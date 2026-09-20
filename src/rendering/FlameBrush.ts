@@ -88,7 +88,7 @@ export function fireField(
       field.r * 2.1,
       field.r * 2.1,
       "#fff",
-      (fade * (0.28 + Math.sin(time * 2) * 0.08)) / Math.max(1, overlaps),
+      (fade * (0.56 + Math.sin(time * 2) * 0.16)) / Math.max(1, overlaps),
       2,
       0,
       time,

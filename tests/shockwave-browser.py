@@ -64,12 +64,12 @@ with sync_playwright() as p:
  assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[2]')==0
  page.evaluate("""()=>{const g=__KEYABYSS__.game;g.fields=[];g.addField('fire',640,400,150,4);g.fields[0].age=1;g.render();}""")
  assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[2]')==2
- assert 0<page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1]')<=.36
+ assert 0<page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1]')<=.72
  page.screenshot(path=str(OUT/'heat-and-centered-hud-1080.png'))
  page.evaluate('__KEYABYSS__.game.options.reduceMotion=true;__KEYABYSS__.game.render()');assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==0
- checks.append('flame explosion displacement is 55 percent of other waves; heat strength stays below .36; reduced motion removes displacement')
+ checks.append('flame explosion displacement is 55 percent of other waves; heat strength stays below .72; reduced motion removes displacement')
  # Read actual GPU displacement: even 14 overlapping fires cannot amplify heat
- # beyond 1.5 world units (~2 pixels at 1080P), across quality levels and phases.
+ # beyond 3 world units (~4 pixels at 1080P), across quality levels and phases.
  heat=page.evaluate("""()=>{const g=__KEYABYSS__.game,n=g.nativeRenderer;g.options.reduceMotion=false;g.enemies=[];g.fields=[];g.fx=[];
  const half=v=>{const sign=v&32768?-1:1,e=(v>>10)&31,m=v&1023;return sign*(e===0?m*2**-24:(1+m/1024)*2**(e-15));};
  const results=[];
@@ -84,9 +84,9 @@ with sync_playwright() as p:
    for(let i=0;i<pixels.length;i+=4){const x=(decode(pixels[i])-decode(pixels[i+2]))*scale*span.x,y=(decode(pixels[i+1])-decode(pixels[i+3]))*scale*span.y;maximum=Math.max(maximum,Math.hypot(x,y));}
    results.push({count,quality,time,maximum});
  }return results;}""")
- assert all(0<item['maximum']<1.5 for item in heat),heat
+ assert all(0<item['maximum']<3 for item in heat),heat
  page.screenshot(path=str(OUT/'overlapping-heat-1080.png'))
- checks.append('GPU heat displacement stays below 1.5 world units with 1 or 14 fires, all three quality levels and three phases')
+ checks.append('GPU heat displacement stays below 3 world units with 1 or 14 fires, all three quality levels and three phases')
  assert not errors,errors
  b.close()
 (OUT/'report.json').write_text(json.dumps({'checks':checks,'probes':probes,'radii':radii,'heat':heat,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')
