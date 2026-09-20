@@ -3,8 +3,8 @@
   "artifacts": [
     {
       "artifact": "dist/index.html",
-      "bytes": 735701,
-      "sha256": "429f976f16112202423af4931a9a32f563529dde070d0ff57c342acbd1cae365"
+      "bytes": 735786,
+      "sha256": "13d64a686a129bf92103ec4c2d5fe4a14192e62ea8a78f422ce89a02cb178ccd"
     },
     {
       "artifact": "dist/assets/art/FLAME_GRIMOIR.png",
@@ -47,9 +47,9 @@
       "sha256": "25f8bbe43fa04058d01cb603d89c898e23a626d28b37883eb566bad0cec020b1"
     },
     {
-      "artifact": "dist/assets/battle-renderer-6c2b5b57.js",
-      "bytes": 764485,
-      "sha256": "6c2b5b57c7c9322fdc21df655c3ae8c6d567960f2005271c457807771078a1f2"
+      "artifact": "dist/assets/battle-renderer-1d144814.js",
+      "bytes": 764513,
+      "sha256": "1d14481466ac502d8c0c601b68f5fdec333e542dfad88b499de4445408c60b58"
     },
     {
       "artifact": "dist/audio/clip-01cb6b0450b74be5.js",

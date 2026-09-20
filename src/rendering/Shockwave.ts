@@ -15,7 +15,7 @@ export function shockwaveProfile(effect: BurstEffect) {
   return {
     radius,
     width,
-    amplitude: width * 0.21 * envelope,
+    amplitude: width * 0.21 * envelope * (effect.kind === "flame" ? 0.55 : 1),
     direction: inward ? -1 : 1,
     opacity: envelope,
   };

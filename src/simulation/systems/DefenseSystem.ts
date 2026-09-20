@@ -74,7 +74,7 @@ export function parryFeedback(this: Context) {
         this,
         e,
         DEFENSE.pulseKnockback *
-          (1 - 0.25 * Math.min(1, distance / DEFENSE.pulseRadius)),
+          (1 - 0.25 * Math.min(1, distance / DEFENSE.pulseFalloffDistance)),
         false,
       );
   }

@@ -15,6 +15,15 @@ with sync_playwright() as p:
  page.locator('#startBtn').click();page.locator('#beginRun').click();page.wait_for_function("__KEYABYSS__.game.state==='playing'")
  page.evaluate("""()=>{const g=__KEYABYSS__.game;g.state='paused';g.cancel();g.enemies=[];g.nodes=[];g.fields=[];g.bullets=[];g.shake=0;g.kickX=0;g.kickY=0;g.visualTime=2;g.options.fx=1;g.options.reduceMotion=false;
  window.waveAt=(kind,t)=>{g.fx=[{type:'burst',kind,x:640,y:400,r:115,max:.65,life:.65*(1-t),color:'#b9efdf',seed:17}];g.render();};}""")
+ # Unequal side columns and changing counters must not move the chapter/wave center.
+ for width,height in [(2560,1440),(1920,1080),(1280,720),(800,600),(480,800)]:
+  page.set_viewport_size({'width':width,'height':height})
+  layout=page.evaluate("""()=>{const chapter=document.querySelector('.chapter-block'),actions=document.querySelector('.battle-actions');actions.firstElementChild.textContent='99:59 · 12345 击破';const c=chapter.getBoundingClientRect(),a=actions.getBoundingClientRect(),h=document.querySelector('.hud-top').getBoundingClientRect();return {center:c.x+c.width/2,visible:c.width>0,right:a.right,edge:h.right};}""")
+  if width>600:assert abs(layout['center']-width/2)<1,layout
+  else:assert not layout['visible'],layout
+  assert abs(layout['right']-layout['edge'])<1,layout
+ page.set_viewport_size({'width':1920,'height':1080})
+ checks.append('chapter/wave remains viewport-centered at four desktop sizes; compact HUD keeps actions right-aligned')
  # UV ramps reveal the sign of the actual composite lookup, not merely the field vector.
  probes=page.evaluate("""()=>{const g=__KEYABYSS__.game,n=g.nativeRenderer,r=n.renderer,env=n.environment.material;
  const shader=env.fragmentShader;const samples=[];
@@ -47,14 +56,18 @@ with sync_playwright() as p:
  for kind in ['shock','ultimate','electric','flame','shard','implosion']:
   page.evaluate('kind=>waveAt(kind,.4)',kind)
   assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==1,kind
+ flame_ratio=page.evaluate("""()=>{waveAt('shock',.4);const reference=__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1];waveAt('flame',.4);return __KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1]/reference;}""")
+ assert abs(flame_ratio-.55)<1e-5,flame_ratio
  page.evaluate('waveAt("parry",1)');assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==0
  checks.append('all six explosive effects share the travelling front; parry expands across frames and fully expires')
  page.evaluate("""()=>{const g=__KEYABYSS__.game;g.fx=[];g.fields=[];g.addField('gravity',640,400,150,4);g.fields[0].age=1;g.render();}""")
  assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[2]')==0
  page.evaluate("""()=>{const g=__KEYABYSS__.game;g.fields=[];g.addField('fire',640,400,150,4);g.fields[0].age=1;g.render();}""")
  assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[2]')==2
+ assert 0<page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1]')<=2.7
+ page.screenshot(path=str(OUT/'heat-and-centered-hud-1080.png'))
  page.evaluate('__KEYABYSS__.game.options.reduceMotion=true;__KEYABYSS__.game.render()');assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==0
- checks.append('gravity and heat retain distinct field types; reduced motion removes displacement')
+ checks.append('flame explosion displacement is 55 percent of other waves; heat strength stays below 2.7; reduced motion removes displacement')
  assert not errors,errors
  b.close()
 (OUT/'report.json').write_text(json.dumps({'checks':checks,'probes':probes,'radii':radii,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')

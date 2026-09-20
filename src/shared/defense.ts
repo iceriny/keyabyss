@@ -5,8 +5,10 @@ export const DEFENSE = Object.freeze({
   radius: 42,
   damage: 32,
   knockback: 2200,
-  pulseRadius: 185,
+  pulseRadius: 105,
   pulseKnockback: 1050,
+  // Separate force falloff from eligibility so a smaller radius never weakens hits.
+  pulseFalloffDistance: 185,
   pushDuration: 1.2,
   slowDuration: 0.52,
   slowHold: 0.06,

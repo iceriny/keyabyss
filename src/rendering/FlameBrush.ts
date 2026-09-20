@@ -78,7 +78,7 @@ export function fireField(
       field.r * 2.1,
       field.r * 2.1,
       "#fff",
-      fade * (7 + Math.sin(time * 3) * 2),
+      fade * (2.1 + Math.sin(time * 3) * 0.6),
       2,
       0,
       time,

@@ -11,7 +11,7 @@ test("counter knocks contact target far away and pressure displaces neighbors wi
   g.player.y = 400;
   const main = g.spawnEnemy("ram", 410, 400),
     near = g.spawnEnemy("nib", 400, 485),
-    outside = g.spawnEnemy("nib", 400, 690);
+    outside = g.spawnEnemy("nib", 400, 550);
   for (const e of [main, near, outside]) {
     e.hp = e.maxHp = 10000;
     e.grace = 0;
@@ -26,6 +26,9 @@ test("counter knocks contact target far away and pressure displaces neighbors wi
   assert.equal(outside.hp, 10000);
   assert(main.ix > 1000);
   assert(near.iy > 700);
+  // The nearer cutoff must preserve the previous impulse at the same position.
+  const previousImpulse = 1050 * (1 - 0.25 * 85 / 185) / Math.max(0.85, Math.sqrt(near.mass));
+  assert(Math.abs(near.iy - previousImpulse) < 1e-6);
   assert.equal(outside.iy, 0);
   assert.deepEqual(bullet, bulletBefore);
   assert.equal(g.counterSlowTime, DEFENSE.slowDuration);
