@@ -1,0 +1,362 @@
+
+> keyabyss@0.3.0 test
+> node --test tests/*.test.cjs
+
+TAP version 13
+# Subtest: seeded random numbers are deterministic and in range
+ok 1 - seeded random numbers are deterministic and in range
+  ---
+  duration_ms: 0.971657
+  type: 'test'
+  ...
+# Subtest: normalizes Qwerty, strings and CSV rows without altering keyword underscores
+ok 2 - normalizes Qwerty, strings and CSV rows without altering keyword underscores
+  ---
+  duration_ms: 0.37778
+  type: 'test'
+  ...
+# Subtest: TXT supports comments, BOM, CRLF and duplicates
+ok 3 - TXT supports comments, BOM, CRLF and duplicates
+  ---
+  duration_ms: 1.002984
+  type: 'test'
+  ...
+# Subtest: CSV supports reordered columns, quotes, commas and multiline meanings
+ok 4 - CSV supports reordered columns, quotes, commas and multiline meanings
+  ---
+  duration_ms: 0.779546
+  type: 'test'
+  ...
+# Subtest: TSV and Chinese headers are understood
+ok 5 - TSV and Chinese headers are understood
+  ---
+  duration_ms: 0.533675
+  type: 'test'
+  ...
+# Subtest: JSON object, Qwerty and JSONL imports
+ok 6 - JSON object, Qwerty and JSONL imports
+  ---
+  duration_ms: 0.257498
+  type: 'test'
+  ...
+# Subtest: rejects malformed, empty, oversized, unsupported and all-invalid dictionaries
+ok 7 - rejects malformed, empty, oversized, unsupported and all-invalid dictionaries
+  ---
+  duration_ms: 0.973399
+  type: 'test'
+  ...
+# Subtest: word pool prefers distinct initials whenever possible
+ok 8 - word pool prefers distinct initials whenever possible
+  ---
+  duration_ms: 0.379192
+  type: 'test'
+  ...
+# Subtest: a one-word dictionary remains usable and never falls back to built-in words
+ok 9 - a one-word dictionary remains usable and never falls back to built-in words
+  ---
+  duration_ms: 2.63104
+  type: 'test'
+  ...
+# Subtest: length filtering keeps short tokens in later chapters
+ok 10 - length filtering keeps short tokens in later chapters
+  ---
+  duration_ms: 0.881841
+  type: 'test'
+  ...
+# Subtest: all 12 source-attributed snapshots normalize without duplicates or invalid entries
+ok 11 - all 12 source-attributed snapshots normalize without duplicates or invalid entries
+  ---
+  duration_ms: 46.902161
+  type: 'test'
+  ...
+# Subtest: C++ snapshot contains normative underscore tokens, but not context-only module/import entries
+ok 12 - C++ snapshot contains normative underscore tokens, but not context-only module/import entries
+  ---
+  duration_ms: 0.309547
+  type: 'test'
+  ...
+# Subtest: CMU dictionary is mechanically filtered, large, and export/reimport compatible
+ok 13 - CMU dictionary is mechanically filtered, large, and export/reimport compatible
+  ---
+  duration_ms: 175.290293
+  type: 'test'
+  ...
+# Subtest: relic IDs are unique; all have finite stack limits
+ok 14 - relic IDs are unique; all have finite stack limits
+  ---
+  duration_ms: 0.181784
+  type: 'test'
+  ...
+# Subtest: UI word completion executes exactly once and needs no Enter
+ok 15 - UI word completion executes exactly once and needs no Enter
+  ---
+  duration_ms: 1.00696
+  type: 'test'
+  ...
+# Subtest: case is normalized without adding punctuation or modifier characters
+ok 16 - case is normalized without adding punctuation or modifier characters
+  ---
+  duration_ms: 0.2188
+  type: 'test'
+  ...
+# Subtest: wrong character preserves prefix and never falls through into another action
+ok 17 - wrong character preserves prefix and never falls through into another action
+  ---
+  duration_ms: 0.206262
+  type: 'test'
+  ...
+# Subtest: Backspace is one character, Escape-equivalent clear discards whole UI prefix
+ok 18 - Backspace is one character, Escape-equivalent clear discards whole UI prefix
+  ---
+  duration_ms: 0.164318
+  type: 'test'
+  ...
+# Subtest: same initial can branch normally, but duplicate and prefix aliases are rejected
+ok 19 - same initial can branch normally, but duplicate and prefix aliases are rejected
+  ---
+  duration_ms: 0.426063
+  type: 'test'
+  ...
+# Subtest: disabled words produce an explicit disabled result, never an executable action
+ok 20 - disabled words produce an explicit disabled result, never an executable action
+  ---
+  duration_ms: 0.113452
+  type: 'test'
+  ...
+# Subtest: changing context drops partial input instead of carrying it to the next screen
+ok 21 - changing context drops partial input instead of carrying it to the next screen
+  ---
+  duration_ms: 0.110607
+  type: 'test'
+  ...
+# Subtest: updating same context may preserve only a still-valid prefix
+ok 22 - updating same context may preserve only a still-valid prefix
+  ---
+  duration_ms: 0.131548
+  type: 'test'
+  ...
+# Subtest: fixed-width imported-library identifiers never create prefix ambiguities
+ok 23 - fixed-width imported-library identifiers never create prefix ambiguities
+  ---
+  duration_ms: 0.318491
+  type: 'test'
+  ...
+# Subtest: all 48 relics plus fallback and page actions are a valid prefix-free vocabulary
+ok 24 - all 48 relics plus fallback and page actions are a valid prefix-free vocabulary
+  ---
+  duration_ms: 0.517971
+  type: 'test'
+  ...
+# Subtest: reverse target navigation chooses last target when unlocked, preserving typed prefix
+ok 25 - reverse target navigation chooses last target when unlocked, preserving typed prefix
+  ---
+  duration_ms: 6.40221
+  type: 'test'
+  ...
+# Subtest: UI command parsing has no route to combat counters or selected gameplay dictionary
+ok 26 - UI command parsing has no route to combat counters or selected gameplay dictionary
+  ---
+  duration_ms: 1.821769
+  type: 'test'
+  ...
+# Subtest: every one of the 17 enemy/pillar types, split children, boss and node has a current-library word
+ok 27 - every one of the 17 enemy/pillar types, split children, boss and node has a current-library word
+  ---
+  duration_ms: 8.165691
+  type: 'test'
+  ...
+# Subtest: typing frost launches a real projectile; damage is delayed until physical contact
+ok 28 - typing frost launches a real projectile; damage is delayed until physical contact
+  ---
+  duration_ms: 8.776442
+  type: 'test'
+  ...
+# Subtest: wrong keys preserve progress, shared-prefix alternatives resolve without an artificial error
+ok 29 - wrong keys preserve progress, shared-prefix alternatives resolve without an artificial error
+  ---
+  duration_ms: 1.82244
+  type: 'test'
+  ...
+# Subtest: Tab cycles matching prefixes without erasing input
+ok 30 - Tab cycles matching prefixes without erasing input
+  ---
+  duration_ms: 1.841669
+  type: 'test'
+  ...
+# Subtest: directed dash travels over time, retains text and consumes exactly one charge
+ok 31 - directed dash travels over time, retains text and consumes exactly one charge
+  ---
+  duration_ms: 3.835187
+  type: 'test'
+  ...
+# Subtest: perfect dodge is risk-triggered, not awarded on every safe dash
+ok 32 - perfect dodge is risk-triggered, not awarded on every safe dash
+  ---
+  duration_ms: 4.064773
+  type: 'test'
+  ...
+# Subtest: mass distinguishes impact response; velocity decays instead of teleporting
+ok 33 - mass distinguishes impact response; velocity decays instead of teleporting
+  ---
+  duration_ms: 2.010534
+  type: 'test'
+  ...
+# Subtest: knocked enemy collides with arena wall, takes impact damage and rebounds
+ok 34 - knocked enemy collides with arena wall, takes impact damage and rebounds
+  ---
+  duration_ms: 2.384268
+  type: 'test'
+  ...
+# Subtest: body collision transmits momentum from a knocked enemy to another
+ok 35 - body collision transmits momentum from a knocked enemy to another
+  ---
+  duration_ms: 1.863702
+  type: 'test'
+  ...
+# Subtest: fast projectile collision uses swept segments instead of endpoint-only hit tests
+ok 36 - fast projectile collision uses swept segments instead of endpoint-only hit tests
+  ---
+  duration_ms: 1.927739
+  type: 'test'
+  ...
+# Subtest: frost freezes and leaves a slow field while storm is instant multi-target damage
+ok 37 - frost freezes and leaves a slow field while storm is instant multi-target damage
+  ---
+  duration_ms: 5.250222
+  type: 'test'
+  ...
+# Subtest: storm conductive marks overload on the third hit and stormcell clears nearby bullets
+ok 38 - storm conductive marks overload on the third hit and stormcell clears nearby bullets
+  ---
+  duration_ms: 1.477059
+  type: 'test'
+  ...
+# Subtest: paper summons require typing; paper agents actually dive and then expire
+ok 39 - paper summons require typing; paper agents actually dive and then expire
+  ---
+  duration_ms: 18.077617
+  type: 'test'
+  ...
+# Subtest: all three ultimates are distinct and require resource; resource cannot self-recharge during ultimate
+ok 40 - all three ultimates are distinct and require resource; resource cannot self-recharge during ultimate
+  ---
+  duration_ms: 6.425936
+  type: 'test'
+  ...
+# Subtest: green rune clears bullets and pending telegraphs, not an already active laser
+ok 41 - green rune clears bullets and pending telegraphs, not an already active laser
+  ---
+  duration_ms: 1.450588
+  type: 'test'
+  ...
+# Subtest: telegraphs owned by a slain mortar are cancelled before explosion
+ok 42 - telegraphs owned by a slain mortar are cancelled before explosion
+  ---
+  duration_ms: 1.443719
+  type: 'test'
+  ...
+# Subtest: new enemies implement healer, finite brood, charger and mirror behavior
+ok 43 - new enemies implement healer, finite brood, charger and mirror behavior
+  ---
+  duration_ms: 2.282554
+  type: 'test'
+  ...
+# Subtest: pause freezes simulation, dash travel, enemies, charge and ultimates
+ok 44 - pause freezes simulation, dash travel, enemies, charge and ultimates
+  ---
+  duration_ms: 2.416216
+  type: 'test'
+  ...
+# Subtest: input target is not rewritten by splash or paper effects; partial target death awards shield
+ok 45 - input target is not rewritten by splash or paper effects; partial target death awards shield
+  ---
+  duration_ms: 1.701518
+  type: 'test'
+  ...
+# Subtest: rescue prevents one fatal hit and only one
+ok 46 - rescue prevents one fatal hit and only one
+  ---
+  duration_ms: 1.808649
+  type: 'test'
+  ...
+# Subtest: feather completion is reserved for the next eligible long word, without recursively charging itself
+ok 47 - feather completion is reserved for the next eligible long word, without recursively charging itself
+  ---
+  duration_ms: 2.165978
+  type: 'test'
+  ...
+# Subtest: new generic relics implement damage risk, DOT, shield, execute and perfect-wave clear
+ok 48 - new generic relics implement damage risk, DOT, shield, execute and perfect-wave clear
+  ---
+  duration_ms: 2.023523
+  type: 'test'
+  ...
+# Subtest: awakenings require the right school and both prerequisites; rerolls never offer maxed relics
+ok 49 - awakenings require the right school and both prerequisites; rerolls never offer maxed relics
+  ---
+  duration_ms: 2.268934
+  type: 'test'
+  ...
+# Subtest: all fully stacked relics have a non-blocking repeatable fallback reward
+ok 50 - all fully stacked relics have a non-blocking repeatable fallback reward
+  ---
+  duration_ms: 1.593384
+  type: 'test'
+  ...
+# Subtest: boss towers have words, reduce incoming damage, and phase transition does not duplicate towers
+ok 51 - boss towers have words, reduce incoming damage, and phase transition does not duplicate towers
+  ---
+  duration_ms: 2.158116
+  type: 'test'
+  ...
+# Subtest: all nine rooms route to victory, and continuation retains build while raising difficulty
+ok 52 - all nine rooms route to victory, and continuation retains build while raising difficulty
+  ---
+  duration_ms: 9.163186
+  type: 'test'
+  ...
+# Subtest: a single long C++ token works in every school, including the underscore
+ok 53 - a single long C++ token works in every school, including the underscore
+  ---
+  duration_ms: 11.515236
+  type: 'test'
+  ...
+# Subtest: all five modes have increasing speed, damage, spawn pressure; every chapter and loop grows
+ok 54 - all five modes have increasing speed, damage, spawn pressure; every chapter and loop grows
+  ---
+  duration_ms: 0.426324
+  type: 'test'
+  ...
+# Subtest: visual intensity does not perturb game random sequence or subsequent enemy words
+ok 55 - visual intensity does not perturb game random sequence or subsequent enemy words
+  ---
+  duration_ms: 3.495114
+  type: 'test'
+  ...
+# Subtest: Boss phase protection prevents one-hit phase skips and then expires
+ok 56 - Boss phase protection prevents one-hit phase skips and then expires
+  ---
+  duration_ms: 2.710991
+  type: 'test'
+  ...
+# Subtest: environmental words do not consume the next empowered attack cadence
+ok 57 - environmental words do not consume the next empowered attack cadence
+  ---
+  duration_ms: 1.747537
+  type: 'test'
+  ...
+# Subtest: next-loop bosses scale beyond the preceding final boss and elite contract is honored
+ok 58 - next-loop bosses scale beyond the preceding final boss and elite contract is honored
+  ---
+  duration_ms: 2.592652
+  type: 'test'
+  ...
+1..58
+# tests 58
+# suites 0
+# pass 58
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 298.016003

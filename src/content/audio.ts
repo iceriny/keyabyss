@@ -1,0 +1,141 @@
+import type { AudioDefinition } from "../contracts/content.ts";
+export const audio = [
+  {
+    id: "frost",
+    keyBase: 560,
+    keyWave: "sine",
+    cast: [
+      {
+        kind: "tone",
+        frequency: 145,
+        duration: 0.22,
+        wave: "triangle",
+        volume: 0.28,
+        slide: 0.42,
+      },
+      {
+        kind: "noise",
+        duration: 0.13,
+        frequency: 3700,
+        volume: 0.18,
+      },
+      {
+        kind: "tone",
+        frequency: 980,
+        duration: 0.16,
+        wave: "sine",
+        volume: 0.07,
+        slide: 2,
+      },
+    ],
+    heavyCast: [
+      {
+        kind: "tone",
+        frequency: 96,
+        duration: 0.22,
+        wave: "triangle",
+        volume: 0.46,
+        slide: 0.42,
+      },
+      {
+        kind: "noise",
+        duration: 0.13,
+        frequency: 3700,
+        volume: 0.18,
+      },
+      {
+        kind: "tone",
+        frequency: 980,
+        duration: 0.16,
+        wave: "sine",
+        volume: 0.07,
+        slide: 2,
+      },
+    ],
+  },
+  {
+    id: "storm",
+    keyBase: 260,
+    keyWave: "triangle",
+    cast: [
+      {
+        kind: "tone",
+        frequency: 110,
+        duration: 0.12,
+        wave: "sawtooth",
+        volume: 0.13,
+        slide: 3,
+      },
+      {
+        kind: "noise",
+        duration: 0.12,
+        frequency: 5000,
+        volume: 0.19,
+      },
+      {
+        kind: "tone",
+        frequency: 510,
+        duration: 0.16,
+        wave: "triangle",
+        volume: 0.22,
+        slide: 0.55,
+      },
+    ],
+  },
+  {
+    id: "spirit",
+    keyBase: 410,
+    keyWave: "sine",
+    cast: [
+      {
+        kind: "noise",
+        duration: 0.09,
+        frequency: 1700,
+        volume: 0.12,
+      },
+      {
+        kind: "tone",
+        frequency: 350,
+        duration: 0.2,
+        wave: "sine",
+        volume: 0.24,
+        slide: 1.9,
+      },
+      {
+        kind: "tone",
+        frequency: 520,
+        duration: 0.18,
+        wave: "sine",
+        volume: 0.11,
+        slide: 1.3,
+      },
+    ],
+  },
+  {
+    id: "flame",
+    keyBase: 330,
+    keyWave: "triangle",
+    cast: [
+      {
+        kind: "tone",
+        frequency: 125,
+        duration: 0.2,
+        wave: "sawtooth",
+        volume: 0.15,
+        slide: 0.3,
+      },
+      { kind: "noise", frequency: 1900, duration: 0.2, volume: 0.2 },
+    ],
+    heavyCast: [
+      {
+        kind: "tone",
+        frequency: 75,
+        duration: 0.28,
+        wave: "triangle",
+        volume: 0.36,
+        slide: 0.2,
+      },
+      { kind: "noise", frequency: 3000, duration: 0.24, volume: 0.3 },
+    ],
+  },
+] as const satisfies readonly AudioDefinition[];

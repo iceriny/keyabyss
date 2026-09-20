@@ -1,0 +1,30 @@
+import type { Book } from "../../../contracts/content.ts";
+export default {
+  artwork: "book-storm",
+  visual: {
+    rays: 5,
+    highlight: "#fff5d6",
+    shadow: "#534126",
+    ultimate: "lightning",
+  },
+  appearance: "player-storm",
+  audio: "storm",
+  behavior: "storm",
+  id: "storm",
+  command: "storm",
+  shortcut: "2",
+  headline: "传导。蓄能。过载。",
+  subtitle: "连锁四名敌人，以密集墨潮引燃雷暴。",
+  eyebrow: "STORM GRIMOIRE",
+  name: "雷鸣之书",
+  short: "雷鸣",
+  icon: "ϟ",
+  color: "#ffd17c",
+  desc: "瞬发电弧 · 过载引爆",
+  detail:
+    "瞬时连锁四名目标，三层导电引爆过载。每第4次施法强化传导，适合牵引墨影、连锁清场。",
+  ultimate: "雷鸣终章",
+  ultimateDesc: "6秒雷暴领域；每次完词降下额外落雷，继续打字才能扩大优势。",
+  cadence: "雷印",
+  cycle: 4,
+} satisfies Book;

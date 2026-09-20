@@ -1,0 +1,30 @@
+import type { Book } from "../../../contracts/content.ts";
+export default {
+  artwork: "book-frost",
+  visual: {
+    rays: 6,
+    highlight: "#e4fcff",
+    shadow: "#193e54",
+    ultimate: "crystal",
+  },
+  appearance: "player-frost",
+  audio: "frost",
+  behavior: "frost",
+  id: "frost",
+  command: "frost",
+  shortcut: "1",
+  headline: "冻结。穿透。碎裂。",
+  subtitle: "每四次施法，唤醒一支重型冰矛。",
+  eyebrow: "FROST GRIMOIRE",
+  name: "寒墨之书",
+  short: "冰霜",
+  icon: "❄",
+  color: "#8bdeff",
+  desc: "重型冰枪 · 冻结碎裂",
+  detail:
+    "有飞行时间的穿透冰枪，命中击退并留下霜场。每第4次施法发射重型冰矛，击碎冻结目标。",
+  ultimate: "冰河纪事",
+  ultimateDesc: "冻结并轰击大范围敌人，随后冰针雨覆盖战场。",
+  cadence: "霜印",
+  cycle: 4,
+} satisfies Book;

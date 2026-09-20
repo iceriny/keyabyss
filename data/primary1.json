@@ -1,0 +1,422 @@
+{
+  "id": "primary1",
+  "title": "小学一年级 · 全册",
+  "sourceLabel": "Qwerty Learner / RealKai42",
+  "source": "https://github.com/RealKai42/qwerty-learner",
+  "sourceBlob": null,
+  "upstreamFile": "PEP_SL_XiaoXue1_1_t.json",
+  "retrievedAt": "2026-09-20T08:28:42.603Z",
+  "snapshot": "complete",
+  "scope": "完整同步 2 个源文件；原始 97 条，过滤 1 条，去重 0 条。",
+  "description": "小学一年级 · 全册；保留源中文释义，完整同步后过滤不支持的短语并去重。",
+  "sourceRecords": 97,
+  "excluded": [
+    "a/an"
+  ],
+  "count": 96,
+  "upstreamFiles": [
+    "PEP_SL_XiaoXue1_1_t.json",
+    "PEP_SL_XiaoXue1_2_t.json"
+  ],
+  "sources": [
+    {
+      "file": "PEP_SL_XiaoXue1_1_t.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEP_SL_XiaoXue1_1_t.json",
+      "sha256": "cce7ac7bcc1e0eaf87a737e35c47ba6197b79e53b08c88b2c847bec3ab68c695",
+      "records": 52
+    },
+    {
+      "file": "PEP_SL_XiaoXue1_2_t.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEP_SL_XiaoXue1_2_t.json",
+      "sha256": "90a167a12719664cf376ad060adb3602abb81b27266313200221692e271e9bca",
+      "records": 45
+    }
+  ],
+  "duplicates": 0,
+  "words": [
+    {
+      "word": "book",
+      "meaning": "书；书本"
+    },
+    {
+      "word": "ruler",
+      "meaning": "尺子"
+    },
+    {
+      "word": "pencil",
+      "meaning": "铅笔"
+    },
+    {
+      "word": "schoolbag",
+      "meaning": "书包"
+    },
+    {
+      "word": "teacher",
+      "meaning": "教师"
+    },
+    {
+      "word": "i",
+      "meaning": "我"
+    },
+    {
+      "word": "have",
+      "meaning": "有"
+    },
+    {
+      "word": "face",
+      "meaning": "脸"
+    },
+    {
+      "word": "ear",
+      "meaning": "耳朵"
+    },
+    {
+      "word": "eye",
+      "meaning": "眼睛"
+    },
+    {
+      "word": "nose",
+      "meaning": "鼻子"
+    },
+    {
+      "word": "mouth",
+      "meaning": "嘴巴"
+    },
+    {
+      "word": "this",
+      "meaning": "这（个）"
+    },
+    {
+      "word": "is",
+      "meaning": "是"
+    },
+    {
+      "word": "my",
+      "meaning": "我的"
+    },
+    {
+      "word": "dog",
+      "meaning": "狗"
+    },
+    {
+      "word": "bird",
+      "meaning": "鸟"
+    },
+    {
+      "word": "tiger",
+      "meaning": "老虎"
+    },
+    {
+      "word": "monkey",
+      "meaning": "猴子"
+    },
+    {
+      "word": "cat",
+      "meaning": "猫"
+    },
+    {
+      "word": "what",
+      "meaning": "什么"
+    },
+    {
+      "word": "it",
+      "meaning": "它"
+    },
+    {
+      "word": "one",
+      "meaning": "一"
+    },
+    {
+      "word": "two",
+      "meaning": "二"
+    },
+    {
+      "word": "three",
+      "meaning": "三"
+    },
+    {
+      "word": "four",
+      "meaning": "四"
+    },
+    {
+      "word": "five",
+      "meaning": "五"
+    },
+    {
+      "word": "six",
+      "meaning": "六"
+    },
+    {
+      "word": "seven",
+      "meaning": "七"
+    },
+    {
+      "word": "eight",
+      "meaning": "八"
+    },
+    {
+      "word": "nine",
+      "meaning": "九"
+    },
+    {
+      "word": "ten",
+      "meaning": "十"
+    },
+    {
+      "word": "how",
+      "meaning": "多少"
+    },
+    {
+      "word": "many",
+      "meaning": "多的，许多的"
+    },
+    {
+      "word": "are",
+      "meaning": "是"
+    },
+    {
+      "word": "there",
+      "meaning": "（代替主语）"
+    },
+    {
+      "word": "black",
+      "meaning": "黑色；黑色的"
+    },
+    {
+      "word": "yellow",
+      "meaning": "黄色；黄色的"
+    },
+    {
+      "word": "blue",
+      "meaning": "蓝色；蓝色的"
+    },
+    {
+      "word": "red",
+      "meaning": "红色；红色的"
+    },
+    {
+      "word": "green",
+      "meaning": "绿色；绿色的"
+    },
+    {
+      "word": "colour",
+      "meaning": "颜色"
+    },
+    {
+      "word": "apple",
+      "meaning": "苹果"
+    },
+    {
+      "word": "pear",
+      "meaning": "梨"
+    },
+    {
+      "word": "banana",
+      "meaning": "香蕉"
+    },
+    {
+      "word": "orange",
+      "meaning": "柑橘；橙"
+    },
+    {
+      "word": "do",
+      "meaning": "（助动词）"
+    },
+    {
+      "word": "you",
+      "meaning": "你；你们"
+    },
+    {
+      "word": "like",
+      "meaning": "喜欢，喜爱"
+    },
+    {
+      "word": "yes",
+      "meaning": "是，是的"
+    },
+    {
+      "word": "no",
+      "meaning": "不，不是"
+    },
+    {
+      "word": "chair",
+      "meaning": "椅子"
+    },
+    {
+      "word": "desk",
+      "meaning": "书桌，写字台"
+    },
+    {
+      "word": "blackboard",
+      "meaning": "黑板"
+    },
+    {
+      "word": "on",
+      "meaning": "在⋯⋯上"
+    },
+    {
+      "word": "under",
+      "meaning": "在⋯⋯下面 ；在⋯⋯下方"
+    },
+    {
+      "word": "in",
+      "meaning": "在⋯⋯里面"
+    },
+    {
+      "word": "where",
+      "meaning": "在哪里"
+    },
+    {
+      "word": "the",
+      "meaning": "放在名词前，特指人、事或物"
+    },
+    {
+      "word": "light",
+      "meaning": "灯"
+    },
+    {
+      "word": "bed",
+      "meaning": "床"
+    },
+    {
+      "word": "door",
+      "meaning": "门 ；出入口"
+    },
+    {
+      "word": "box",
+      "meaning": "箱子 ；盒子"
+    },
+    {
+      "word": "near",
+      "meaning": "靠近，接近"
+    },
+    {
+      "word": "behind",
+      "meaning": "在⋯⋯背后"
+    },
+    {
+      "word": "plane",
+      "meaning": "飞机"
+    },
+    {
+      "word": "ball",
+      "meaning": "球"
+    },
+    {
+      "word": "doll",
+      "meaning": "玩偶，玩具娃娃"
+    },
+    {
+      "word": "train",
+      "meaning": "列车，火车"
+    },
+    {
+      "word": "car",
+      "meaning": "小汽车，轿车"
+    },
+    {
+      "word": "bear",
+      "meaning": "玩具熊 ；熊"
+    },
+    {
+      "word": "can",
+      "meaning": "可以 ；能够"
+    },
+    {
+      "word": "sure",
+      "meaning": "当然"
+    },
+    {
+      "word": "sorry",
+      "meaning": "对不起，抱歉"
+    },
+    {
+      "word": "rice",
+      "meaning": "米饭 ；米"
+    },
+    {
+      "word": "noodles",
+      "meaning": "面条"
+    },
+    {
+      "word": "vegetable",
+      "meaning": "蔬菜"
+    },
+    {
+      "word": "fish",
+      "meaning": "鱼肉 ；鱼"
+    },
+    {
+      "word": "chicken",
+      "meaning": "鸡肉 ；鸡"
+    },
+    {
+      "word": "egg",
+      "meaning": "鸡蛋"
+    },
+    {
+      "word": "hungry",
+      "meaning": "饥饿的"
+    },
+    {
+      "word": "want",
+      "meaning": "要 ；想要"
+    },
+    {
+      "word": "and",
+      "meaning": "和"
+    },
+    {
+      "word": "juice",
+      "meaning": "果汁 ；蔬菜汁"
+    },
+    {
+      "word": "tea",
+      "meaning": "茶 ；茶叶"
+    },
+    {
+      "word": "milk",
+      "meaning": "奶 ；牛奶"
+    },
+    {
+      "word": "water",
+      "meaning": "水"
+    },
+    {
+      "word": "thirsty",
+      "meaning": "口渴的"
+    },
+    {
+      "word": "thanks",
+      "meaning": "感谢"
+    },
+    {
+      "word": "shirt",
+      "meaning": "衬衫"
+    },
+    {
+      "word": "t-shirt",
+      "meaning": "T 恤衫；短袖圆领汗衫"
+    },
+    {
+      "word": "skirt",
+      "meaning": "裙子"
+    },
+    {
+      "word": "dress",
+      "meaning": "连衣裙 ；套裙"
+    },
+    {
+      "word": "socks",
+      "meaning": "短袜"
+    },
+    {
+      "word": "shorts",
+      "meaning": "短裤"
+    },
+    {
+      "word": "your",
+      "meaning": "你的 ；你们的"
+    }
+  ]
+}

@@ -1,0 +1,425 @@
+{
+  "id": "primary2",
+  "title": "小学二年级 · 全册",
+  "sourceLabel": "Qwerty Learner / RealKai42",
+  "source": "https://github.com/RealKai42/qwerty-learner",
+  "sourceBlob": null,
+  "upstreamFile": "PEP_SL_XiaoXue2_1_t.json",
+  "retrievedAt": "2026-09-20T08:28:43.470Z",
+  "snapshot": "complete",
+  "scope": "完整同步 2 个源文件；原始 109 条，过滤 16 条，去重 0 条。",
+  "description": "小学二年级 · 全册；保留源中文释义，完整同步后过滤不支持的短语并去重。",
+  "sourceRecords": 109,
+  "excluded": [
+    "father christmas",
+    "christmas tree",
+    "new year",
+    "play football",
+    "fly a kite",
+    "ride a bike",
+    "make a model plane",
+    "make a snowman",
+    "get up",
+    "eat breakfast",
+    "go to school",
+    "eat lunch",
+    "go home",
+    "eat dinner",
+    "go to bed",
+    "every day"
+  ],
+  "count": 93,
+  "upstreamFiles": [
+    "PEP_SL_XiaoXue2_1_t.json",
+    "PEP_SL_XiaoXue2_2_t.json"
+  ],
+  "sources": [
+    {
+      "file": "PEP_SL_XiaoXue2_1_t.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEP_SL_XiaoXue2_1_t.json",
+      "sha256": "084e724dd8e647bd2859f0caeeff458e355fdf09849f5008d0f32eec2f113b83",
+      "records": 54
+    },
+    {
+      "file": "PEP_SL_XiaoXue2_2_t.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEP_SL_XiaoXue2_2_t.json",
+      "sha256": "8fa3226c61b29224c2263ea887a704551f29b82366d3eef42a9ef8b9d39dfc88",
+      "records": 55
+    }
+  ],
+  "duplicates": 0,
+  "words": [
+    {
+      "word": "father",
+      "meaning": "父亲 ；爸爸"
+    },
+    {
+      "word": "mother",
+      "meaning": "母亲 ；妈妈"
+    },
+    {
+      "word": "brother",
+      "meaning": "兄 ；弟"
+    },
+    {
+      "word": "sister",
+      "meaning": "姐 ；妹"
+    },
+    {
+      "word": "grandmother",
+      "meaning": "外祖母"
+    },
+    {
+      "word": "grandfather",
+      "meaning": "外祖父"
+    },
+    {
+      "word": "who",
+      "meaning": "谁"
+    },
+    {
+      "word": "he",
+      "meaning": "他"
+    },
+    {
+      "word": "she",
+      "meaning": "她"
+    },
+    {
+      "word": "classmate",
+      "meaning": "同班同学"
+    },
+    {
+      "word": "friend",
+      "meaning": "朋友"
+    },
+    {
+      "word": "woman",
+      "meaning": "女人"
+    },
+    {
+      "word": "girl",
+      "meaning": "女孩"
+    },
+    {
+      "word": "man",
+      "meaning": "男人"
+    },
+    {
+      "word": "boy",
+      "meaning": "男孩"
+    },
+    {
+      "word": "look",
+      "meaning": "看 ；瞧"
+    },
+    {
+      "word": "his",
+      "meaning": "他的"
+    },
+    {
+      "word": "name",
+      "meaning": "名字"
+    },
+    {
+      "word": "her",
+      "meaning": "她的"
+    },
+    {
+      "word": "or",
+      "meaning": "还是"
+    },
+    {
+      "word": "big",
+      "meaning": "大的"
+    },
+    {
+      "word": "tall",
+      "meaning": "高的"
+    },
+    {
+      "word": "pretty",
+      "meaning": "漂亮的，可爱的"
+    },
+    {
+      "word": "thin",
+      "meaning": "瘦的"
+    },
+    {
+      "word": "short",
+      "meaning": "矮的"
+    },
+    {
+      "word": "handsome",
+      "meaning": "漂亮的，英俊的"
+    },
+    {
+      "word": "new",
+      "meaning": "新的"
+    },
+    {
+      "word": "does",
+      "meaning": "（助动词）"
+    },
+    {
+      "word": "bookshop",
+      "meaning": "书店"
+    },
+    {
+      "word": "zoo",
+      "meaning": "动物园"
+    },
+    {
+      "word": "school",
+      "meaning": "学校"
+    },
+    {
+      "word": "supermarket",
+      "meaning": "超市"
+    },
+    {
+      "word": "park",
+      "meaning": "公园"
+    },
+    {
+      "word": "hospital",
+      "meaning": "医院"
+    },
+    {
+      "word": "go",
+      "meaning": "去"
+    },
+    {
+      "word": "to",
+      "meaning": "向，朝"
+    },
+    {
+      "word": "grass",
+      "meaning": "草"
+    },
+    {
+      "word": "tree",
+      "meaning": "树"
+    },
+    {
+      "word": "flower",
+      "meaning": "花 ；花朵"
+    },
+    {
+      "word": "boat",
+      "meaning": "小船"
+    },
+    {
+      "word": "lake",
+      "meaning": "湖"
+    },
+    {
+      "word": "hill",
+      "meaning": "小山"
+    },
+    {
+      "word": "christmas",
+      "meaning": "圣诞节"
+    },
+    {
+      "word": "card",
+      "meaning": "贺卡 ；明信片"
+    },
+    {
+      "word": "present",
+      "meaning": "礼物"
+    },
+    {
+      "word": "merry",
+      "meaning": "高兴的 ；愉快的"
+    },
+    {
+      "word": "too",
+      "meaning": "也 ；又"
+    },
+    {
+      "word": "here",
+      "meaning": "这儿"
+    },
+    {
+      "word": "for",
+      "meaning": "（表示接受某事物或从某事物中获益的人）"
+    },
+    {
+      "word": "thank",
+      "meaning": "谢谢"
+    },
+    {
+      "word": "happy",
+      "meaning": "快乐的 ；幸福的"
+    },
+    {
+      "word": "swim",
+      "meaning": "游泳"
+    },
+    {
+      "word": "can't",
+      "meaning": "不能；不会"
+    },
+    {
+      "word": "rainy",
+      "meaning": "下雨的"
+    },
+    {
+      "word": "cloudy",
+      "meaning": "多云的"
+    },
+    {
+      "word": "snowy",
+      "meaning": "下雪的"
+    },
+    {
+      "word": "windy",
+      "meaning": "刮风的"
+    },
+    {
+      "word": "sunny",
+      "meaning": "晴朗的"
+    },
+    {
+      "word": "umbrella",
+      "meaning": "雨伞"
+    },
+    {
+      "word": "weather",
+      "meaning": "天气"
+    },
+    {
+      "word": "wow",
+      "meaning": "哇"
+    },
+    {
+      "word": "let's",
+      "meaning": "让我们……"
+    },
+    {
+      "word": "spring",
+      "meaning": "春天"
+    },
+    {
+      "word": "summer",
+      "meaning": "夏天"
+    },
+    {
+      "word": "autumn",
+      "meaning": "秋天"
+    },
+    {
+      "word": "winter",
+      "meaning": "冬天"
+    },
+    {
+      "word": "hot",
+      "meaning": "炎热的"
+    },
+    {
+      "word": "warm",
+      "meaning": "温暖的"
+    },
+    {
+      "word": "cool",
+      "meaning": "凉爽的"
+    },
+    {
+      "word": "cold",
+      "meaning": "寒冷的"
+    },
+    {
+      "word": "favourite",
+      "meaning": "最喜欢的"
+    },
+    {
+      "word": "season",
+      "meaning": "季节"
+    },
+    {
+      "word": "eleven",
+      "meaning": "十一"
+    },
+    {
+      "word": "twelve",
+      "meaning": "十二"
+    },
+    {
+      "word": "twenty",
+      "meaning": "二十"
+    },
+    {
+      "word": "thirty",
+      "meaning": "三十"
+    },
+    {
+      "word": "forty",
+      "meaning": "四十"
+    },
+    {
+      "word": "fifty",
+      "meaning": "五十"
+    },
+    {
+      "word": "thirteen",
+      "meaning": "十三"
+    },
+    {
+      "word": "fourteen",
+      "meaning": "十四"
+    },
+    {
+      "word": "fifteen",
+      "meaning": "十五"
+    },
+    {
+      "word": "time",
+      "meaning": "时间"
+    },
+    {
+      "word": "playtime",
+      "meaning": "游戏时间；课间休息时间"
+    },
+    {
+      "word": "when",
+      "meaning": "什么时候；何时"
+    },
+    {
+      "word": "at",
+      "meaning": "在……点钟"
+    },
+    {
+      "word": "sunday",
+      "meaning": "星期天"
+    },
+    {
+      "word": "monday",
+      "meaning": "星期一"
+    },
+    {
+      "word": "tuesday",
+      "meaning": "星期二"
+    },
+    {
+      "word": "wednesday",
+      "meaning": "星期三"
+    },
+    {
+      "word": "thursday",
+      "meaning": "星期四"
+    },
+    {
+      "word": "friday",
+      "meaning": "星期五"
+    },
+    {
+      "word": "saturday",
+      "meaning": "星期六"
+    },
+    {
+      "word": "today",
+      "meaning": "今天"
+    }
+  ]
+}

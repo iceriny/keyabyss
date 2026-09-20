@@ -1,0 +1,735 @@
+{
+  "version": "0.6.0",
+  "artifacts": [
+    {
+      "artifact": "dist/index.html",
+      "bytes": 735701,
+      "sha256": "4486e09d09208695b5ed162ca2b8c3f057db8ef90d748e1ded6d24ac7ccc793e"
+    },
+    {
+      "artifact": "dist/assets/art/FLAME_GRIMOIR.png",
+      "bytes": 2619370,
+      "sha256": "73f95623ee8b8e68bbe6d8837ef774808b96f1d9ac5f70a126c0c36b7d672033"
+    },
+    {
+      "artifact": "dist/assets/art/FROST_GRIMOIRE.png",
+      "bytes": 2380296,
+      "sha256": "97241b15f35daec565f90bdb1743d0bf6b633bb8c7b9649ff6718ab1e24e8b1c"
+    },
+    {
+      "artifact": "dist/assets/art/SPIRIT_GRIMOIRE.png",
+      "bytes": 2045537,
+      "sha256": "1c397f3d0f08b0c4c3a4943e3b363b21c758ff97071ec0445d7ea816bf6e9f4f"
+    },
+    {
+      "artifact": "dist/assets/art/STORM_GRIMOIRE.png",
+      "bytes": 2800798,
+      "sha256": "acc395c3e742cf36720e16a5cd2be2441ff117740b7a246c3b3fc0066023d13c"
+    },
+    {
+      "artifact": "dist/assets/art/flame-seal.svg",
+      "bytes": 10068,
+      "sha256": "9ee2d58ab6218280bff5ad9bf22f4ea3decd0b0b00967ed98a160fc4d72c453e"
+    },
+    {
+      "artifact": "dist/assets/art/frost-seal.svg",
+      "bytes": 10063,
+      "sha256": "6962080416e8de9033c9899d658bada514b291a49d0993f8fef3415469dcaac4"
+    },
+    {
+      "artifact": "dist/assets/art/spirit-seal.svg",
+      "bytes": 10087,
+      "sha256": "8c0993c9c91a22cb01daec57bb317e4223691c4ceb5b05e238ffa3c737152edb"
+    },
+    {
+      "artifact": "dist/assets/art/storm-seal.svg",
+      "bytes": 10025,
+      "sha256": "25f8bbe43fa04058d01cb603d89c898e23a626d28b37883eb566bad0cec020b1"
+    },
+    {
+      "artifact": "dist/assets/battle-renderer-a7bad81b.js",
+      "bytes": 763655,
+      "sha256": "a7bad81bbd92bf188385d8d09d72cd20a0f43f4829a61afa9f9f681d41ef396e"
+    },
+    {
+      "artifact": "dist/audio/clip-01cb6b0450b74be5.js",
+      "bytes": 739410,
+      "sha256": "cd88938bd4218371d907862282ca850b7d04949b79c695f3c27b9142d2980a7e"
+    },
+    {
+      "artifact": "dist/audio/clip-08085a01f5675247.js",
+      "bytes": 258950,
+      "sha256": "2aad9e6cdb7f3bb502160bb8b6911e6af7c1988f6adbe9c02479c9acc3c0362b"
+    },
+    {
+      "artifact": "dist/audio/clip-095ceb49ef7a106c.js",
+      "bytes": 469374,
+      "sha256": "9a8b649a2a9528fb5931455a149a364f950eaee4359171cbbd2c5685ff0a4bbc"
+    },
+    {
+      "artifact": "dist/audio/clip-0b71b78b5b33f55f.js",
+      "bytes": 63594,
+      "sha256": "92c109f17210d5cbce67ea71c7ba287042cd4919aecd6b920bcd0849b0a04850"
+    },
+    {
+      "artifact": "dist/audio/clip-0fbe510e2300970b.js",
+      "bytes": 472870,
+      "sha256": "14a0198cb7fb081babba37a9b5921ea57672ddd75ac2a106410f132e181f5ea3"
+    },
+    {
+      "artifact": "dist/audio/clip-11a78d67beadb562.js",
+      "bytes": 681018,
+      "sha256": "b3bf9f71f0555f89d2a718d084dffe4215a249dcf3093662d0b10229ccf94c8b"
+    },
+    {
+      "artifact": "dist/audio/clip-13a16119edb28fd4.js",
+      "bytes": 47686,
+      "sha256": "6aed2868a675bf03d90da73fec3ce39a148bcd21ffa2bcd819503cc4b6a7d901"
+    },
+    {
+      "artifact": "dist/audio/clip-16634f8747ac83dc.js",
+      "bytes": 351322,
+      "sha256": "5a459036cbae337a2d8da9e087f99a9b3d8833ea1706fed0f7b6fe0806333644"
+    },
+    {
+      "artifact": "dist/audio/clip-171ee0e43bb72dcd.js",
+      "bytes": 265290,
+      "sha256": "95bfdcf2b6f20631f8e9d97f7bf50eed7081638ec1f75ae779b8d6842b88d8a1"
+    },
+    {
+      "artifact": "dist/audio/clip-18020edab835f10e.js",
+      "bytes": 155970,
+      "sha256": "1c2dd792a7d0db197a2fb40b237ef2a9f5c238145f72af8293d45fca56e0a494"
+    },
+    {
+      "artifact": "dist/audio/clip-19649e15caaea1f4.js",
+      "bytes": 456642,
+      "sha256": "304caf0fdf99faf0f49793f528ba86241bfd4b6d530cc89bb47cc83c0bf903d6"
+    },
+    {
+      "artifact": "dist/audio/clip-1d7328e53a02e54f.js",
+      "bytes": 55318,
+      "sha256": "59612b5850737ffde100495feead760d44d34bab0335678ced250596a1230740"
+    },
+    {
+      "artifact": "dist/audio/clip-1f1afdc75563819c.js",
+      "bytes": 1063734,
+      "sha256": "4e0f28c0ce68b089a4b2e68f1d0bd9fa3c573e92a7e5eb4976e8c1dcb96c23d7"
+    },
+    {
+      "artifact": "dist/audio/clip-201ce4679166f13b.js",
+      "bytes": 371106,
+      "sha256": "1ecbc528eed234d2e64f872f31e1654395b4b45f5b0dd5e95a4cca037fa68e2a"
+    },
+    {
+      "artifact": "dist/audio/clip-20827bdf14f9d366.js",
+      "bytes": 277870,
+      "sha256": "cc47d332f1c47f7da398a51afeccf7b8ea6ed78df7ceeb8f061370904249b0c8"
+    },
+    {
+      "artifact": "dist/audio/clip-21ad8080bfb5372d.js",
+      "bytes": 375506,
+      "sha256": "14ebcf4a62cb840ef3bdb072ca16bbb87ff74a77e833fbd499bd4ecf9fc712d6"
+    },
+    {
+      "artifact": "dist/audio/clip-21b1390461660378.js",
+      "bytes": 956022,
+      "sha256": "9edc545c147e0fb268f535619a1ee713e4b2b1a40399717601a78d2ceda8ae64"
+    },
+    {
+      "artifact": "dist/audio/clip-22d2cf790a998d5c.js",
+      "bytes": 112522,
+      "sha256": "d2f577ba276cdf6554f27f554f471cf6334ead5b407a79b82eae550ad0476db2"
+    },
+    {
+      "artifact": "dist/audio/clip-256689550c41cfe3.js",
+      "bytes": 991290,
+      "sha256": "be49843d5efbf3800d88c08e2ba743d3e9207369a1bbca2a7c6629bcc339474a"
+    },
+    {
+      "artifact": "dist/audio/clip-2672418cc993e6df.js",
+      "bytes": 385058,
+      "sha256": "5e5aeea26e18c1aef5cb6461a1b972001196f5d6541f198acce2f42be94be366"
+    },
+    {
+      "artifact": "dist/audio/clip-26d16695dce87d20.js",
+      "bytes": 739390,
+      "sha256": "af2addbcfaeefd7564a3b8fcb237a63a49acf70ebb75a7899fd9fed561c8c685"
+    },
+    {
+      "artifact": "dist/audio/clip-27a57152d77418e5.js",
+      "bytes": 242638,
+      "sha256": "d47a13a681558286cec0a6c621f1ecef094f76b21ffa0ac91647404136989d65"
+    },
+    {
+      "artifact": "dist/audio/clip-295faf5d193f0f07.js",
+      "bytes": 129314,
+      "sha256": "68690eefdc88ffe0e392dfacaa65a931575140624de4c476d508d3e7d9cc8c0e"
+    },
+    {
+      "artifact": "dist/audio/clip-29c48d6fa0bea828.js",
+      "bytes": 264610,
+      "sha256": "8e285b01fc2c50c4a9c751a5e034914899a4945b5621c5d642bed2b2f1d47d55"
+    },
+    {
+      "artifact": "dist/audio/clip-2ee091713d43c609.js",
+      "bytes": 710726,
+      "sha256": "d90f67e288f6820d776a1756ed614a37863370ac050776092ee214460ab943ae"
+    },
+    {
+      "artifact": "dist/audio/clip-3077f6c2e195a791.js",
+      "bytes": 296730,
+      "sha256": "701909812f551cbba611f92ad558a3224cef01d5cb66526f1665db3fa3295804"
+    },
+    {
+      "artifact": "dist/audio/clip-30935fa07c199c32.js",
+      "bytes": 258450,
+      "sha256": "3597afef785871fd372db196680f46f75a50662c00ffc742d326bacc773516e7"
+    },
+    {
+      "artifact": "dist/audio/clip-32a4115ef05705ae.js",
+      "bytes": 287534,
+      "sha256": "a4ddaf92a633f8763d1254b3d24338f5d92294a0bc1d4e54c1f63026827112b0"
+    },
+    {
+      "artifact": "dist/audio/clip-3472cb0f11afc49f.js",
+      "bytes": 163502,
+      "sha256": "df489a755018c012998c9b8c3e84c8f5abb346f2ebf3ae2d55bdc284e87ad644"
+    },
+    {
+      "artifact": "dist/audio/clip-37000516984c0644.js",
+      "bytes": 654374,
+      "sha256": "670736f11950384c1c06a9beb24b64de11a8442c26c8aa3cbe453c8cc3620166"
+    },
+    {
+      "artifact": "dist/audio/clip-390cf0b27d2e6aa2.js",
+      "bytes": 402874,
+      "sha256": "a287487d4f70acc545a6112888326433adc2fe902f468244d8794c95de0e5775"
+    },
+    {
+      "artifact": "dist/audio/clip-3bfefebf4a062100.js",
+      "bytes": 602306,
+      "sha256": "21080acbe4432b466367c51904c3afd009bce211d4ab6592a22cf5f06a7c81f6"
+    },
+    {
+      "artifact": "dist/audio/clip-40fb1ddbb7a408b3.js",
+      "bytes": 1004638,
+      "sha256": "6f4a6f33ba965ea595be88f61102105575880ce771712d1d04805930a51732cc"
+    },
+    {
+      "artifact": "dist/audio/clip-41e3c44a66752a99.js",
+      "bytes": 343358,
+      "sha256": "01d513dc7b16de768e7dcb381c6612d79104421df4244bc0ba4ffd4bde2b69c7"
+    },
+    {
+      "artifact": "dist/audio/clip-4419f9b5b7cd4d3c.js",
+      "bytes": 541358,
+      "sha256": "4534d5bef049d7d7a72eb2fc75a3464ade41cfdf82087253424ee177189f46be"
+    },
+    {
+      "artifact": "dist/audio/clip-48b396d93db5141b.js",
+      "bytes": 362042,
+      "sha256": "3b80a4a24d73b9baf23f942c31f5003149268c5147f31076ade3404a74c1ec2d"
+    },
+    {
+      "artifact": "dist/audio/clip-48c07210bea19d8d.js",
+      "bytes": 564630,
+      "sha256": "e2b917e1ae049fcbce47ae174d1920f93ee498147567cd8d290b5c3e8751752a"
+    },
+    {
+      "artifact": "dist/audio/clip-4d4df05bcdf4a1ee.js",
+      "bytes": 245330,
+      "sha256": "b00b5b1dc680a9b10c91b5b12b1b19b2aac5f56bbba3b3407f8c967f47c9649a"
+    },
+    {
+      "artifact": "dist/audio/clip-51c76abadd431bd3.js",
+      "bytes": 203614,
+      "sha256": "dcbee6062bde9872e02b9be09499b17c64cdb37ca17b603e2c2b8588171b8bd1"
+    },
+    {
+      "artifact": "dist/audio/clip-56031d726a35a202.js",
+      "bytes": 790458,
+      "sha256": "0dfb7d348e5be831de120f005eb6b8a486b03884720e63183dfe540d28d1c114"
+    },
+    {
+      "artifact": "dist/audio/clip-56d06c1b09149a43.js",
+      "bytes": 331358,
+      "sha256": "adcae1f3580843dacf6cde4a0600b9ce3cb796c4f72f13041e9b18b2875a382e"
+    },
+    {
+      "artifact": "dist/audio/clip-58ebe9a013ef7eb7.js",
+      "bytes": 49538,
+      "sha256": "0351aa7e5244a17f6fbbe4e74f6adfc5b8dbf6ab9846a4e490638ebb2ce2f74b"
+    },
+    {
+      "artifact": "dist/audio/clip-5c25880fdf68386c.js",
+      "bytes": 337338,
+      "sha256": "e31344e7f63f9e58a4aa034f9e0f22eb2909956a2913abe6cc8286d80f4530e3"
+    },
+    {
+      "artifact": "dist/audio/clip-5f758ab4a7d7a9a6.js",
+      "bytes": 381018,
+      "sha256": "70194e3166aa1b164f186339baea3b1d2295d625cbb171a264e815e04b3b44fa"
+    },
+    {
+      "artifact": "dist/audio/clip-5fe7f208356a5e8c.js",
+      "bytes": 644530,
+      "sha256": "a136246005f9bef1d16486d0e579572476113f9579cb7fbf1d70f734104c76e3"
+    },
+    {
+      "artifact": "dist/audio/clip-649d6cf999cc0186.js",
+      "bytes": 112098,
+      "sha256": "e929d6149b2916e7b686109d1f6d8ab0d48613b1eb6b22c01539609a2553778d"
+    },
+    {
+      "artifact": "dist/audio/clip-6a990054c15c1a61.js",
+      "bytes": 152630,
+      "sha256": "a2e47aeb33b05104ff9c853fb7886406bd8e6a19b0feaceb8e6b348987039f9b"
+    },
+    {
+      "artifact": "dist/audio/clip-6da43f627b4eac42.js",
+      "bytes": 236242,
+      "sha256": "ff98363f8a34ebe85641505ba196ad2f96348974a330a3aeb981d40c31536fe4"
+    },
+    {
+      "artifact": "dist/audio/clip-6e0553e89b29be6c.js",
+      "bytes": 122778,
+      "sha256": "4aed84ce2f7e6f4d130373e568f5509ef01b199fbb2e8c6238ed64d061f4d7c4"
+    },
+    {
+      "artifact": "dist/audio/clip-712a1b7717024819.js",
+      "bytes": 437550,
+      "sha256": "7b72f8df3d7c93b5ddf4cceebb92d06292f5a0031390b2243717da850bec7d5b"
+    },
+    {
+      "artifact": "dist/audio/clip-71ad4acc07b36763.js",
+      "bytes": 167250,
+      "sha256": "b830ccf842293028c2b30358608b4bdccc3c2d08ff7daec9f7cc008cd634536f"
+    },
+    {
+      "artifact": "dist/audio/clip-73ea90a8ab7e0157.js",
+      "bytes": 85770,
+      "sha256": "cec79738651fc4c5f715e5aba67a8520b36dae82ca89049b809a7d86d6e03eda"
+    },
+    {
+      "artifact": "dist/audio/clip-7611e80a4c9e662e.js",
+      "bytes": 227822,
+      "sha256": "2637de4d1e0ce495af5fbe53af73ac92c46a234f5ed50bd377c3b817b1e4a8d6"
+    },
+    {
+      "artifact": "dist/audio/clip-76c09198d5073b03.js",
+      "bytes": 92190,
+      "sha256": "406a075a9d458f7022f4a241e262c3a932e3e8ba3e85770386e385cfbd38d60d"
+    },
+    {
+      "artifact": "dist/audio/clip-785b70102204e8c8.js",
+      "bytes": 120206,
+      "sha256": "059de8274d91666701affe1f64498a3ced0392e989a94ea4d38d3b67babf060d"
+    },
+    {
+      "artifact": "dist/audio/clip-787df551c1f69622.js",
+      "bytes": 258678,
+      "sha256": "f60e497480057907a95b98b585305674fec1465e60b56dbccde996b381b039e4"
+    },
+    {
+      "artifact": "dist/audio/clip-79324b19f3f038b3.js",
+      "bytes": 59014,
+      "sha256": "d809a44c3a48bf9cd157a56ad74967be37b87ac740724fa687afb05de46fc510"
+    },
+    {
+      "artifact": "dist/audio/clip-7bc8aca181bf1d14.js",
+      "bytes": 739122,
+      "sha256": "edc55aaa479c570f6f575bb6238b802e72764bf5f23527ec5227eae42945e97e"
+    },
+    {
+      "artifact": "dist/audio/clip-7ed4893ce7c5baef.js",
+      "bytes": 548058,
+      "sha256": "1a3e6b50eb4f23325057d553b42bd6007b3945b9472df7d4b91a9dcb79d98661"
+    },
+    {
+      "artifact": "dist/audio/clip-8056a0853975ab8d.js",
+      "bytes": 147734,
+      "sha256": "bc5b1602cd41fa107ae7b25644296a27cb5469d8cba38acc73b37417002ae89f"
+    },
+    {
+      "artifact": "dist/audio/clip-805734322522daec.js",
+      "bytes": 990090,
+      "sha256": "e1303fb83fe6fc812f7bf03d08512e5941103513b83d48d60731b90c3841b3b1"
+    },
+    {
+      "artifact": "dist/audio/clip-81ad04c4e9dd74a7.js",
+      "bytes": 339478,
+      "sha256": "8b0d62e5d8d48f5ac9f10f6a0e19956f0f0be4b5905b7c156c91339fcf477d28"
+    },
+    {
+      "artifact": "dist/audio/clip-82becd8ed26c96f4.js",
+      "bytes": 56754,
+      "sha256": "e62b691615b409b8822d449bdb64be2892c36dadf041768c2a95f7e942bc2682"
+    },
+    {
+      "artifact": "dist/audio/clip-8701d477f151811b.js",
+      "bytes": 197834,
+      "sha256": "034ae4557d80f84bc409352646db3426de969efde042a3abefc4847dd0580668"
+    },
+    {
+      "artifact": "dist/audio/clip-872a4b3938508e5c.js",
+      "bytes": 691082,
+      "sha256": "b518389d2204776fde026bf51d943025434e4bfdf6a3fc02079e8d638db0092c"
+    },
+    {
+      "artifact": "dist/audio/clip-879b2500cf4c23d0.js",
+      "bytes": 271926,
+      "sha256": "e265c8007cefafd71c6f5606d7f3511c5891736ea64ffa9c7f9cb18ce4080bf8"
+    },
+    {
+      "artifact": "dist/audio/clip-88b5bcca903d122d.js",
+      "bytes": 278290,
+      "sha256": "d02c06c63f7620ed03e3c0d17bad2815cc50d2a3008cbace40f1d21b3da30d62"
+    },
+    {
+      "artifact": "dist/audio/clip-8db89ee6ec96d871.js",
+      "bytes": 548722,
+      "sha256": "c23da25d902286913f6b62b12ae4ab835c93412c45608b5de05fcbdba59389ad"
+    },
+    {
+      "artifact": "dist/audio/clip-8f1ee173aa9d7da8.js",
+      "bytes": 259246,
+      "sha256": "05f3e4a5897118971c3a82834b827b7b81447c71c9da0baf9d2e754c088596ce"
+    },
+    {
+      "artifact": "dist/audio/clip-9a439ef5026ea274.js",
+      "bytes": 155366,
+      "sha256": "63cbbc16ec64e71b7264e6323148ab6ac4f48ba90b32accaa3b72b9ecb20920f"
+    },
+    {
+      "artifact": "dist/audio/clip-9c996f3186ab7b17.js",
+      "bytes": 446398,
+      "sha256": "d3f2bf0183f3c530709314b28fcebe334630e6245c424d4449df054148a05488"
+    },
+    {
+      "artifact": "dist/audio/clip-a23c70eb9ebd23d0.js",
+      "bytes": 104198,
+      "sha256": "e3366927df7e9a50e4692d0fe37bbce9cdc63e901d4f765063cc67931526a5cd"
+    },
+    {
+      "artifact": "dist/audio/clip-a2a95abc5497ec05.js",
+      "bytes": 157850,
+      "sha256": "653786aacd512e8d00b8e9016d74102e1745d04070b192704027b1e31d2ac802"
+    },
+    {
+      "artifact": "dist/audio/clip-a934b219aeb45c1f.js",
+      "bytes": 341050,
+      "sha256": "011ba7b623501155c35e6d0fe8955efffd88383021bb10d7911f866b1abdfdb7"
+    },
+    {
+      "artifact": "dist/audio/clip-abe8b4fd6c3c83ba.js",
+      "bytes": 125090,
+      "sha256": "5dd80fd8e9f686a0169958bf8af8b09fe70fa5fd97a9c9e61d4b53ac797960e0"
+    },
+    {
+      "artifact": "dist/audio/clip-ac4adaa832e39c77.js",
+      "bytes": 581106,
+      "sha256": "5db162d6e10d209840a5f46c595c06958787b9c71bdb4a56e576f1daabc076d4"
+    },
+    {
+      "artifact": "dist/audio/clip-adec8a7de2a944c4.js",
+      "bytes": 226202,
+      "sha256": "008ca021f72d624b8a0e0a133fed91672fd99d4c7b711a624ecfcfd9590c190c"
+    },
+    {
+      "artifact": "dist/audio/clip-b2d8f201ea287592.js",
+      "bytes": 95102,
+      "sha256": "565b996a4286d1e909e2038bf341a26bfb23a449c9bd03c67bb84ad1419cd91c"
+    },
+    {
+      "artifact": "dist/audio/clip-b2e47cb04c0ecb66.js",
+      "bytes": 250526,
+      "sha256": "3c2dfbee8c7c2488f7cc7a34a1b9ccb8b030a55379b59aba7cc6d7283ff8aa59"
+    },
+    {
+      "artifact": "dist/audio/clip-b2ee8c4bf6c9f77b.js",
+      "bytes": 124430,
+      "sha256": "ece4321bd769826b3f4de710d1db35d5090ec93a75899b539d04ba561c2d5513"
+    },
+    {
+      "artifact": "dist/audio/clip-b5331118f537f70f.js",
+      "bytes": 271362,
+      "sha256": "84c2017d730ebde4be3da50ead084fe7a5832a5973ef71a58d86d5bb54282806"
+    },
+    {
+      "artifact": "dist/audio/clip-ba3335d3ff47044e.js",
+      "bytes": 421890,
+      "sha256": "6c99e4eb303fc60e34eef8d44c3d135227005f92c395a967a2f228b1191ef987"
+    },
+    {
+      "artifact": "dist/audio/clip-bb687691c13bdee1.js",
+      "bytes": 477222,
+      "sha256": "3b0094745aabee22cf69ccf26df2ecced1273ce940f82e1c0fa3aa9dd009fd94"
+    },
+    {
+      "artifact": "dist/audio/clip-befc717c83c126d4.js",
+      "bytes": 417262,
+      "sha256": "c4ef2628fe08d70cacbc2dced19aeb5234bd38a14919a52ad5388b5c1d7e4c9c"
+    },
+    {
+      "artifact": "dist/audio/clip-c5e9a66589a001fc.js",
+      "bytes": 720978,
+      "sha256": "d8cad6d947f24f739f97c8da490a3b57c6e5e625564f3a911c3f24a2aa23e3a1"
+    },
+    {
+      "artifact": "dist/audio/clip-c62820f3f1b1e197.js",
+      "bytes": 171158,
+      "sha256": "6090b70817db1d0d68afba23b03727d49bdb30efd889cc71cadce4947125d845"
+    },
+    {
+      "artifact": "dist/audio/clip-ccd5f1a1f22df022.js",
+      "bytes": 394218,
+      "sha256": "c3de15d5f3416a18ae697d77b43f538dd2a27ca61dbaefbf347a8c238fac6d84"
+    },
+    {
+      "artifact": "dist/audio/clip-cd3e29b00e3bf1ba.js",
+      "bytes": 259566,
+      "sha256": "3c46d767b4db105b1503ffb7fa18416e9b09479c5a5d098bbbc06d3b24f6d893"
+    },
+    {
+      "artifact": "dist/audio/clip-d053467049430e38.js",
+      "bytes": 216110,
+      "sha256": "e2f6329651addcf4bed4850c4f171c67b0469661b49aeead76cccd210aabdd8c"
+    },
+    {
+      "artifact": "dist/audio/clip-d4cdf29d00f189c1.js",
+      "bytes": 296602,
+      "sha256": "c74d7c6b64464fc626c4e84ce7880b423a2b6b1ee3a09ab58fa845a9c302ec80"
+    },
+    {
+      "artifact": "dist/audio/clip-d748c5bbe64a5c31.js",
+      "bytes": 154750,
+      "sha256": "14f633d24fadce946cc09175ba04739a28f016cb1d3c0a9b3f435ad3e826b6ec"
+    },
+    {
+      "artifact": "dist/audio/clip-d7858ee10e9b7b75.js",
+      "bytes": 985570,
+      "sha256": "78d63d22080907b3f769021b7cf6b1bb8ce965ac347f2921b9329c04fff6d8ce"
+    },
+    {
+      "artifact": "dist/audio/clip-dac7c6452f735de3.js",
+      "bytes": 747162,
+      "sha256": "440871dabba62cb662e18eb83f57d526c155915b2efb415cfdb0010a66356ee4"
+    },
+    {
+      "artifact": "dist/audio/clip-db456978846ab790.js",
+      "bytes": 131506,
+      "sha256": "f252377a24e8acc3aa4251af14314598c62e00fdb2fa85222301ce45761f0528"
+    },
+    {
+      "artifact": "dist/audio/clip-dc1207d98013fa54.js",
+      "bytes": 221786,
+      "sha256": "f6b94cc8efff03f42f8529d6061390d978f78f0ac8be32b7c0e6acb9f49e223e"
+    },
+    {
+      "artifact": "dist/audio/clip-dcb45e265545f2fe.js",
+      "bytes": 95886,
+      "sha256": "4351cf1e422cca0c874041399dd534c9507a22a6cff2c2747c56033f93a3a8bc"
+    },
+    {
+      "artifact": "dist/audio/clip-dcfb451ea8d6bf12.js",
+      "bytes": 178994,
+      "sha256": "3f578969440497821ec7c09bc71f8c4aceb221d33eabfd4417e18191bdb31e47"
+    },
+    {
+      "artifact": "dist/audio/clip-e3ad1e738d8ad246.js",
+      "bytes": 231862,
+      "sha256": "d1162473aa7521834a34f3d7e299e43291857d05308574fa83aae37018aacc03"
+    },
+    {
+      "artifact": "dist/audio/clip-e41b5321b035683e.js",
+      "bytes": 400110,
+      "sha256": "1426056872d23915a480a31957ad8c7df03961bd9f4f696553bb99fa45107d23"
+    },
+    {
+      "artifact": "dist/audio/clip-e46212b258e21efa.js",
+      "bytes": 267758,
+      "sha256": "9d983b4460c949feb64853dc03287891085256d58630689e8d153d87530901de"
+    },
+    {
+      "artifact": "dist/audio/clip-e4f3802ebc72942a.js",
+      "bytes": 414190,
+      "sha256": "024016e8dddc778a949f47d44829c7a127050e3f72901c0a4507e5752d1ba6d9"
+    },
+    {
+      "artifact": "dist/audio/clip-e6176bb75ab9be96.js",
+      "bytes": 144494,
+      "sha256": "fa996ef95d4cc30227ff7b3b98e0c4e9425f3595c3a3c116289c57879d07265e"
+    },
+    {
+      "artifact": "dist/audio/clip-e9bee3d7e0754395.js",
+      "bytes": 163166,
+      "sha256": "ad54203bde4f0079ce0573fcc913e2a26d28259bc010bc1516079a2f73a57675"
+    },
+    {
+      "artifact": "dist/audio/clip-ee229bde1b8c6569.js",
+      "bytes": 625722,
+      "sha256": "e31129e75293228c6b9a4a75d7a6144affbe2affe430341948df5e77495b0897"
+    },
+    {
+      "artifact": "dist/audio/clip-ee2882acda50387f.js",
+      "bytes": 395994,
+      "sha256": "692767350ba1e39225b59ebcf83d5f3fee0c65173e028010b822d51b1652b8c8"
+    },
+    {
+      "artifact": "dist/audio/clip-eeb6a37773a72cc9.js",
+      "bytes": 240662,
+      "sha256": "1d1ef2456b49d07977204725afd03236429f48fdd655ff547b0b4e6c2215cb87"
+    },
+    {
+      "artifact": "dist/audio/clip-ef343a7d6c628e8e.js",
+      "bytes": 345302,
+      "sha256": "2a1e20b761484f03ae336cde64ef0de569f302e2b93fa72782be037428454b2b"
+    },
+    {
+      "artifact": "dist/audio/clip-f2f72f73f592a6de.js",
+      "bytes": 223530,
+      "sha256": "2c04ec52dc1ef4d3afe55a64081ad1001a3f361445618564fd3bc55cb1425ea9"
+    },
+    {
+      "artifact": "dist/audio/clip-f385053d91cb4cab.js",
+      "bytes": 384630,
+      "sha256": "dd9fb63b624ca0832861ed5970556bb2bb64152a33f7c4b7c2b1a9439b55c576"
+    },
+    {
+      "artifact": "dist/audio/clip-f96d549ea7e5c7a1.js",
+      "bytes": 192458,
+      "sha256": "32357813098977d78eacb58f572bc421f208876fb3a3456c39c6680f790a502f"
+    },
+    {
+      "artifact": "dist/audio/clip-fd5e31720512bf55.js",
+      "bytes": 158510,
+      "sha256": "3f93ab14e7917078ff14018c9db9a10dcfda8e086e1707cc789b6270d96e3901"
+    },
+    {
+      "artifact": "dist/audio/clip-fdffd339f2d2f739.js",
+      "bytes": 592822,
+      "sha256": "b74e856df7ca1e234bc392de97b2b486fd673bd791a4da702645e5c039f0a00a"
+    },
+    {
+      "artifact": "dist/word/cet4.json",
+      "bytes": 183186,
+      "sha256": "b54bdfdea9532cfa9273550ab87ba02bd94ffe93fd506c7835c5db3acb612f72"
+    },
+    {
+      "artifact": "dist/word/cet6.json",
+      "bytes": 194254,
+      "sha256": "8f8bea1a81c5204f299368f9956037bf72365367028339abed2374ff490a084c"
+    },
+    {
+      "artifact": "dist/word/cpp.json",
+      "bytes": 7387,
+      "sha256": "78f101835a45edb582f6c5a9240d50c9b17282a57a8a707c26a14309b8f5e7de"
+    },
+    {
+      "artifact": "dist/word/extension.json",
+      "bytes": 2648390,
+      "sha256": "d6736880d14cbf0b140ebe333095e8055112cad1c406f494d66881b7151aa6c0"
+    },
+    {
+      "artifact": "dist/word/junior.json",
+      "bytes": 100465,
+      "sha256": "eb3f796b7edf709720146768d537e4ae38b792d37fe2f4b640943f3264c54b84"
+    },
+    {
+      "artifact": "dist/word/primary1.json",
+      "bytes": 4881,
+      "sha256": "87b0a8fa3a11991ae472901c3a46114c54fcdc8faf95e1bebb781416c36e22c2"
+    },
+    {
+      "artifact": "dist/word/primary2.json",
+      "bytes": 5015,
+      "sha256": "a482f12390453deafcd00a75bcded534498d473fb4afe15f1b0cd366b38e34bc"
+    },
+    {
+      "artifact": "dist/word/primary3.json",
+      "bytes": 6306,
+      "sha256": "5e38d79b4e24acd9edcb42847b6c9fcac457feed8efd0819ca0c6bc5ab825de5"
+    },
+    {
+      "artifact": "dist/word/primary4.json",
+      "bytes": 7156,
+      "sha256": "0981cbde92a134de19294594bc2bdba03ce10cde7dc5f0ecc62c6178b6de0cbd"
+    },
+    {
+      "artifact": "dist/word/primary5.json",
+      "bytes": 10635,
+      "sha256": "c2e8ab2af0676219a738698c80ac20bffb49e6e202dc090caa038f81ba36ef74"
+    },
+    {
+      "artifact": "dist/word/primary6.json",
+      "bytes": 9158,
+      "sha256": "42aaf6399003ef991fbd3168b3037dfca706980f8049b3787e103c8d35ebf25d"
+    },
+    {
+      "artifact": "dist/word/senior.json",
+      "bytes": 173349,
+      "sha256": "71db69d0edf32e4ae0b062455f96d4f6d24140938024b12c10c0dd07845fc815"
+    },
+    {
+      "artifact": "dist/word/vocab-cet4-e0082f55.js",
+      "bytes": 182419,
+      "sha256": "e0082f557ae34c0dc91fd814680ec74d5a2997f7fd18eb9d91c25be02e1a6dde"
+    },
+    {
+      "artifact": "dist/word/vocab-cet6-62bce715.js",
+      "bytes": 193487,
+      "sha256": "62bce715e2fd6c2aaf3333b9557ee28c081e443e8eb05c9218b614e004a2ae80"
+    },
+    {
+      "artifact": "dist/word/vocab-cpp-606001aa.js",
+      "bytes": 6963,
+      "sha256": "606001aa551582abeac38526470b1c25c93d89eabda9aa237473f52f75dd32a3"
+    },
+    {
+      "artifact": "dist/word/vocab-extension-057e318a.js",
+      "bytes": 786219,
+      "sha256": "057e318a48438e38ae9c6986420dd1ead390df6a3b06c93047fc56ea1ca715b4"
+    },
+    {
+      "artifact": "dist/word/vocab-junior-31cc6ddc.js",
+      "bytes": 93020,
+      "sha256": "31cc6ddcabb62478d42d27e57e9b419ac70bde1505245b4e5c997b4ad48c90bf"
+    },
+    {
+      "artifact": "dist/word/vocab-primary1-333682e4.js",
+      "bytes": 3818,
+      "sha256": "333682e4b39a230d8651bb89bd8657aea27dc06fd67c36b9f8c15cd170c85264"
+    },
+    {
+      "artifact": "dist/word/vocab-primary2-28be7fa1.js",
+      "bytes": 3729,
+      "sha256": "28be7fa107e11052fd82f69958a945e968c1ba9c0c66ad2d89d634687eb1d0cd"
+    },
+    {
+      "artifact": "dist/word/vocab-primary3-d938244e.js",
+      "bytes": 5262,
+      "sha256": "d938244e26df1643cf907437bf79a92d03c1e62e90a88a27018bf04436a6ba27"
+    },
+    {
+      "artifact": "dist/word/vocab-primary4-56e79e96.js",
+      "bytes": 5683,
+      "sha256": "56e79e965c99f2c6e00fb2a5ef6eacdc84b6e3fb9a723d3fa0a9d7d08f687a88"
+    },
+    {
+      "artifact": "dist/word/vocab-primary5-53443036.js",
+      "bytes": 8792,
+      "sha256": "534430368f761d92e38b8b89f9a99aab5fad06452a19cbc866d0888f7f206b88"
+    },
+    {
+      "artifact": "dist/word/vocab-primary6-fdf3007d.js",
+      "bytes": 7714,
+      "sha256": "fdf3007d4b640ea2e3059d2d0cbaafa7c08153de6216fafecf670fd511e77b5e"
+    },
+    {
+      "artifact": "dist/word/vocab-senior-78f46554.js",
+      "bytes": 160984,
+      "sha256": "78f4655400fa133918b264359bf36098a86e575ba28e305f1ede0ca6859b1957"
+    }
+  ]
+}

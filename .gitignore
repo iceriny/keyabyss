@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+public/assets/vocab-*.js
+dist/
+public/assets/
+public/audio/
+public/word/
+art/Magic UI Designed/
+docs/test-output*/
+.env
+.env.*
+*.tsbuildinfo

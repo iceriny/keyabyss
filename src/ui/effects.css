@@ -1,0 +1,318 @@
+/* Shared typography and interaction effects. No permanent JS animation loop. */
+.game-number {
+  color: #f6d68f;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.primary .game-number {
+  color: #49300a;
+}
+.cmd-badge i {
+  color: #f6d68f;
+}
+.game-term {
+  text-decoration: underline dotted #bdcbb64d;
+  text-underline-offset: 0.24em;
+  text-decoration-thickness: 1px;
+  transition:
+    color 0.18s,
+    text-shadow 0.18s;
+}
+.game-term:hover {
+  color: #f5dfa5;
+  text-shadow: 0 0 12px #edc97b66;
+  text-decoration-color: #e8cf94;
+}
+#hud .game-term {
+  pointer-events: auto;
+}
+.game-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  z-index: 9900;
+  padding: 20px 24px;
+  border: 0;
+  border-top: 1px solid #e8cb8580;
+  border-bottom: 1px solid #e8cb8533;
+  background: linear-gradient(115deg, #10222cf5, #091319eb 75%, #0b141ee0);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 14px 45px #0008,
+    0 -5px 35px #c0a65d10;
+  animation: annotation-reveal 0.22s ease-out both;
+}
+.game-tooltip strong {
+  display: block;
+  font-size: 21px;
+  color: #f2dfb1;
+  letter-spacing: 2px;
+  margin: 8px 0;
+}
+.game-tooltip p {
+  margin: 10px 0 4px;
+  color: #c2cfd3;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.tooltip-category,
+.term-category {
+  font: 12px/1.5 var(--mono);
+  color: #a7babd;
+  letter-spacing: 3px;
+}
+.tooltip-rule {
+  height: 1px;
+  margin-top: 15px;
+  background: linear-gradient(90deg, #edce86aa, #edce8618 70%, transparent);
+  transform-origin: left;
+  animation: inscription-draw 0.45s ease-out both;
+}
+.game-tooltip::before {
+  content: "✧";
+  position: absolute;
+  right: 23px;
+  top: 16px;
+  color: #f2dba2;
+  text-shadow: 0 0 13px #f2dba260;
+  font-size: 24px;
+}
+.glossary-tools {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+.glossary-tools .field {
+  margin-bottom: 0;
+}
+.term-card h3 {
+  margin-top: 8px;
+}
+.term-card small {
+  color: #97a9b6;
+}
+.glossary-empty {
+  grid-column: 1 / -1;
+  padding: 36px 0;
+  text-align: center;
+}
+
+/* Light travels along open surfaces instead of enclosing them in more borders. */
+.button {
+  position: relative;
+  isolation: isolate;
+}
+.button::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--card-color, var(--school, #e8cf94)),
+    transparent
+  );
+  opacity: 0;
+  transform: scaleX(0.15);
+  transition:
+    opacity 0.24s,
+    transform 0.4s ease-out;
+}
+.button:hover:not(:disabled)::after,
+.button.game-focus::after,
+.button.command-match::after {
+  opacity: 0.9;
+  transform: scaleX(1);
+}
+.button:active:not(:disabled) {
+  filter: brightness(1.2);
+}
+.button.primary {
+  background-size: 220% 100%;
+  background-image: linear-gradient(
+    110deg,
+    #ac925c,
+    #efdca0 42%,
+    #d7bd78 57%,
+    #ad9159
+  );
+  transition:
+    background-position 0.7s,
+    filter 0.18s,
+    box-shadow 0.35s;
+}
+.button.primary:hover {
+  background-position: 100% 0;
+  box-shadow: 0 0 32px #e2c57928;
+}
+.choice-card.selected::after,
+.difficulty-options .selected::after,
+.tabs .selected::after {
+  opacity: 0.85;
+  transform: scaleX(1);
+  animation: selection-breath 3.8s ease-in-out infinite;
+}
+.modal-heading {
+  position: relative;
+}
+.modal-heading::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 65%;
+  height: 1px;
+  background: linear-gradient(90deg, #e8cb8580, transparent);
+  transform-origin: left;
+  animation: inscription-draw 0.85s ease-out both;
+}
+.modal-panel > .choice-grid,
+.modal-panel > .stats-grid,
+.modal-panel > .help-grid,
+.modal-panel > .codex-grid {
+  animation: annotation-reveal 0.4s ease-out both;
+}
+.codex-card,
+.help-grid article {
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
+}
+.codex-card:hover,
+.help-grid article:hover {
+  background: linear-gradient(115deg, #30464b66, #16263128 75%, transparent);
+  box-shadow: inset 2px 0 0 #d0b97960;
+}
+.codex-card::after {
+  content: "✦";
+  pointer-events: none;
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 12px;
+  color: var(--page-ink);
+  opacity: 0.2;
+  transition:
+    opacity 0.3s,
+    transform 0.6s;
+}
+.codex-card:hover::after {
+  opacity: 0.8;
+  transform: rotate(90deg);
+}
+.meter > i,
+.loading-track > i {
+  transition: width 0.18s linear;
+}
+.ultimate-block .button.ready {
+  box-shadow:
+    0 0 28px #e5c78230,
+    inset 0 -1px #e5c782a0;
+}
+.defense-readout.active {
+  text-shadow: 0 0 16px #aef3f899;
+}
+.command-dock:has(.command-input:not(:empty)) {
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+.command-dock:has(.command-input i) {
+  border-top-color: #d6bf7b44;
+}
+.cast-box[data-casting="true"] .cast-label {
+  color: var(--school);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--school) 35%, transparent);
+}
+
+@keyframes annotation-reveal {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes inscription-draw {
+  from {
+    transform: scaleX(0.05);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+@keyframes selection-breath {
+  50% {
+    opacity: 0.4;
+    filter: brightness(1.35);
+  }
+}
+body[data-ui-fx="low"] .button::after {
+  animation: none;
+}
+body[data-ui-fx="low"] .game-tooltip {
+  backdrop-filter: none;
+  background: #0c1921fa;
+  box-shadow: none;
+}
+body[data-ui-fx="low"] .game-term:hover {
+  text-shadow: none;
+}
+body[data-ui-fx="medium"] .button::after {
+  animation-duration: 6s;
+}
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+@media (max-width: 700px) {
+  .glossary-tools {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .game-tooltip {
+    padding: 16px 18px;
+  }
+}
+@media (max-width: 900px) {
+  .book-selection {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin: 460px 6% 0;
+    padding-bottom: 20px;
+  }
+  .home-controls {
+    margin-top: 0;
+    padding-bottom: 90px;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 600px) {
+  .book-selection {
+    margin-top: 435px;
+  }
+}

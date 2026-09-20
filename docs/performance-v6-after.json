@@ -1,0 +1,25 @@
+{
+  "environment": "Windows headless Chrome, 1440x900, DPR 1, frozen deterministic combat, 5s RAF sample after 1.2s warmup",
+  "results": [
+    {
+      "frames": 301,
+      "seconds": 5.006900000011921,
+      "fps": 60.11703848674496,
+      "frameP95": 16.800000000000182,
+      "renderMedian": 0.5,
+      "renderP95": 0.6000000238418579,
+      "enemies": 6,
+      "bullets": 24
+    },
+    {
+      "frames": 301,
+      "seconds": 5.0043999999999995,
+      "fps": 60.14707057789146,
+      "frameP95": 16.80000000000109,
+      "renderMedian": 0.9000000059604645,
+      "renderP95": 1.0999999940395355,
+      "enemies": 24,
+      "bullets": 96
+    }
+  ]
+}

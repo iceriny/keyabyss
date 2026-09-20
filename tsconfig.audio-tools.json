@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "types": ["node", "vite/client"] },
+  "include": ["tools/audio.ts", "tools/audio-preview.ts", "tools/audio-preview-plugin.ts"]
+}

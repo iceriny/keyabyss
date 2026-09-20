@@ -1,0 +1,30 @@
+import type { Book } from "../../../contracts/content.ts";
+export default {
+  id: "flame",
+  behavior: "flame",
+  command: "flame",
+  shortcut: "4",
+  artwork: "book-flame",
+  appearance: "player-flame",
+  audio: "flame",
+  visual: {
+    rays: 7,
+    highlight: "#fff2b5",
+    shadow: "#54251c",
+    ultimate: "inferno",
+  },
+  name: "灰烬之书",
+  short: "火焰",
+  icon: "♨",
+  color: "#ff994e",
+  headline: "点燃。积蓄。焚尽。",
+  subtitle: "每三次施法，释放一枚熔爆火球。",
+  eyebrow: "ASHEN GRIMOIRE",
+  desc: "灼烧叠层 · 熔爆扩散",
+  detail:
+    "火弹命中后附加灼烧，每0.5秒造成伤害，最多叠至3层并持续3秒。每第3次施法释放熔爆火球，造成范围伤害并留下火场；闪避也会留下短暂火场。",
+  ultimate: "焚世余烬",
+  ultimateDesc: "在目标附近引爆烈焰，留下持续火场；随后5秒降下追踪陨火。",
+  cadence: "焰印",
+  cycle: 3,
+} satisfies Book;

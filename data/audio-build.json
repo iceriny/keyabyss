@@ -1,0 +1,10 @@
+{
+  "cues": 41,
+  "sources": 37,
+  "clips": 112,
+  "bytes": 39793324,
+  "sampleRate": 48000,
+  "codec": "FLAC",
+  "spatialChannels": 1,
+  "uiChannels": 2
+}

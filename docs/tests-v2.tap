@@ -1,0 +1,290 @@
+
+> keyabyss@0.2.0 test
+> node --test tests/core.test.cjs tests/mechanics.test.cjs
+
+TAP version 13
+# Subtest: seeded random numbers are deterministic and in range
+ok 1 - seeded random numbers are deterministic and in range
+  ---
+  duration_ms: 1.330855
+  type: 'test'
+  ...
+# Subtest: normalizes Qwerty, strings and CSV rows without altering keyword underscores
+ok 2 - normalizes Qwerty, strings and CSV rows without altering keyword underscores
+  ---
+  duration_ms: 0.50412
+  type: 'test'
+  ...
+# Subtest: TXT supports comments, BOM, CRLF and duplicates
+ok 3 - TXT supports comments, BOM, CRLF and duplicates
+  ---
+  duration_ms: 0.593153
+  type: 'test'
+  ...
+# Subtest: CSV supports reordered columns, quotes, commas and multiline meanings
+ok 4 - CSV supports reordered columns, quotes, commas and multiline meanings
+  ---
+  duration_ms: 1.000607
+  type: 'test'
+  ...
+# Subtest: TSV and Chinese headers are understood
+ok 5 - TSV and Chinese headers are understood
+  ---
+  duration_ms: 0.258669
+  type: 'test'
+  ...
+# Subtest: JSON object, Qwerty and JSONL imports
+ok 6 - JSON object, Qwerty and JSONL imports
+  ---
+  duration_ms: 0.39831
+  type: 'test'
+  ...
+# Subtest: rejects malformed, empty, oversized, unsupported and all-invalid dictionaries
+ok 7 - rejects malformed, empty, oversized, unsupported and all-invalid dictionaries
+  ---
+  duration_ms: 1.060298
+  type: 'test'
+  ...
+# Subtest: word pool prefers distinct initials whenever possible
+ok 8 - word pool prefers distinct initials whenever possible
+  ---
+  duration_ms: 0.512922
+  type: 'test'
+  ...
+# Subtest: a one-word dictionary remains usable and never falls back to built-in words
+ok 9 - a one-word dictionary remains usable and never falls back to built-in words
+  ---
+  duration_ms: 3.630509
+  type: 'test'
+  ...
+# Subtest: length filtering keeps short tokens in later chapters
+ok 10 - length filtering keeps short tokens in later chapters
+  ---
+  duration_ms: 0.615367
+  type: 'test'
+  ...
+# Subtest: all 12 source-attributed snapshots normalize without duplicates or invalid entries
+ok 11 - all 12 source-attributed snapshots normalize without duplicates or invalid entries
+  ---
+  duration_ms: 42.403873
+  type: 'test'
+  ...
+# Subtest: C++ snapshot contains normative underscore tokens, but not context-only module/import entries
+ok 12 - C++ snapshot contains normative underscore tokens, but not context-only module/import entries
+  ---
+  duration_ms: 0.3186
+  type: 'test'
+  ...
+# Subtest: CMU dictionary is mechanically filtered, large, and export/reimport compatible
+ok 13 - CMU dictionary is mechanically filtered, large, and export/reimport compatible
+  ---
+  duration_ms: 160.551286
+  type: 'test'
+  ...
+# Subtest: relic IDs are unique; all have finite stack limits
+ok 14 - relic IDs are unique; all have finite stack limits
+  ---
+  duration_ms: 0.178519
+  type: 'test'
+  ...
+# Subtest: every one of the 17 enemy/pillar types, split children, boss and node has a current-library word
+ok 15 - every one of the 17 enemy/pillar types, split children, boss and node has a current-library word
+  ---
+  duration_ms: 10.346057
+  type: 'test'
+  ...
+# Subtest: typing frost launches a real projectile; damage is delayed until physical contact
+ok 16 - typing frost launches a real projectile; damage is delayed until physical contact
+  ---
+  duration_ms: 10.333547
+  type: 'test'
+  ...
+# Subtest: wrong keys preserve progress, shared-prefix alternatives resolve without an artificial error
+ok 17 - wrong keys preserve progress, shared-prefix alternatives resolve without an artificial error
+  ---
+  duration_ms: 2.063017
+  type: 'test'
+  ...
+# Subtest: Tab cycles matching prefixes without erasing input
+ok 18 - Tab cycles matching prefixes without erasing input
+  ---
+  duration_ms: 1.869526
+  type: 'test'
+  ...
+# Subtest: directed dash travels over time, retains text and consumes exactly one charge
+ok 19 - directed dash travels over time, retains text and consumes exactly one charge
+  ---
+  duration_ms: 2.656492
+  type: 'test'
+  ...
+# Subtest: perfect dodge is risk-triggered, not awarded on every safe dash
+ok 20 - perfect dodge is risk-triggered, not awarded on every safe dash
+  ---
+  duration_ms: 5.441438
+  type: 'test'
+  ...
+# Subtest: mass distinguishes impact response; velocity decays instead of teleporting
+ok 21 - mass distinguishes impact response; velocity decays instead of teleporting
+  ---
+  duration_ms: 2.195638
+  type: 'test'
+  ...
+# Subtest: knocked enemy collides with arena wall, takes impact damage and rebounds
+ok 22 - knocked enemy collides with arena wall, takes impact damage and rebounds
+  ---
+  duration_ms: 2.503722
+  type: 'test'
+  ...
+# Subtest: body collision transmits momentum from a knocked enemy to another
+ok 23 - body collision transmits momentum from a knocked enemy to another
+  ---
+  duration_ms: 1.919122
+  type: 'test'
+  ...
+# Subtest: fast projectile collision uses swept segments instead of endpoint-only hit tests
+ok 24 - fast projectile collision uses swept segments instead of endpoint-only hit tests
+  ---
+  duration_ms: 1.948146
+  type: 'test'
+  ...
+# Subtest: frost freezes and leaves a slow field while storm is instant multi-target damage
+ok 25 - frost freezes and leaves a slow field while storm is instant multi-target damage
+  ---
+  duration_ms: 5.178031
+  type: 'test'
+  ...
+# Subtest: storm conductive marks overload on the third hit and stormcell clears nearby bullets
+ok 26 - storm conductive marks overload on the third hit and stormcell clears nearby bullets
+  ---
+  duration_ms: 1.35412
+  type: 'test'
+  ...
+# Subtest: paper summons require typing; paper agents actually dive and then expire
+ok 27 - paper summons require typing; paper agents actually dive and then expire
+  ---
+  duration_ms: 19.245434
+  type: 'test'
+  ...
+# Subtest: all three ultimates are distinct and require resource; resource cannot self-recharge during ultimate
+ok 28 - all three ultimates are distinct and require resource; resource cannot self-recharge during ultimate
+  ---
+  duration_ms: 6.707315
+  type: 'test'
+  ...
+# Subtest: green rune clears bullets and pending telegraphs, not an already active laser
+ok 29 - green rune clears bullets and pending telegraphs, not an already active laser
+  ---
+  duration_ms: 1.450225
+  type: 'test'
+  ...
+# Subtest: telegraphs owned by a slain mortar are cancelled before explosion
+ok 30 - telegraphs owned by a slain mortar are cancelled before explosion
+  ---
+  duration_ms: 1.250453
+  type: 'test'
+  ...
+# Subtest: new enemies implement healer, finite brood, charger and mirror behavior
+ok 31 - new enemies implement healer, finite brood, charger and mirror behavior
+  ---
+  duration_ms: 2.156519
+  type: 'test'
+  ...
+# Subtest: pause freezes simulation, dash travel, enemies, charge and ultimates
+ok 32 - pause freezes simulation, dash travel, enemies, charge and ultimates
+  ---
+  duration_ms: 1.970619
+  type: 'test'
+  ...
+# Subtest: input target is not rewritten by splash or paper effects; partial target death awards shield
+ok 33 - input target is not rewritten by splash or paper effects; partial target death awards shield
+  ---
+  duration_ms: 1.463535
+  type: 'test'
+  ...
+# Subtest: rescue prevents one fatal hit and only one
+ok 34 - rescue prevents one fatal hit and only one
+  ---
+  duration_ms: 1.69268
+  type: 'test'
+  ...
+# Subtest: feather completion is reserved for the next eligible long word, without recursively charging itself
+ok 35 - feather completion is reserved for the next eligible long word, without recursively charging itself
+  ---
+  duration_ms: 2.008465
+  type: 'test'
+  ...
+# Subtest: new generic relics implement damage risk, DOT, shield, execute and perfect-wave clear
+ok 36 - new generic relics implement damage risk, DOT, shield, execute and perfect-wave clear
+  ---
+  duration_ms: 1.973523
+  type: 'test'
+  ...
+# Subtest: awakenings require the right school and both prerequisites; rerolls never offer maxed relics
+ok 37 - awakenings require the right school and both prerequisites; rerolls never offer maxed relics
+  ---
+  duration_ms: 1.93856
+  type: 'test'
+  ...
+# Subtest: all fully stacked relics have a non-blocking repeatable fallback reward
+ok 38 - all fully stacked relics have a non-blocking repeatable fallback reward
+  ---
+  duration_ms: 1.50703
+  type: 'test'
+  ...
+# Subtest: boss towers have words, reduce incoming damage, and phase transition does not duplicate towers
+ok 39 - boss towers have words, reduce incoming damage, and phase transition does not duplicate towers
+  ---
+  duration_ms: 2.009949
+  type: 'test'
+  ...
+# Subtest: all nine rooms route to victory, and continuation retains build while raising difficulty
+ok 40 - all nine rooms route to victory, and continuation retains build while raising difficulty
+  ---
+  duration_ms: 8.278011
+  type: 'test'
+  ...
+# Subtest: a single long C++ token works in every school, including the underscore
+ok 41 - a single long C++ token works in every school, including the underscore
+  ---
+  duration_ms: 10.443603
+  type: 'test'
+  ...
+# Subtest: all five modes have increasing speed, damage, spawn pressure; every chapter and loop grows
+ok 42 - all five modes have increasing speed, damage, spawn pressure; every chapter and loop grows
+  ---
+  duration_ms: 0.404499
+  type: 'test'
+  ...
+# Subtest: visual intensity does not perturb game random sequence or subsequent enemy words
+ok 43 - visual intensity does not perturb game random sequence or subsequent enemy words
+  ---
+  duration_ms: 2.92082
+  type: 'test'
+  ...
+# Subtest: Boss phase protection prevents one-hit phase skips and then expires
+ok 44 - Boss phase protection prevents one-hit phase skips and then expires
+  ---
+  duration_ms: 2.613477
+  type: 'test'
+  ...
+# Subtest: environmental words do not consume the next empowered attack cadence
+ok 45 - environmental words do not consume the next empowered attack cadence
+  ---
+  duration_ms: 1.452308
+  type: 'test'
+  ...
+# Subtest: next-loop bosses scale beyond the preceding final boss and elite contract is honored
+ok 46 - next-loop bosses scale beyond the preceding final boss and elite contract is honored
+  ---
+  duration_ms: 1.810007
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 287.171495

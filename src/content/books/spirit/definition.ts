@@ -1,0 +1,30 @@
+import type { Book } from "../../../contracts/content.ts";
+export default {
+  artwork: "book-spirit",
+  visual: {
+    rays: 8,
+    highlight: "#f3e6ff",
+    shadow: "#3b2856",
+    ultimate: "orbit",
+  },
+  appearance: "player-spirit",
+  audio: "spirit",
+  behavior: "spirit",
+  id: "spirit",
+  command: "spirit",
+  shortcut: "3",
+  headline: "标记。俯冲。合击。",
+  subtitle: "以连贯咒文，驱使纸灵军团。",
+  eyebrow: "SPIRIT GRIMOIRE",
+  name: "纸灵之书",
+  short: "纸灵",
+  icon: "◇",
+  color: "#c2a0ff",
+  desc: "标记集火 · 飞刃军团",
+  detail:
+    "每次完词唤醒一只纸灵，基础上限三只；咒文标记敌人并驱使已唤醒纸灵集火。每第3次施法发动交叉斩；停笔至灵力耗尽后纸灵休眠。",
+  ultimate: "千纸夜行",
+  ultimateDesc: "8秒额外唤醒四只纸灵，并立即展开环形飞刃，强化标记集火。",
+  cadence: "灵印",
+  cycle: 3,
+} satisfies Book;
