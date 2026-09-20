@@ -313,6 +313,7 @@ export class NativeBattleRenderer {
           fade,
           g.options.reduceMotion,
           effectQuality(g.options.fx).layers,
+          g.fields,
         );
       else if (f.kind === "gravity") {
         if (!g.options.reduceMotion)

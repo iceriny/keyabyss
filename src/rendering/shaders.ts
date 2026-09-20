@@ -90,7 +90,7 @@ void main() {
     offset = direction * band * vStyle.y * polarity * smoothstep(0.,width*.25,r);
   }
   if(vStyle.z >= 1.5) {
-    offset = vec2(sin(vLocal.y*18.+vStyle.w*3.), cos(vLocal.x*13.-vStyle.w*2.))
+    offset = vec2(sin(vLocal.y*10.+vStyle.w*1.5), cos(vLocal.x*8.-vStyle.w*1.2))
       * edge * sin(r*3.14159) * vStyle.y;
   }
   float a=vStyle.x;

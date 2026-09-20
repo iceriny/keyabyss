@@ -46,6 +46,7 @@ export function fireField(
   fade: number,
   reduced: boolean,
   layers = 3,
+  fields: readonly Readonly<Field>[] = [field],
 ) {
   ground.glow(field.x, field.y, field.r, "#ad3820", fade * 0.34, 0.45);
   for (let i = 0; i < 6 * layers; i++) {
@@ -71,18 +72,28 @@ export function fireField(
       0.8,
     );
   }
-  if (!reduced)
+  if (!reduced) {
+    // Intersecting heat fields share a displacement budget. At any pixel their
+    // combined weight is <= 1, while distant fires keep their own shimmer.
+    let overlaps = 0;
+    for (const other of fields) {
+      if (other.kind !== "fire" || other.life <= 0) continue;
+      const reach = (field.r + other.r) * 1.05;
+      if ((field.x - other.x) ** 2 + (field.y - other.y) ** 2 <= reach ** 2)
+        overlaps++;
+    }
     warp.add(
       field.x,
       field.y,
       field.r * 2.1,
       field.r * 2.1,
       "#fff",
-      fade * (2.1 + Math.sin(time * 3) * 0.6),
+      (fade * (0.28 + Math.sin(time * 2) * 0.08)) / Math.max(1, overlaps),
       2,
       0,
       time,
     );
+  }
 }
 export function fireProjectile(
   fx: InstancedBatch,

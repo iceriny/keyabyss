@@ -64,11 +64,30 @@ with sync_playwright() as p:
  assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[2]')==0
  page.evaluate("""()=>{const g=__KEYABYSS__.game;g.fields=[];g.addField('fire',640,400,150,4);g.fields[0].age=1;g.render();}""")
  assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[2]')==2
- assert 0<page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1]')<=2.7
+ assert 0<page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.attributes[1].array[1]')<=.36
  page.screenshot(path=str(OUT/'heat-and-centered-hud-1080.png'))
  page.evaluate('__KEYABYSS__.game.options.reduceMotion=true;__KEYABYSS__.game.render()');assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==0
- checks.append('flame explosion displacement is 55 percent of other waves; heat strength stays below 2.7; reduced motion removes displacement')
+ checks.append('flame explosion displacement is 55 percent of other waves; heat strength stays below .36; reduced motion removes displacement')
+ # Read actual GPU displacement: even 14 overlapping fires cannot amplify heat
+ # beyond 1.5 world units (~2 pixels at 1080P), across quality levels and phases.
+ heat=page.evaluate("""()=>{const g=__KEYABYSS__.game,n=g.nativeRenderer;g.options.reduceMotion=false;g.enemies=[];g.fields=[];g.fx=[];
+ const half=v=>{const sign=v&32768?-1:1,e=(v>>10)&31,m=v&1023;return sign*(e===0?m*2**-24:(1+m/1024)*2**(e-15));};
+ const results=[];
+ for(const count of [1,14])for(const quality of [.3,.75,1])for(const time of [.4,1.5,3]){
+   g.fields=[];g.options.fx=quality;g.visualTime=time;
+   for(let i=0;i<count;i++){g.addField('fire',640+(i%3-1)*18,400+(Math.floor(i/3)-2)*12,80+(i%4)*45,4,true);g.fields.at(-1).age=1;}
+   if(g.fields.length!==count)throw new Error('Heat fixture merged fields');
+   g.render();const t=n.displacementTarget,halfFloat=t.texture.type===1016;
+   const pixels=halfFloat?new Uint16Array(t.width*t.height*4):new Uint8Array(t.width*t.height*4);
+   n.renderer.readRenderTargetPixels(t,0,0,t.width,t.height,pixels);
+   const decode=halfFloat?half:v=>v/255,span=n.composite.material.uniforms.worldSpan.value,scale=n.composite.material.uniforms.warpStrength.value/8;let maximum=0;
+   for(let i=0;i<pixels.length;i+=4){const x=(decode(pixels[i])-decode(pixels[i+2]))*scale*span.x,y=(decode(pixels[i+1])-decode(pixels[i+3]))*scale*span.y;maximum=Math.max(maximum,Math.hypot(x,y));}
+   results.push({count,quality,time,maximum});
+ }return results;}""")
+ assert all(0<item['maximum']<1.5 for item in heat),heat
+ page.screenshot(path=str(OUT/'overlapping-heat-1080.png'))
+ checks.append('GPU heat displacement stays below 1.5 world units with 1 or 14 fires, all three quality levels and three phases')
  assert not errors,errors
  b.close()
-(OUT/'report.json').write_text(json.dumps({'checks':checks,'probes':probes,'radii':radii,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')
+(OUT/'report.json').write_text(json.dumps({'checks':checks,'probes':probes,'radii':radii,'heat':heat,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')
 for check in checks:print('PASS',check,flush=True)
