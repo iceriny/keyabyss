@@ -53,9 +53,9 @@ with sync_playwright() as p:
  page.evaluate('__KEYABYSS__.game.updatePlayer(.2)')
  page.keyboard.press('Space');assert page.evaluate('__KEYABYSS__.game.player.parryTime>0&&__KEYABYSS__.game.dashes===2')
  page.evaluate("""()=>{const g=__KEYABYSS__.game;g.bullet(g.player.x+20,g.player.y,Math.PI,100,'#fff');g.updateBullets(.01);g.state='paused';g.fx=g.fx.filter(f=>f.kind==='parry');g.fx.forEach(f=>f.life=f.max*.7);g.render();}""")
- assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==2
+ assert page.evaluate('__KEYABYSS__.game.nativeRenderer.warp.count')==1
  page.screenshot(path=str(OUT/'counter-warp-1080.png'))
- passed('arrow and Alt keydown dodge immediately without repeats; Space parries independently with two distortion layers')
+ passed('arrow and Alt keydown dodge immediately without repeats; Space parries independently with one radial pressure front')
  assert not errors,errors
  b.close()
 (OUT/'report.json').write_text(json.dumps({'checks':checks,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')

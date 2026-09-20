@@ -1,5 +1,5 @@
 import { effectQuality } from "./EffectQuality";
-import { MenuScene } from './MenuScene.ts';
+import { MenuScene } from "./MenuScene.ts";
 import { fireField, fireProjectile, burningEnemy } from "./FlameBrush";
 import * as THREE from "three";
 import type {
@@ -164,6 +164,7 @@ export class NativeBattleRenderer {
       bloomStrength: { value: 1 },
       hitFlash: { value: 0 },
       warpStrength: { value: 1 },
+      worldSpan: { value: new THREE.Vector2(1280, 800) },
     });
     this.passes = [environment, this.composite];
     this.lost = false;
@@ -222,6 +223,7 @@ export class NativeBattleRenderer {
     this.environment.material.uniforms.worldSpan.value.set(spanX, spanY);
     this.environment.material.uniforms.worldOrigin.value.set(left, top);
     this.warp.material.uniforms.worldSpan.value.set(spanX, spanY);
+    this.composite.material.uniforms.worldSpan.value.set(spanX, spanY);
   }
 
   async prepare() {
@@ -243,7 +245,9 @@ export class NativeBattleRenderer {
           scene === this.environmentScene ||
           scene === this.displacementScene
           ? this.camera
-          : scene === this.menu.scene ? this.menu.camera : this.screenCamera,
+          : scene === this.menu.scene
+            ? this.menu.camera
+            : this.screenCamera,
       );
     }
     if (this.disposed) return;
@@ -794,7 +798,10 @@ export class NativeBattleRenderer {
       (this.atlasInstances[handle.page] || 0) + 1;
   }
 
-  renderMenu(frame: import('../contracts/menu-scene.ts').MenuSceneFrame, time: number) {
+  renderMenu(
+    frame: import("../contracts/menu-scene.ts").MenuSceneFrame,
+    time: number,
+  ) {
     if (this.disposed || this.lost || !this.ready) return;
     this.menu.render(this.renderer, frame, time, this.game.options.fx);
   }

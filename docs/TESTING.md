@@ -2,7 +2,11 @@
 
 环境：Windows、Node.js 24.19.0、Python / Playwright、本机无头 Chrome。测试使用独立浏览器配置与测试存档。
 
-## 弹反与文字稳定性（最新）
+## 冲击波方向与传播（最新）
+
+构建、138 项单元检查通过；冲击波 GPU 探针 3 组、弹反原生渲染回归 2 组通过。验证实际合成取样方向、内爆/外扩、中心稳定、连续帧半径、场类型、减少动态效果及文字清晰度。详见 [SHOCKWAVES.md](SHOCKWAVES.md)，截图与结果位于 `test-output-shockwave/`。
+
+## 弹反与文字稳定性
 
 构建、136 项单元检查通过；UI 12 组、文本 5 组、原生弹反/文字 2 组、音画反馈 3 组共 22 组浏览器检查通过。验证正文悬停与同段去重、键盘不触发提示、长距离反制与周边无伤控制、时缓恢复、文字固定锚点与覆盖命中、GPU 位移与减少动态效果。证据在 `test-output-counter/`，实现见 [COUNTER-AND-READABILITY.md](COUNTER-AND-READABILITY.md)。
 

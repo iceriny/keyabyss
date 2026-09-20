@@ -30,7 +30,7 @@ with sync_playwright() as p:
  n.composite.material.uniforms.warpStrength.value=0;r.setRenderTarget(null);r.render(n.composite.scene,n.screenCamera);const flat=capture();
  let pixels=0,total=0;for(let i=0;i<flat.length;i+=4){const d=Math.abs(flat[i]-warped[i])+Math.abs(flat[i+1]-warped[i+1])+Math.abs(flat[i+2]-warped[i+2]);total+=d;if(d>24)pixels++;}
  g.render();return {pixels,total,strength,warps:n.warp.count};}""")
- assert delta['pixels']>1500 and delta['strength']==2.8 and delta['warps']==2,delta
+ assert delta['pixels']>1500 and delta['strength']==2.8 and delta['warps']==1,delta
  page.screenshot(path=str(OUT/'counter-distortion-1080.png'))
  qualities=page.evaluate("""()=>{const g=__KEYABYSS__.game;return [.3,.6,1].map(fx=>{g.options.fx=fx;g.render();return g.nativeRenderer.composite.material.uniforms.warpStrength.value;});}""")
  assert qualities==[1.25,2,2.8],qualities

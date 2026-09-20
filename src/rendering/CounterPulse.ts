@@ -1,5 +1,6 @@
 import type { BurstEffect } from "../combat/model.ts";
 import type { InstancedBatch } from "./InstancedBatch.ts";
+import { addShockwave, shockwaveProfile } from "./Shockwave.ts";
 /** Sharp contact flash -> expanding pressure ring -> separated, fading shards. */
 export function counterPulse(
   fx: InstancedBatch,
@@ -10,7 +11,8 @@ export function counterPulse(
 ) {
   const t = 1 - Math.max(0, effect.life / effect.max);
   const fade = (1 - t) ** 1.5;
-  const radius = reduceMotion ? 57 : 22 + effect.r * (1 - (1 - t) ** 3);
+  const wave = shockwaveProfile(effect);
+  const radius = reduceMotion ? 57 : wave.radius;
   const flash = Math.max(0, 1 - t / 0.22);
   fx.glow(effect.x, effect.y, 22 + flash * 18, "#fff9dc", flash * 0.55, 1.7);
   fx.line(
@@ -23,10 +25,26 @@ export function counterPulse(
     flash * 0.7,
     2,
   );
-  fx.ring(effect.x, effect.y, radius, "#eaffed", fade, 1.2 + flash * 4, 2);
-  fx.ring(effect.x, effect.y, radius * 0.86, "#89e9cd", fade * 0.65, 1.1, 1.3);
+  fx.ring(
+    effect.x,
+    effect.y,
+    radius,
+    "#eaffed",
+    fade * 0.65,
+    1.2 + flash * 2,
+    1.3,
+  );
+  fx.ring(
+    effect.x,
+    effect.y,
+    Math.max(1, radius - wave.width * 1.3),
+    "#89e9cd",
+    fade * 0.25,
+    1.1,
+    0.8,
+  );
   if (layers > 1) {
-    fx.ring(effect.x, effect.y, radius * 1.16, "#f6d89b", fade * 0.2, 0.7, 1.2);
+    fx.ring(effect.x, effect.y, radius + 2, "#f6d89b", fade * 0.1, 0.7, 0.7);
   }
   const count = 6 + layers * 2;
   for (let i = 0; i < count; i++) {
@@ -60,30 +78,6 @@ export function counterPulse(
       );
   }
   if (!reduceMotion && warp.count < 32) {
-    const pressureRadius = 26 + effect.r * 1.65 * (1 - (1 - t) ** 2);
-    const pressure = (1 - t) ** 0.85;
-    warp.add(
-      effect.x,
-      effect.y,
-      effect.r * 4.4,
-      effect.r * 4.4,
-      "#ffffff",
-      pressure * 95,
-      1,
-      0,
-      pressureRadius / (effect.r * 2.2),
-    );
-    if (layers > 1 && warp.count < 32)
-      warp.add(
-        effect.x,
-        effect.y,
-        pressureRadius * 2,
-        pressureRadius * 2,
-        "#ffffff",
-        pressure * 28,
-        0,
-        0,
-        0,
-      );
+    addShockwave(warp, effect.x, effect.y, wave);
   }
 }

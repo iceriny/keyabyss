@@ -64,13 +64,14 @@ void main() {
   gl_FragColor = col;
 }`;
 
-// Each field is a local quad. RG stores positive displacement, BA negative;
+// Each field stores visible motion, not texture lookup offsets. RG is positive, BA negative;
 // additive unsigned buffers work without floating point framebuffer extensions.
 export const displacementFragment = /* glsl */ `
 uniform vec2 worldSpan;
 varying vec2 vLocal;
 varying vec4 vStyle;
 varying vec4 vColor;
+varying vec4 vAtlas;
 void main() {
   float r = length(vLocal);
   if(r >= 1.) discard;
@@ -78,16 +79,22 @@ void main() {
   float edge = 1. - smoothstep(.55, 1., r);
   vec2 offset;
   if(vStyle.z < .5) {
-    offset = (direction * .7 + vec2(-direction.y, direction.x) * 1.4)
+    offset = (-direction * .7 + vec2(-direction.y, direction.x) * 1.4)
       * sin(r * 3.14159) * edge * vStyle.y;
   } else if(vStyle.z < 1.5) {
-    float band = exp(-pow((r - vStyle.w) / .13, 2.));
-    offset = direction * band * vStyle.y * edge;
+    float width = max(vAtlas.x, .005);
+    float q = (r - vStyle.w) / width;
+    // Compression crest and weaker restoring wake follow the travel direction.
+    float polarity = vAtlas.y;
+    float band = exp(-q*q) - .24*exp(-pow((q+1.35*polarity)/.85,2.));
+    offset = direction * band * vStyle.y * polarity * smoothstep(0.,width*.25,r);
   }
   if(vStyle.z >= 1.5) {
     offset = vec2(sin(vLocal.y*18.+vStyle.w*3.), cos(vLocal.x*13.-vStyle.w*2.))
       * edge * sin(r*3.14159) * vStyle.y;
   }
+  float a=vStyle.x;
+  offset=mat2(cos(a),sin(a),-sin(a),cos(a))*offset;
   offset *= vec2(1., -1.) / worldSpan;
   gl_FragColor = vec4(max(offset, 0.), max(-offset, 0.)) * 8.;
 }`;
@@ -141,14 +148,19 @@ uniform sampler2D bloom;
 uniform float bloomStrength;
 uniform float hitFlash;
 uniform float warpStrength;
+uniform vec2 worldSpan;
 varying vec2 vUv;
 void main(){
   vec4 field=texture2D(displacement,vUv);
-  vec2 offset=clamp((field.rg-field.ba)*warpStrength/8.,vec2(-.055),vec2(.055));
-  vec3 env=texture2D(environment,clamp(vUv+offset,vec2(.001),vec2(.999))).rgb;
-  vec4 world=texture2D(actors,clamp(vUv+offset*.52,vec2(.001),vec2(.999)));
+  vec2 motion=(field.rg-field.ba)*warpStrength/8.*worldSpan;
+  // Length clamp preserves radial symmetry on every aspect ratio.
+  motion*=min(1.,44./max(length(motion),.001));
+  // Inverse mapping: outward-moving features sample nearer the center.
+  vec2 sceneUV=clamp(vUv-motion/worldSpan,vec2(.001),vec2(.999));
+  vec3 env=texture2D(environment,sceneUV).rgb;
+  vec4 world=texture2D(actors,sceneUV);
   vec3 col=env*(1.-world.a)+world.rgb;
-  col+=texture2D(bloom,vUv).rgb*bloomStrength;
+  col+=texture2D(bloom,sceneUV).rgb*bloomStrength;
   col+=vec3(.28,.015,.035)*hitFlash*smoothstep(.22,.65,length(vUv-.5));
   gl_FragColor=vec4(col,1.);
   #include <colorspace_fragment>

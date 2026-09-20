@@ -1,5 +1,6 @@
 import { effectQuality } from "./EffectQuality";
-import { counterPulse } from './CounterPulse.ts';
+import { addShockwave, shockwaveProfile } from "./Shockwave.ts";
+import { counterPulse } from "./CounterPulse.ts";
 import { ultimateEffects } from "./UltimateEffects";
 import { MathUtils } from "three";
 import type { RenderFrame } from "../contracts/render-frame.ts";
@@ -198,11 +199,28 @@ export class SpellBrush {
       return;
     }
     if (f.type === "burst") {
-      if (f.kind === 'parry') {
-        counterPulse(fx, this.warp, f, quality.layers, this.game.options.reduceMotion);
+      if (f.kind === "parry") {
+        counterPulse(
+          fx,
+          this.warp,
+          f,
+          quality.layers,
+          this.game.options.reduceMotion,
+        );
         return;
       }
-      const r = f.r * (0.12 + 0.88 * Math.pow(t, 0.45));
+      const wave = shockwaveProfile(f);
+      const refracts = [
+        "shock",
+        "ultimate",
+        "electric",
+        "implosion",
+        "flame",
+        "shard",
+      ].includes(f.kind);
+      const r = refracts
+        ? wave.radius
+        : f.r * (0.12 + 0.88 * Math.pow(t, 0.45));
       fx.glow(
         f.x,
         f.y,
@@ -230,20 +248,11 @@ export class SpellBrush {
           t,
         );
       }
-      if (
-        [
-          "shock",
-          "ultimate",
-          "electric",
-          "implosion",
-          "flame",
-          "shard",
-        ].includes(f.kind)
-      ) {
+      if (refracts) {
         fx.ring(
           f.x,
           f.y,
-          f.kind === "implosion" ? f.r * (0.2 + 0.8 * alpha) : r,
+          r,
           f.color,
           alpha,
           (f.kind === "ultimate" ? 7 : 3) * alpha + 0.7,
@@ -251,17 +260,7 @@ export class SpellBrush {
         );
         fx.ring(f.x, f.y, r * 0.73, f.color, alpha * 0.35, 1, 1);
         if (!this.game.options.reduceMotion && this.warp.count < 32)
-          this.warp.add(
-            f.x,
-            f.y,
-            f.r * 2.5,
-            f.r * 2.5,
-            "#ffffff",
-            alpha * (f.kind === "ultimate" ? 52 : 25),
-            1,
-            0,
-            r / (f.r * 1.25),
-          );
+          addShockwave(this.warp, f.x, f.y, wave);
       }
       if (
         quality.layers > 1 &&
