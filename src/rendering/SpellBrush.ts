@@ -312,6 +312,30 @@ export class SpellBrush {
       }
       return;
     }
+    if (f.type === "slash" && f.cross) {
+      const reduced = this.game.options.reduceMotion;
+      const sweep = reduced ? 1 : Math.min(1, t / 0.32);
+      const fade = Math.pow(alpha, 1.5);
+      fx.glow(f.x, f.y, f.r * 0.55, "#f6ecff", Math.pow(alpha, 4) * 0.65, 1.7);
+      for (const side of [-1, 1]) {
+        const angle = f.angle + side * Math.PI * 0.24;
+        const dx = Math.cos(angle), dy = Math.sin(angle);
+        const point = (u: number) => {
+          const along = (u * 2 - 1) * f.r;
+          const bend = Math.sin(u * Math.PI * 2) * f.r * 0.08 * side;
+          return { x: f.x + dx * along - dy * bend, y: f.y + dy * along + dx * bend };
+        };
+        let previous = point(0);
+        for (let i = 1; i <= 18; i++) {
+          const u = i / 18 * sweep, next = point(u);
+          const width = Math.max(0.4, Math.sin(u * Math.PI) * 5 * fade);
+          fx.line(previous.x, previous.y, next.x, next.y, width * 2.8, f.color, fade * 0.22, 1.3);
+          fx.line(previous.x, previous.y, next.x, next.y, width, "#fff4ff", fade, 2);
+          previous = next;
+        }
+      }
+      return;
+    }
     if (f.type === "slash")
       for (let i = 0; i < 2; i++)
         this.arc(

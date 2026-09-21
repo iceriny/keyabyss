@@ -1,16 +1,17 @@
+import {
+  beginFlight,
+  flightPoint,
+  orbitPoint,
+} from "../../shared/spirit-flight.ts";
 import type { Point } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
 
-const { clamp, pick, random, hash } = C;
-const W = 1280,
-  H = 800,
-  TAU = Math.PI * 2,
-  ENTITY_SCALE = 0.66;
 const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "content"
   | "combatValue"
   | "stats"
   | "bookBehavior"
@@ -31,18 +32,20 @@ type Context = Pick<
 >;
 
 export function spiritPosition(this: Context, i: number, n: number) {
-  const a = this.time * 0.95 + (i / Math.max(1, n)) * TAU;
-  return {
-    x: this.player.x + Math.cos(a) * 67,
-    y: this.player.y - 11 + Math.sin(a) * 45,
-  };
+  return orbitPoint(this.player, this.time, i, n, this.content.spiritFlight);
 }
 
 export function updateSpirits(this: Context, dt: number) {
   this.spiritTime = Math.max(0, this.spiritTime - dt);
   const capacity = this.combatValue("summon.capacity");
-  this.awakenedSpirits = this.spiritTime > 0 ? Math.min(this.awakenedSpirits, capacity) : 0;
-  const count = this.spiritTime > 0 ? (this.bookBehavior.summons ? this.awakenedSpirits : capacity) : 0;
+  this.awakenedSpirits =
+    this.spiritTime > 0 ? Math.min(this.awakenedSpirits, capacity) : 0;
+  const count =
+    this.spiritTime > 0
+      ? this.bookBehavior.summons
+        ? this.awakenedSpirits
+        : capacity
+      : 0;
   while (this.spirits.length < count) {
     const i = this.spirits.length;
     this.spirits.push({
@@ -64,56 +67,118 @@ export function updateSpirits(this: Context, dt: number) {
     s.cooldown -= dt;
     s.block = Math.max(0, s.block - dt);
     const orbit = this.spiritPosition(s.i, count);
+    const profile = this.content.spiritFlight;
     if (s.mode === "orbit" && s.cooldown <= 0) {
       const marked = this.enemies.find(
         (e) => !e.dead && e.id === this.focusId && e.mark > 0,
       );
-      const t = marked || this.nearest(s, new Set(), 450);
-      if (t) {
-        s.mode = "dive";
-        s.targetId = t.id;
-        s.life = 0.8;
+      const target = marked || this.nearest(s, new Set(), 450);
+      if (target) {
+        s.targetId = target.id;
+        beginFlight(s, "dive", target, profile);
       }
     }
-    let target = this.enemies.find((e) => !e.dead && e.id === s.targetId),
-      q = s.mode === "dive" && target ? target : orbit;
-    if (s.mode === "dive" && !target) s.mode = "return";
-    const dx = q.x - s.x,
-      dy = q.y - s.y,
-      d = Math.hypot(dx, dy) || 1,
-      speed = s.mode === "dive" ? 790 : s.mode === "return" ? 650 : 190;
-    s.vx += ((dx / d) * Math.min(speed, d * 6) - s.vx) * Math.min(1, dt * 13);
-    s.vy += ((dy / d) * Math.min(speed, d * 6) - s.vy) * Math.min(1, dt * 13);
+    const target = this.enemies.find((e) => !e.dead && e.id === s.targetId);
+    if (s.mode === "dive" && !target) beginFlight(s, "return", orbit, profile);
     const px = s.x,
       py = s.y;
-    s.x += s.vx * dt;
-    s.y += s.vy * dt;
-    s.angle = Math.atan2(s.vy, s.vx);
-    s.trail.push({ x: s.x, y: s.y });
-    if (s.trail.length > 8) s.trail.shift();
-    if (s.mode === "dive" && target) {
-      s.life -= dt;
-      if (
-        C.segmentDistance(px, py, s.x, s.y, target.x, target.y) <
-        target.r + 10
-      ) {
-        const damage =
-          this.combatValue("summon.damage", { marked: Number(target.mark > 0) });
-        this.strike(target, damage, {
-          kind: "blade",
-          from: { x: px, y: py },
-          direct: false,
-          depth: 1,
-        });
-        s.mode = "return";
+    let hit = false;
+    if (s.flight) {
+      const f = s.flight;
+      if (s.mode === "dive" && target) f.end = { x: target.x, y: target.y };
+      if (s.mode === "return") {
+        f.end = orbit;
+        const next = orbitPoint(
+          this.player,
+          this.time + 0.05,
+          s.i,
+          count,
+          profile,
+        );
+        f.arrival = {
+          x: (((next.x - orbit.x) / 0.05) * f.duration) / 3,
+          y: (((next.y - orbit.y) / 0.05) * f.duration) / 3,
+        };
+      }
+      const from = Math.min(1, f.elapsed / f.duration);
+      f.elapsed = Math.min(f.duration, f.elapsed + dt);
+      const to = f.elapsed / f.duration;
+      const steps = Math.max(1, Math.ceil((to - from) / 0.08));
+      let previous = { x: s.x, y: s.y };
+      for (let i = 1; i <= steps; i++) {
+        const progress = from + ((to - from) * i) / steps;
+        const q = flightPoint(
+          f,
+          s.mode === "cross" ? progress ** 1.6 : progress,
+        );
+        if (
+          s.mode === "dive" &&
+          target &&
+          C.segmentDistance(
+            previous.x,
+            previous.y,
+            q.x,
+            q.y,
+            target.x,
+            target.y,
+          ) <
+            target.r + 10
+        )
+          hit = true;
+        s.x = q.x;
+        s.y = q.y;
+        previous = q;
+        if (hit) break;
+      }
+      if (dt > 0) {
+        s.vx = (s.x - px) / dt;
+        s.vy = (s.y - py) / dt;
+      }
+      if (hit && target) {
+        this.strike(
+          target,
+          this.combatValue("summon.damage", {
+            marked: Number(target.mark > 0),
+          }),
+          {
+            kind: "blade",
+            from: { x: px, y: py },
+            direct: false,
+            depth: 1,
+          },
+        );
         s.cooldown =
           this.bookBehavior.summons && this.ultimateTime > 0 ? 0.24 : 0.55;
-      } else if (s.life <= 0) {
-        s.mode = "return";
-        s.cooldown = 0.2;
+        beginFlight(s, "return", orbit, profile);
+      } else if (to >= 1) {
+        if (s.mode === "return") {
+          s.mode = "orbit";
+          s.flight = undefined;
+        } else {
+          s.cooldown = Math.max(s.cooldown, 0.2);
+          beginFlight(s, "return", orbit, profile);
+        }
       }
+    } else {
+      const next = orbitPoint(
+        this.player,
+        this.time + 0.05,
+        s.i,
+        count,
+        profile,
+      );
+      const response = 1 - Math.exp(-profile.orbit.response * dt);
+      s.vx +=
+        ((next.x - orbit.x) / 0.05 + (orbit.x - s.x) * 3 - s.vx) * response;
+      s.vy +=
+        ((next.y - orbit.y) / 0.05 + (orbit.y - s.y) * 3 - s.vy) * response;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
     }
-    if (s.mode === "return" && dist(s, orbit) < 35) s.mode = "orbit";
+    if (Math.hypot(s.vx, s.vy) > 1) s.angle = Math.atan2(s.vy, s.vx);
+    const last = s.trail[s.trail.length - 1];
+    if (!last || dist(last, s) >= 3) s.trail.push({ x: s.x, y: s.y });
+    if (s.trail.length > profile.trailPoints) s.trail.shift();
     if (this.stats.summonedMark && s.block <= 0) {
       const b = this.bullets.find((b) => !b.dead && dist(b, s) < 22);
       if (b) {

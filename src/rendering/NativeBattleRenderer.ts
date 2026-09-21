@@ -641,8 +641,9 @@ export class NativeBattleRenderer {
       );
     }
     for (const s of g.spirits) {
+      const cutting = s.mode === "cross";
       if (s.trail) {
-        this.brush.trail(s.trail, "#c7a5ff", 2.5, 0.6);
+        this.brush.trail(s.trail, cutting ? "#f4e7ff" : "#c7a5ff", cutting ? 4.5 : 2.2, cutting ? 0.95 : 0.5);
         for (let i = 2; i < s.trail.length; i += 3) {
           const p = s.trail[i];
           fx.add(
@@ -665,11 +666,11 @@ export class NativeBattleRenderer {
         s.y,
         128,
         128,
-        s.mode === "orbit" ? Math.sin(t + s.i) * 0.3 : s.angle + Math.PI / 2,
+        s.angle + Math.PI / 2,
         1,
         1,
       );
-      fx.glow(s.x, s.y, 17, "#bd9af5", 0.3, 1);
+      fx.glow(s.x, s.y, cutting ? 23 : 17, cutting ? "#f1dbff" : "#bd9af5", cutting ? 0.55 : 0.3, 1);
     }
     for (const b of g.bullets)
       if (!b.dead) {

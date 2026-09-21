@@ -304,7 +304,8 @@ export interface Spirit extends Point {
   i: number;
   vx: number;
   vy: number;
-  mode: "orbit" | "dive" | "return";
+  mode: "orbit" | "dive" | "return" | "cross";
+  flight?: { start: Point; control: Point; bend: Point; end: Point; arrival?: Point; elapsed: number; duration: number };
   cooldown: number;
   angle: number;
   trail: Point[];
@@ -338,6 +339,7 @@ export interface SlashEffect extends EffectBase {
   type: "slash";
   r: number;
   angle: number;
+  cross?: boolean;
 }
 export interface TextEffect extends EffectBase {
   type: "text";

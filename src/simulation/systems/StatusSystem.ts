@@ -1,3 +1,4 @@
+import { beginFlight } from "../../shared/spirit-flight.ts";
 import type { Point, Enemy, SpellOptions } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
 
@@ -11,6 +12,8 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "content"
+  | "spirits"
   | "applyBurn"
   | "fireImpact"
   | "tickBurn"
@@ -198,16 +201,34 @@ export function crossSlash(this: Context, target: Enemy | null, dmg: number) {
   const t =
     target && !target.dead ? target : this.nearest(target || this.player);
   if (!t) return;
+  const profile = this.content.spiritFlight;
+  const heading = Math.atan2(t.y - this.player.y, t.x - this.player.x);
+  for (const spirit of this.spirits) {
+    const angle = heading + (spirit.i % 2 ? -profile.cross.angle : profile.cross.angle);
+    beginFlight(spirit, "cross", {
+      x: t.x + Math.cos(angle) * profile.cross.reach,
+      y: t.y + Math.sin(angle) * profile.cross.reach,
+    }, profile);
+    // Straighten the final stroke through the target, then carry momentum past it.
+    spirit.flight!.arrival = {
+      x: Math.cos(angle) * profile.cross.reach * 1.4,
+      y: Math.sin(angle) * profile.cross.reach * 1.4,
+    };
+    spirit.cooldown = Math.max(spirit.cooldown, 0.24);
+  }
   this.fx.push({
     type: "slash",
     x: t.x,
     y: t.y,
-    r: 92,
-    angle: Math.PI * 0.25,
+    r: profile.cross.reach,
+    cross: true,
+    angle: heading,
     color: "#ddc8ff",
     life: 0.42,
     max: 0.42,
   });
+  this.ring(t.x, t.y, 38, "#f4eaff", 0.2);
+  this.sparks(t.x, t.y, 14, "#e9d8ff", 190, "chip");
   this.strike(t, dmg, { kind: "paper", from: this.player, empowered: true });
   for (const e of this.enemies)
     if (!e.dead && e !== t && dist(e, t) < 95)
