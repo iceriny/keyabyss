@@ -1,5 +1,7 @@
 import * as THREE from "three";
-import { MenuDust } from './MenuDust';
+import { MenuDust } from "./MenuDust";
+import { arcaneBackdropFragment } from "./ArcaneBackdrop";
+import { screenVertex } from "./shaders";
 import type { MenuSceneFrame } from "../contracts/menu-scene.ts";
 
 const vertexShader = `varying vec2 vUv;
@@ -36,13 +38,36 @@ void main(){
   gl_FragColor=vec4(mix(uColor,vec3(1.,.96,.84),clamp(ink*.35,0.,.65)),clamp(light,0.,.85));
 }`;
 
-/** Two small shader planes share the battle WebGL context; no extra RAF or post stack. */
+/** Paper and two small ritual planes share the battle context and animation clock. */
 export class MenuScene {
   readonly dust = new MenuDust();
   readonly scene = new THREE.Scene();
   readonly camera = new THREE.OrthographicCamera(0, 1, 0, 1, -1, 1);
   readonly geometry = new THREE.PlaneGeometry(1, 1);
-  constructor(){this.scene.add(this.dust.points);}
+  readonly backdrop = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2),
+    new THREE.ShaderMaterial({
+      vertexShader: screenVertex,
+      fragmentShader: arcaneBackdropFragment,
+      uniforms: {
+        worldSpan: { value: new THREE.Vector2(1280, 800) },
+        worldOrigin: { value: new THREE.Vector2() },
+        player: { value: new THREE.Vector2(640, 400) },
+        school: { value: new THREE.Color() },
+        time: { value: 0 },
+        activity: { value: 0 },
+        detail: { value: 1 },
+        presence: { value: 0.64 },
+      },
+      depthTest: false,
+      depthWrite: false,
+    }),
+  );
+  constructor() {
+    this.backdrop.frustumCulled = false;
+    this.backdrop.renderOrder = -2;
+    this.scene.add(this.backdrop, this.dust.points);
+  }
   readonly meshes = Array.from({ length: 2 }, () => {
     const material = new THREE.ShaderMaterial({
       vertexShader,
@@ -72,7 +97,15 @@ export class MenuScene {
     quality: number,
   ) {
     const canvas = renderer.domElement;
-    this.dust.update(frame.reduced?0:time,quality,frame.color);
+    this.dust.update(frame.reduced ? 0 : time, quality, frame.color);
+    this.dust.points.visible = !frame.reduced;
+    const bg = this.backdrop.material.uniforms;
+    bg.time.value = frame.reduced ? 0 : time;
+    bg.detail.value = quality < 0.6 ? 0.65 : quality < 0.9 ? 0.85 : 1;
+    bg.worldSpan.value.set(
+      (800 * canvas.clientWidth) / Math.max(1, canvas.clientHeight),
+      800,
+    );
     this.camera.right = canvas.clientWidth;
     this.camera.bottom = canvas.clientHeight;
     this.camera.updateProjectionMatrix();
@@ -95,6 +128,8 @@ export class MenuScene {
     renderer.render(this.scene, this.camera);
   }
   dispose() {
+    this.backdrop.geometry.dispose();
+    this.backdrop.material.dispose();
     this.dust.dispose();
     this.meshes.forEach((m) => m.material.dispose());
     this.geometry.dispose();

@@ -24,7 +24,7 @@ with sync_playwright() as p:
  const e=g.spawnEnemy('guard',800,400,false,true);Object.assign(e,{word:'sand',hp:10000,maxHp:10000,grace:0});g.target=e;g.emit('hud');}""")
  page.keyboard.type('s');page.keyboard.press('Space')
  assert page.evaluate("__KEYABYSS__.game.player.parryTime>0&&__KEYABYSS__.game.dashes===0&&__KEYABYSS__.game.prefix==='s'")
- assert '弹反中' in page.locator('.defense-readout').inner_text()
+ assert page.locator('.defense-readout').count()==0
  page.screenshot(animations="disabled",path=str(OUT/'parry-1080.png'))
  check('Space starts a visible parry without consuming dodge charges or erasing the typed prefix')
  # Browser auto-repeat cannot chain a held Space into repeated defenses.

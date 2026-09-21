@@ -10,6 +10,7 @@ import "./ui/results.css";
 import "./ui/open-ui.css";
 import "./ui/desktop.css";
 import "./ui/arrival.css";
+import "./ui/deployment.css";
 
 if (!document.documentElement.dataset.gameMounted) {
   document.documentElement.dataset.gameMounted = "true";

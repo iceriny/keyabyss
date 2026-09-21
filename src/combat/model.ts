@@ -40,7 +40,7 @@ export interface Player extends Point {
 }
 export const createPlayer = (): Player => ({
   x: 640,
-  y: 490,
+  y: 400,
   r: 7,
   hp: 115,
   maxHp: 115,

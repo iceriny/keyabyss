@@ -34,7 +34,7 @@ with sync_playwright() as p:
     page.wait_for_timeout(400)
     assert page.evaluate('__KEYABYSS__.game.nativeRenderer.menu.meshes[0].material.uniforms.uTime.value') > t
     assert native_pixels()['sum'] != before['sum']
-    assert page.evaluate('__KEYABYSS__.game.nativeRenderer.renderer.info.render.calls') == 3
+    assert page.evaluate('__KEYABYSS__.game.nativeRenderer.renderer.info.render.calls') == 4
     page.screenshot(path=str(OUT/'home-1080.png'))
     for school in ['storm','spirit','flame','frost']:
         page.locator(f'[data-book="{school}"]').click()
@@ -80,7 +80,7 @@ with sync_playwright() as p:
     assert page.evaluate('__KEYABYSS__.game.menuScene===null')
     assert page.evaluate('__KEYABYSS__.game.nativeRenderer.renderer===window.savedRenderer')
     page.wait_for_timeout(200)
-    assert page.evaluate('__KEYABYSS__.game.nativeRenderer.renderer.info.render.calls')>3
+    assert page.evaluate('__KEYABYSS__.game.nativeRenderer.renderer.info.render.calls')>4
     page.evaluate('__KEYABYSS__.game.home()')
     page.wait_for_function('__KEYABYSS__.game.menuScene?.anchors.length>0')
     assert page.evaluate('__KEYABYSS__.game.nativeRenderer.renderer===window.savedRenderer')

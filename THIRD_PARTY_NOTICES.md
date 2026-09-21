@@ -4,9 +4,9 @@
 
 ## 界面与视觉依赖
 
-React、React DOM、Scheduler、Three.js、postprocessing、three.quarks、quarks.core 及 Floating UI（dom / core / utils）使用 MIT 许可证，版本锁定在 `package-lock.json`。分发 HTML 内的 `third-party-licenses` 文本节点包含它们的完整许可，以及本项目和词库许可。Floating UI 用于提示层定位与边缘避让。运行时代码随发行包分发；主界面内联，不从 CDN 加载。
+React、React DOM、Scheduler、Three.js、postprocessing、three.quarks、quarks.core 及 Floating UI（dom / core / utils）使用 MIT 许可证，版本锁定在 `package-lock.json`。发行包的 `THIRD-PARTY-LICENSES.txt` 包含它们的完整许可，以及本项目和词库许可，设置页「关于」提供离线入口。Floating UI 用于提示层定位与边缘避让。运行时代码随发行包分发；不从 CDN 加载。
 
-Vite、TypeScript、React Vite 插件、vite-plugin-singlefile、Prettier 和类型声明包仅用于开发、检查与构建。Three.js 用于原生战场场景、角色图集、实例化弹幕、粒子、位移场、辉光与 WebGL 生命周期管理；独立 TypeScript 模拟输出状态，文字与危险预警使用 Canvas 覆盖层。
+Vite、TypeScript、React Vite 插件、vite-plugin-singlefile、javascript-obfuscator、Prettier 和类型声明包仅用于开发、检查与构建。Three.js 用于原生战场场景、角色图集、实例化弹幕、粒子、位移场、辉光与 WebGL 生命周期管理；独立 TypeScript 模拟输出状态，文字与危险预警使用 Canvas 覆盖层。
 
 ## Qwerty Learner
 
@@ -48,7 +48,7 @@ https://cdn.jsdelivr.net/gh/RealKai42/qwerty-learner@master/public/dicts/<filena
 81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22
 ```
 
-仅保留词形，移除发音，不提供中文释义。它含专有名称、生僻形式，不是词频名单、教材分级或大学考试词表。原始版权与许可通知完整保留在 `licenses/CMUdict-LICENSE.txt`，单文件 HTML 也内嵌该通知。
+仅保留词形，移除发音，不提供中文释义。它含专有名称、生僻形式，不是词频名单、教材分级或大学考试词表。原始版权与许可通知完整保留在 `licenses/CMUdict-LICENSE.txt`，发行包的 `THIRD-PARTY-LICENSES.txt` 也保留该通知。
 
 ## C++ 工作草案关键词
 

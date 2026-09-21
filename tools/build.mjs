@@ -7,6 +7,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { obfuscate } from "./obfuscate.mjs";
+import { appDefine } from "./app-metadata.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const audioBuild = spawnSync(process.execPath, ['tools/audio.ts','build'], { cwd:root, stdio:'inherit', windowsHide:true });
 if (audioBuild.status !== 0) throw Error('Audio build failed');
@@ -26,9 +28,9 @@ const native = await build({
     },
   },
 });
-const nativeCode = (Array.isArray(native) ? native[0] : native).output.find(
+const nativeCode = obfuscate((Array.isArray(native) ? native[0] : native).output.find(
   (item) => item.type === "chunk",
-).code;
+).code);
 const nativeName = `battle-renderer-${createHash("sha256").update(nativeCode).digest("hex").slice(0, 8)}.js`;
 const publicAssets = path.join(root, "public/assets");
 for (const file of fs.readdirSync(publicAssets))
@@ -50,19 +52,19 @@ function artifact(stem, extension, contents) {
 }
 async function bundle(entry, name, define = {}) {
   const result = await build({
-    configFile: false, root, publicDir: false, define,
+    configFile: false, root, publicDir: false, define: { ...appDefine, ...define },
     build: { target: "es2022", write: false, minify: true,
       lib: { entry: path.join(root, entry), name, formats: ["iife"] } },
   });
   return (Array.isArray(result) ? result[0] : result).output;
 }
 const game = await bundle("src/main.tsx", "KeyAbyssGame", { "process.env.NODE_ENV": JSON.stringify("production") });
-const gameScript = artifact("game", "js", game.find(item => item.type === "chunk").code);
+const gameScript = artifact("game", "js", obfuscate(game.find(item => item.type === "chunk").code));
 const gameStyle = artifact("game", "css", game.find(item => item.type === "asset" && item.fileName.endsWith(".css")).source);
 const boot = await bundle("src/bootstrap/preflight.ts", "KeyAbyssPreflight", {
   __GAME_SCRIPT__: JSON.stringify(gameScript), __GAME_STYLE__: JSON.stringify(gameStyle),
 });
-const bootScript = artifact("preflight", "js", boot.find(item => item.type === "chunk").code);
+const bootScript = artifact("preflight", "js", obfuscate(boot.find(item => item.type === "chunk").code));
 const bootStyle = artifact("preflight", "css", fs.readFileSync(path.join(root, "src/bootstrap/preflight.css")));
 const source = path.join(output, "index.html");
 let html = fs.readFileSync(path.join(root, "index.html"), "utf8")
@@ -92,6 +94,8 @@ const legal = licenses
 // License notices remain in the distribution without inflating the first document.
 fs.writeFileSync(path.join(output, "THIRD-PARTY-LICENSES.txt"), legal);
 generatedFiles.push("THIRD-PARTY-LICENSES.txt");
+fs.copyFileSync(path.join(root, "LICENSE"), path.join(output, "LICENSE"));
+generatedFiles.push("LICENSE");
 if (html.includes('/src/') || html.includes('type="module"')) throw Error("Unresolved bootstrap entry");
 fs.writeFileSync(source, html, "utf8");
 const publicRoot = path.join(root, "public");

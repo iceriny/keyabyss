@@ -60,7 +60,7 @@ export function FirstVisitSetup({ settings, onChange, onFull, onDone }: {
       <p>观察法阵与粒子是否流畅，再选择适合的特效等级。</p>
       <small>这是预览场景帧率，实际战斗会随敌人和特效数量变化。设置随时可调整。</small>
     </section>
-    <section className="calibration-settings"><SettingsPanel settings={settings} onChange={onChange} onFull={onFull} />
+    <section className="calibration-settings"><SettingsPanel settings={settings} onChange={onChange} onFull={onFull} showAbout={false} />
       <Button word="ready" variant="primary" onClick={onDone}>保存并进入书库 →</Button>
     </section>
   </div>;

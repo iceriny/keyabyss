@@ -3,7 +3,7 @@ import { BookArtwork } from "./BookArtwork";
 import { MagicPattern } from "./MagicPattern";
 import { useMenuScene } from "./useMenuScene";
 import type { SessionView } from "../contracts/session.ts";
-import { useState, type CSSProperties } from "react";
+import { useState, type ReactNode, type CSSProperties } from "react";
 import type {
   BookId,
   ModeId,
@@ -28,7 +28,11 @@ export function Home({
   onDeploy,
   onOpen,
   game,
+  deployment, deploying = false, leaving = false, busy = false, onStart, onBack, loading,
 }: {
+  deployment?: ReactNode;
+  deploying?: boolean; leaving?: boolean; busy?: boolean;
+  onStart?: () => void; onBack?: () => void; loading?: ReactNode;
   book: BookId;
   game: SessionView | null;
   onBook: (id: BookId) => void;
@@ -52,7 +56,7 @@ export function Home({
       <main
         id="home"
         ref={root}
-        className="home-screen ritual-home"
+        className={`home-screen ritual-home${deploying ? " is-deploying" : ""}${leaving ? " is-departing" : ""}`}
         data-menu-root
         style={{ "--school": b.color } as CSSProperties}
       >
@@ -87,7 +91,7 @@ export function Home({
               {String(Object.keys(C.BOOKS).length).padStart(2, "0")}
             </span>
           </div>
-          <div className="book-grid">
+          <div className="book-grid" inert={deploying || leaving}>
             {(Object.entries(C.BOOKS) as [BookId, typeof b][]).map(
               ([id, item], i) => {
                 const count = Object.keys(C.BOOKS).length;
@@ -123,16 +127,17 @@ export function Home({
             )}
           </div>
           <Button
-            word="start"
+            word={deploying ? "begin" : "start"}
             variant="primary deploy-button"
-            id="startBtn"
+            id={deploying ? "beginRun" : "startBtn"}
             data-default-focus
-            onClick={onDeploy}
+            disabled={busy || leaving}
+            onClick={deploying ? onStart : onDeploy}
           >
-            准备出征 <span>→</span>
+            {busy ? "正在唤醒咒典" : deploying ? "进入咒典" : "准备出征"} <span>→</span>
           </Button>
         </section>
-        <nav className="camp-menu" aria-label="营地菜单">
+        <nav className="camp-menu" aria-label="营地菜单" inert={deploying || leaving}>
           <Button word="vocab" onClick={() => onOpen("vocab")}>
             词库
           </Button>
@@ -160,6 +165,11 @@ export function Home({
             <Key>Shift</Key> 终式
           </span>
         </div>
+        <div className="deployment-wings" inert={!deploying || leaving || busy} aria-hidden={!deploying}>
+          {deployment}
+        </div>
+        {deploying && <div className="deployment-return"><Button word="back" onClick={onBack} disabled={leaving}>收起书页 <Key>Esc</Key></Button></div>}
+        {deploying && <div className="deployment-status" role="status">{loading || "三章 · 九场 · 一次全新构筑"}</div>}
       </main>
     </GameText>
   );
@@ -174,7 +184,6 @@ export function Deployment({
   onProgressive,
   seed,
   onSeed,
-  onStart,
   onLibrary,
 }: {
   books: Vocabulary[];
@@ -186,7 +195,6 @@ export function Deployment({
   onProgressive: (value: boolean) => void;
   seed: string;
   onSeed: (value: string) => void;
-  onStart: () => void;
   onLibrary: () => void;
 }) {
   const notes: Record<ModeId, string> = {
@@ -199,7 +207,9 @@ export function Deployment({
   return (
     <GameText>
       <>
-        <div className="panel-scroll">
+        <section className="deployment-wing wing-left" aria-label="词库与词长">
+        <h2>书页 · 词库</h2>
+        <div className="deployment-wing-content">
         <div className="deployment-grid">
           <Select
             id="vocabSelect"
@@ -217,6 +227,12 @@ export function Deployment({
             管理 / 导入
           </Button>
         </div>
+        <Toggle id="progressive" label="渐进词长" word="grow" value={progressive} onChange={onProgressive} />
+        </div>
+        </section>
+        <section className="deployment-wing wing-right" aria-label="难度与种子">
+        <h2>远征 · 难度</h2>
+        <div className="deployment-wing-content">
         <div className="field-label">战斗难度</div>
         <div className="difficulty-options">
           {(Object.keys(C.MODES) as ModeId[]).map((id) => (
@@ -233,13 +249,6 @@ export function Deployment({
           ))}
         </div>
         <p className="mode-description">{notes[mode]}</p>
-        <Toggle
-          id="progressive"
-          label="渐进词长"
-          word="grow"
-          value={progressive}
-          onChange={onProgressive}
-        />
         <Field
           id="seedInput"
           label="书页种子 · 留空随机"
@@ -248,17 +257,7 @@ export function Deployment({
           onChange={onSeed}
         />
         </div>
-        <div className="modal-footer">
-          <span>三章 · 九场 · 一次全新构筑</span>
-          <Button
-            id="beginRun"
-            word="begin"
-            variant="primary"
-            onClick={onStart}
-          >
-            进入咒典 →
-          </Button>
-        </div>
+        </section>
       </>
     </GameText>
   );

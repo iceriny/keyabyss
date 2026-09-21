@@ -18,7 +18,6 @@
 #hud .build-button { position: absolute; left: auto; right: 3.5%; }
 #hud .health-block { width: min(260px,22vw); }
 #hud .hud-top { grid-template-columns: minmax(0,1fr) minmax(260px,auto) minmax(0,1fr); }
-#hud .defense-readout { bottom: 160px; }
 @media (max-height: 850px) {
   .ritual-home .game-title { top: 4%; }
   .ritual-home .game-title h1 { font-size: 48px; }

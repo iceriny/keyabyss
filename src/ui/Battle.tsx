@@ -89,24 +89,6 @@ export function HUD({
         <Button className="build-button" onClick={onBag}>
           构筑 · {Object.keys(game.relics).length}
         </Button>
-        <div
-          className={`defense-readout ${p.parryTime > 0 ? "active" : p.parryCooldown <= 0 ? "ready" : ""}`}
-        >
-          <span>
-            <Key>Space</Key>{" "}
-            {p.parryTime > 0
-              ? "弹反中"
-              : p.parryCooldown > 0
-                ? `弹反 ${p.parryCooldown.toFixed(1)}s`
-                : "弹反就绪"}
-          </span>
-          <small>方向键 · 闪避 / Alt · 自动择位</small>
-          {p.invuln > 0 && (
-            <small className="invulnerability">
-              无敌 {p.invuln.toFixed(1)}s
-            </small>
-          )}
-        </div>
         <div className="hud-bottom">
           <div className="level-block">
             <strong>LV {game.level}</strong>

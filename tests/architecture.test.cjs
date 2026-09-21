@@ -8,10 +8,12 @@ const baseline = require("./fixtures/ritual-baseline.json");
 const { builtinContent } = require("../src/bootstrap/content.ts");
 const { CombatSimulation } = require("../src/simulation/CombatSimulation.ts");
 
-test("headless simulation matches directional-assault frame traces", () => {
+test("headless simulation matches historical directional-assault traces from their original origin", () => {
   assert.equal(typeof globalThis.window, "undefined");
   for (const expected of baseline) {
     const g = isolate(createGame(["cat", "dog", "book", "alpha", "beta", "glyph", "frost", "storm", "spirit", "flame", "rune"], expected.book));
+    // This saved trajectory predates centered spawning; preserve its explicit setup.
+    g.player.y = 490;
     for (let i = 0; i < 6; i++)
       g.spawnEnemy(
         ["nib", "quill", "guard", "mirror", "split", "vortex"][i],
@@ -508,4 +510,16 @@ test("elite traits compose under arbitrary IDs and label targeting validates liv
   assert.equal(g.target, null);
   assert.equal("labels" in g, false);
   assert.equal("castLabel" in g, false);
+});
+
+
+test("new runs and room transitions spawn the player at the view center", () => {
+  const { createPlayer } = require("../src/combat/model.ts");
+  assert.deepEqual([createPlayer().x, createPlayer().y], [640, 400]);
+  const g = createGame();
+  assert.deepEqual([g.player.x, g.player.y], [640, 400]);
+  g.player.x = 170; g.player.y = 600;
+  g.stage++;
+  g.beginRoom();
+  assert.deepEqual([g.player.x, g.player.y], [640, 400]);
 });

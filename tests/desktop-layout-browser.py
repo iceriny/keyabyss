@@ -28,7 +28,7 @@ with sync_playwright() as p:
  page.evaluate("()=>{const g=__KEYABYSS__.game;g.player.invuln=999;g.spawnClock=999;g.enemies=[];g.combo=100;g.emit('hud');}")
  for w,h in SIZES[:7]:
   page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(60)
-  for a,c in [('.health-block','.chapter-block'),('.health-block','.combat-side'),('.defense-readout','#castBox'),('.level-block','#castBox'),('.ultimate-block','#castBox')]:assert disjoint(rect(a),rect(c)),(w,h,a,c,rect(a),rect(c))
+  for a,c in [('.health-block','.chapter-block'),('.health-block','.combat-side'),('.level-block','#castBox'),('.ultimate-block','#castBox')]:assert disjoint(rect(a),rect(c)),(w,h,a,c,rect(a),rect(c))
   for sel in ['.build-button','.health-block','.chapter-block','.battle-actions','.combat-side','.level-block','#castBox','.ultimate-block']:
    r=rect(sel);assert r['x']>=0 and r['x']+r['width']<=w and r['y']>=0 and r['y']+r['height']<=h,(w,h,sel,r,page.locator(sel).evaluate('e=>({position:getComputedStyle(e).position,left:getComputedStyle(e).left,right:getComputedStyle(e).right,transform:getComputedStyle(e).transform})'))
   if w in [1024,1366,1920]:page.screenshot(path=str(OUT/f'hud-{w}x{h}.png'))

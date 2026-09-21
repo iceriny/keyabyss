@@ -31,8 +31,8 @@ test('parry window expires, cooldown cannot be refreshed early, and zero dash ch
 });
 
 test('swept projectiles reflect physically, lose hostile curve, cannot hit the player, and hit the first enemy once',()=>{
- const g=game(),e=g.spawnEnemy('nib',800,490);e.hp=e.maxHp=1000;e.grace=0;
- const b=g.bullet(710,490,Math.PI,1500,'#fff',{source:e.id,curve:.2});const hp=g.player.hp;
+ const g=game(),e=g.spawnEnemy('nib',800,g.player.y);e.hp=e.maxHp=1000;e.grace=0;
+ const b=g.bullet(710,g.player.y,Math.PI,1500,'#fff',{source:e.id,curve:.2});const hp=g.player.hp;
  g.input(' ');g.updateBullets(.04);assert(b.reflected);assert.equal(b.curve,0);assert(b.vx>0);assert.equal(e.hp,1000);assert.equal(g.player.hp,hp);
  g.updateBullets(.12);assert(b.dead);assert.equal(e.hp,968);g.updateBullets(.12);assert.equal(e.hp,968);
  const orphan=g.bullet(g.player.x+12,g.player.y,Math.PI,100,'#fff');g.updateBullets(.01);assert(orphan.reflected);assert(orphan.vx>0);
@@ -60,7 +60,7 @@ test('parry does not provide blanket invulnerability to laser and ground explosi
 
 test('the affinity relic attaches each book effect to reflected and contact damage, and baseline counters stay neutral',()=>{
  for(const book of ['frost','storm','flame','spirit']) {
-  const g=game(book),e=g.spawnEnemy('nib',800,490);e.hp=e.maxHp=1000;
+  const g=game(book),e=g.spawnEnemy('nib',800,g.player.y);e.hp=e.maxHp=1000;
   g.counterHit(e);assert.equal(e.chill,0);assert.equal(e.conduct,0);assert(!e.burn);assert.equal(e.mark,0);
   g.relics.inscription=1;g.counterHit(e);
   if(book==='frost')assert.equal(e.chill,48);
@@ -72,11 +72,11 @@ test('the affinity relic attaches each book effect to reflected and contact dama
 
 test('ranged enemies must approach and chargers can actually reach the player on every difficulty',()=>{
  for(const mode of Object.keys(C.MODES)) {
-  const g=game('frost',mode),e=g.spawnEnemy('quill',200,490);e.grace=0;e.shoot=0;
+  const g=game('frost',mode),e=g.spawnEnemy('quill',200,g.player.y);e.grace=0;e.shoot=0;
   g.enemyAttack(e);assert.equal(g.bullets.length,0);const x=e.x;g.updateEnemies(.1);assert(e.x>x);
   e.x=500;g.enemyAttack(e);assert(g.bullets.length>0);
   for(const kind of ['ram','reaper']) {
-   const h=game('frost',mode),r=h.spawnEnemy(kind,240,490);r.grace=0;r.shoot=0;r.hp=1e6;h.enemyAttack(r);assert.equal(r.windup,0);
+   const h=game('frost',mode),r=h.spawnEnemy(kind,240,h.player.y);r.grace=0;r.shoot=0;r.hp=1e6;h.enemyAttack(r);assert.equal(r.windup,0);
    r.x=h.player.x-h.enemyProfile(r).chargeSpeed*Math.min(1.35,h.pressure.speed)*.4;
    assert(h.inAttackRange(r));h.enemyAttack(r);assert(r.windup>0);const hp=h.player.hp;
    step(h, r.windup+.65);assert(h.player.hp<hp, mode+' '+kind+' reaches target');

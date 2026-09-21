@@ -169,3 +169,12 @@
 .codex-icon .relic-art { width: 30px; height: 30px; }
 .choice-icon > .relic-art { width: 52px; height: 52px; }
 .book-artwork-fallback svg { width: 100%; height: 100%; }
+.settings-about { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(205,183,142,.25); }
+.settings-about h3 { margin: 0 0 12px; }
+.settings-about dl { display: grid; grid-template-columns: 64px minmax(0,1fr); gap: 10px 18px; line-height: 1.6; }
+.settings-about dt { opacity: .65; }
+.settings-about dd { margin: 0; overflow-wrap: anywhere; user-select: text; }
+.settings-about nav { display: flex; gap: 24px; margin: 18px 0; }
+.settings-about a { color: inherit; text-decoration: underline; text-underline-offset: 5px; text-decoration-color: rgba(205,183,142,.45); }
+.settings-about a:hover,.settings-about a:focus-visible { color: #f6e4b9; text-shadow: 0 0 12px #cdb78e; outline: none; text-decoration-color: currentColor; }
+.settings-about .about-note { opacity: .7; font-size: .85em; line-height: 1.8; }

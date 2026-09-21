@@ -69,7 +69,7 @@ with sync_playwright() as p:
  page.keyboard.press('Escape');page.mouse.move(5,5);page.set_viewport_size({'width':1920,'height':1080})
  page.locator('[data-command=back]').click();page.locator('#startBtn').click();page.locator('#beginRun').click();page.wait_for_function("__KEYABYSS__.game.state==='playing'")
  assert page.locator('#hud .game-number').count()>6
- assert page.locator('.defense-readout [data-term]').count()==0
+ assert page.locator('.defense-readout').count()==0
  assert page.evaluate("__KEYABYSS__.game.state==='playing'")
  page.keyboard.press('Space');assert page.locator('#gameTooltip').count()==0
  assert page.evaluate('__KEYABYSS__.game.player.parryTime>0')

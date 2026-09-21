@@ -1,6 +1,6 @@
 {
   "name": "keyabyss",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "description": "键渊：失控咒典 · 词令共鸣 — 全键盘交互、打字施法、肉鸽构筑",
   "scripts": {
@@ -65,6 +65,7 @@
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.1",
     "dependency-cruiser": "^18.3.1",
+    "javascript-obfuscator": "5.8.0",
     "prettier": "^3.9.8",
     "typescript": "^7.0.2",
     "vite": "^8.3.0",

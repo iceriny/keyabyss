@@ -113,41 +113,7 @@ varying vec2 vUv;
 void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }
 `;
 
-export const environmentFragment = /* glsl */ `
-varying vec2 vUv;
-uniform vec2 worldSpan;
-uniform vec2 worldOrigin;
-uniform vec2 player;
-uniform vec3 school;
-uniform float time;
-uniform float activity;
-uniform float detail;
-float hash(vec2 p){return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453);}
-float noise(vec2 p){vec2 i=floor(p), f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.),f.x),f.y);}
-float cloud(vec2 p){return noise(p)*.55+noise(p*2.03)*.28+noise(p*4.1)*.12;}
-void main(){
-  vec2 w=worldOrigin+vec2(vUv.x,1.-vUv.y)*worldSpan;
-  vec2 center=w-vec2(640.,399.);
-  vec2 q=center/380.;
-  float radius=length(q), angle=atan(q.y,q.x);
-  float fog=cloud(q*2.1+vec2(time*.025,-time*.018));
-  float farFog=cloud(q*3.3-vec2(time*.018,time*.012));
-  float periphery=smoothstep(.35,1.3,radius);
-  vec3 col=mix(vec3(.0025,.005,.011),vec3(.009,.021,.030),fog);
-  col+=vec3(.009,.016,.021)*farFog*periphery*detail;
-  float lens=length(center/vec2(1.,.76));
-  float ring=abs(mod(lens+21.,92.)-46.);
-  float cuts=smoothstep(.15,.35,sin(angle*9.+floor(lens/92.)*2.+time*.035));
-  float etching=(1.-smoothstep(.5,1.4,ring))*cuts*periphery;
-  col+=vec3(.025,.042,.050)*etching;
-  float strata=sin(q.x*15.+sin(q.y*7.+time*.025)*.35+time*.015);
-  float tracery=pow(max(0.,strata),36.)*smoothstep(.15,.75,radius);
-  col+=vec3(.007,.016,.022)*tracery*detail;
-  float lighting=exp(-length(w-player)/160.)*activity;
-  col+=school*lighting*(.025+fog*.07);
-  col*=1.-.32*smoothstep(.5,1.,length(vUv-.5));
-  gl_FragColor=vec4(col,1.);
-}`;
+export { arcaneBackdropFragment as environmentFragment } from "./ArcaneBackdrop";
 
 export const compositeFragment = /* glsl */ `
 uniform sampler2D environment;

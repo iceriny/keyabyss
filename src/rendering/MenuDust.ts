@@ -12,8 +12,8 @@ export class MenuDust {
       p.y=mod(p.y+1.+time*(.006+seed*.01),2.)-1.;p.x+=sin(time*.12+seed*31.)*.025;
       alpha=(.25+.5*pow(.5+.5*sin(time*.6+seed*35.),2.))*smoothstep(0.,.16,1.-abs(p.y));
       p.x+=sin(p.y*4.+time*.08+seed*9.)*.05;
-      gl_Position=vec4(p,0.,1.);gl_PointSize=seed>.86?12.+seed*8.:2.+seed*5.;}`,
-    fragmentShader: `uniform vec3 tint;varying float alpha;void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;gl_FragColor=vec4(tint,exp(-d*d*6.)*alpha*.65);}`,
+      gl_Position=vec4(p,0.,1.);gl_PointSize=2.+seed*1.5;}`,
+    fragmentShader: `uniform vec3 tint;varying float alpha;void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;gl_FragColor=vec4(tint,((1.-smoothstep(.2,.6,d))*.7+exp(-d*d*7.)*.15)*alpha*.45);}`,
     transparent: true,
     depthTest: false,
     depthWrite: false,
@@ -38,7 +38,7 @@ export class MenuDust {
   update(time: number, quality: number, color: string) {
     this.material.uniforms.time.value = time;
     this.material.uniforms.tint.value.set(color);
-    this.geometry.setDrawRange(0, quality < 0.5 ? 80 : quality < 0.9 ? 220 : 420);
+    this.geometry.setDrawRange(0, quality < 0.5 ? 20 : quality < 0.9 ? 36 : 56);
   }
   dispose() {
     this.geometry.dispose();

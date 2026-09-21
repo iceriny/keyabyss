@@ -81,7 +81,7 @@ export function beginRoom(this: Context, route: Route = { type: "normal" }) {
   this.resetArrays();
   this.cancel(false);
   this.player.x = 640;
-  this.player.y = 490;
+  this.player.y = 400;
   this.player.vx = 0;
   this.player.vy = 0;
   this.player.dashState = null;

@@ -248,7 +248,7 @@ export class CombatSimulation {
     this.resetArrays();
     this.player = {
       x: 640,
-      y: 490,
+      y: 400,
       r: 7,
       hp: this.mode.hp,
       maxHp: this.mode.hp,

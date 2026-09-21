@@ -1,7 +1,7 @@
 /* The archive is one continuous space; interactive books are its navigation. */
 @property --orbit-angle { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
 .ritual-home.home-screen { min-height: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--school) 7%, transparent), transparent 65%); }
-.ritual-home.home-screen::after { inset: 0; border: 0; background: radial-gradient(ellipse, transparent 40%, #030811b0); }
+.ritual-home.home-screen::after { inset: 0; border: 0; background: radial-gradient(ellipse, transparent 48%, #03081145); }
 .ritual-home .game-title { top: 6%; left: 5%; pointer-events: none; }
 .ritual-home .game-title h1 { font-size: clamp(45px, 5vw, 82px); }
 .ritual-home .edition { font-size: 9px; letter-spacing: 3px; color: #93a3b5; }
@@ -31,7 +31,7 @@
 .ritual-home .book-grid .choice-card.selected .cmd-badge { bottom: -14px; }
 .ritual-home .book-grid .choice-card strong { width: 100%; padding: 0; text-align: center; text-indent: 5px; }
 .ritual-home .book-grid .choice-card.selected strong { font-size: clamp(28px, 2.3vw, 38px); line-height: 1.2; font-weight: 650; }
-.ritual-home .book-grid .choice-card.game-focus { outline: none; box-shadow: none !important; background-image: none !important; filter: brightness(1.15) drop-shadow(0 0 12px var(--card-color)); }
+.ritual-home .book-grid .choice-card:is(.game-focus, .command-match) { outline: none; box-shadow: none !important; background-image: none !important; filter: brightness(1.15) drop-shadow(0 0 12px var(--card-color)); }
 .ritual-home .card-pattern { inset: -4%; width: 108%; height: 108%; opacity: .14; }
 .ritual-home .selected .card-pattern { opacity: .55; }
 .book-aura { position: absolute; inset: 12% -9%; border: 1px solid color-mix(in srgb, var(--card-color) 50%, transparent); border-radius: 50%; transform: rotate(-28deg) scaleY(.4); box-shadow: 0 0 22px color-mix(in srgb, var(--card-color) 22%, transparent), inset 0 0 18px color-mix(in srgb, var(--card-color) 16%, transparent); }

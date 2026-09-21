@@ -84,7 +84,7 @@ export function App() {
   const [archive, setArchive] = useState(() => readRunArchive(storage));
   const archiveRef = useRef(archive);
   const [entered, setEntered] = useState(false);
-  const [arrival, setArrival] = useState<{ reveal: () => void; book: BookId } | null>(null);
+  const [arrival, setArrival] = useState<{ reveal: () => void; book: BookId; origin?: { x: number; y: number } } | null>(null);
   const [arriving, setArriving] = useState(false);
   const [loading, setLoading] = useState<LoadingState | null>(null);
   const loadingToken = useRef(0),
@@ -262,8 +262,9 @@ export function App() {
     void prepare(
       selected,
       (words) => {
-        setStack([]);
-        setArrival({ book, reveal: () => game.start({
+        const icon = document.querySelector("#home .choice-card.selected .choice-icon")?.getBoundingClientRect();
+        const origin = icon ? { x: icon.x + icon.width / 2, y: icon.y + icon.height / 2 } : undefined;
+        setArrival({ book, origin, reveal: () => { setStack([]); game.start({
           book,
           mode,
           words,
@@ -273,7 +274,7 @@ export function App() {
           seed:
             seed.trim() ||
             Math.random().toString(36).slice(2, 10).toUpperCase(),
-        }) });
+        }); } });
       },
       "准备战场",
       true,
@@ -299,22 +300,6 @@ export function App() {
   let content = null;
   if (screen) {
     if (screen.type === "calibration") content = <FirstVisitSetup settings={settings} onChange={value => { game?.unlockAudio(); setSettings(value); }} onFull={full} onDone={() => { save("calibration-complete", true); setStack([]); }} />;
-    if (screen.type === "deploy")
-      content = (
-        <Deployment
-          books={books}
-          vocab={vocab}
-          onVocab={setVocab}
-          mode={mode}
-          onMode={setMode}
-          progressive={progressive}
-          onProgressive={setProgressive}
-          seed={seed}
-          onSeed={setSeed}
-          onStart={start}
-          onLibrary={() => open("vocab")}
-        />
-      );
     if (screen.type === "settings")
       content = (
         <SettingsPanel
@@ -500,6 +485,7 @@ export function App() {
         <ArcaneCursor />
         {arrival && game && <BattleArrival
           book={C.BOOKS[arrival.book]}
+          origin={arrival.origin}
           reduced={settings.reduceMotion}
           reveal={arrival.reveal}
           complete={() => setArrival(null)}
@@ -510,7 +496,7 @@ export function App() {
         />
         <canvas id="battle-labels" ref={labels} aria-hidden="true" />
         {state !== "home" && <EdgeVeil />}
-        {loading && (
+        {loading && !(state === "home" && stack.some(s => s.type === "deploy")) && (
           <LoadingScreen
             state={loading}
             onCancel={cancelLoading}
@@ -532,13 +518,20 @@ export function App() {
         {(entered || arriving) && state === "home" && (
           <div
             className={arriving ? "home-arrival" : undefined}
-            inert={!entered || !!screen || !!loading || !!arrival}
+            inert={!entered || (!!screen && screen.type !== "deploy") || !!arrival}
           >
             <Home
               game={game}
               book={book}
               onBook={setBook}
               settings={settings}
+              deploying={stack.some(s => s.type === "deploy")}
+              leaving={!!arrival}
+              busy={!!loading}
+              onStart={start}
+              onBack={back}
+              loading={loading ? <>{loading.error || loading.label}{loading.error && <Button word="retry" onClick={() => retryLoad.current()}>重试</Button>}</> : undefined}
+              deployment={<Deployment books={books} vocab={vocab} onVocab={setVocab} mode={mode} onMode={setMode} progressive={progressive} onProgressive={setProgressive} seed={seed} onSeed={setSeed} onLibrary={() => open("vocab")} />}
               onDeploy={() => open("deploy")}
               onOpen={open}
             />
@@ -557,7 +550,7 @@ export function App() {
             />
           </div>
         )}
-        {screen && (
+        {screen && screen.type !== "deploy" && (
           <div inert={!!loading}>
             <Modal
               effects={screen.type === "result" ? <OutcomeEffects /> : undefined}

@@ -1,5 +1,8 @@
 import { startAfterFonts } from "./fonts";
 
+// Applies to the preflight page and all later game screens, including text fields.
+window.addEventListener("contextmenu", event => event.preventDefault(), { capture: true });
+
 declare const __GAME_SCRIPT__: string;
 declare const __GAME_STYLE__: string;
 

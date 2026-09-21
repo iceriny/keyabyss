@@ -1,4 +1,5 @@
 import { RelicIcon } from "./RelicIcon";
+import { About } from "./About";
 import { GameText } from "./GameText";
 import { TERMS } from "../content/glossary.ts";
 import { BookArtwork } from "./BookArtwork";
@@ -22,10 +23,12 @@ export function SettingsPanel({
   settings,
   onChange,
   onFull,
+  showAbout = true,
 }: {
   settings: Settings;
   onChange: (next: Settings) => void;
   onFull: () => void;
+  showAbout?: boolean;
 }) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -114,6 +117,7 @@ export function SettingsPanel({
           value={settings.reduceMotion}
           onChange={(v) => set("reduceMotion", v)}
         />
+        {showAbout && <About />}
         </div>
         <div className="modal-footer">
           <span>自动保存</span>

@@ -46,8 +46,8 @@ button:focus-visible,
 [tabindex]:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #f2d6a6;
-  outline-offset: 4px;
+  outline: none;
+  text-shadow: 0 0 12px #f2d6a655;
 }
 button:focus:not(:focus-visible) {
   outline: none;
@@ -200,8 +200,9 @@ kbd {
   color: #dae0e9;
 }
 .command-match {
-  outline: 2px solid #ebcd94;
-  outline-offset: 2px;
+  outline: none;
+  color: #f0dfb8;
+  text-shadow: 0 0 12px #ebcd9460;
 }
 .accent {
   color: var(--school);
@@ -2661,39 +2662,6 @@ kbd {
     transition: none !important;
   }
 }
-.defense-readout {
-  position: absolute;
-  left: 50%;
-  bottom: 154px;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 7px;
-  color: #86999e;
-  white-space: nowrap;
-  font-size: 13px;
-}
-.defense-readout.ready {
-  color: #c2dfd6;
-}
-.defense-readout.active {
-  color: #e3ffd2;
-  text-shadow: 0 0 14px #d0ff9766;
-}
-.defense-readout small {
-  font-size: 12px;
-  color: #99aaa8;
-}
-.defense-readout .invulnerability {
-  color: #cbeaff;
-}
-@media (max-height: 760px) {
-  .defense-readout {
-    bottom: 125px;
-  }
-}
-
 /* Shared, theme-tinted engraving assets; the GPU halo lives behind these layers. */
 .home-screen { background: transparent; }
 .book-grid .choice-card.selected {

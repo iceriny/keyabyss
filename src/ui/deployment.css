@@ -1,0 +1,43 @@
+/* Preparation unfolds around the same selected book, within the archive scene. */
+.deployment-wings { position:absolute; inset:0; pointer-events:none; z-index:22; visibility:hidden; transition:visibility .65s; }
+.is-deploying .deployment-wings { visibility:visible; }
+.deployment-wing { position:absolute; top:23%; bottom:145px; width:26%; max-width:390px; opacity:0; filter:blur(8px); transition:transform .65s cubic-bezier(.2,.75,.2,1),opacity .45s,filter .65s; pointer-events:none; display:flex; flex-direction:column; padding:12px 8px 24px; }
+.wing-left { left:5%; transform:translateX(80px); }
+.wing-right { right:5%; transform:translateX(-80px); }
+.is-deploying .deployment-wing { opacity:1; filter:none; transform:none; pointer-events:auto; }
+.deployment-wing h2 { font:400 clamp(21px,2vw,30px)/1.5 var(--font-display); color:#e4d1a9; letter-spacing:.13em; margin:0 0 25px; padding-bottom:13px; border-bottom:1px solid #c8b78a35; }
+.deployment-wing .deployment-grid { display:block; }
+.deployment-wing .field,.deployment-wing .select-field { margin:16px 0; }
+.deployment-wing .button { background:transparent; border:0; border-radius:0; border-bottom:1px solid #bca77540; padding:9px 4px; box-shadow:none; }
+.deployment-wing .difficulty-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 16px; }
+.deployment-wing .difficulty-options .button { min-width:0; font-size:15px; }
+.deployment-wing .difficulty-options .selected { color:#f1d698; text-shadow:0 0 16px #d6c09755; border-bottom-color:#e6c982; }
+.deployment-wing .setting-row { gap:12px; margin-top:26px; }
+.deployment-wing .mode-description { min-height:48px; line-height:1.7; margin:16px 0; color:#8fa2b1; }
+.deployment-wing input:not([type=range]),.deployment-wing [role=combobox] { background:linear-gradient(90deg,#b7c6ca09,transparent); border:0; border-bottom:1px solid #bca77560; border-radius:0; }
+.ritual-home .game-title,.ritual-home .camp-menu,.ritual-home .home-controls,.ritual-home .section-label,.ritual-home .hero-caption { transition:filter .55s,opacity .55s; }
+.is-deploying :is(.game-title,.camp-menu,.home-controls,.section-label,.hero-caption) { opacity:.13; filter:blur(4px); pointer-events:none; }
+.ritual-home.is-deploying .book-grid .choice-card:not(.selected) { opacity:.08; filter:blur(12px); pointer-events:none; }
+.deployment-return { position:absolute; top:7%; left:5%; z-index:24; }
+.deployment-return .button { border:0; background:transparent; color:#a8b5bd; font-size:13px; }
+.deployment-status { position:absolute; bottom:100px; left:32%; right:32%; text-align:center; color:#92a7b1; font:12px/1.7 var(--font-small); z-index:24; }
+.is-deploying .deploy-button { z-index:25; }
+.is-departing .deployment-wings,.is-departing .deployment-status,.is-departing .deployment-return,.is-departing .deploy-button { opacity:0; transition:opacity .35s; pointer-events:none; }
+.is-departing .book-grid .choice-card.selected .choice-icon { animation:archive-open-book 1.2s both; }
+@keyframes archive-open-book { 0%{filter:brightness(1)} 55%{filter:brightness(1.6) drop-shadow(0 0 35px var(--school))} 100%{filter:brightness(2.4) drop-shadow(0 0 65px var(--school));opacity:0;scale:1.12} }
+.battle-arrival.in-place .arrival-book,.battle-arrival.in-place .arrival-caption { display:none; }
+.battle-arrival.in-place .arrival-gate,.battle-arrival.in-place .arrival-wave,.battle-arrival.in-place .arrival-motes { left:var(--arrival-x); top:var(--arrival-y); }
+.battle-arrival.in-place .arrival-veil { animation:archive-open-veil 2s both; background:radial-gradient(ellipse at var(--arrival-x) var(--arrival-y),#101c26,#040910); }
+@keyframes archive-open-veil { 0%,35%{opacity:0} 60%{opacity:.95} 100%{opacity:0} }
+@media(max-height:760px) { .deployment-wing { top:17%; bottom:135px; } .deployment-wing h2 { margin-bottom:12px; } .deployment-wing .setting-row { margin-top:12px; } .deployment-wing .field,.deployment-wing .select-field { margin:10px 0; } }
+.reduced-motion .deployment-wing { transition:opacity .15s; transform:none; filter:none; }
+.reduced-motion .is-departing .book-grid .choice-card.selected .choice-icon { animation:none; }
+@media(prefers-reduced-motion:reduce) { .deployment-wing { transition:opacity .15s; transform:none; filter:none; } .is-departing .book-grid .choice-card.selected .choice-icon { animation:none; } }
+
+.ritual-home.is-deploying .hero-caption { animation:none; opacity:.12; filter:blur(4px); }
+.deployment-wing .cmd-badge,.deployment-return .cmd-badge { border:0; background:transparent; opacity:.5; font-size:10px; }
+.deployment-wing .difficulty-options .button { display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:8px; }
+.ritual-home.is-deploying .deploy-button { background:linear-gradient(90deg,transparent,#b8cbe00a,transparent); }
+
+.deployment-wing h2 { flex-shrink:0; }
+.deployment-wing-content { min-height:0; overflow-y:auto; scrollbar-width:thin; padding-bottom:12px; }

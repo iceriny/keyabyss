@@ -1,25 +1,25 @@
 {
-  "version": "0.6.0",
+  "version": "0.6.3",
   "artifacts": [
     {
       "artifact": "dist/index.html",
       "bytes": 1352,
-      "sha256": "07c3e98c6e15f0c65f023ba5c9aabe55abda18bca41ee1e4d359f1d2a411fa54"
+      "sha256": "906dc8cfcd1658dd499240687f50c8b2257ce216f0a5139d1f0108bf2dc9d711"
     },
     {
-      "artifact": "dist/assets/game-93983896.js",
-      "bytes": 633549,
-      "sha256": "93983896b0ce6e7d9b2ae4d11ae864d9dee8e5cecb9e4af0cf693f83f8deff5b"
+      "artifact": "dist/assets/game-e9e230f9.js",
+      "bytes": 1112927,
+      "sha256": "e9e230f9c3683d68085877adebc3e55c9188688b3a46c5199332f4312bca78b6"
     },
     {
-      "artifact": "dist/assets/game-6693b9e9.css",
-      "bytes": 86249,
-      "sha256": "6693b9e9382c92f66fc13fa97835d3f4e45f34f9a1d268679eb2380ef7e27dd4"
+      "artifact": "dist/assets/game-151a7e0b.css",
+      "bytes": 95021,
+      "sha256": "151a7e0be1e421893a3df20653058c1b0c3c4b3df91ee9db5e1a71f2d71247b6"
     },
     {
-      "artifact": "dist/assets/preflight-3c38e3fe.js",
-      "bytes": 3316,
-      "sha256": "3c38e3fe00c1f908edfd31bfaaecef78ad17971b0180dd767d974446aab992d5"
+      "artifact": "dist/assets/preflight-bab4f7da.js",
+      "bytes": 5222,
+      "sha256": "bab4f7da45d280fc58b2059e401a7b29740d30ee1e6f7a4dd978630410a3c208"
     },
     {
       "artifact": "dist/assets/preflight-b9ea612e.css",
@@ -30,6 +30,11 @@
       "artifact": "dist/THIRD-PARTY-LICENSES.txt",
       "bytes": 83240,
       "sha256": "a3673ca9235dc5bb0a78e39f7baeced8db512f1a16c71b79e7d6e4c4b8121421"
+    },
+    {
+      "artifact": "dist/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
     },
     {
       "artifact": "dist/assets/art/FLAME_GRIMOIR.png",
@@ -72,9 +77,9 @@
       "sha256": "25f8bbe43fa04058d01cb603d89c898e23a626d28b37883eb566bad0cec020b1"
     },
     {
-      "artifact": "dist/assets/battle-renderer-f772e72a.js",
-      "bytes": 765583,
-      "sha256": "f772e72ac5edf89b6cb785f1df66fe2fd7380b63bb3134445ce53b08a134079e"
+      "artifact": "dist/assets/battle-renderer-4c1d4074.js",
+      "bytes": 1324179,
+      "sha256": "4c1d40747811b77cd1a09db762b18bf6a4389ffda9d5a5355d2f71c3557854f5"
     },
     {
       "artifact": "dist/audio/clip-01cb6b0450b74be5.js",

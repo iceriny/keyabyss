@@ -227,9 +227,6 @@
     0 0 28px #e5c78230,
     inset 0 -1px #e5c782a0;
 }
-.defense-readout.active {
-  text-shadow: 0 0 16px #aef3f899;
-}
 .command-dock:has(.command-input:not(:empty)) {
   transition:
     border-color 0.25s,

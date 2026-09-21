@@ -32,7 +32,9 @@ function radialDisplacement() {
 }
 
 /** Distorts actual startup pixels. Wave light and refraction share one radius/clock. */
-export function StartupWave({ startedAt, children }: { startedAt: number | null; children: ReactNode }) {
+export function StartupWave({ startedAt, children, frozen = false }: { startedAt: number | null; children: ReactNode; frozen?: boolean }) {
+  const freeze = useRef(frozen);
+  freeze.current = frozen;
   const id = `startup-wave-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const layer = useRef<HTMLDivElement>(null);
   const field = useRef<SVGFEImageElement>(null);
@@ -43,6 +45,7 @@ export function StartupWave({ startedAt, children }: { startedAt: number | null;
     const element = layer.current!, image = field.current!, map = displacement.current!;
     let frame = 0;
     const tick = () => {
+      if (freeze.current) return;
       const elapsed = performance.now() - startedAt;
       const first = elapsed < startupTiming.impact;
       const progress = Math.max(0, Math.min(1, first

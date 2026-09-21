@@ -149,11 +149,12 @@ export class NativeBattleRenderer {
     const environment = screen(environmentFragment, {
       worldSpan: { value: new THREE.Vector2() },
       worldOrigin: { value: new THREE.Vector2() },
-      player: { value: new THREE.Vector2(640, 490) },
+      player: { value: new THREE.Vector2(640, 400) },
       school: { value: new THREE.Color("#91d6ee") },
       time: { value: 0 },
       activity: { value: 0 },
       detail: { value: 1 },
+      presence: { value: 1 },
     });
     this.environment = environment;
     this.environmentScene.add(this.decor.mesh);
