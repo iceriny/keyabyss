@@ -21,6 +21,10 @@ npm run build
 
 完成后打开 `dist/index.html`。分享离线包时保留整个 `dist` 目录的内容，包括字体、音效、词库和许可文件。
 
+构建最后会保留 `dist/`，并将其中全部内容压缩为 `releases/keyabyss-<版本号>.7z` 和 `releases/keyabyss-<版本号>.zip`。解压后根目录即为 `index.html`。版本号读取 `package.json`；同版本重新构建会替换对应压缩包，不保留旧包中已删除的文件。
+
+打包需要安装 7-Zip：将 `7z` 或 `7zz` 加入 PATH，Windows 也会自动查找 Program Files 下的默认安装位置；自定义路径可用环境变量 `SEVEN_ZIP` 指定可执行文件。两个压缩包均通过完整性检查后才输出；工具缺失或压缩失败会使构建报错，已生成的 `dist/` 保留。
+
 发行构建默认混淆启动、游戏和战场脚本，开发模式不混淆。配置位于 `tools/obfuscate.mjs`；内容哈希与发行清单根据最终产物生成。词库数据和许可保持可读，`THIRD_PARTY_NOTICES.md` 仅保留在源码仓库。
 
 普通构建直接使用已提供的 WOFF2 字体。只有替换 `public/font` 中的源字体后，才需要安装 `requirements-dev.txt` 中的工具并执行 `npm run fonts:build`。

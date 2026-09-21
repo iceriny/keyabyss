@@ -4,6 +4,7 @@ __pycache__/
 node_modules/
 public/assets/vocab-*.js
 dist/
+releases/
 public/assets/
 public/audio/
 public/word/

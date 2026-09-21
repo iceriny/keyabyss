@@ -4,12 +4,12 @@
     {
       "artifact": "dist/index.html",
       "bytes": 1352,
-      "sha256": "906dc8cfcd1658dd499240687f50c8b2257ce216f0a5139d1f0108bf2dc9d711"
+      "sha256": "9bdd54175e3e273c9dc957d9227f0822ded252dace6bf1462018ff2b0acbd526"
     },
     {
-      "artifact": "dist/assets/game-e9e230f9.js",
-      "bytes": 1112927,
-      "sha256": "e9e230f9c3683d68085877adebc3e55c9188688b3a46c5199332f4312bca78b6"
+      "artifact": "dist/assets/game-1c9f7c2e.js",
+      "bytes": 1116421,
+      "sha256": "1c9f7c2ef5c6e0fd0dfae6f11bd61d994475172b71f4fcd6598a27e04e593966"
     },
     {
       "artifact": "dist/assets/game-151a7e0b.css",
@@ -17,9 +17,9 @@
       "sha256": "151a7e0be1e421893a3df20653058c1b0c3c4b3df91ee9db5e1a71f2d71247b6"
     },
     {
-      "artifact": "dist/assets/preflight-bab4f7da.js",
-      "bytes": 5222,
-      "sha256": "bab4f7da45d280fc58b2059e401a7b29740d30ee1e6f7a4dd978630410a3c208"
+      "artifact": "dist/assets/preflight-5bddc01c.js",
+      "bytes": 5219,
+      "sha256": "5bddc01ca236c849a735bb2e7c9cc9f590cd5b82213e722d3f118c6d60c2238b"
     },
     {
       "artifact": "dist/assets/preflight-b9ea612e.css",

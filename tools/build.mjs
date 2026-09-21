@@ -9,6 +9,7 @@ import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { obfuscate } from "./obfuscate.mjs";
 import { appDefine } from "./app-metadata.mjs";
+import { archiveRelease } from "./archive.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const audioBuild = spawnSync(process.execPath, ['tools/audio.ts','build'], { cwd:root, stdio:'inherit', windowsHide:true });
 if (audioBuild.status !== 0) throw Error('Audio build failed');
@@ -166,3 +167,4 @@ fs.writeFileSync(
 console.log(
   `Offline release: ${files.length} verified files (${(artifacts.reduce((sum, item) => sum + item.bytes, 0) / 1024 / 1024).toFixed(2)} MB)`,
 );
+archiveRelease(root);
