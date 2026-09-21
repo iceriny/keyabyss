@@ -60,7 +60,6 @@ export interface WorldState {
   chargePulse: number;
   clearDelay: number;
   combo: number;
-  comboTimer: number;
   config: Config;
   corpses: Debris[];
   correct: number;

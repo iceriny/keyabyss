@@ -34,10 +34,17 @@ export function layoutWordLabels(
         16,
         Math.min(base, 390 / Math.max(1, target.word.length)),
       );
-      const w = measure(target.word, font) + 24,
-        h = font + 13;
+      let meaningText = frame.options.labelMeaning ? target.meaning?.trim().replace(/\s+/g, " ") : undefined;
+      if (meaningText && measure(meaningText, 12) > 280) {
+        const chars = Array.from(meaningText);
+        while (chars.length && measure(chars.join("") + "…", 12) > 280) chars.pop();
+        meaningText = chars.join("") + "…";
+      }
+      const w = Math.max(measure(target.word, font), meaningText ? measure(meaningText, 12) : 0) + 24,
+        h = font + 13 + (meaningText ? 18 : 0);
       return {
         target,
+        meaningText,
         font,
         w,
         h,

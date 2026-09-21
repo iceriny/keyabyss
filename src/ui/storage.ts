@@ -26,6 +26,7 @@ export const defaultSettings: Settings = {
   largeText: false,
   fx: 1,
   meaning: true,
+  labelMeaning: false,
   music: true,
   sound: true,
   reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,

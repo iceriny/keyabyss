@@ -103,6 +103,12 @@ export function SettingsPanel({
           onChange={(v) => set("meaning", v)}
         />
         <Toggle
+          label="头顶中文释义"
+          word="translation"
+          value={settings.labelMeaning}
+          onChange={(v) => set("labelMeaning", v)}
+        />
+        <Toggle
           label="减少动态效果"
           word="motion"
           value={settings.reduceMotion}

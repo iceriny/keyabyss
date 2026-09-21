@@ -41,6 +41,7 @@ export interface Settings {
   largeText: boolean;
   fx: number;
   meaning: boolean;
+  labelMeaning: boolean;
   music: boolean;
   sound: boolean;
   reduceMotion: boolean;

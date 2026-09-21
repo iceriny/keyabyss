@@ -25,7 +25,6 @@ type Context = Pick<
   | "chapter"
   | "chargePulse"
   | "combo"
-  | "comboTimer"
   | "config"
   | "correct"
   | "cycle"
@@ -171,7 +170,6 @@ export function input(this: Context, key: string) {
   retainLock(this.target);
   this.correct++;
   this.prefix += key;
-  this.comboTimer = 5;
   this.player.recoil = Math.max(this.player.recoil, 0.1);
   this.chargePulse = 1;
   this.sparks(this.player.x, this.player.y - 17, 2, this.bookData.color, 45);

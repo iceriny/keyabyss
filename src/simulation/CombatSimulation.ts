@@ -142,6 +142,7 @@ export class CombatSimulation {
       largeText: false,
       fx: 1,
       meaning: true,
+      labelMeaning: false,
       reduceMotion: false,
       volume: 0.3,
       sfxVolume: 1,
@@ -201,7 +202,6 @@ export class CombatSimulation {
     this.chapter = 0;
     this.loopCount = 0;
     this.combo = 0;
-    this.comboTimer = 0;
     this.autofill = false;
     this.manual = 0;
     this.reflectionBoost = false;
@@ -368,11 +368,6 @@ export class CombatSimulation {
       this.resonance = 100;
     }
     p.recoil *= Math.exp(-dt * 13);
-    this.comboTimer -= dt;
-    if (this.comboTimer <= 0 && this.combo > 0) {
-      this.combo = Math.max(0, this.combo - 1);
-      this.comboTimer = 1;
-    }
     this.chargePulse = Math.max(0, this.chargePulse - dt * 5);
     this.stopCooldown = Math.max(0, this.stopCooldown - dt);
     if (this.decoy) this.decoy.life -= dt;

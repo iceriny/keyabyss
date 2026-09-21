@@ -31,7 +31,6 @@ type Context = Pick<
   | "chain"
   | "clearBullets"
   | "combo"
-  | "comboTimer"
   | "damageMultiplier"
   | "emit"
   | "floating"
@@ -72,7 +71,6 @@ export function cast(
   this.domainEvents.publish({ type: "cast", entity: t.id, word });
   this.casts++;
   this.combo++;
-  this.comboTimer = 5;
   this.maxCombo = Math.max(this.combo, this.maxCombo);
   if (!t.kind) this.bookCounter++;
   this.perfectWords = perfect ? this.perfectWords + 1 : 0;

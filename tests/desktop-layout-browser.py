@@ -25,7 +25,7 @@ with sync_playwright() as p:
   page.keyboard.press('Escape')
  print('PASS four books and settings at ten desktop viewports',flush=True)
  page.set_viewport_size({'width':1280,'height':720});page.locator('#startBtn').click();page.locator('#beginRun').click();page.wait_for_function("__KEYABYSS__.game.state==='playing'")
- page.evaluate("()=>{const g=__KEYABYSS__.game;g.player.invuln=999;g.spawnClock=999;g.enemies=[];g.combo=100;g.comboTimer=999;g.emit('hud');}")
+ page.evaluate("()=>{const g=__KEYABYSS__.game;g.player.invuln=999;g.spawnClock=999;g.enemies=[];g.combo=100;g.emit('hud');}")
  for w,h in SIZES[:7]:
   page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(60)
   for a,c in [('.health-block','.chapter-block'),('.health-block','.combat-side'),('.defense-readout','#castBox'),('.level-block','#castBox'),('.ultimate-block','#castBox')]:assert disjoint(rect(a),rect(c)),(w,h,a,c,rect(a),rect(c))

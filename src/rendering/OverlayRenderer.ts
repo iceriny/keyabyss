@@ -304,10 +304,10 @@ export class OverlayRenderer {
       c.textAlign = "left";
       c.textBaseline = "middle";
       c.fillStyle = col;
-      c.fillText(t.word, l.x + 12, l.y + l.h / 2 + 0.5);
+      c.fillText(t.word, l.x + 12, l.y + (l.font + 13) / 2 + 0.5);
       if (this.frame.prefix && t.word.startsWith(this.frame.prefix)) {
         c.fillStyle = locked ? "#79d5b9" : "#6ba69b";
-        c.fillText(this.frame.prefix, l.x + 12, l.y + l.h / 2 + 0.5);
+        c.fillText(this.frame.prefix, l.x + 12, l.y + (l.font + 13) / 2 + 0.5);
       }
       if (locked) {
         c.fillStyle = "#ffe0a1";
@@ -315,7 +315,12 @@ export class OverlayRenderer {
         const textW = this.textWidth(c, this.frame.prefix);
         const nextW = this.textWidth(c, t.word[this.frame.prefix.length] || "");
         c.fillStyle = "#e5c990";
-        c.fillRect(l.x + 12 + textW, l.y + l.h - 4, nextW, 1.5);
+        c.fillRect(l.x + 12 + textW, l.y + l.font + 9, nextW, 1.5);
+      }
+      if (l.meaningText) {
+        c.font = canvasFont(12, 600);
+        c.fillStyle = locked ? "#c6bba4" : "#8b9e9f";
+        c.fillText(l.meaningText, l.x + 12, l.y + l.font + 20);
       }
       c.textBaseline = "alphabetic";
     }

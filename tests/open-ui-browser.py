@@ -18,7 +18,7 @@ with sync_playwright() as p:
     page.locator('#startBtn').click();page.locator('#beginRun').click()
     page.wait_for_function("__KEYABYSS__.game.state==='playing'")
     page.emulate_media(reduced_motion='no-preference')
-    page.evaluate('''()=>{const g=__KEYABYSS__.game;g.enemies=[];g.spawnClock=999;g.nodeClock=999;g.comboTimer=999;g.player.invuln=100;g.player.hp=72;g.player.shield=30;g.emit('hud');}''')
+    page.evaluate('''()=>{const g=__KEYABYSS__.game;g.enemies=[];g.spawnClock=999;g.nodeClock=999;g.player.invuln=100;g.player.hp=72;g.player.shield=30;g.emit('hud');}''')
     shield=page.locator('#hud [role=progressbar][aria-label=护盾]')
     assert shield.get_attribute('aria-valuenow')=='30'
     assert shield.get_attribute('aria-valuemax')=='60'
@@ -70,7 +70,7 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT/'stable-history.png'))
     page.keyboard.press('Escape');page.locator('[data-command=home]').click()
     page.emulate_media(reduced_motion='reduce')
-    page.evaluate('''()=>{const g=__KEYABYSS__.game;g.start(g.config);g.combo=80;g.comboTimer=999;g.pending=1;g.upgradeAt=g.time-1;g.postCombat();}''')
+    page.evaluate('''()=>{const g=__KEYABYSS__.game;g.start(g.config);g.combo=80;g.pending=1;g.upgradeAt=g.time-1;g.postCombat();}''')
     page.locator('.upgrade-companion').wait_for()
     assert page.locator('.upgrade-companion').evaluate('e=>getComputedStyle(e).animationName')=='none'
     assert page.locator('.companion-book > i').first.evaluate('e=>getComputedStyle(e).display')=='none'
