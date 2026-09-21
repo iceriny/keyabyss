@@ -1,4 +1,5 @@
 import { counterWorldDelta, dodgeDirection } from "../shared/defense.ts";
+import { APP_VERSION } from "../shared/version.ts";
 import { enemyInCombat } from "../shared/arena.ts";
 import * as FlameSystem from "./systems/FlameSystem.ts";
 import * as EffectExecutor from "./systems/EffectExecutor.ts";
@@ -466,7 +467,7 @@ export class CombatSimulation {
       hp: Math.max(0, this.player.hp),
       maxHp: this.player.maxHp,
       godMode: this.godMode,
-      version: "0.6.2",
+      version: APP_VERSION,
       win,
       chapter: this.chapter + 1,
       stage: this.activeStage,

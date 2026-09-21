@@ -11,6 +11,13 @@ function store() {
 function report() {
   const g = createGame(); let r; g.events.result = value => r=value; g.end(false); return r;
 }
+test('new reports use the package version while archived reports retain their original version', () => {
+  const r = report();
+  assert.equal(r.version, require('../package.json').version);
+  const { data, storage } = store();
+  data.set('keyabyss.history', JSON.stringify([{ ...r, version: '0.6.2' }]));
+  assert.equal(readRunArchive(storage).records[0].version, '0.6.2');
+});
 test('all eight approach sectors stay within the perimeter and span overlapping 110-degree arcs', () => {
   const arena = { l:-220, r:1500, t:-180, b:980 };
   for(let direction=0; direction<8; direction++) for(const spread of [0,.5,.99999]) {

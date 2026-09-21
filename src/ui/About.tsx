@@ -1,10 +1,12 @@
+import { APP_VERSION } from "../shared/version.ts";
+
 export function About() {
   return (
     <section className="settings-about" aria-labelledby="about-heading" data-plain-text>
       <h3 id="about-heading">关于</h3>
       <p>键渊：失控咒典 · 词令共鸣</p>
       <dl>
-        <dt>版本</dt><dd>{__APP_VERSION__}</dd>
+        <dt>版本</dt><dd>{APP_VERSION}</dd>
         <dt>作者</dt><dd>Iceriny</dd>
         <dt>GitHub</dt><dd><a data-nav-order={110} href="https://github.com/iceriny/keyabyss" target="_blank" rel="noopener noreferrer">github.com/iceriny/keyabyss</a></dd>
         <dt>邮箱</dt><dd><a data-nav-order={111} href="mailto:serinamisssu@gmail.com">serinamisssu@gmail.com</a></dd>
