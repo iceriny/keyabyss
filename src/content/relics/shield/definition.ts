@@ -4,7 +4,7 @@ export default {
   id: "shield",
   name: "残句书签",
   tag: "生存",
-  icon: "▱",
+  icon: "shield",
   desc: "输入中的目标被连锁或纸灵击杀，转化为 10 点护盾。",
   max: 1,
   affinity: [],

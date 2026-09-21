@@ -1,5 +1,6 @@
 import "./assets.mjs";
 import "./bundle-vocab.mjs";
+import "./font-assets.mjs";
 import { spawnSync } from 'node:child_process';
 import { build } from "vite";
 import fs from "node:fs";
@@ -35,10 +36,38 @@ for (const file of fs.readdirSync(publicAssets))
     fs.unlinkSync(path.join(publicAssets, file));
 fs.writeFileSync(path.join(publicAssets, nativeName), nativeCode);
 process.env.VITE_BATTLE_RENDERER = `./assets/${nativeName}`;
-await build({ root });
+// Separate classic bundles keep the preflight small and retain file:// support.
 const output = path.join(root, "dist");
+if (path.resolve(output) !== path.resolve(root, "dist")) throw Error("Invalid release directory");
+fs.rmSync(output, { recursive: true, force: true });
+fs.mkdirSync(path.join(output, "assets"), { recursive: true });
+const generatedFiles = [];
+function artifact(stem, extension, contents) {
+  const file = `assets/${stem}-${createHash("sha256").update(contents).digest("hex").slice(0,8)}.${extension}`;
+  fs.writeFileSync(path.join(output, file), contents);
+  generatedFiles.push(file);
+  return `./${file}`;
+}
+async function bundle(entry, name, define = {}) {
+  const result = await build({
+    configFile: false, root, publicDir: false, define,
+    build: { target: "es2022", write: false, minify: true,
+      lib: { entry: path.join(root, entry), name, formats: ["iife"] } },
+  });
+  return (Array.isArray(result) ? result[0] : result).output;
+}
+const game = await bundle("src/main.tsx", "KeyAbyssGame", { "process.env.NODE_ENV": JSON.stringify("production") });
+const gameScript = artifact("game", "js", game.find(item => item.type === "chunk").code);
+const gameStyle = artifact("game", "css", game.find(item => item.type === "asset" && item.fileName.endsWith(".css")).source);
+const boot = await bundle("src/bootstrap/preflight.ts", "KeyAbyssPreflight", {
+  __GAME_SCRIPT__: JSON.stringify(gameScript), __GAME_STYLE__: JSON.stringify(gameStyle),
+});
+const bootScript = artifact("preflight", "js", boot.find(item => item.type === "chunk").code);
+const bootStyle = artifact("preflight", "css", fs.readFileSync(path.join(root, "src/bootstrap/preflight.css")));
 const source = path.join(output, "index.html");
-let html = fs.readFileSync(source, "utf8");
+let html = fs.readFileSync(path.join(root, "index.html"), "utf8")
+  .replace('/src/bootstrap/preflight.css', bootStyle)
+  .replace('<script type="module" src="/src/bootstrap/preflight.ts"></script>', `<script defer src="${bootScript}"></script>`);
 const licenses = [
   "LICENSE",
   "licenses/Qwerty-Learner-GPL-3.0.txt",
@@ -60,15 +89,10 @@ const legal = licenses
       `=== ${file} ===\n${fs.readFileSync(path.join(root, file), "utf8")}`,
   )
   .join("\n\n");
-html = html.replace(
-  "</body>",
-  () =>
-    `<script type="text/plain" id="third-party-licenses">${legal.replace(/<\/script/gi, "<\\/script")}</script></body>`,
-);
-if (/<script\b[^>]*\bsrc=|<link\b[^>]*rel="stylesheet"/i.test(html))
-  throw Error(
-    "The bootstrap must be self-contained; dictionaries load on demand",
-  );
+// License notices remain in the distribution without inflating the first document.
+fs.writeFileSync(path.join(output, "THIRD-PARTY-LICENSES.txt"), legal);
+generatedFiles.push("THIRD-PARTY-LICENSES.txt");
+if (html.includes('/src/') || html.includes('type="module"')) throw Error("Unresolved bootstrap entry");
 fs.writeFileSync(source, html, "utf8");
 const publicRoot = path.join(root, "public");
 function releaseFiles(directory) {
@@ -83,7 +107,13 @@ function releaseFiles(directory) {
     )
     .sort();
 }
-const files = ["index.html", ...releaseFiles(publicRoot)];
+const publicFiles = releaseFiles(publicRoot).filter((file) => !/^font\/.*\.(ttf|otf)$/i.test(file));
+for (const file of publicFiles) {
+  const target = path.join(output, file);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.copyFileSync(path.join(publicRoot, file), target);
+}
+const files = ["index.html", ...generatedFiles, ...publicFiles];
 const actual = releaseFiles(output);
 if (JSON.stringify(actual) !== JSON.stringify([...files].sort()))
   throw Error("Release differs from public asset manifest");
@@ -100,7 +130,7 @@ for (const dictionary of dictionaries) {
 }
 if (!files.includes(`assets/${nativeName}`))
   throw Error("Missing native renderer asset");
-for (const file of files.slice(1)) {
+for (const file of publicFiles) {
   if (
     !fs
       .readFileSync(path.join(publicRoot, file))

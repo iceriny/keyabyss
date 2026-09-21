@@ -18,7 +18,7 @@ export default {
   eyebrow: "FROST GRIMOIRE",
   name: "寒墨之书",
   short: "冰霜",
-  icon: "❄",
+  icon: "frost",
   color: "#8bdeff",
   desc: "重型冰枪 · 冻结碎裂",
   detail:

@@ -6,8 +6,10 @@ const school = (book: string): Book => book === 'storm' || book === 'spirit' || 
 /** Semantic adapter: simulation knows neither Three nor asset filenames. */
 export class Sound extends ThreeAudioSystem implements FeedbackPort {
   ui(kind: UISound) {
-    if (this.ctx?.state === 'suspended') void this.ctx.resume().then(()=>this.play(`ui.${kind}`)).catch(()=>{});
-    else this.play(`ui.${kind}`);
+    const pitch = kind === 'ritualImpact' ? .58 : kind === 'ritualRise' ? .72 : kind === 'book' ? .86 : 1;
+    const play = () => this.play(`ui.${kind}`, undefined, 1, pitch);
+    if (this.ctx?.state === 'suspended') void this.ctx.resume().then(play).catch(()=>{});
+    else play();
   }
   key(n: number, _book: string) { this.play('key', undefined, 1, 1 + Math.min(n,15)*.012); }
   wrong() { this.ui('invalid'); }

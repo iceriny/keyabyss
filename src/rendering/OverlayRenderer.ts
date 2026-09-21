@@ -1,4 +1,7 @@
+import { enemyInCombat } from "../shared/arena.ts";
 import { clamp } from "../shared/math.ts";
+import { canvasFont } from "../shared/typography.ts";
+import { assaultAngle, assaultDirections } from "../shared/assault.ts";
 import { layoutWordLabels } from "./WordLabelLayout.ts";
 import type { Box, Enemy, Label } from "../combat/model.ts";
 import type { OverlayFrame } from "../contracts/overlay-frame.ts";
@@ -30,12 +33,13 @@ export class OverlayRenderer {
     this.textMetrics.clear();
   }
   render(ui: CanvasRenderingContext2D) {
+    this.drawAssaultCompass(ui);
     // Only judgement-critical overlays and text use Canvas. Never uploaded to GPU.
     this.drawTelegraphs(ui);
     this.drawLasers(ui);
     this.drawSafe(ui);
     for (const e of this.frame.enemies)
-      if (!e.dead) {
+      if (!e.dead && enemyInCombat(this.frame.arena, e)) {
         this.drawEnemyStatus(ui, e);
         if (!e.boss && e.hp < e.maxHp) {
           ui.fillStyle = "#162027";
@@ -55,7 +59,7 @@ export class OverlayRenderer {
           t = 1 - alpha;
         ui.save();
         ui.globalAlpha = alpha;
-        ui.font = `700 ${f.size * (1 + Math.sin(Math.min(1, t * 5) * Math.PI) * 0.22)}px Consolas,monospace`;
+        ui.font = canvasFont(f.size * (1 + Math.sin(Math.min(1, t * 5) * Math.PI) * 0.22), 700);
         ui.textAlign = "center";
         ui.lineWidth = 3;
         ui.strokeStyle = "#0a111ce0";
@@ -69,6 +73,44 @@ export class OverlayRenderer {
     this.drawCastPreview(ui);
   }
 
+  drawAssaultCompass(c: CanvasRenderingContext2D) {
+    const f = this.frame;
+    if (f.state !== "playing" && f.state !== "paused") return;
+    c.save();
+    c.translate(f.player.x, f.player.y);
+    const pulse = f.options.reduceMotion ? 0.85 : 0.8 + Math.sin(f.visualTime * 3) * 0.15;
+    const main = f.bossRoom ? null : f.assaultDirection;
+    for (let i = 0; i < 8; i++) {
+      c.save();
+      c.rotate(assaultAngle(i));
+      c.strokeStyle = i === main ? `rgba(239,199,128,${pulse})` : "rgba(170,196,207,0.22)";
+      c.lineWidth = i === main ? 2.5 : 1;
+      c.beginPath(); c.arc(0, 0, 43, -0.16, 0.16); c.stroke();
+      if (i === main) {
+        c.fillStyle = "#f2d29b";
+        c.shadowColor = "#dfae68"; c.shadowBlur = 9;
+        c.beginPath(); c.moveTo(49, 0); c.lineTo(59, -5); c.lineTo(56, 0); c.lineTo(59, 5); c.closePath(); c.fill();
+      }
+      c.restore();
+    }
+    // Brief peripheral warning accompanies off-axis arrivals, without covering target words.
+    for (const enemy of f.enemies) {
+      if (!enemy.ambush || enemy.dead || enemy.age > 3 || enemy.approachDirection == null) continue;
+      c.save(); c.rotate(assaultAngle(enemy.approachDirection));
+      c.globalAlpha = Math.min(1, (3 - enemy.age) * 1.2);
+      c.strokeStyle = "#fa897b"; c.lineWidth = 2.5;
+      c.beginPath(); c.arc(0, 0, 65, -0.17, 0.17); c.stroke();
+      c.beginPath(); c.moveTo(68, -5); c.lineTo(61, 0); c.lineTo(68, 5); c.stroke();
+      c.restore();
+    }
+    if (main !== null) {
+      c.font = canvasFont(11); c.textAlign = "center";
+      c.fillStyle = "#dfc69a"; c.strokeStyle = "#080d17"; c.lineWidth = 3;
+      const label = `${assaultDirections[main]} · 来袭`;
+      c.strokeText(label, 0, 84); c.fillText(label, 0, 84);
+    }
+    c.restore();
+  }
   drawSafe(c: CanvasRenderingContext2D) {
     if (!this.frame.safePoint || this.frame.player.dash < 1) return;
     const p = this.frame.safePoint;
@@ -106,7 +148,7 @@ export class OverlayRenderer {
       c.stroke();
       c.setLineDash([]);
       if (warning) {
-        c.font = "14px monospace";
+        c.font = canvasFont(14);
         c.fillStyle = "#e3ac9d";
         c.textAlign = "center";
         if (l.vertical) c.fillText(l.warning.toFixed(1), l.pos, a.t + 20);
@@ -129,7 +171,7 @@ export class OverlayRenderer {
 
   castPreviewBox(c: CanvasRenderingContext2D) {
     if (!this.frame.prefix) return null;
-    c.font = "600 22px Consolas,'DejaVu Sans Mono',monospace";
+    c.font = canvasFont(22, 600);
     const w = this.textWidth(c, this.frame.prefix) + 35,
       h = 36;
     return {
@@ -150,25 +192,20 @@ export class OverlayRenderer {
     if (!box) return;
     const { x, y, w, h } = box;
     c.save();
-    c.fillStyle = "#091420f5";
-    c.strokeStyle = this.frame.bookData.color;
-    c.lineWidth = 1.5;
-    c.shadowColor = this.frame.bookData.color;
-    c.shadowBlur = 0;
-    c.beginPath();
-    c.roundRect(x, y, w, h, 7);
-    c.fill();
-    c.stroke();
-    c.shadowBlur = 0;
-    c.beginPath();
-    c.moveTo(this.frame.player.x - 4, y + h);
-    c.lineTo(this.frame.player.x, y + h + 5);
-    c.lineTo(this.frame.player.x + 4, y + h);
-    c.fill();
-    c.font = "600 22px Consolas,'DejaVu Sans Mono',monospace";
+    const shade = c.createRadialGradient(x+w/2, y+h/2, 0, x+w/2, y+h/2, w/2+16);
+    shade.addColorStop(0, "#07111dcc"); shade.addColorStop(1, "#07111d00");
+    c.fillStyle = shade;
+    c.fillRect(x-16, y-12, w+32, h+24);
+    const line = c.createLinearGradient(x,0,x+w,0);
+    line.addColorStop(0,"transparent"); line.addColorStop(.5,this.frame.bookData.color); line.addColorStop(1,"transparent");
+    c.strokeStyle = line; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(x, y+h); c.lineTo(x+w, y+h); c.stroke();
+    c.font = canvasFont(22, 600);
     c.fillStyle = "#f3fbff";
     c.textBaseline = "middle";
     c.textAlign = "left";
+    c.strokeStyle = "#06101ce6"; c.lineWidth = 3;
+    c.strokeText(this.frame.prefix, x + 12, y + h / 2);
     c.fillText(this.frame.prefix, x + 12, y + h / 2);
     if (
       this.frame.options.reduceMotion ||
@@ -234,7 +271,7 @@ export class OverlayRenderer {
 
   drawLabels(c: CanvasRenderingContext2D) {
     const labels = layoutWordLabels(this.frame, (word, font) => {
-      c.font = `600 ${font}px Consolas,'DejaVu Sans Mono',monospace`;
+      c.font = canvasFont(font, 600);
       return this.textWidth(c, word);
     });
     this.labels = labels;
@@ -263,7 +300,7 @@ export class OverlayRenderer {
       c.roundRect(l.x, l.y, l.w, l.h, 6);
       c.fill();
       c.stroke();
-      c.font = `600 ${l.font}px Consolas,'DejaVu Sans Mono',monospace`;
+      c.font = canvasFont(l.font, 600);
       c.textAlign = "left";
       c.textBaseline = "middle";
       c.fillStyle = col;
@@ -304,7 +341,7 @@ export class OverlayRenderer {
       c.arc(0, 0, b.r, -Math.PI / 2, -Math.PI / 2 + TAU * ratio);
       c.stroke();
       c.fillStyle = "#f8bea8";
-      c.font = "15px monospace";
+      c.font = canvasFont(15);
       c.textAlign = "center";
       c.fillText(b.warning > 0 ? "!" : "", 0, 5);
       c.restore();
@@ -385,7 +422,7 @@ export class OverlayRenderer {
     }
     if (e.burn && e.burn.life > 0) {
       c.fillStyle = "#ffd090";
-      c.font = "bold 13px Consolas,monospace";
+      c.font = canvasFont(13, 700);
       c.textAlign = "center";
       c.fillText(`灼烧 ${e.burn.stacks}`, 0, e.r + (e.elite ? 44 : 25));
     }
@@ -432,7 +469,7 @@ export class OverlayRenderer {
       c.arc(0, 0, e.r + 7, 0, TAU);
       c.stroke();
       c.setLineDash([]);
-      c.font = "14px sans-serif";
+      c.font = canvasFont(14);
       c.textAlign = "center";
       c.fillStyle = data.color;
       c.fillText(data.name, 0, e.r + 27);

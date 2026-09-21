@@ -1,4 +1,4 @@
-import { inClearArena } from "../../shared/arena.ts";
+import { enemyInCombat } from "../../shared/arena.ts";
 import type { BossDefinition } from "../../contracts/content.ts";
 import type { Arena, Enemy } from "../../combat/model.ts";
 import type { CombatRuntime } from "../Runtime.ts";
@@ -14,7 +14,7 @@ export function limitBossDamage(
     enemies.some(
       (e) =>
         !e.dead &&
-        inClearArena(arena, e) &&
+        enemyInCombat(arena, e) &&
         definition.shieldUnits.includes(e.type),
     )
   )

@@ -14,10 +14,10 @@ test('wrong keys preserve progress, shared-prefix alternatives resolve without a
  const g=isolate(game(['cat','cow'])),a=g.spawnEnemy('guard',400,300),b=g.spawnEnemy('guard',650,300);a.word='cat';b.word='cow';g.target=a;g.input('c');g.input('o');assert.equal(g.target,b);assert.equal(g.prefix,'co');assert.equal(g.errors,0);g.input('x');assert.equal(g.prefix,'co');assert.equal(g.errors,1);g.input('Backspace');assert.equal(g.prefix,'');
 });
 test('Tab cycles matching prefixes without erasing input',()=>{
- const g=isolate(game(['cat','cow','bird'])),a=g.spawnEnemy('guard'),b=g.spawnEnemy('guard');a.word='cat';b.word='cow';g.target=a;g.input('c');g.input('Tab');assert.equal(g.target,b);assert.equal(g.prefix,'c');
+ const g=isolate(game(['cat','cow','bird'])),a=g.spawnEnemy('guard',400,300),b=g.spawnEnemy('guard',650,300);a.word='cat';b.word='cow';g.target=a;g.input('c');g.input('Tab');assert.equal(g.target,b);assert.equal(g.prefix,'c');
 });
 test('directed dash travels over time, retains text and consumes exactly one charge',()=>{
- const g=game(['class']);g.input('c');const e=g.target,x=g.player.x;g.input('ArrowRight');g.input(' ');assert.equal(g.player.x,x);assert.equal(g.player.dash,1);assert.ok(g.player.dashState);step(g,.04);assert.ok(g.player.x>x&&g.player.x<x+173);step(g,.2);assert.equal(g.player.dashState,null);assert.equal(g.target,e);assert.equal(g.prefix,'c');g.releaseKey('ArrowRight');
+ const g=isolate(game(['class']));g.spawnEnemy('guard',640,300);g.input('c');const e=g.target,x=g.player.x;g.input('ArrowRight');g.input(' ');assert.equal(g.player.x,x);assert.equal(g.player.dash,1);assert.ok(g.player.dashState);step(g,.04);assert.ok(g.player.x>x&&g.player.x<x+173);step(g,.2);assert.equal(g.player.dashState,null);assert.equal(g.target,e);assert.equal(g.prefix,'c');g.releaseKey('ArrowRight');
 });
 test('perfect dodge is risk-triggered, not awarded on every safe dash',()=>{
  const g=isolate(game());g.input("ArrowRight");g.dodge();assert.equal(g.perfectDodges,0);step(g,.25);g.bullets=[];g.bullet(g.player.x+35,g.player.y,Math.PI,100,'#ffaaaa');g.dodge();assert.equal(g.perfectDodges,1);assert.ok(g.resonance>=20);

@@ -4,7 +4,7 @@ export default {
   id: "heal",
   name: "生命页签",
   tag: "恢复",
-  icon: "✚",
+  icon: "heal",
   desc: "最大生命增加 20，并立即回复 30 点生命。",
   max: 2,
   affinity: [],

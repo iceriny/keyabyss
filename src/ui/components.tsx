@@ -138,15 +138,20 @@ export function Modal({
   children,
   onBack,
   wide = false,
+  variant = "",
+  effects,
 }: {
   title: string;
   children: ReactNode;
   onBack?: () => void;
   wide?: boolean;
+  variant?: string;
+  effects?: ReactNode;
 }) {
   return (
     <GameText>
-      <div className="modal" id="modal">
+      <div className={`modal ${variant}`} id="modal">
+        {effects}
         <section
           className={`modal-panel ${wide ? "wide" : ""}`}
           data-menu-root
@@ -409,7 +414,7 @@ export function Select({
               >
                 <span>{o.label}</span>
                 <small>{o.detail}</small>
-                {value === o.value && <b>✓</b>}
+                {value === o.value && <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8L6 11L13 4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>}
               </div>
             ))}
           </div>

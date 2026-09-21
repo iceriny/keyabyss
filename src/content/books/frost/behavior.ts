@@ -55,14 +55,16 @@ const behavior: BookBehavior = {
         x: 200 + ctx.rng() * 850,
         y: 230 + ctx.rng() * 320,
       });
-      if (e)
+      if (e) {
+        const angle = ctx.rng() * Math.PI * 2;
         ctx.launchShot(
-          { x: e.x - 110, y: e.y - 240 },
+          { x: e.x + Math.cos(angle) * 264, y: e.y + Math.sin(angle) * 264 },
           e,
           "ice",
           30 * ctx.damageMultiplier(),
           { direct: false, depth: 1, pierce: 1, empowered: true },
         );
+      }
       ctx.ultTick = ctx.stats.empoweredFreeze ? 0.13 : 0.25;
     }
   },

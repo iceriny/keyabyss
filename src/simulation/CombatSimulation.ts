@@ -1,5 +1,5 @@
 import { counterWorldDelta, dodgeDirection } from "../shared/defense.ts";
-import { inClearArena } from "../shared/arena.ts";
+import { enemyInCombat } from "../shared/arena.ts";
 import * as FlameSystem from "./systems/FlameSystem.ts";
 import * as EffectExecutor from "./systems/EffectExecutor.ts";
 import type { WorldState } from "./Runtime.ts";
@@ -53,7 +53,7 @@ export class CombatSimulation {
     this.emit("hud");
   }
   canEnemyAct(enemy: Enemy) {
-    return !enemy.dead && inClearArena(this.arena, enemy);
+    return !enemy.dead && enemyInCombat(this.arena, enemy);
   }
   applyBurn = FlameSystem.applyBurn;
   igniteExplosion = FlameSystem.igniteExplosion;
@@ -105,6 +105,9 @@ export class CombatSimulation {
     return behavior;
   }
   waveCount = 3;
+  assaultDirection = 0;
+  runId = "";
+  private activeStage = 0;
   routeOffers: readonly import("../contracts/content.ts").RouteDefinition[] =
     [];
   routeDestinations: Record<string, number> = {};
@@ -178,6 +181,7 @@ export class CombatSimulation {
   }
 
   start(config: Config) {
+    this.runId = globalThis.crypto?.randomUUID?.() ?? `run-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     this.domainEvents.reset();
     this.presentationCues.reset();
     this.roomVisit = 0;
@@ -266,7 +270,10 @@ export class CombatSimulation {
     this.beginRoom({ type: "normal" });
   }
 
-  beginRoom = EncounterDirector.beginRoom;
+  beginRoom(route?: import("../contracts/game.ts").Route) {
+    this.activeStage = this.stage;
+    EncounterDirector.beginRoom.call(this, route);
+  }
   updateEncounter = EncounterDirector.updateEncounter;
   finishEncounter = EncounterDirector.finishEncounter;
 
@@ -438,16 +445,36 @@ export class CombatSimulation {
     this.emit("resume");
   }
 
-  end(win: boolean) {
+  end(win: boolean, reason: "defeat" | "abandoned" = "defeat") {
+    if (this.state === "result" || this.state === "home") return;
     this.lastWin = win;
     this.cancel(false);
     this.setState("result");
     this.sound.result(win);
     this.emit("result", {
+      schemaVersion: 2,
+      runId: this.runId,
+      settlementId: `${this.runId}:${this.loopCount}`,
+      endedAt: new Date().toISOString(),
+      outcome: win ? "victory" : reason,
+      chapterName: this.content.chapters[this.chapter].name,
+      room: this.roomNumber + 1,
+      roomCount: this.campaign.at(this.activeStage).definition.rooms.length,
+      roomId: this.campaign.at(this.activeStage).room.id,
+      bossRoom: this.bossRoom,
+      bossName: this.bossRoom ? this.bossName : undefined,
+      bossPhase: this.boss?.phase,
+      wave: this.wave,
+      waveCount: this.waveCount,
+      level: this.level,
+      damage: Math.round(this.totalDamage),
+      hp: Math.max(0, this.player.hp),
+      maxHp: this.player.maxHp,
+      godMode: this.godMode,
       version: "0.6.0",
       win,
       chapter: this.chapter + 1,
-      stage: this.stage,
+      stage: this.activeStage,
       loop: this.loopCount,
       kills: this.kills,
       casts: this.casts,
@@ -465,7 +492,7 @@ export class CombatSimulation {
       wallHits: this.wallHits,
       overloads: this.overloads,
       relics: { ...this.relics },
-      words: { ...this.wordStats },
+      words: Object.fromEntries(Object.entries(this.wordStats).map(([word, stat]) => [word, { ...stat }])),
       seed: this.config.seed,
       book: this.book,
       mode: this.config.mode,

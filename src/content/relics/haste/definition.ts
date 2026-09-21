@@ -4,7 +4,7 @@ export default {
   id: "haste",
   name: "共鸣墨晶",
   tag: "终式",
-  icon: "✦",
+  icon: "haste",
   desc: "完词获得的共鸣提高35%。",
   max: 1,
   affinity: [],

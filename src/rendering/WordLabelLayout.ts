@@ -1,3 +1,4 @@
+import { enemyInCombat } from "../shared/arena.ts";
 import type { CombatTarget, Label } from "../combat/model.ts";
 import type { OverlayFrame } from "../contracts/overlay-frame.ts";
 import { clamp } from "../shared/math.ts";
@@ -27,7 +28,7 @@ export function layoutWordLabels(
 ): Label[] {
   const base = frame.options.largeText ? 26 : 22;
   const labels = frame.targets
-    .filter((t) => !t.dead)
+    .filter((t) => !t.dead && (t.kind || enemyInCombat(frame.arena, t)))
     .map((target) => {
       const font = Math.max(
         16,

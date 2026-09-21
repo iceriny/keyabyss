@@ -4,7 +4,7 @@ export default {
   id: "shatter",
   name: "冰裂残页",
   tag: "冰霜",
-  icon: "✧",
+  icon: "shatter",
   desc: "冻结敌人死亡时爆裂，范围伤害提高，最多连锁三层。",
   max: 2,
   affinity: ["frost"],

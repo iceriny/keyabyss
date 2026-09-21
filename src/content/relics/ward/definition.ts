@@ -4,7 +4,7 @@ export default {
   id: "ward",
   name: "护页结界",
   tag: "生存",
-  icon: "⬡",
+  icon: "ward",
   desc: "每完成5词获得12点护盾，护盾最多60。",
   max: 2,
   affinity: [],

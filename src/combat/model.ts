@@ -73,6 +73,10 @@ interface TargetBase extends Point, Word {
   phaseLock: number;
 }
 export interface Enemy extends TargetBase {
+  /** Acquired by player targeting in the clear arena; retained until death. */
+  combatLocked?: boolean;
+  approachDirection?: number;
+  ambush?: boolean;
   burn?: {
     life: number;
     stacks: number;

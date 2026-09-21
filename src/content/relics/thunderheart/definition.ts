@@ -4,7 +4,7 @@ export default {
   id: "thunderheart",
   name: "永昼雷章",
   tag: "觉醒",
-  icon: "☀",
+  icon: "thunderheart",
   desc: "雷鸣终章延长3秒；期间每次完词额外落下两道雷击，命中回复少量护盾。",
   max: 1,
   book: "storm",

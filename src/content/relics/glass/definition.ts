@@ -4,7 +4,7 @@ export default {
   id: "glass",
   name: "玻璃书封",
   tag: "诅咒",
-  icon: "♛",
+  icon: "glass",
   desc: "施法与纸灵伤害提高45%，受到的伤害也提高30%。",
   max: 1,
   rarity: "curse",

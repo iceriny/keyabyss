@@ -20,7 +20,7 @@ export function useUIAudio(game: SessionView | null, entered: boolean, depth: nu
       if (!target || event instanceof PointerEvent && target.contains(event.relatedTarget as Node | null)) return;
       game.playUISound('focus');
     };
-    const select = (event: Event) => { if (button(event.target)) { game.unlockAudio(); game.playUISound('select'); } };
+    const select = (event: Event) => { const target = button(event.target); if (target) { game.unlockAudio(); if (!target.dataset.book) game.playUISound('select'); } };
     document.addEventListener('pointerover', focus);
     document.addEventListener('focusin', focus);
     document.addEventListener('click', select, true);

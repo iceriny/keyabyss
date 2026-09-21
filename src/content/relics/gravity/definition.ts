@@ -4,7 +4,7 @@ export default {
   id: "gravity",
   name: "引力墨核",
   tag: "控场",
-  icon: "⊙",
+  icon: "gravity",
   desc: "直接施法命中时，牵引附近敌人靠近落点，便于穿透与连锁。",
   max: 1,
   affinity: [],

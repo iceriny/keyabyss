@@ -14,7 +14,7 @@ export function useMenuScene(
     if (!game || !root.current) return;
     const element = root.current,
       media = matchMedia("(prefers-reduced-motion: reduce)");
-    let pending = 0;
+    let pending = 0, tracking = 0;
     const measure = () => {
       const anchors: MenuAnchor[] = [];
       const hero = element.querySelector<HTMLElement>(".hero-art");
@@ -46,10 +46,15 @@ export function useMenuScene(
         anchors,
         reduced: reduced || media.matches,
       });
+      if (performance.now() < tracking) pending = requestAnimationFrame(measure);
     };
     const schedule = () => {
       cancelAnimationFrame(pending);
       pending = requestAnimationFrame(measure);
+    };
+    const track = () => {
+      tracking = performance.now() + 1300;
+      schedule();
     };
     const observer = new ResizeObserver(schedule);
     observer.observe(element);
@@ -60,6 +65,8 @@ export function useMenuScene(
     media.addEventListener("change", schedule);
     // Re-measure after the existing entrance transform has settled.
     element.addEventListener("animationend", schedule);
+    element.addEventListener("transitionend", schedule);
+    element.addEventListener("transitionrun", track);
     schedule();
     return () => {
       cancelAnimationFrame(pending);
@@ -68,6 +75,8 @@ export function useMenuScene(
       window.removeEventListener("scroll", schedule, true);
       media.removeEventListener("change", schedule);
       element.removeEventListener("animationend", schedule);
+      element.removeEventListener("transitionend", schedule);
+      element.removeEventListener("transitionrun", track);
       game.setMenuScene(null);
     };
   }, [game, color, school, reduced]);

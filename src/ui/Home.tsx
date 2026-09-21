@@ -3,7 +3,7 @@ import { BookArtwork } from "./BookArtwork";
 import { MagicPattern } from "./MagicPattern";
 import { useMenuScene } from "./useMenuScene";
 import type { SessionView } from "../contracts/session.ts";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import type {
   BookId,
   ModeId,
@@ -34,22 +34,30 @@ export function Home({
   onBook: (id: BookId) => void;
   settings: Settings;
   onDeploy: () => void;
-  onOpen: (name: "vocab" | "codex" | "help" | "settings") => void;
+  onOpen: (name: "vocab" | "codex" | "help" | "settings" | "history") => void;
 }) {
   const b = C.BOOKS[book],
     copy = [b.headline, b.subtitle, b.eyebrow];
+  const bookIds = Object.keys(C.BOOKS);
+  const [orbit, setOrbit] = useState({ book, turn: bookIds.indexOf(book) });
+  if (orbit.book !== book) {
+    const count = bookIds.length;
+    const delta = bookIds.indexOf(book) - bookIds.indexOf(orbit.book);
+    const shortest = ((delta + count * 1.5) % count) - count / 2;
+    setOrbit({ book, turn: orbit.turn + shortest });
+  }
   const root = useMenuScene(game, b.color, book, settings.reduceMotion);
   return (
     <GameText>
       <main
         id="home"
         ref={root}
-        className="home-screen"
+        className="home-screen ritual-home"
         data-menu-root
         style={{ "--school": b.color } as CSSProperties}
       >
         <div className="game-title">
-          <span className="edition">KEYABYSS / 04</span>
+          <span className="edition">KEYABYSS / THE SEALED ARCHIVE</span>
           <h1>
             键<span>渊</span>
           </h1>
@@ -62,16 +70,18 @@ export function Home({
             reduced={settings.reduceMotion}
             density={settings.fx}
           />
-          <BookArtwork key={book} book={b} className="hero-book" decorative />
-          <div className="hero-caption">
+          <div className="archive-floor" />
+          <div className="archive-beam" />
+          <div className="hero-caption" key={book} aria-live="polite">
             <span>{copy[2]}</span>
             <h2>{copy[0]}</h2>
             <p>{copy[1]}</p>
+            <small>{b.desc}</small>
           </div>
         </div>
         <section className="book-selection" aria-label="选择咒典">
           <div className="section-label">
-            <span>选择咒典</span>
+            <span>封 印 书 库 <small>触碰法书 · 唤醒共鸣</small></span>
             <span>
               0{Object.keys(C.BOOKS).indexOf(book) + 1} /{" "}
               {String(Object.keys(C.BOOKS).length).padStart(2, "0")}
@@ -79,7 +89,11 @@ export function Home({
           </div>
           <div className="book-grid">
             {(Object.entries(C.BOOKS) as [BookId, typeof b][]).map(
-              ([id, item], i) => (
+              ([id, item], i) => {
+                const count = Object.keys(C.BOOKS).length;
+                const angle = (i - Object.keys(C.BOOKS).indexOf(book)) * Math.PI * 2 / count;
+                const depth = (Math.cos(angle) + 1) / 2;
+                return (
                 <ChoiceCard
                   key={id}
                   word={item.command}
@@ -89,15 +103,23 @@ export function Home({
                     <>
                       <MagicPattern school={id} className="card-pattern" />
                       <BookArtwork book={item} decorative />
+                      <span className="book-aura" />
+                      <span className="book-satellites">
+                        {Array.from({ length: 12 }, (_, n) => <i key={n} style={{ "--spark": n } as CSSProperties} />)}
+                      </span>
+                      {book === id && <span key={id} className="book-resonance" />}
                     </>
                   }
                   title={item.name}
-                  description={item.desc}
                   selected={book === id}
-                  onClick={() => onBook(id)}
-                  style={{ "--card-color": item.color } as CSSProperties}
+                  onClick={() => { if (book !== id) { game?.playUISound("book"); onBook(id); } }}
+                  style={{
+                    "--card-color": item.color,
+                    "--orbit-angle": `${(i - orbit.turn) * 360 / count}deg`,
+                    zIndex: Math.round(depth * 10) + 2,
+                  } as CSSProperties}
                 />
-              ),
+              ); },
             )}
           </div>
           <Button
@@ -122,6 +144,9 @@ export function Home({
           </Button>
           <Button word="settings" onClick={() => onOpen("settings")}>
             设置
+          </Button>
+          <Button word="history" onClick={() => onOpen("history")}>
+            远征记录
           </Button>
         </nav>
         <div className="home-controls">
@@ -174,6 +199,7 @@ export function Deployment({
   return (
     <GameText>
       <>
+        <div className="panel-scroll">
         <div className="deployment-grid">
           <Select
             id="vocabSelect"
@@ -221,6 +247,7 @@ export function Deployment({
           value={seed}
           onChange={onSeed}
         />
+        </div>
         <div className="modal-footer">
           <span>三章 · 九场 · 一次全新构筑</span>
           <Button

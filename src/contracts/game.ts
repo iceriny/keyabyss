@@ -74,6 +74,25 @@ export interface RouteInfo {
   loop: number;
 }
 export interface Report {
+  schemaVersion?: 2;
+  runId?: string;
+  settlementId?: string;
+  endedAt?: string;
+  outcome?: "victory" | "defeat" | "abandoned";
+  chapterName?: string;
+  room?: number;
+  roomCount?: number;
+  roomId?: string;
+  bossRoom?: boolean;
+  bossName?: string;
+  bossPhase?: number;
+  wave?: number;
+  waveCount?: number;
+  level?: number;
+  damage?: number;
+  hp?: number;
+  maxHp?: number;
+  godMode?: boolean;
   chapter?: number;
   stage?: number;
   loop?: number;

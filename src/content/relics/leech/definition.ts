@@ -4,7 +4,7 @@ export default {
   id: "leech",
   name: "朱砂印",
   tag: "恢复",
-  icon: "♥",
+  icon: "leech",
   desc: "每完成 6 次咒文恢复 4 点生命。",
   max: 2,
   affinity: [],

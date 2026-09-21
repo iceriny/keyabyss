@@ -33,6 +33,15 @@ void main() {
   if (kind < .5) {
     vec2 uv = vec2(vLocal.x * .5 + .5, .5 - vLocal.y * .5);
     vec4 texel = texture2D(atlas, vAtlas.xy + uv * vAtlas.zw);
+    // Only cold-zone actors pass softness; clear-zone sprites retain one sample.
+    if (vStyle.w > .0001) {
+      vec2 blur = vec2(vStyle.w);
+      texel *= .4;
+      texel += texture2D(atlas, vAtlas.xy + clamp(uv + vec2(blur.x,0.),0.,1.) * vAtlas.zw) * .15;
+      texel += texture2D(atlas, vAtlas.xy + clamp(uv - vec2(blur.x,0.),0.,1.) * vAtlas.zw) * .15;
+      texel += texture2D(atlas, vAtlas.xy + clamp(uv + vec2(0.,blur.y),0.,1.) * vAtlas.zw) * .15;
+      texel += texture2D(atlas, vAtlas.xy + clamp(uv - vec2(0.,blur.y),0.,1.) * vAtlas.zw) * .15;
+    }
     col *= texel;
     if(emissionOnly > .5) col.rgb *= smoothstep(.12, .65, max(texel.r, max(texel.g, texel.b)));
   } else if (kind < 1.5) {

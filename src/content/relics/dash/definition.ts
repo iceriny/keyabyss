@@ -5,7 +5,7 @@ export default {
   id: "dash",
   name: "折叠书页",
   tag: "生存",
-  icon: "➜",
+  icon: "dash",
   desc: "闪避充能恢复加快 28%，充能上限增加 1。",
   max: 1,
   affinity: [],

@@ -1,4 +1,8 @@
+import { FirstVisitSetup } from "./FirstVisitSetup";
 import { GameText } from "./GameText";
+import { readRunArchive, settleRun } from "../application/runArchive.ts";
+import { ResultPanel, HistoryPanel, OutcomeEffects } from "./RunResults.tsx";
+import { storage } from "./storage.ts";
 import { TooltipHost } from "./Tooltip";
 import { StartupGate } from "./StartupGate";
 import { ArcaneCursor } from "./ArcaneCursor";
@@ -30,18 +34,20 @@ import {
 import { Button, KeyboardLayer, Modal, Stat } from "./components";
 import { Home, Deployment } from "./Home";
 import { CodexPanel, HelpPanel, SettingsPanel, VocabPanel } from "./Panels";
-import { HUD, ResultPanel, RoutePanel, UpgradePanel } from "./Battle";
+import { HUD, RoutePanel, UpgradePanel } from "./Battle";
 import { LoadingScreen, type LoadingState } from "./LoadingScreen";
 import { loadVocabulary, paint, prepareBattle } from "../loading";
 
 type Screen =
   | {
       type:
+        | "calibration"
         | "deploy"
         | "vocab"
         | "codex"
         | "help"
         | "settings"
+        | "history"
         | "pause"
         | "quit"
         | "tutorial"
@@ -57,6 +63,7 @@ type Screen =
     }
   | { type: "result"; report: Report };
 const titles: Record<Screen["type"], string> = {
+  calibration: "初入书库 · 调校共鸣",
   deploy: "准备出征",
   vocab: "词库工坊",
   codex: "咒典图鉴",
@@ -69,9 +76,12 @@ const titles: Record<Screen["type"], string> = {
   upgrade: "选择遗物",
   route: "选择下一页",
   result: "未完待续",
+  history: "远征记录",
 };
 
 export function App() {
+  const [archive, setArchive] = useState(() => readRunArchive(storage));
+  const archiveRef = useRef(archive);
   const [entered, setEntered] = useState(false);
   const [arriving, setArriving] = useState(false);
   const [loading, setLoading] = useState<LoadingState | null>(null);
@@ -147,16 +157,10 @@ export function App() {
           ]);
         },
         result(report) {
-          const records = read<Report[]>("history", []);
-          if (
-            !save(
-              "history",
-              [
-                { ...report, words: undefined, date: new Date().toISOString() },
-                ...(Array.isArray(records) ? records : []),
-              ].slice(0, 30),
-            )
-          )
+          const nextArchive = settleRun(archiveRef.current, report);
+          archiveRef.current = nextArchive;
+          setArchive(nextArchive);
+          if (!save("archive", nextArchive))
             toast("存储空间不足，本次战报可手动导出");
           setStack([{ type: "result", report }]);
         },
@@ -184,7 +188,7 @@ export function App() {
     save("prefs", { book, mode, vocab });
   }, [book, mode, vocab]);
   const open = (
-    type: "vocab" | "codex" | "help" | "settings" | "deploy" | "bag" | "quit",
+    type: "vocab" | "codex" | "help" | "settings" | "deploy" | "bag" | "quit" | "history",
   ) => setStack((s) => [...s, { type }]);
   const back = () => {
     if (loading) {
@@ -195,7 +199,7 @@ export function App() {
     if (stack.length > 1) setStack((s) => s.slice(0, -1));
     else if (screen.type === "pause") game?.resume();
     else if (screen.type === "result") game?.home();
-    else if (!["upgrade", "route"].includes(screen.type)) setStack([]);
+    else if (!["upgrade", "route", "calibration"].includes(screen.type)) setStack([]);
   };
   const cancelLoading = () => {
     loadingToken.current++;
@@ -290,6 +294,7 @@ export function App() {
   const playing = state === "playing" && !screen;
   let content = null;
   if (screen) {
+    if (screen.type === "calibration") content = <FirstVisitSetup settings={settings} onChange={value => { game?.unlockAudio(); setSettings(value); }} onFull={full} onDone={() => { save("calibration-complete", true); setStack([]); }} />;
     if (screen.type === "deploy")
       content = (
         <Deployment
@@ -469,8 +474,9 @@ export function App() {
       );
     if (screen.type === "result" && game)
       content = (
-        <ResultPanel report={screen.report} game={game} onRetry={launch} />
+        <ResultPanel report={screen.report} game={game} onRetry={launch} onHistory={() => open("history")} />
       );
+    if (screen.type === "history") content = <HistoryPanel archive={archive} />;
   }
   return (
     <GameText>
@@ -508,6 +514,7 @@ export function App() {
             onContinue={() => {
               setArriving(false);
               setEntered(true);
+              if (!read("calibration-complete", false)) setStack([{ type: "calibration" }]);
             }}
           />
         )}
@@ -526,7 +533,7 @@ export function App() {
             />
           </div>
         )}
-        {game && state !== "home" && (
+        {game && state !== "home" && state !== "result" && (
           <div inert={!!screen || !!loading}>
             <HUD
               game={game}
@@ -542,12 +549,15 @@ export function App() {
         {screen && (
           <div inert={!!loading}>
             <Modal
+              effects={screen.type === "result" ? <OutcomeEffects /> : undefined}
+              variant={screen.type === "result" ? `outcome-modal ${screen.report.win ? "victory" : screen.report.outcome === "abandoned" ? "abandoned" : "defeat"}` : screen.type === "history" ? "history-modal" : ["upgrade", "route"].includes(screen.type) ? "upgrade-modal" : screen.type === "calibration" ? "calibration-modal" : ""}
               title={
-                screen.type === "result" && screen.report.win
-                  ? "终稿已改写"
+                screen.type === "result"
+                  ? screen.report.win ? "终稿已改写" : screen.report.outcome === "abandoned" ? "此行暂落笔" : "墨尽 · 未完待续"
                   : titles[screen.type]
               }
               wide={[
+                "calibration",
                 "vocab",
                 "codex",
                 "help",
@@ -556,9 +566,10 @@ export function App() {
                 "route",
                 "bag",
                 "result",
+                "history",
               ].includes(screen.type)}
               onBack={
-                ["upgrade", "route", "result"].includes(screen.type)
+                ["upgrade", "route", "result", "calibration"].includes(screen.type)
                   ? undefined
                   : back
               }

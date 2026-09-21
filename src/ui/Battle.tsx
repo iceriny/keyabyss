@@ -1,13 +1,16 @@
+import { RelicIcon } from "./RelicIcon";
 import { GameText } from "./GameText";
+import { ComboReadout, UpgradeCompanion, VitalBars } from "./BattleReadouts";
+import { assaultDirections } from "../shared/assault.ts";
 import { BookArtwork } from "./BookArtwork";
 import type { SessionView as Game } from "../contracts/session.ts";
 import { ROUTES } from "../content/catalog.ts";
 import { type CSSProperties } from "react";
 import { Sigil } from "./Sigil";
 import { useGamePulse } from "./useGamePulse";
-import type { Relic, Report, Route } from "../contracts/game.ts";
-import { C, download, fmt } from "./storage";
-import { Button, ChoiceCard, Key, Meter, Stat } from "./components";
+import type { Relic, Route } from "../contracts/game.ts";
+import { C, fmt } from "./storage";
+import { Button, ChoiceCard, Key, Meter } from "./components";
 
 export function HUD({
   game,
@@ -37,13 +40,9 @@ export function HUD({
                 <BookArtwork book={b} decorative />
                 {b.name}
               </strong>
-              <span>
-                {Math.ceil(p.hp)} / {p.maxHp}
-              </span>
             </div>
-            <Meter label="生命" value={p.hp / p.maxHp} />
+            <VitalBars player={p} />
             <div className="hud-secondary">
-              <span>护盾 {Math.ceil(p.shield)}</span>
               <span>
                 闪避 {game.godMode ? "∞" : "◆".repeat(Math.floor(p.dash))}
                 {"◇".repeat(Math.max(0, p.maxDash - Math.floor(p.dash)))}
@@ -66,7 +65,7 @@ export function HUD({
             <span>
               {game.bossRoom
                 ? "守页者之战"
-                : `第 ${game.wave} / ${game.waveCount} 波 · ${game.spawned} / ${game.roomQuota}`}
+                : `第 ${game.wave} / ${game.waveCount} 波 · ${assaultDirections[game.assaultDirection]}侧来袭 · ${game.spawned} / ${game.roomQuota}`}
             </span>
           </div>
           <div className="battle-actions">
@@ -86,19 +85,7 @@ export function HUD({
             <Meter label="守页者生命" value={boss.hp / boss.maxHp} />
           </div>
         )}
-        <div className="combat-side">
-          <strong>{game.combo}</strong>
-          <span>连笔</span>
-          <div className="cadence">
-            {Array.from({ length: b.cycle }, (_, i) => (
-              <i
-                key={i}
-                className={i < game.bookCounter % b.cycle ? "active" : ""}
-              />
-            ))}
-          </div>
-          <span>{b.cadence}</span>
-        </div>
+        <ComboReadout combo={game.combo} counter={game.bookCounter} cycle={b.cycle} cadence={b.cadence} />
         <Button className="build-button" onClick={onBag}>
           构筑 · {Object.keys(game.relics).length}
         </Button>
@@ -211,7 +198,7 @@ export function UpgradePanel({
               data-upgrade={r.id}
               word={r.command ?? r.id}
               shortcut={String(i + 1)}
-              icon={r.icon}
+              icon={<RelicIcon id={r.id} />}
               tag={
                 r.rarity === "awaken"
                   ? "咒典觉醒"
@@ -239,6 +226,7 @@ export function UpgradePanel({
           </Button>
           <span>LV {game.level}</span>
         </div>
+        <UpgradeCompanion game={game} />
       </>
     </GameText>
   );
@@ -268,7 +256,7 @@ export function RoutePanel({
                 word={r.word}
                 shortcut={String(i + 1)}
                 data-route={i}
-                icon={r.icon}
+                icon={<RelicIcon id={r.id} />}
                 title={r.name}
                 description={
                   r.type === "elite"
@@ -288,75 +276,7 @@ export function RoutePanel({
             结束本局
           </Button>
         </div>
-      </>
-    </GameText>
-  );
-}
-export function ResultPanel({
-  report,
-  game,
-  onRetry,
-}: {
-  report: Report;
-  game: Game;
-  onRetry: () => void;
-}) {
-  const mistakes = Object.entries(report.words)
-    .filter(([, s]) => s.errors > 0)
-    .sort((a, b) => b[1].errors - a[1].errors)
-    .slice(0, 12);
-  return (
-    <GameText>
-      <>
-        <div className="stats-grid">
-          <Stat label="击破" value={report.kills} />
-          <Stat label="最高连笔" value={report.maxCombo} />
-          <Stat
-            label="准确率"
-            value={`${(report.accuracy * 100).toFixed(1)}%`}
-          />
-          <Stat label="WPM" value={Math.round(report.wpm)} />
-        </div>
-        <p>
-          {fmt(report.elapsed)} · {report.casts} 次施法 ·{" "}
-          {C.MODES[report.mode].name}
-        </p>
-        <p>
-          {report.vocab} · 种子 {report.seed}
-        </p>
-        {mistakes.length > 0 && (
-          <div className="word-preview">
-            {mistakes.map(([w, s]) => (
-              <span key={w}>
-                {w} · {s.errors} 错
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="modal-footer">
-          <Button word="home" onClick={() => game.home()}>
-            返回书库
-          </Button>
-          <Button
-            word="report"
-            onClick={() => download(report, "keyabyss-report.json")}
-          >
-            导出战报
-          </Button>
-          {report.win ? (
-            <Button
-              word="next"
-              variant="primary"
-              onClick={() => game.continueLoop()}
-            >
-              下一周目 →
-            </Button>
-          ) : (
-            <Button word="retry" variant="primary" onClick={onRetry}>
-              再写一局 →
-            </Button>
-          )}
-        </div>
+        <UpgradeCompanion game={game} />
       </>
     </GameText>
   );

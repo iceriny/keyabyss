@@ -1,0 +1,20 @@
+[
+  {
+    "family": "汇文明朝体",
+    "source": "public/font/汇文明朝体.ttf",
+    "sourceSha256": "1ea5d0450c0d034c3e4077f2b533d74fbd1bf1f14d938477389338e64d3d8d9c",
+    "file": "font/huiwen-ming.woff2",
+    "bytes": 8021356,
+    "sha256": "0416027d2157dba296f2419d9dc0a7515c94d8ef7b22e6e6c9e03e8d91103fee",
+    "glyphs": 13295
+  },
+  {
+    "family": "京華老宋体v3.0",
+    "source": "public/font/京華老宋体v3.0.ttf",
+    "sourceSha256": "f7fef9fc413e9e2343f0bb432c51cca41c44b8fe37f071dc86b050896ae9f9e2",
+    "file": "font/jinghua-song.woff2",
+    "bytes": 19282412,
+    "sha256": "d53ba98d7956e9ac9114c46d23c14d880774aba32dc7c87d7fed981dbc80b5b8",
+    "glyphs": 40223
+  }
+]

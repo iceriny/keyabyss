@@ -4,7 +4,7 @@ export default {
   id: "marionette",
   name: "傀儡纸冠",
   tag: "觉醒",
-  icon: "♜",
+  icon: "marionette",
   desc: "纸灵在飞行中拦截敌弹；击杀标记目标额外获得8点共鸣。",
   max: 1,
   book: "spirit",

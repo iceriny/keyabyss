@@ -27,7 +27,8 @@ export class SessionController implements SessionView {
         get: () => Reflect.get(this.#snapshot, key),
       });
     const hud = game.events.hud,
-      upgrade = game.events.upgrade;
+      upgrade = game.events.upgrade,
+      route = game.events.route;
     const onHud = () => {
       hud?.();
       this.publish();
@@ -37,11 +38,17 @@ export class SessionController implements SessionView {
       this.publish();
       upgrade?.(choices);
     };
+    const onRoute: NonNullable<Game["events"]["route"]> = (info) => {
+      this.publish();
+      route?.(info);
+    };
     game.events.hud = onHud;
     game.events.upgrade = onUpgrade;
+    game.events.route = onRoute;
     this.#release = () => {
       if (game.events.hud === onHud) game.events.hud = hud;
       if (game.events.upgrade === onUpgrade) game.events.upgrade = upgrade;
+      if (game.events.route === onRoute) game.events.route = route;
     };
   }
   private read(): HudSnapshot {
@@ -88,6 +95,7 @@ export class SessionController implements SessionView {
       roomCount: g.roomCount,
       bossRoom: !!g.bossRoom,
       wave: g.wave || 1,
+      assaultDirection: g.assaultDirection,
       waveCount: g.waveCount,
       spawned: g.spawned || 0,
       roomQuota: g.roomQuota || 0,
@@ -153,7 +161,7 @@ export class SessionController implements SessionView {
       case "quit":
         if (!["playing", "paused", "upgrade", "route"].includes(g.state))
           return false;
-        g.end(false);
+        g.end(false, "abandoned");
         break;
       case "continue":
         if (g.state !== "result" || !g.lastWin) return false;

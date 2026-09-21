@@ -1,4 +1,5 @@
 import { clearArena } from "../../shared/arena.ts";
+import { AMBUSH_CHANCE, assaultEntry } from "../../shared/assault.ts";
 import type { EnemyActionContext } from "../../content-sdk/EnemyBehavior.ts";
 
 import { enemyDefaults } from "../../combat/model.ts";
@@ -72,6 +73,7 @@ type Context = Pick<
   | "target"
   | "wallHits"
   | "wave"
+  | "assaultDirection"
   | "wordFor"
 >;
 
@@ -92,20 +94,14 @@ export function spawnEnemy(
     return null;
   const t = this.content.enemies[type] || this.content.enemies.nib,
     w = this.wordFor(!!t.behavior.longWord);
+  let approachDirection: number | undefined;
+  let ambush = false;
   if (x == null) {
-    const side = this.rng();
-    x =
-      side < 0.23
-        ? this.arena.l + 25
-        : side > 0.77
-          ? this.arena.r - 25
-          : this.arena.l +
-            60 +
-            this.rng() * (this.arena.r - this.arena.l - 120);
-    y =
-      side < 0.23 || side > 0.77
-        ? this.arena.t + 70 + this.rng() * (this.arena.b - this.arena.t - 150)
-        : this.arena.t + 28 + this.rng() * 36;
+    ambush = !small && this.rng() < AMBUSH_CHANCE;
+    approachDirection = ambush
+      ? (this.assaultDirection + 1 + Math.floor(this.rng() * 7)) % 8
+      : this.assaultDirection;
+    ({ x, y } = assaultEntry(this.arena, approachDirection, this.rng()));
   }
   y ??= this.arena.t + 28;
   const eliteRoll = this.rng();
@@ -125,6 +121,8 @@ export function spawnEnemy(
     (traits?.health ?? 1);
   const e: Enemy = {
     ...enemyDefaults(),
+    approachDirection,
+    ambush,
     id: ++this.id,
     type,
     countsForClear: t.behavior.countsForClear !== false,

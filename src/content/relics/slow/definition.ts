@@ -4,7 +4,7 @@ export default {
   id: "slow",
   name: "时间书签",
   tag: "控场",
-  icon: "◷",
+  icon: "slow",
   desc: "锁定输入时，敌人与子弹移动速度降低 18%。",
   max: 1,
   affinity: [],

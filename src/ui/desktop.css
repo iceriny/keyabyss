@@ -1,0 +1,50 @@
+/* Desktop viewport layout: fullscreen and windowed use the same available space. */
+.ritual-home { --caption-bottom: clamp(100px,14dvh,170px); --caption-height: 128px; }
+.ritual-home .hero-caption { top: auto; bottom: var(--caption-bottom); height: var(--caption-height); left: 26%; right: 26%; display: flex; flex-direction: column; justify-content: center; gap: 9px; }
+.ritual-home .hero-caption :is(h2,p,small) { margin: 0; }
+.ritual-home .hero-caption small { display: block; }
+.ritual-home .book-grid { top: 19%; bottom: calc(var(--caption-bottom) + var(--caption-height) + 38px); height: auto; left: 18%; right: 18%; }
+.ritual-home .book-grid .choice-card { top: calc(55% + var(--depth) * 45%); width: min(390px,25vw,37dvh); height: min(440px,42dvh); transform: translate(-50%,-100%) scale(var(--book-scale)) rotate(var(--book-tilt)); transform-origin: 50% 100%; }
+.ritual-home .book-grid .choice-card.selected strong { font-size: clamp(28px,2.3vw,38px); }
+.ritual-home .deploy-button { bottom: 26px; }
+.ritual-home .camp-menu { bottom: 32px; gap: 9px; }
+.ritual-home .home-controls { bottom: 32px; max-width: 24%; }
+/* Content-heavy desktop windows keep outer actions visible even below 900px high. */
+.modal .modal-panel { max-height: calc(100dvh - 112px); padding-block: clamp(12px,2.6dvh,30px); }
+.modal-panel .modal-heading { margin-bottom: clamp(12px,2dvh,26px); padding-bottom: 12px; }
+.calibration-modal .first-visit-setup { grid-template-columns: minmax(0,1fr) minmax(330px,450px); gap: clamp(24px,3vw,50px); }
+.upgrade-modal .choice-grid { flex: 0 1 auto; min-height: 0; overflow-y: auto; }
+.upgrade-modal .upgrade-companion { flex: 0 0 auto; }
+#hud .build-button { position: absolute; left: auto; right: 3.5%; }
+#hud .health-block { width: min(260px,22vw); }
+#hud .hud-top { grid-template-columns: minmax(0,1fr) minmax(260px,auto) minmax(0,1fr); }
+#hud .defense-readout { bottom: 160px; }
+@media (max-height: 850px) {
+  .ritual-home .game-title { top: 4%; }
+  .ritual-home .game-title h1 { font-size: 48px; }
+  .ritual-home .camp-menu .button { min-height: 30px; padding-block: 3px; }
+  .modal-panel .modal-heading h2 { font-size: 28px; }
+  .upgrade-companion { min-height: 124px; margin-top: 16px; padding-block: 10px; grid-template-columns: 110px 210px minmax(0,1fr); gap: 22px; }
+  .companion-book,.companion-book > .sigil { width: 110px; height: 110px; }
+  .companion-relics { height: 70px; max-height: 70px; }
+  .companion-vitals > strong { margin-block: 4px 9px; font-size: 19px; }
+  .calibration-scene canvas { height: 30dvh; }
+  .calibration-settings > .modal-footer { margin-top: 10px; padding-top: 8px; }
+  .calibration-settings > .button { margin-top: 8px; }
+  #hud .combat-side { top: 144px; }
+  #hud .boss-hud { top: 112px; }
+}
+@media (max-width: 1200px) {
+  .ritual-home .edition { font-size: 8px; letter-spacing: 1px; }
+  .ritual-home .hero-caption { left: 24%; right: 24%; }
+  .ritual-home .home-controls { font-size: 9px; right: 3%; }
+  .ritual-home .camp-menu { left: 3%; }
+  .ritual-home .camp-menu .button { font-size: 12px; letter-spacing: 1px; }
+  .calibration-modal .modal-panel { padding-inline: 24px; }
+  .first-visit-setup .calibration-settings { min-width: 0; }
+  #hud .chapter-block { font-size: 14px; }
+  #hud .chapter-block > span:last-child { font-size: 12px; }
+  #hud .hud-top { gap: 14px; }
+  #hud .hud-bottom { grid-template-columns: 160px minmax(0,1fr) 200px; gap: 20px; }
+  #hud .level-block { width: 160px; }
+}

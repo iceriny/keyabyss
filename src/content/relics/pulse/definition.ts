@@ -4,7 +4,7 @@ export default {
   id: "pulse",
   name: "段落终结",
   tag: "爆破",
-  icon: "◉",
+  icon: "pulse",
   desc: "每完成 5 次咒文，释放以自身为中心的清弹冲击波。",
   max: 1,
   affinity: [],

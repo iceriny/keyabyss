@@ -3,7 +3,11 @@ const cue = (source: string, spatial: boolean, gain: number, cooldown: number, p
   ({ source, spatial, gain, cooldown, priority, group, limit, variants: [0, 1, 2] });
 // Only these references (and their selected variants) enter the release.
 export const soundCues = {
-  'ui.enter': { ...cue('UIMisc_MENU OPEN LARGE-Arrival_B00M_MUIDS.wav', false, .68, 1.5, 6, 'ui', 1), variants: [0] },
+  'ui.ritualRise': { ...cue('DSGNWhsh_WHOOSH NEUTRAL-Closing In_B00M_MUIDS.wav', false, .52, 1, 6, 'ui', 1), variants: [0], duration: .864 },
+  'ui.ritualImpact': { ...cue('MAGPoof_POOF LARGE LIGHT-Slammer_B00M_MUIDS.wav', false, .95, 1, 7, 'ui', 1), variants: [0], offset: .465, duration: 2.35 },
+  'ui.ritualChime': { ...cue('UIMisc_CONFIRM-Soft Shine_B00M_MUIDS.wav', false, .46, .5, 5, 'ui', 2), variants: [0] },
+  'ui.book': { ...cue('DSGNWhsh_WHOOSH NEUTRAL-Spellbook_B00M_MUIDS.wav', false, .6, .16, 5, 'ui', 2), variants: [0, 1] },
+  'ui.enter': { ...cue('UIMisc_MENU OPEN LARGE-Arrival_B00M_MUIDS.wav', false, .5, 1.5, 6, 'ui', 1), variants: [0], offset: .17 },
   'ui.type': { ...cue('UIClick_FOCUS-Clicker_B00M_MUIDS.wav', false, .24, .018, 2, 'ui', 8), duration: .11 },
   'ui.focus': cue('UIClick_FOCUS-Hover_B00M_MUIDS.wav', false, .24, .08, 1, 'ui', 2),
   'ui.select': cue('UIClick_SELECT-Choice_B00M_MUIDS.wav', false, .48, .08, 4, 'ui'),

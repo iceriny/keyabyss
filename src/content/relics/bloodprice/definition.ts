@@ -4,7 +4,7 @@ export default {
   id: "bloodprice",
   name: "血字契约",
   tag: "诅咒",
-  icon: "契",
+  icon: "bloodprice",
   desc: "施法伤害提高40%；领取时及之后每进入新的一页损失8生命，同一页只扣一次，不会致死。",
   max: 1,
   rarity: "curse",

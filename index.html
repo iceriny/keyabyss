@@ -1,2 +1,19 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="theme-color" content="#080b13"/><title>键渊 · 失控咒典</title><link rel="icon" href="data:,"/></head><body><div id="root"><div id="boot" role="status" aria-live="polite" style="position:fixed;inset:0;display:grid;place-content:center;gap:20px;text-align:center;background:#0b141e;color:#eaf1f4;font:18px 'Segoe UI',sans-serif"><span style="font-size:46px;color:#b3d8df">◇</span><span>正在唤醒咒典</span></div></div><noscript>请启用 JavaScript，并使用实体键盘游玩。</noscript><script type="module" src="/src/main.tsx"></script></body></html>
+<html lang="zh-CN" data-fonts="loading">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#080b13"/><title>键渊 · 失控咒典</title><link rel="icon" href="data:,"/>
+<style>html,body{margin:0;background:#080b13;color:#c5ced9}#boot{font-family:system-ui,sans-serif}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="/src/bootstrap/preflight.css"/>
+</head>
+<body>
+<div id="root"><section id="boot" aria-label="字体准备">
+<div class="boot-mark" aria-hidden="true">✧</div><p class="boot-eyebrow">KEYABYSS / BEFORE THE ARCHIVE</p>
+<div role="status" aria-live="polite"><h1 id="boot-status">正在准备字体</h1><p id="boot-detail">正在连接咒典</p></div>
+<div class="boot-track" aria-hidden="true"><i></i></div>
+<p id="boot-hint">字体完整载入后，才会展开书库。</p>
+<div class="boot-actions"><button id="boot-fullscreen" type="button" hidden>全屏显示(推荐)</button><button id="boot-continue" type="button" hidden disabled>准备中…</button><button id="boot-retry" type="button" hidden>重试</button></div>
+</section></div>
+<noscript>请启用 JavaScript，并使用实体键盘游玩。</noscript>
+<script type="module" src="/src/bootstrap/preflight.ts"></script>
+</body></html>

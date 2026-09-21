@@ -1,3 +1,4 @@
+import { edgeWidth } from "../../shared/arena.ts";
 import { DEFENSE, dodgeDirection } from "../../shared/defense.ts";
 import type { BookAbilityContext } from "../../content-sdk/BookBehavior.ts";
 
@@ -55,45 +56,71 @@ export function findSafe(this: Context) {
     a = this.arena;
   const { x: ax, y: ay } = dodgeDirection(this.aimKeys);
   if (!ax && !ay) {
-    // Fixed candidate count: O(enemies + bullets + hazards), independent of vocabulary size.
-    let best = { x: p.x, y: p.y, manual: false },
-      bestScore = Infinity;
-    for (let i = 0; i < 16; i++) {
-      const angle = -Math.PI / 2 + (i * TAU) / 16;
+    // Predict once per search, then score a bounded set of landing candidates.
+    // Look beyond the 1s invulnerability window instead of chasing empty space now.
+    const horizon = DEFENSE.dodgeInvulnerability + 0.4;
+    const trajectories = this.bullets.filter(b => !b.dead && !b.reflected).map(b => {
+      let x = b.x, y = b.y, vx = b.vx, vy = b.vy;
+      const segments = [];
+      const step = 0.1;
+      for (let t = 0; t < Math.min(horizon, b.life); t += step) {
+        const angle = Math.atan2(vy, vx) + (b.curve || 0) * step;
+        const speed = Math.hypot(vx, vy) * (b.accel && b.age + t < 2 ? Math.pow(b.accel, step) : 1);
+        vx = Math.cos(angle) * speed; vy = Math.sin(angle) * speed;
+        const nx = x + vx * step, ny = y + vy * step;
+        segments.push({ x, y, nx, ny, t }); x = nx; y = ny;
+      }
+      return { radius: b.r + p.r + 12, segments };
+    });
+    const center = { x: (a.l + a.r) / 2, y: (a.t + a.b) / 2 };
+    const margin = edgeWidth(a) + 60;
+    let best = { x: p.x, y: p.y, manual: false }, bestScore = Infinity;
+    for (let i = 0; i < 24; i++) {
+      const angle = -Math.PI / 2 + (i * TAU) / 24;
       const q = {
         x: clamp(p.x + Math.cos(angle) * 172, a.l + 25, a.r - 25),
         y: clamp(p.y + Math.sin(angle) * 164, a.t + 28, a.b - 24),
         manual: false,
       };
       let score = Math.max(0, 150 - dist(p, q)) * 5;
-      for (const e of this.enemies)
-        if (!e.dead) score += 7000 / Math.max(8, dist(q, e) - e.r);
-      for (const b of this.bullets)
-        if (!b.dead && !b.reflected) {
-          const d = C.segmentDistance(
-            b.x,
-            b.y,
-            b.x + b.vx * 0.7,
-            b.y + b.vy * 0.7,
-            q.x,
-            q.y,
-          );
-          score += d < b.r + 22 ? 500 : 100 / Math.max(10, d);
+      for (const e of this.enemies) if (!e.dead) {
+        let vx = e.vx, vy = e.vy;
+        if (e.charge > 0 || e.windup > 0) {
+          const speed = this.enemyProfile(e).chargeSpeed;
+          if (speed) {
+            const dx = e.windup > 0 ? e.aimX - e.x : e.cx;
+            const dy = e.windup > 0 ? e.aimY - e.y : e.cy;
+            const n = Math.hypot(dx, dy) || 1;
+            vx = dx / n * speed; vy = dy / n * speed;
+          }
         }
-      for (const l of this.lasers)
-        if (
-          !l.dead &&
-          (l.vertical ? Math.abs(q.x - l.pos) : Math.abs(q.y - l.pos)) <
-            l.width + 24
-        )
-          score += 700;
-      for (const b of this.blasts)
-        if (!b.dead && !b.fired && dist(q, b) < b.r + 24) score += 800;
-      score += Math.hypot(q.x - (a.l + a.r) / 2, q.y - (a.t + a.b) / 2) * 0.025;
-      if (score < bestScore) {
-        best = q;
-        bestScore = score;
+        const movement = Math.max(0, horizon - Math.max(e.freeze, e.stun, e.windup));
+        const duration = e.charge > 0 ? Math.min(e.charge, movement) : movement;
+        const ex = clamp(e.x + vx * duration + e.ix * .12, a.l, a.r);
+        const ey = clamp(e.y + vy * duration + e.iy * .12, a.t, a.b);
+        const d = C.segmentDistance(e.x, e.y, ex, ey, q.x, q.y) - e.r - p.r;
+        score += 5000 / Math.max(10, d) + (d < 18 ? 1400 : 0);
       }
+      for (const path of trajectories) {
+        let risk = 0;
+        for (const s of path.segments) {
+          const d = C.segmentDistance(s.x, s.y, s.nx, s.ny, q.x, q.y);
+          // Early passes are protected, late passes are a genuine landing threat.
+          const weight = s.t < .7 ? .25 : s.t < 1 ? .6 : 1;
+          risk = Math.max(risk, weight * (d < path.radius ? 1600 : 120 / Math.max(10, d - path.radius)));
+        }
+        score += risk;
+      }
+      for (const l of this.lasers)
+        if (!l.dead && l.warning <= horizon && l.warning + l.active > .17 &&
+          (l.vertical ? Math.abs(q.x - l.pos) : Math.abs(q.y - l.pos)) < l.width + p.r + 20)
+          score += 1800;
+      for (const b of this.blasts)
+        if (!b.dead && !b.fired && b.warning <= horizon && dist(q, b) < b.r + p.r + 20) score += 1900;
+      const clearance = Math.min(q.x - a.l, a.r - q.x, q.y - a.t, a.b - q.y);
+      score += Math.max(0, margin - clearance) ** 2 * .08;
+      score += dist(q, center) * .12 + Math.max(0, dist(q, center) - dist(p, center)) * .7;
+      if (score < bestScore) { best = q; bestScore = score; }
     }
     return best;
   }

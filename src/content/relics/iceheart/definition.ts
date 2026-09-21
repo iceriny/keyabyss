@@ -4,7 +4,7 @@ export default {
   id: "iceheart",
   name: "凛冬残卷",
   tag: "觉醒",
-  icon: "❅",
+  icon: "iceheart",
   desc: "冰河纪事获得30护盾，持续冰针雨更密集；重型冰矛额外冻结附近敌人。",
   max: 1,
   book: "frost",

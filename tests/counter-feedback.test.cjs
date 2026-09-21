@@ -131,3 +131,13 @@ test("dense labels stay attached and prioritize lock, threat and length", () => 
   assert.equal(moved.x, after.x + 1);
   assert.equal(moved.y, after.y + 2);
 });
+
+test("cold-zone enemy labels disappear until crossing the shared clear boundary", () => {
+  const g = make(), { edgeWidth } = require("../src/shared/arena.ts");
+  const width = edgeWidth(g.arena), e = g.spawnEnemy("nib", g.arena.l + width - 1, 400);
+  const frame = createOverlayFrame(g), measure = word => word.length * 12;
+  g.target = e;
+  assert(!layoutWordLabels(frame, measure).some(l => l.target.id === e.id));
+  e.x += e.r + 2;
+  assert(layoutWordLabels(frame, measure).some(l => l.target.id === e.id));
+});

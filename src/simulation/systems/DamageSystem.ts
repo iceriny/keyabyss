@@ -1,4 +1,4 @@
-import { inClearArena } from "../../shared/arena.ts";
+import { enemyInCombat } from "../../shared/arena.ts";
 import { limitBossDamage } from "./PhaseController.ts";
 
 import type { Point, Enemy } from "../../combat/model.ts";
@@ -100,7 +100,7 @@ export function damage(
       this.arena,
     );
   if (
-    inClearArena(this.arena, e) &&
+    enemyInCombat(this.arena, e) &&
     this.enemyProfile(e).frontArmor &&
     e.freeze <= 0 &&
     e.stun <= 0
@@ -113,7 +113,7 @@ export function damage(
     if (front > 0.2) dmg *= 0.7;
   }
   if (
-    inClearArena(this.arena, e) &&
+    enemyInCombat(this.arena, e) &&
     this.enemyProfile(e).mirror &&
     e.mirror > 0 &&
     e.freeze <= 0 &&
@@ -206,7 +206,7 @@ export function kill(this: Context, e: Enemy, depth = 0) {
   }
   if (e.mark > 0 && this.stats.summonedMark) this.addResonance(8);
   if (
-    inClearArena(this.arena, e) &&
+    enemyInCombat(this.arena, e) &&
     this.enemyProfile(e).deathSplit &&
     !e.small &&
     depth < 2 &&
@@ -215,12 +215,12 @@ export function kill(this: Context, e: Enemy, depth = 0) {
     for (const spawn of this.enemyProfile(e).deathSpawns ?? [])
       this.spawnEnemy(spawn.enemy, e.x + spawn.x, e.y + spawn.y, true);
   }
-  if (inClearArena(this.arena, e) && this.enemyProfile(e).deathVortex) {
+  if (enemyInCombat(this.arena, e) && this.enemyProfile(e).deathVortex) {
     this.pull(e.x, e.y, 245, 470);
     this.explode(e.x, e.y, 155, 35, e, depth + 1, "#b6a2eb");
   }
   const deathBlast = this.eliteProfile(e)?.deathBlast;
-  if (inClearArena(this.arena, e) && deathBlast && !this.roomEnded)
+  if (enemyInCombat(this.arena, e) && deathBlast && !this.roomEnded)
     this.makeBlast(
       e.x,
       e.y,

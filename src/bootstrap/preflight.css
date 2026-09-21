@@ -1,0 +1,17 @@
+/* Intentionally independent of game styles and downloaded fonts. */
+#boot { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font: 13px/1.8 system-ui,sans-serif; background: radial-gradient(ellipse at 50% 45%,#26304730,transparent 46%); }
+#boot .boot-mark { color: #cbb58b; font-size: 35px; text-shadow: 0 0 28px #d4b77860; }
+#boot .boot-eyebrow { color: #697b90; letter-spacing: .25em; font-size: 9px; margin: 20px 0 30px; }
+#boot h1 { font: 400 21px/1.6 system-ui,sans-serif; letter-spacing: .16em; color: #d7d2c5; margin: 0; }
+#boot-detail { min-height: 22px; color: #8c9bae; font-size: 11px; margin: 13px 0; }
+#boot .boot-track { width: 240px; height: 1px; margin: 13px 0; overflow: hidden; background: #a69b7830; }
+#boot .boot-track i { display: block; width: 40%; height: 100%; background: linear-gradient(90deg,transparent,#dcc79b,transparent); animation: boot-drift 2.4s ease-in-out infinite; }
+#boot-hint { color: #718298; font-size: 11px; margin: 12px 0 22px; }
+#boot .boot-actions { display: flex; gap: 26px; min-height: 42px; }
+#boot button { font: 12px/1.8 system-ui,sans-serif; letter-spacing: .06em; padding: 9px 5px; border: 0; border-bottom: 1px solid #b5a07865; border-radius: 0; color: #c8bc9f; background: transparent; cursor: pointer; }
+#boot button:hover,#boot button:focus-visible { outline: none; border-bottom-color: #f1dcb1; color: #f2e3c4; text-shadow: 0 0 16px #e3c68970; }
+#boot button:disabled { opacity: .4; cursor: default; }
+[data-fonts="ready"] #boot .boot-track i { width: 100%; animation: none; background: linear-gradient(90deg,transparent,#dcc79b,transparent); }
+[data-fonts="error"] #boot .boot-track i { animation: none; background: #b98b76; }
+@keyframes boot-drift { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
+@media(prefers-reduced-motion:reduce) { #boot .boot-track i { animation: none; } }

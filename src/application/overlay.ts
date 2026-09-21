@@ -4,6 +4,9 @@ import type { OverlayFrame } from "../contracts/overlay-frame.ts";
 export function createOverlayFrame(game: CombatSimulation): OverlayFrame {
   const keys = [
     "arena",
+    "assaultDirection",
+    "state",
+    "bossRoom",
     "blasts",
     "bookData",
     "enemies",

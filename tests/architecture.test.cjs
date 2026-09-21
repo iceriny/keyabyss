@@ -8,7 +8,7 @@ const baseline = require("./fixtures/ritual-baseline.json");
 const { builtinContent } = require("../src/bootstrap/content.ts");
 const { CombatSimulation } = require("../src/simulation/CombatSimulation.ts");
 
-test("headless simulation matches ritual-balance frame traces", () => {
+test("headless simulation matches directional-assault frame traces", () => {
   assert.equal(typeof globalThis.window, "undefined");
   for (const expected of baseline) {
     const g = isolate(createGame(["cat", "dog", "book", "alpha", "beta", "glyph", "frost", "storm", "spirit", "flame", "rune"], expected.book));

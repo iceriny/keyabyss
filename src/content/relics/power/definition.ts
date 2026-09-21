@@ -4,7 +4,7 @@ export default {
   id: "power",
   name: "锋利笔尖",
   tag: "基础",
-  icon: "↗",
+  icon: "power",
   desc: "所有直接施法伤害提高 25%。",
   max: 3,
   affinity: [],

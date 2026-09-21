@@ -1,3 +1,4 @@
+import { enemyInCombat } from "../../shared/arena.ts";
 import { directionKeys, dodgeDirection } from "../../shared/defense.ts";
 import type { Point, CombatTarget } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
@@ -12,6 +13,7 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "arena"
   | "enemyProfile"
   | "aimKeys"
   | "autofill"
@@ -83,6 +85,13 @@ export function targets(this: Context) {
   );
 }
 
+function selectable(ctx: Context, target: CombatTarget) {
+  return !!target.kind || enemyInCombat(ctx.arena, target);
+}
+function retainLock(target: CombatTarget | null) {
+  if (target && !target.kind) target.combatLocked = true;
+}
+
 export function priority(this: Context, t: CombatTarget) {
   return (
     dist(t, this.player) +
@@ -126,7 +135,7 @@ export function input(this: Context, key: string) {
     this.target = null;
     this.prefix = "";
     const matches = this.targets()
-      .filter((t) => t.word[0] === key)
+      .filter((t) => selectable(this, t) && t.word[0] === key)
       .sort((a, b) => this.priority(a) - this.priority(b));
     if (matches.length) {
       this.target = matches[0];
@@ -136,7 +145,7 @@ export function input(this: Context, key: string) {
   if (this.target && this.target.word[this.prefix.length] !== key) {
     // Resolve shared initials from the typed prefix; no token is rewritten mid-input.
     const alternatives = this.targets()
-      .filter((t) => t.word.startsWith(this.prefix + key))
+      .filter((t) => selectable(this, t) && t.word.startsWith(this.prefix + key))
       .sort((a, b) => this.priority(a) - this.priority(b));
     if (alternatives.length) this.target = alternatives[0];
   }
@@ -159,6 +168,7 @@ export function input(this: Context, key: string) {
     }
     return true;
   }
+  retainLock(this.target);
   this.correct++;
   this.prefix += key;
   this.comboTimer = 5;
@@ -182,7 +192,7 @@ export function input(this: Context, key: string) {
 export function cycle(this: Context, direction = 1) {
   const prefix = this.prefix || "";
   const list = this.targets()
-    .filter((t) => !prefix || t.word.startsWith(prefix))
+    .filter((t) => selectable(this, t) && (!prefix || t.word.startsWith(prefix)))
     .sort((a, b) => this.priority(a) - this.priority(b));
   if (!list.length) return;
   const index = this.target ? list.indexOf(this.target) : -1;
@@ -194,6 +204,7 @@ export function cycle(this: Context, direction = 1) {
           : 0
         : (index + direction + list.length) % list.length
     ];
+  retainLock(this.target);
   if (!prefix) this.castError = false;
   this.emit("hud");
 }
@@ -206,11 +217,12 @@ export function clickTarget(
 ) {
   if (this.state !== "playing") return;
   const t =
-    this.targets().find((t) => t.id === targetId) ||
-    this.targets().find((t) => Math.hypot(x - t.x, y - t.y) < t.r + 10);
+    this.targets().filter((t) => selectable(this, t)).find((t) => t.id === targetId) ||
+    this.targets().filter((t) => selectable(this, t)).find((t) => Math.hypot(x - t.x, y - t.y) < t.r + 10);
   if (t) {
     this.cancel(false);
     this.target = t;
+    retainLock(t);
     this.emit("hud");
   }
 }

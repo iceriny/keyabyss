@@ -4,7 +4,7 @@ export default {
   id: "perfect",
   name: "无瑕落款",
   tag: "精准",
-  icon: "☆",
+  icon: "perfect",
   desc: "本次咒文没有错字时，获得额外 35% 伤害。",
   max: 2,
   affinity: [],

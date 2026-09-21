@@ -1,0 +1,24 @@
+/* Loaded and decoded before App mounts. Large text uses Ming; supporting text uses Song. */
+:root {
+  --font-display: "汇文明朝体", serif;
+  --font-small: "京華老宋体v3.0", serif;
+  --mono: var(--font-small);
+  font-family: var(--font-display);
+}
+body, button { font-family: var(--font-display); }
+p, small, label, input, textarea, kbd,
+.cmd-badge, .edition, .section-label, .field-label, .field-hint,
+.home-controls, .command-dock, .command-input, .word-preview,
+.loading-count, .mode-description, .modal-footer > span,
+.startup-subtitle, .startup-gate p, .startup-gate p small,
+.game-title p, .hero-caption > span, .hero-caption p, .hero-caption small,
+.ritual-phase small, .god-mode-badge, .game-tooltip p,
+.game-tooltip-category, .camp-menu .button {
+  font-family: var(--font-small);
+}
+.game-title h1, .startup-gate h1,
+.modal-heading h2, .codex-card h3, .help-grid h3,
+.modal-panel .choice-card strong, .book-grid .choice-card strong,
+.hero-caption h2, .stat strong {
+  font-family: var(--font-display);
+}

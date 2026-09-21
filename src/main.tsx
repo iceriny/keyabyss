@@ -4,4 +4,13 @@ import "../data/vocab-index.js";
 import { App } from "./ui/App";
 import "./style.css";
 import "./ui/effects.css";
-createRoot(document.getElementById("root")!).render(<App />);
+import "./ui/ritual.css";
+import "./ui/typography.css";
+import "./ui/results.css";
+import "./ui/open-ui.css";
+import "./ui/desktop.css";
+
+if (!document.documentElement.dataset.gameMounted) {
+  document.documentElement.dataset.gameMounted = "true";
+  createRoot(document.getElementById("root")!).render(<App />);
+}

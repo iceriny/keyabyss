@@ -1,3 +1,4 @@
+import { RelicIcon } from "./RelicIcon";
 import { GameText } from "./GameText";
 import { TERMS } from "../content/glossary.ts";
 import { BookArtwork } from "./BookArtwork";
@@ -31,6 +32,7 @@ export function SettingsPanel({
   return (
     <GameText>
       <>
+        <div className="panel-scroll settings-content">
         <Toggle
           label="声音"
           word="sound"
@@ -106,6 +108,7 @@ export function SettingsPanel({
           value={settings.reduceMotion}
           onChange={(v) => set("reduceMotion", v)}
         />
+        </div>
         <div className="modal-footer">
           <span>自动保存</span>
           <Button word="full" onClick={onFull}>
@@ -160,6 +163,14 @@ export function HelpPanel() {
           <p>
             清除每波增援，选择遗物与补给路线，击败守页者。通关可携构筑挑战下一周目。
           </p>
+        </article>
+        <article>
+          <h3>观潮 · 八向来袭</h3>
+          <p>每波敌人从随机方向主攻。角色周围的金色箭头指向敌人来处，珊瑚红外围箭头短暂提示其他方向的偷袭。注意观察四周，及时调整目标。</p>
+        </article>
+        <article>
+          <h3>留痕 · 远征记录</h3>
+          <p>书库和结算页可查看最近 50 份战报，回顾到达阶段、施法表现、遗物与错词，并导出留存。记录保存在当前浏览器中。</p>
         </article>
         <article>
           <h3>藏词 · 自己的词库</h3>
@@ -306,7 +317,7 @@ export function CodexPanel({
                     >
                       <div className="codex-card-meta">
                         <span className="codex-icon" aria-hidden="true">
-                          {r.icon}
+                          <RelicIcon id={r.id} />
                         </span>
                         <span className="codex-rarity">
                           {RELIC_RARITIES[relicRarity(r)].label}
@@ -474,6 +485,7 @@ export function VocabPanel({
     return (
       <GameText>
         <>
+          <div className="panel-scroll">
           <Field
             id="pasteName"
             label="名称 / 文件名"
@@ -515,6 +527,7 @@ export function VocabPanel({
               </div>
             </div>
           )}
+          </div>
           <div className="modal-footer">
             <Button
               word="cancel"
@@ -592,6 +605,7 @@ export function VocabPanel({
             ))}
           </div>
           <section className="vocab-detail">
+            <div className="panel-scroll vocab-description">
             <h3>{book.title}</h3>
             <p>{book.description}</p>
             <p className="source">
@@ -606,6 +620,7 @@ export function VocabPanel({
                   {w.meaning && <small>{w.meaning}</small>}
                 </span>
               ))}
+            </div>
             </div>
             <div className="actions">
               <Button

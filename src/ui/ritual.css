@@ -1,0 +1,133 @@
+/* The archive is one continuous space; interactive books are its navigation. */
+@property --orbit-angle { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+.ritual-home.home-screen { min-height: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--school) 7%, transparent), transparent 65%); }
+.ritual-home.home-screen::after { inset: 0; border: 0; background: radial-gradient(ellipse, transparent 40%, #030811b0); }
+.ritual-home .game-title { top: 6%; left: 5%; pointer-events: none; }
+.ritual-home .game-title h1 { font-size: clamp(45px, 5vw, 82px); }
+.ritual-home .edition { font-size: 9px; letter-spacing: 3px; color: #93a3b5; }
+.ritual-home .game-title p { font-size: 12px; }
+.ritual-home .hero-art { display: block; inset: 0; height: auto; animation: none; }
+.ritual-home .hero-pattern { width: min(66vw, 800px); top: 45%; opacity: .13; }
+.ritual-home .hero-art .portal { inset: 5% 16% 10%; opacity: .2; }
+.archive-floor { position: absolute; left: 50%; top: 62%; width: min(85vw, 1200px); height: 35%; transform: translate(-50%, -50%); border-radius: 50%; border: 1px solid color-mix(in srgb, var(--school) 35%, transparent); background: repeating-radial-gradient(ellipse, transparent 0 13%, color-mix(in srgb, var(--school) 9%, transparent) 13.2% 13.5%, transparent 13.7% 20%); box-shadow: 0 0 80px color-mix(in srgb, var(--school) 8%, transparent), inset 0 0 70px color-mix(in srgb, var(--school) 10%, transparent); mask-image: linear-gradient(transparent, #000 35%, #000 75%, transparent); }
+.archive-beam { position: absolute; left: 30%; width: 40%; top: 0; height: 76%; opacity: .24; background: conic-gradient(from 164deg at 50% -20%, transparent, var(--school) 12deg, transparent 31deg); filter: blur(22px); }
+.ritual-home .book-selection { position: absolute; inset: 0; width: auto; max-width: none; margin: 0; padding: 0; pointer-events: none; }
+.ritual-home .section-label { position: absolute; top: 7%; right: 5%; gap: 28px; font-size: 12px; letter-spacing: 4px; text-align: right; }
+.ritual-home .section-label small { display: block; margin-top: 12px; font-size: 10px; letter-spacing: 2px; opacity: .6; }
+.ritual-home .book-grid { position: absolute; top: 17%; left: 18%; right: 18%; height: 49%; display: block; perspective: 1200px; }
+.ritual-home .book-grid .choice-card { position: absolute; left: calc(50% + var(--orbit-x) * 43%); top: calc(14% + var(--depth) * 48%); width: clamp(190px, 25vw, 390px); height: clamp(220px, 29vw, 440px); min-height: 0; padding: 0; display: block; border: 0; border-radius: 0; background: none; box-shadow: none; transform: translate(-50%, -50%) scale(var(--book-scale)) rotate(var(--book-tilt)); filter: blur(var(--book-blur)) brightness(calc(.48 + var(--depth) * .52)); opacity: calc(.48 + var(--depth) * .52); transition: left 1.25s cubic-bezier(.2,.7,.2,1), top 1.25s cubic-bezier(.2,.7,.2,1), transform 1.25s cubic-bezier(.2,.7,.2,1), filter 1.1s, opacity 1.1s; pointer-events: auto; overflow: visible; }
+.ritual-home .book-grid .choice-card::before, .ritual-home .book-grid .choice-card::after { display: none; }
+.ritual-home .book-grid .choice-card { --orbit-x: sin(var(--orbit-angle)); --depth: calc((cos(var(--orbit-angle)) + 1) / 2); --book-scale: calc(.5 + var(--depth) * .5); --book-blur: calc((1 - var(--depth)) * 3.2px); --book-tilt: calc(sin(var(--orbit-angle)) * -13deg); transition: --orbit-angle 1.25s cubic-bezier(.2,.7,.2,1); }
+.ritual-home .book-grid .choice-card:hover { background: none; box-shadow: none; filter: blur(0) brightness(1.15); opacity: 1; }
+.ritual-home .book-grid .choice-card:focus-visible { outline: none; filter: brightness(1.15) drop-shadow(0 0 12px var(--card-color)); }
+.ritual-home .book-grid .choice-card .button-content { display: flex; width: 100%; height: calc(100% - 25px); flex-direction: column; align-items: center; justify-content: flex-end; }
+.ritual-home .book-grid .choice-icon { position: absolute; inset: 0 0 12%; width: auto; height: auto; font-size: inherit; }
+.ritual-home .book-grid .choice-icon { transform: none; margin: 0; }
+.ritual-home .book-grid .choice-icon .book-artwork { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 25px 20px #000a) drop-shadow(0 0 15px color-mix(in srgb, var(--card-color) 28%, transparent)); animation: archive-float 7s ease-in-out infinite; }
+.ritual-home .book-grid .choice-icon .book-artwork-fallback { font-size: 120px; }
+.ritual-home .book-grid .choice-card strong { font-size: 17px; letter-spacing: 5px; color: var(--card-color); text-shadow: 0 2px 10px #000; }
+.ritual-home .book-grid .choice-card .cmd-badge { display: inline-flex; margin: 12px auto 0; font-size: 11px; background: transparent; border: 0; opacity: .7; }
+.ritual-home .book-grid .choice-card .cmd-badge { position: absolute; left: 50%; right: auto; top: auto; bottom: 0; transform: translateX(-50%); margin: 0; }
+.ritual-home .book-grid .choice-card.selected .cmd-badge { bottom: -14px; }
+.ritual-home .book-grid .choice-card strong { width: 100%; padding: 0; text-align: center; text-indent: 5px; }
+.ritual-home .book-grid .choice-card.selected strong { font-size: clamp(28px, 2.3vw, 38px); line-height: 1.2; font-weight: 650; }
+.ritual-home .book-grid .choice-card.game-focus { outline: none; box-shadow: none !important; background-image: none !important; filter: brightness(1.15) drop-shadow(0 0 12px var(--card-color)); }
+.ritual-home .card-pattern { inset: -4%; width: 108%; height: 108%; opacity: .14; }
+.ritual-home .selected .card-pattern { opacity: .55; }
+.book-aura { position: absolute; inset: 12% -9%; border: 1px solid color-mix(in srgb, var(--card-color) 50%, transparent); border-radius: 50%; transform: rotate(-28deg) scaleY(.4); box-shadow: 0 0 22px color-mix(in srgb, var(--card-color) 22%, transparent), inset 0 0 18px color-mix(in srgb, var(--card-color) 16%, transparent); }
+.book-satellites { position: absolute; inset: 0; animation: archive-orbit 22s linear infinite; }
+.book-satellites i { position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; background: var(--card-color); border-radius: 50%; box-shadow: 0 0 7px var(--card-color), 0 0 15px var(--card-color); transform: rotate(calc(var(--spark) * 30deg)) translateX(clamp(85px, 12vw, 175px)); opacity: .7; }
+.book-resonance { position: absolute; inset: 5%; border: 2px solid var(--card-color); border-radius: 50%; pointer-events: none; animation: archive-resonance 1.3s ease-out both; }
+.ritual-home .hero-caption { left: 25%; right: 25%; bottom: 17%; text-align: center; animation: archive-caption 1s ease-out both; }
+.ritual-home .hero-caption > span { display: block; font-size: 10px; letter-spacing: 6px; text-indent: 6px; }
+.ritual-home .hero-caption h2 { margin: 10px 0 0; font-size: clamp(16px, 1.2vw, 20px); font-weight: 500; letter-spacing: 3px; text-indent: 3px; color: #c6d2df; }
+.ritual-home .hero-caption p { display: block; margin-top: 10px; font-size: 13px; }
+.ritual-home .hero-caption small { display: block; margin-top: 9px; font-size: 11px; color: #8495a8; }
+.ritual-home .deploy-button { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); width: 260px; min-height: 52px; margin: 0; padding: 12px 24px; border: 0; border-top: 1px solid color-mix(in srgb, var(--school) 50%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--school) 25%, transparent); border-radius: 0; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--school) 12%, #0c142090), transparent); box-shadow: 0 0 35px color-mix(in srgb, var(--school) 8%, transparent); font-size: 17px; letter-spacing: 3px; pointer-events: auto; }
+.ritual-home .deploy-button:hover { background: color-mix(in srgb, var(--school) 18%, #0c1420); }
+.ritual-home .deploy-button { color: #e4eef6; }
+.ritual-home .deploy-button .button-content { justify-content: center; gap: 14px; text-align: center; }
+.ritual-home .deploy-button .cmd-badge { color: #b5c9da; border: 0; background: transparent; }
+.ritual-home .camp-menu { top: auto; left: 5%; bottom: 9%; gap: 14px; }
+.ritual-home .camp-menu .button { padding: 5px 0; border: 0; background: transparent; color: #b3c1cd; font-size: 14px; letter-spacing: 3px; }
+.ritual-home .camp-menu .button::before { content: '◇'; color: var(--school); font-size: 12px; }
+.ritual-home .camp-menu .button:hover { color: #f2e3c8; text-shadow: 0 0 15px var(--school); }
+.ritual-home .camp-menu .cmd-badge { border: 0; background: transparent; opacity: .5; font-size: 10px; }
+.ritual-home .home-controls { position: absolute; margin: 0; padding: 0; right: 5%; bottom: 8%; display: grid; gap: 9px; color: #8193a5; font-size: 10px; }
+@keyframes archive-float { 50% { transform: translateY(-12px) rotate(2deg); } }
+@keyframes archive-orbit { to { transform: rotate(360deg); } }
+@keyframes archive-resonance { 0% { transform: scale(.55); opacity: 0; } 20% { opacity: .9; } 100% { transform: scale(1.8); opacity: 0; } }
+@keyframes archive-caption { from { opacity: 0; transform: translateY(9px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* Immediate light wave; 1.15–2.4s charge; 2.4–5.45s heavy wave; fade to 7s. */
+.startup-filter { position: absolute; pointer-events: none; }
+.startup-visual { position: absolute; inset: 0; display: grid; place-items: center; isolation: isolate; --wave-radius: 0px; --wave-light: 0; }
+.startup-gate[data-leaving="true"] { animation: ritual-depart 7s linear both; cursor: default; }
+.startup-gate[data-leaving="true"] .startup-content { animation: ritual-release 5.45s ease-in-out both; }
+.startup-gate[data-leaving="true"] .startup-mark { animation: ritual-seal-flash .9s ease-out both; }
+.startup-gate[data-leaving="true"] .startup-orbit { animation: ritual-orbit-flash .95s ease-out both; }
+.startup-gate[data-leaving="true"] .startup-halo { animation: none; opacity: .25; transition: opacity .6s; }
+.startup-gate[data-leaving="true"] #startupPrompt { animation: ritual-prompt-out .45s ease-out both; }
+.home-arrival #home { animation: archive-arrival 7s ease-out both; }
+.ritual-rings { position: absolute; width: 66vmin; height: 66vmin; left: 50%; top: 48%; transform: translate(-50%, -50%); }
+.ritual-rings b { position: absolute; inset: 0; border: 1px solid #c4d9ee40; border-radius: 50%; box-shadow: inset 0 0 28px #9ed1ff08, 0 0 25px #9ed1ff08; }
+.ritual-rings b:nth-child(2) { inset: -12%; border: 2px dotted #c4d9ee30; }
+.ritual-rings b:nth-child(3) { inset: -27%; border-color: #c4d9ee15; }
+.startup-gate[data-leaving="true"] .ritual-rings { animation: ritual-seal-release 5.45s ease-in-out both; }
+.ritual-seal-bloom { position: absolute; left: 50%; top: 48%; width: 85vmin; height: 85vmin; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, #eaf6ff85 0%, #c7e7ff55 14%, #a6d7ff32 32%, #76baff16 48%, transparent 69%); opacity: 0; mix-blend-mode: screen; }
+.startup-gate[data-leaving="true"] .ritual-seal-bloom { animation: ritual-bloom 7s linear both; }
+.ritual-rays { position: absolute; inset: 0; opacity: 0; }
+.ritual-rays b { position: absolute; left: 50%; top: 48%; width: 65vmax; height: 1px; transform-origin: 0 50%; transform: rotate(calc(var(--ray) * 15deg)); background: linear-gradient(90deg, #d9edffcc, #92ccff12 50%, transparent); }
+.startup-gate[data-leaving="true"] .ritual-rays { animation: ritual-rays var(--ritual-wave-duration) var(--ritual-impact-delay) ease-out both; }
+.ritual-shock, .ritual-flare { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.ritual-shock { background: radial-gradient(circle at 50% 48%, transparent max(0px, calc(var(--wave-radius) - 90px)), #8fcfff35 max(0px, calc(var(--wave-radius) - 38px)), #effaffdd var(--wave-radius), #92cbff40 calc(var(--wave-radius) + 12px), transparent calc(var(--wave-radius) + 40px)), radial-gradient(circle at 50% 48%, transparent calc(var(--wave-radius) * .82), #addefa40 calc(var(--wave-radius) * .87), transparent calc(var(--wave-radius) * .92)); }
+.ritual-flare { background: radial-gradient(circle at 50% 48%, #80b5e000 0%, #89bce235 calc(var(--wave-radius) * .56), #b6dbff70 calc(var(--wave-radius) * .90), transparent calc(var(--wave-radius) + 45px)); mix-blend-mode: screen; }
+.startup-gate[data-leaving="true"] .ritual-shock, .startup-gate[data-leaving="true"] .ritual-flare { opacity: var(--wave-light); }
+.ritual-phase { position: absolute; left: 0; right: 0; bottom: 12%; text-align: center; color: #dbe7f2; letter-spacing: 8px; font-size: 15px; animation: archive-caption .7s both; }
+.ritual-phase small { display: block; margin-top: 18px; font: 9px var(--mono); letter-spacing: 5px; color: #8198ae; }
+@keyframes ritual-depart { 0%, 70% { opacity: 1; } 80% { opacity: .88; } 100% { opacity: 0; } }
+@keyframes ritual-release { 0%, 44% { opacity: 1; transform: scale(1); } 66% { opacity: .75; transform: scale(1.06); } 100% { opacity: 0; transform: scale(1.15); } }
+@keyframes ritual-seal-flash { 0% { filter: brightness(1) drop-shadow(0 0 9px #9ad9fa55); } 8% { filter: brightness(6) drop-shadow(0 0 28px #eaf7ffff) drop-shadow(0 0 72px #9fd5ffdd); } 30% { filter: brightness(3) drop-shadow(0 0 55px #b6dfffcc); } 100% { filter: brightness(1) drop-shadow(0 0 15px #9ad9fa70); } }
+@keyframes ritual-orbit-flash { 0% { opacity: .09; filter: brightness(1); } 8% { opacity: 1; filter: brightness(4) drop-shadow(0 0 24px #b9e2ff); } 35% { opacity: .6; filter: brightness(2); } 100% { opacity: .14; filter: brightness(1); } }
+@keyframes ritual-bloom { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.7); } 1% { opacity: 1; } 6% { opacity: .8; transform: translate(-50%, -50%) scale(1.25); } 16%, 20% { opacity: .03; transform: translate(-50%, -50%) scale(.9); } 33% { opacity: .32; transform: translate(-50%, -50%) scale(.65); } 35% { opacity: .7; } 53%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.3); } }
+@keyframes ritual-prompt-out { to { opacity: 0; } }
+@keyframes ritual-seal-release { 0% { opacity: .5; filter: brightness(1); } 2% { opacity: 1; filter: brightness(4) drop-shadow(0 0 24px #b9e2ff); } 20%, 40% { opacity: .45; filter: brightness(1); transform: translate(-50%, -50%) scale(1); } 46% { opacity: .8; filter: brightness(2); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); } }
+@keyframes ritual-rays { 0% { opacity: 0; transform: scale(.5); } 8% { opacity: .6; } 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes archive-arrival { 0%, 70% { opacity: 0; filter: blur(8px); } 84% { opacity: .65; } 100% { opacity: 1; filter: blur(0); } }
+
+@media (max-height: 760px) and (min-width: 761px) {
+  .ritual-home .book-grid { top: 15%; height: 44%; }
+  .ritual-home .book-grid .choice-card { width: 240px; height: 270px; }
+  .ritual-home .hero-caption { bottom: 18%; }
+  .ritual-home .hero-caption h2 { font-size: 17px; }
+  .ritual-home .hero-caption small { display: none; }
+  .ritual-home .game-title h1 { font-size: 48px; }
+}
+@media (max-width: 900px) {
+  .ritual-home .game-title { top: 4%; }
+  .ritual-home .game-title h1 { font-size: 42px; }
+  .ritual-home .edition { font-size: 7px; letter-spacing: 1px; }
+  .ritual-home .section-label { top: 7%; right: 5%; font-size: 10px; letter-spacing: 2px; gap: 10px; }
+  .ritual-home .section-label small { display: none; }
+  .ritual-home .book-grid { top: 25%; left: 18%; right: 18%; height: 30%; }
+  .ritual-home .book-grid .choice-card { width: 190px; height: 220px; }
+  .ritual-home .book-grid .choice-card strong { font-size: 14px; letter-spacing: 2px; text-indent: 2px; }
+  .ritual-home .book-grid .choice-card.selected strong { font-size: 28px; }
+  .ritual-home .book-grid .choice-card .cmd-badge { margin-top: 5px; }
+  .ritual-home .hero-pattern { width: 110vw; top: 42%; }
+  .ritual-home .hero-caption { left: 5%; right: 5%; bottom: 27%; }
+  .ritual-home .hero-caption > span { font-size: 8px; }
+  .ritual-home .hero-caption h2 { margin-top: 8px; font-size: 16px; letter-spacing: 3px; }
+  .ritual-home .hero-caption p { font-size: 11px; }
+  .ritual-home .hero-caption small { display: none; }
+  .ritual-home .deploy-button { bottom: 16%; width: 230px; }
+  .ritual-home .camp-menu { bottom: 5%; left: 5%; right: 5%; display: flex; justify-content: space-between; gap: 6px; }
+  .ritual-home .camp-menu .button { font-size: 11px; letter-spacing: 1px; min-height: 40px; gap: 5px; }
+  .ritual-home .camp-menu .cmd-badge, .ritual-home .home-controls { display: none; }
+}
+body[data-ui-fx="low"] .book-satellites i:nth-child(n+5) { display: none; }
+body[data-ui-fx="low"] .archive-beam { display: none; }
+.reduced-motion .ritual-home *, .reduced-motion .startup-gate, .reduced-motion .startup-gate * { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .ritual-home *, .startup-gate, .startup-gate *, .home-arrival #home { animation: none !important; transition: none !important; }
+}

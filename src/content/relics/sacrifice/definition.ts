@@ -4,7 +4,7 @@ export default {
   id: "sacrifice",
   name: "背水誓书",
   tag: "风险",
-  icon: "†",
+  icon: "sacrifice",
   desc: "生命低于40%时，施法和纸灵伤害提高50%。",
   max: 1,
   affinity: [],

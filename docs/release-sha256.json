@@ -3,8 +3,33 @@
   "artifacts": [
     {
       "artifact": "dist/index.html",
-      "bytes": 735786,
-      "sha256": "13d64a686a129bf92103ec4c2d5fe4a14192e62ea8a78f422ce89a02cb178ccd"
+      "bytes": 1352,
+      "sha256": "07c3e98c6e15f0c65f023ba5c9aabe55abda18bca41ee1e4d359f1d2a411fa54"
+    },
+    {
+      "artifact": "dist/assets/game-93983896.js",
+      "bytes": 633549,
+      "sha256": "93983896b0ce6e7d9b2ae4d11ae864d9dee8e5cecb9e4af0cf693f83f8deff5b"
+    },
+    {
+      "artifact": "dist/assets/game-6693b9e9.css",
+      "bytes": 86249,
+      "sha256": "6693b9e9382c92f66fc13fa97835d3f4e45f34f9a1d268679eb2380ef7e27dd4"
+    },
+    {
+      "artifact": "dist/assets/preflight-3c38e3fe.js",
+      "bytes": 3316,
+      "sha256": "3c38e3fe00c1f908edfd31bfaaecef78ad17971b0180dd767d974446aab992d5"
+    },
+    {
+      "artifact": "dist/assets/preflight-b9ea612e.css",
+      "bytes": 1969,
+      "sha256": "b9ea612ef597511ed1c11ec9c0bef6fe88f3e9d0a69158f2774216826907c749"
+    },
+    {
+      "artifact": "dist/THIRD-PARTY-LICENSES.txt",
+      "bytes": 83240,
+      "sha256": "a3673ca9235dc5bb0a78e39f7baeced8db512f1a16c71b79e7d6e4c4b8121421"
     },
     {
       "artifact": "dist/assets/art/FLAME_GRIMOIR.png",
@@ -47,9 +72,9 @@
       "sha256": "25f8bbe43fa04058d01cb603d89c898e23a626d28b37883eb566bad0cec020b1"
     },
     {
-      "artifact": "dist/assets/battle-renderer-1d144814.js",
-      "bytes": 764513,
-      "sha256": "1d14481466ac502d8c0c601b68f5fdec333e542dfad88b499de4445408c60b58"
+      "artifact": "dist/assets/battle-renderer-f772e72a.js",
+      "bytes": 765583,
+      "sha256": "f772e72ac5edf89b6cb785f1df66fe2fd7380b63bb3134445ce53b08a134079e"
     },
     {
       "artifact": "dist/audio/clip-01cb6b0450b74be5.js",
@@ -80,6 +105,11 @@
       "artifact": "dist/audio/clip-11a78d67beadb562.js",
       "bytes": 681018,
       "sha256": "b3bf9f71f0555f89d2a718d084dffe4215a249dcf3093662d0b10229ccf94c8b"
+    },
+    {
+      "artifact": "dist/audio/clip-12ca276677b0c986.js",
+      "bytes": 473142,
+      "sha256": "3982042a973ff5562a6c0991721eb9bbbbec1fe97c6b051d7b6692dcd26c10bd"
     },
     {
       "artifact": "dist/audio/clip-13a16119edb28fd4.js",
@@ -242,6 +272,11 @@
       "sha256": "b00b5b1dc680a9b10c91b5b12b1b19b2aac5f56bbba3b3407f8c967f47c9649a"
     },
     {
+      "artifact": "dist/audio/clip-4d5586f968877baa.js",
+      "bytes": 731606,
+      "sha256": "245d65a9d06e79252e026d6d6f207a61f73efb125b75ec45e0e8ba878e736577"
+    },
+    {
       "artifact": "dist/audio/clip-51c76abadd431bd3.js",
       "bytes": 203614,
       "sha256": "dcbee6062bde9872e02b9be09499b17c64cdb37ca17b603e2c2b8588171b8bd1"
@@ -280,6 +315,11 @@
       "artifact": "dist/audio/clip-649d6cf999cc0186.js",
       "bytes": 112098,
       "sha256": "e929d6149b2916e7b686109d1f6d8ab0d48613b1eb6b22c01539609a2553778d"
+    },
+    {
+      "artifact": "dist/audio/clip-6648bf9c1aa02453.js",
+      "bytes": 818030,
+      "sha256": "b59099fbae915cecc1ba8d298bdc03af6533a06556387add96c8a04451a82400"
     },
     {
       "artifact": "dist/audio/clip-6a990054c15c1a61.js",
@@ -417,6 +457,11 @@
       "sha256": "653786aacd512e8d00b8e9016d74102e1745d04070b192704027b1e31d2ac802"
     },
     {
+      "artifact": "dist/audio/clip-a7b86a081c45d1d5.js",
+      "bytes": 514442,
+      "sha256": "55446299182f8b07d11822bc458372c90b7e8aca42181ede9fecd4e9f26e6ee0"
+    },
+    {
       "artifact": "dist/audio/clip-a934b219aeb45c1f.js",
       "bytes": 341050,
       "sha256": "011ba7b623501155c35e6d0fe8955efffd88383021bb10d7911f866b1abdfdb7"
@@ -537,6 +582,11 @@
       "sha256": "3f578969440497821ec7c09bc71f8c4aceb221d33eabfd4417e18191bdb31e47"
     },
     {
+      "artifact": "dist/audio/clip-df203d6798e8e20f.js",
+      "bytes": 283170,
+      "sha256": "34572bf2a7a7ad511636f3076aa70bc4130df6ba05b081d6da741419b56861ef"
+    },
+    {
       "artifact": "dist/audio/clip-e3ad1e738d8ad246.js",
       "bytes": 231862,
       "sha256": "d1162473aa7521834a34f3d7e299e43291857d05308574fa83aae37018aacc03"
@@ -610,6 +660,16 @@
       "artifact": "dist/audio/clip-fdffd339f2d2f739.js",
       "bytes": 592822,
       "sha256": "b74e856df7ca1e234bc392de97b2b486fd673bd791a4da702645e5c039f0a00a"
+    },
+    {
+      "artifact": "dist/font/huiwen-ming.woff2",
+      "bytes": 8021356,
+      "sha256": "0416027d2157dba296f2419d9dc0a7515c94d8ef7b22e6e6c9e03e8d91103fee"
+    },
+    {
+      "artifact": "dist/font/jinghua-song.woff2",
+      "bytes": 19282412,
+      "sha256": "d53ba98d7956e9ac9114c46d23c14d880774aba32dc7c87d7fed981dbc80b5b8"
     },
     {
       "artifact": "dist/word/cet4.json",

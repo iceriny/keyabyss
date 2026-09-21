@@ -15,7 +15,7 @@ export default {
   },
   name: "灰烬之书",
   short: "火焰",
-  icon: "♨",
+  icon: "flame",
   color: "#ff994e",
   headline: "点燃。积蓄。焚尽。",
   subtitle: "每三次施法，释放一枚熔爆火球。",

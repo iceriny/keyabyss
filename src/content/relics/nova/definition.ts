@@ -4,7 +4,7 @@ export default {
   id: "nova",
   name: "完美段落",
   tag: "精准",
-  icon: "✺",
+  icon: "nova",
   desc: "连续完成3次无错字咒文，释放一次半径150的清弹冲击波。",
   max: 1,
   affinity: [],

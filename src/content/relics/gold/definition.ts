@@ -4,7 +4,7 @@ export default {
   id: "gold",
   name: "鎏金藏书票",
   tag: "成长",
-  icon: "✦",
+  icon: "gold",
   desc: "之后击杀获得的经验增加 35%。",
   max: 1,
   affinity: [],

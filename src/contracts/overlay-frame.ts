@@ -18,6 +18,9 @@ export interface OverlayFrame extends Pick<
   | "content"
 > {
   readonly safePoint: Readonly<Point> | null;
+  readonly assaultDirection: number;
+  readonly state: import("./game.ts").GameState;
+  readonly bossRoom: boolean;
   readonly targets: readonly Readonly<CombatTarget>[];
   readonly elites: Readonly<Record<string, EliteDefinition>>;
 }

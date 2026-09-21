@@ -77,7 +77,7 @@ export function upgradeChoices(this: Context): RewardChoice[] {
         id: "renewal",
         name: "余烬补给",
         tag: "补给",
-        icon: "✚",
+        icon: "renewal",
         desc: "所有遗物均已满阶。恢复25生命，补充一次闪避充能。",
         kind: "supply",
         heal: 25,

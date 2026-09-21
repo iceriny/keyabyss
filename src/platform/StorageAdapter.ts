@@ -6,6 +6,7 @@ const versions: Readonly<Record<string, number>> = {
   settings: 1,
   prefs: 1,
   history: 1,
+  archive: 1,
   custom: 1,
 };
 

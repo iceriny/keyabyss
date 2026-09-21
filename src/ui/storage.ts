@@ -2,7 +2,7 @@ import type { Vocabulary, Settings } from "../contracts/game.ts";
 export * as C from "../bootstrap/catalog-api.ts";
 import * as C from "../bootstrap/catalog-api.ts";
 import { StorageAdapter } from "../platform/StorageAdapter.ts";
-const storage = new StorageAdapter(() => localStorage);
+export const storage = new StorageAdapter(() => localStorage);
 export const read = <T>(key: string, fallback: T): T =>
   storage.read(key, fallback);
 export const save = (key: string, value: unknown) => storage.save(key, value);

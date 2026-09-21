@@ -4,7 +4,7 @@ export default {
   id: "long",
   name: "长句回响",
   tag: "重击",
-  icon: "≡",
+  icon: "long",
   desc: "长度至少 7 的咒文伤害提高 75%，并清除目标周围子弹。",
   max: 2,
   minWordLength: 7,

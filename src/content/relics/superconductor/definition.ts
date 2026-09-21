@@ -4,7 +4,7 @@ export default {
   id: "superconductor",
   name: "超导禁卷",
   tag: "觉醒",
-  icon: "ϟ",
+  icon: "superconductor",
   desc: "电弧额外跳跃2次，过载向内牵引敌人并造成更大范围爆炸。",
   max: 1,
   book: "storm",

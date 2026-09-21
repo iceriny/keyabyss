@@ -5,6 +5,7 @@ import { assetManager } from "../bootstrap/assets.ts";
 import { BOOKS } from "../content/catalog.ts";
 import { Sigil } from "./Sigil";
 import { Button } from "./components";
+import { StartupWave, startupTiming } from "./StartupWave";
 /** The first interaction is deliberate; it also unlocks browser audio. */
 export function StartupGate({
   game,
@@ -20,12 +21,19 @@ export function StartupGate({
   const [ready, setReady] = useState(false),
     [error, setError] = useState(""),
     [attempt, setAttempt] = useState(0),
-    [leaving, setLeaving] = useState(false);
+    [leaving, setLeaving] = useState(false),
+    [phase, setPhase] = useState("封印回应"),
+    [waveStartedAt, setWaveStartedAt] = useState<number | null>(null);
   const continued = useRef(false),
-    exitTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useEffect(() => () => clearTimeout(exitTimer.current), []);
+    timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   useEffect(() => {
     const enter = (event: Event) => {
+      // Preserve the browser's native fullscreen toggle without entering the game.
+      if (event instanceof KeyboardEvent && event.key === "F11") {
+        event.stopImmediatePropagation();
+        return;
+      }
       if (!ready) {
         // Loading input is not queued and must not feed hidden menu commands.
         if (!error && event.type === "keydown") {
@@ -43,7 +51,15 @@ export function StartupGate({
       game?.playUISound("enter");
       setLeaving(true);
       onBegin();
-      exitTimer.current = setTimeout(onContinue, reduceMotion ? 240 : 1600);
+      const reduced = reduceMotion || matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const at = (ms: number, action: () => void) => timers.current.push(setTimeout(action, ms));
+      if (!reduced) {
+        setWaveStartedAt(performance.now());
+        at(startupTiming.rise, () => { setPhase("静候回响"); game?.playUISound("ritualRise"); });
+        at(startupTiming.impact, () => { setPhase("破印 · 苏醒"); game?.playUISound("ritualImpact"); });
+        at(startupTiming.chime, () => { setPhase("咒典在等待你的名字"); game?.playUISound("ritualChime"); });
+      }
+      at(reduced ? 240 : startupTiming.duration, onContinue);
     };
     // Capture before the menu keyboard layer; the entry gesture is consumed in full.
     window.addEventListener("keydown", enter, true);
@@ -83,6 +99,10 @@ export function StartupGate({
         className="startup-gate"
         data-ready={ready}
         data-leaving={leaving}
+        style={{
+          "--ritual-impact-delay": `${startupTiming.impact}ms`,
+          "--ritual-wave-duration": `${startupTiming.waveEnd - startupTiming.impact}ms`,
+        } as CSSProperties}
         role="dialog"
         aria-modal="true"
         aria-label="唤醒咒典"
@@ -91,9 +111,16 @@ export function StartupGate({
         data-menu-root
         tabIndex={-1}
       >
+        <StartupWave startedAt={waveStartedAt}>
         <div className="startup-atmosphere" aria-hidden="true">
-          <div className="startup-aperture" />
           <div className="startup-halo" />
+          <div className="ritual-seal-bloom" />
+          <div className="ritual-rings"><b /><b /><b /></div>
+          <div className="ritual-rays">
+            {Array.from({ length: 24 }, (_, i) => <b key={i} style={{ "--ray": i } as CSSProperties} />)}
+          </div>
+          <div className="ritual-shock" />
+          <div className="ritual-flare" />
           <Sigil className="startup-orbit" progress={0.18} />
           {Array.from({ length: 64 }, (_, i) => (
             <i
@@ -120,7 +147,7 @@ export function StartupGate({
               (ready ? (
                 <>
                   <span id="enterGame">点击任意位置或按任意键继续</span>
-                  <small>PRESS ANY KEY TO CONTINUE</small>
+                  <small>F11 切换全屏 · 其他任意键继续</small>
                 </>
               ) : (
                 "正在唤醒咒典"
@@ -132,6 +159,8 @@ export function StartupGate({
             </Button>
           )}
         </div>
+        </StartupWave>
+        {leaving && <div className="ritual-phase" role="status"><span>{phase}</span><small>THE ARCHIVE AWAKENS</small></div>}
       </div>
     </GameText>
   );

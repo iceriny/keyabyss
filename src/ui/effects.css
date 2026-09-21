@@ -87,8 +87,18 @@
   gap: 24px;
   margin-bottom: 8px;
 }
-.glossary-tools .field {
-  margin-bottom: 0;
+.glossary-tools .field,
+.glossary-tools .select-field {
+  margin: 16px 0 0;
+}
+.glossary-tools .field > span,
+.glossary-tools .field-label {
+  height: 24px;
+  line-height: 24px;
+  margin-bottom: 12px;
+}
+.glossary-tools input[type="text"] {
+  height: 48px;
 }
 .term-card h3 {
   margin-top: 8px;

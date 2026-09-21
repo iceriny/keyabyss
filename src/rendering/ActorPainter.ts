@@ -1,3 +1,4 @@
+import { canvasFont } from "../shared/typography.ts";
 import type { Book, EnemyDefinition } from "../contracts/content.ts";
 import type { RenderFrame } from "../contracts/render-frame.ts";
 import type { Enemy, RuneNode, Player } from "../combat/model";
@@ -36,7 +37,7 @@ export class ActorPainter {
     c.stroke();
     c.rotate(-Math.PI / 4);
     c.shadowBlur = 0;
-    c.font = "17px sans-serif";
+    c.font = canvasFont(17);
     c.textAlign = "center";
     c.textBaseline = "middle";
     c.fillStyle = color;
@@ -473,7 +474,7 @@ export class ActorPainter {
       c.beginPath();
       c.arc(0, -r - 9, 12, 0, TAU);
       c.stroke();
-      c.font = "18px sans-serif";
+      c.font = canvasFont(18);
       c.fillStyle = color;
       c.textAlign = "center";
       c.fillText(e.type === "priest" ? "+" : "⌘", 0, 10);

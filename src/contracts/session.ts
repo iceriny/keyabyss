@@ -38,6 +38,7 @@ export interface HudSnapshot {
   readonly roomCount: number;
   readonly bossRoom: boolean;
   readonly wave: number;
+  readonly assaultDirection: number;
   readonly waveCount: number;
   readonly spawned: number;
   readonly roomQuota: number;

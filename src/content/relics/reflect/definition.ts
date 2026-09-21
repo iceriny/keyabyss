@@ -4,7 +4,7 @@ export default {
   id: "reflect",
   name: "镜面批注",
   tag: "反制",
-  icon: "◈",
+  icon: "reflect",
   desc: "拆弹反击伤害提高 60%；拆弹后下一次施法伤害翻倍。",
   max: 1,
   affinity: [],

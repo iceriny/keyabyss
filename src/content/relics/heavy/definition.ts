@@ -4,7 +4,7 @@ export default {
   id: "heavy",
   name: "鲸骨笔杆",
   tag: "冲击",
-  icon: "⬢",
+  icon: "heavy",
   desc: "法术击退提高60%；撞墙与撞敌造成的碰撞伤害翻倍。",
   max: 2,
   affinity: [],

@@ -4,7 +4,7 @@ export default {
   id: "frost",
   name: "零度批注",
   tag: "冰霜",
-  icon: "❄",
+  icon: "frost",
   desc: "所有施法附加寒气；已有寒气增加，冻结持续更久。",
   max: 3,
   affinity: ["frost"],

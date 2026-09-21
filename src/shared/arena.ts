@@ -26,3 +26,8 @@ export function clearArena(arena: Readonly<Arena>, padding = 0): Arena {
     b: arena.b - margin,
   };
 }
+
+/** A lock acquired inside the arena survives knockback into the veil. */
+export function enemyInCombat(arena: Readonly<Arena>, enemy: Point & { r: number; combatLocked?: boolean }) {
+  return !!enemy.combatLocked || inClearArena(arena, enemy, enemy.r);
+}

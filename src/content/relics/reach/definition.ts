@@ -4,7 +4,7 @@ export default {
   id: "reach",
   name: "远行墨迹",
   tag: "连锁",
-  icon: "∞",
+  icon: "reach",
   desc: "电弧传导范围增加 100，爆炸范围增加 25。",
   max: 2,
   affinity: [],

@@ -2,6 +2,7 @@ import type { CombatRuntime } from "../Runtime.ts";
 import type { Route } from "../../contracts/game.ts";
 import { difficulty } from "./difficulty.ts";
 import { pick } from "../../shared/math.ts";
+import { assaultDirections } from "../../shared/assault.ts";
 type Context = Pick<
   CombatRuntime,
   | "pendingRequiredTasks"
@@ -60,6 +61,7 @@ type Context = Pick<
   | "ultimateTime"
   | "upgradeAt"
   | "wave"
+  | "assaultDirection"
   | "waveCount"
   | "waveRest"
   | "waveWaiting"
@@ -117,6 +119,7 @@ export function beginRoom(this: Context, route: Route = { type: "normal" }) {
   this.bossRoom = progress.room.boss;
   this.boss = null;
   this.wave = 1;
+  this.assaultDirection = this.bossRoom ? 0 : Math.floor(this.rng() * 8);
   if (this.bossRoom) {
     this.spawnBoss();
     this.roomQuota = 0;
@@ -167,10 +170,11 @@ export function updateEncounter(this: Context, dt: number) {
       if (this.waveRest <= 0) {
         this.waveWaiting = false;
         this.wave++;
+        this.assaultDirection = Math.floor(this.rng() * 8);
         this.spawnClock = 0.8;
         this.emit("banner", {
           title: this.wave === 2 ? "墨潮涌动" : "最后一波",
-          sub: `WAVE 0${this.wave} / ${this.mode.name}`,
+          sub: `第 ${this.wave} 波 · ${assaultDirections[this.assaultDirection]}侧来袭`,
         });
       }
     }

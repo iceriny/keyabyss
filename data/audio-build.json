@@ -1,8 +1,8 @@
 {
-  "cues": 41,
+  "cues": 45,
   "sources": 37,
-  "clips": 112,
-  "bytes": 39793324,
+  "clips": 117,
+  "bytes": 42613714,
   "sampleRate": 48000,
   "codec": "FLAC",
   "spatialChannels": 1,

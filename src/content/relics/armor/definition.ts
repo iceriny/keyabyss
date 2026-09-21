@@ -4,7 +4,7 @@ export default {
   id: "armor",
   name: "硬壳书封",
   tag: "生存",
-  icon: "⬡",
+  icon: "armor",
   desc: "受到的伤害减少 25%。",
   max: 2,
   affinity: [],

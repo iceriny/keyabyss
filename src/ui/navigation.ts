@@ -23,6 +23,7 @@ export function navigationOrder(word?: string) {
     codex: 61,
     help: 62,
     settings: 63,
+    history: 64,
   };
   return primary[word] ?? 100;
 }

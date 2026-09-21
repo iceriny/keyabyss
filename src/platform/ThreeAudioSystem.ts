@@ -113,14 +113,17 @@ export class ThreeAudioSystem {
       if (this.disposed || epoch !== this.epoch || cue.spatial && worldEpoch !== this.worldEpoch || !this.enabled || this.blocked || this.ctx?.state !== 'running' || performance.now()-now > (cue.spatial ? 180 : 450)) return;
       if (this.pool.filter(v=>v.cue===id && v.audio.isPlaying).length >= cue.limit) { this.dropped++; return; }
       const voice = this.voice(cue.spatial, id, cue.priority); if (!voice) { this.dropped++; return; }
-      voice.audio.setBuffer(buffer).setVolume(cue.gain * Math.min(1.5, Math.max(0, strength))).setPlaybackRate(pitch);
+      const volume = cue.gain * Math.min(1.5, Math.max(0, strength));
+      voice.audio.setBuffer(buffer).setVolume(volume).setPlaybackRate(pitch);
+      voice.audio.offset = Math.min(cue.offset ?? 0, Math.max(0, buffer.duration - .001));
       const time = this.ctx.currentTime;
       voice.audio.gain.gain.cancelScheduledValues(time);
-      voice.audio.gain.gain.setValueAtTime(cue.gain * Math.min(1.5, Math.max(0, strength)), time);
+      voice.audio.gain.gain.setValueAtTime(cue.offset ? 0 : volume, time);
+      if (cue.offset) voice.audio.gain.gain.linearRampToValueAtTime(volume, time + .006);
       voice.audio.duration = cue.duration;
       if (cue.duration) {
-        const end = time + Math.min(cue.duration, buffer.duration) / pitch;
-        voice.audio.gain.gain.setValueAtTime(voice.audio.getVolume(), Math.max(time, end - .025));
+        const end = time + Math.min(cue.duration, buffer.duration - voice.audio.offset) / pitch;
+        voice.audio.gain.gain.setValueAtTime(volume, Math.max(time, end - .025));
         voice.audio.gain.gain.linearRampToValueAtTime(0, end);
       }
       if (cue.spatial) voice.audio.position.set(point.x/160, -point.y/160, 0);

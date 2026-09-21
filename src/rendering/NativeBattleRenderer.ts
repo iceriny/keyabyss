@@ -1,3 +1,4 @@
+import { edgeWidth } from "../shared/arena.ts";
 import { effectQuality } from "./EffectQuality";
 import { MenuScene } from "./MenuScene.ts";
 import { fireField, fireProjectile, burningEnemy } from "./FlameBrush";
@@ -484,7 +485,10 @@ export class NativeBattleRenderer {
     // Draw order uses entity y without mutating the simulation array.
     for (const e of [...g.enemies].sort((a, b) => a.y - b.y))
       if (!e.dead) {
-        const alpha = e.grace > 0 ? 0.45 + 0.2 * Math.sin(e.age * 5) : 1,
+        const edgeDistance = Math.min(e.x - g.arena.l, g.arena.r - e.x, e.y - g.arena.t, g.arena.b - e.y);
+        const clarity = clamp((edgeDistance - e.r) / edgeWidth(g.arena));
+        const visibility = e.combatLocked ? 1 : 0.06 + 0.94 * clarity * clarity;
+        const alpha = visibility * (e.grace > 0 ? 0.45 + 0.2 * Math.sin(e.age * 5) : 1),
           size = 128;
         this.sprite(
           e.boss
@@ -500,6 +504,7 @@ export class NativeBattleRenderer {
           alpha,
           e.flash > 0 ? 2 : 0.12,
           e.freeze > 0 ? "#c7efff" : "#ffffff",
+          e.combatLocked ? 0 : (1 - clarity) * 0.085,
         );
         burningEnemy(fx, e, t);
         if (e.flash > 0)
@@ -775,6 +780,7 @@ export class NativeBattleRenderer {
     alpha = 1,
     emission = 0.3,
     tint = "#ffffff",
+    softness = 0,
   ) {
     const handle = this.atlas.entries.get(key);
     if (!handle) return;
@@ -794,7 +800,7 @@ export class NativeBattleRenderer {
       batch.material = this.actorPages[handle.page].material;
       batch.mesh.material = batch.material;
     }
-    batch.add(x, y, w, h, tint, alpha, 0, angle, 0, emission, handle.uv);
+    batch.add(x, y, w, h, tint, alpha, 0, angle, softness, emission, handle.uv);
     this.atlasInstances[handle.page] =
       (this.atlasInstances[handle.page] || 0) + 1;
   }

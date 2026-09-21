@@ -1,10 +1,5 @@
-@font-face {
-  font-family: GameMono;
-  src: local("Cascadia Code"), local("Consolas");
-  font-display: swap;
-}
 :root {
-  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-display);
   color: #e9edf4;
   background: #080b13;
   font-synthesis: none;
@@ -13,7 +8,7 @@
   --gold: #ebd1a0;
   --school: #8bdeff;
   --panel: #111923;
-  --mono: GameMono, monospace;
+  --mono: var(--font-small);
   color-scheme: dark;
 }
 * {
@@ -240,7 +235,7 @@ kbd {
   color: #aebdce;
 }
 .game-title h1 {
-  font-family: "Noto Serif CJK SC", "SimSun", serif;
+  font-family: var(--font-display);
   font-size: clamp(64px, 6.6vw, 108px);
   font-weight: 400;
   letter-spacing: 9px;
@@ -333,8 +328,7 @@ kbd {
   border: 1px solid var(--school);
   border-radius: 50%;
   font:
-    clamp(64px, 7vw, 110px) Georgia,
-    serif;
+    clamp(64px, 7vw, 110px) var(--font-display);
   color: var(--school);
   text-shadow: 0 0 26px var(--school);
   box-shadow:
@@ -353,8 +347,7 @@ kbd {
   position: absolute;
   bottom: 28px;
   font:
-    14px Georgia,
-    serif;
+    14px var(--font-display);
   letter-spacing: 5px;
   color: var(--school);
 }
@@ -548,8 +541,7 @@ kbd {
 }
 .command-input > span {
   font:
-    14px "Microsoft YaHei",
-    sans-serif;
+    14px var(--font-small);
   letter-spacing: 1px;
   color: #b1bed0;
 }
@@ -829,7 +821,7 @@ kbd {
 }
 .stat strong {
   display: block;
-  font: 30px var(--mono);
+  font: 30px var(--font-display);
   color: #eddaaf;
   margin-bottom: 12px;
 }
@@ -943,7 +935,7 @@ kbd {
 }
 .codex-card h3,
 .help-grid h3 {
-  font-family: Georgia, "Noto Serif SC", "Microsoft YaHei", serif;
+  font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: 0.06em;
   color: #eddfbd;
@@ -1024,7 +1016,7 @@ kbd {
   color: #e1eaf3;
 }
 .word-preview small {
-  font-family: "Microsoft YaHei", sans-serif;
+  font-family: var(--font-small);
   color: #bdcadb;
   font-size: 13px;
   max-width: 230px;
@@ -1164,7 +1156,7 @@ kbd {
   font-size: 14px;
 }
 .combat-side > strong {
-  font: 48px var(--mono);
+  font: 48px var(--font-display);
   color: #e7d6b5;
 }
 .cadence {
@@ -1226,7 +1218,7 @@ kbd {
   letter-spacing: 3px;
 }
 .cast-word {
-  font: 600 clamp(20px, 2.4vw, 32px)/1.4 var(--mono);
+  font: 600 clamp(20px, 2.4vw, 32px)/1.4 var(--font-display);
   color: #edf4fb;
   overflow-wrap: anywhere;
   min-height: 40px;
@@ -2280,8 +2272,7 @@ kbd {
   transform: translateX(-50%);
   color: #ffe2a0;
   font:
-    700 11px Consolas,
-    monospace;
+    700 11px var(--font-small);
   letter-spacing: 0.2em;
   text-shadow: 0 0 15px #f9bf4c90;
 }
@@ -2307,7 +2298,7 @@ kbd {
   padding-bottom: 18px;
 }
 .modal-heading h2 {
-  font-family: Georgia, "Noto Serif SC", "Microsoft YaHei", serif;
+  font-family: var(--font-display);
   letter-spacing: 0.15em;
   color: #eddfbd;
   text-shadow: 0 0 25px #ead19725;
@@ -2453,7 +2444,7 @@ kbd {
   padding: 30px 24px;
 }
 .modal-panel .choice-card strong {
-  font-family: Georgia, "Microsoft YaHei", serif;
+  font-family: var(--font-display);
   letter-spacing: 0.08em;
 }
 .modal-panel .choice-card p {
@@ -2581,9 +2572,7 @@ kbd {
 }
 .startup-gate h1 {
   font:
-    400 clamp(44px, 5vw, 64px) Georgia,
-    "Microsoft YaHei",
-    serif;
+    400 clamp(44px, 5vw, 64px) var(--font-display);
   letter-spacing: 0.42em;
   margin: 0 0 0 0.42em;
   color: #eee0b9;
@@ -2611,8 +2600,7 @@ kbd {
 .startup-gate p small {
   display: block;
   font:
-    10px Consolas,
-    monospace;
+    10px var(--font-small);
   letter-spacing: 0.2em;
   color: #8f9d99;
   margin-top: 10px;

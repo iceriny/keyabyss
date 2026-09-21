@@ -18,7 +18,7 @@ export default {
   eyebrow: "SPIRIT GRIMOIRE",
   name: "纸灵之书",
   short: "纸灵",
-  icon: "◇",
+  icon: "spirit",
   color: "#c2a0ff",
   desc: "标记集火 · 飞刃军团",
   detail:

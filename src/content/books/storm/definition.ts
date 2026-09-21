@@ -18,7 +18,7 @@ export default {
   eyebrow: "STORM GRIMOIRE",
   name: "雷鸣之书",
   short: "雷鸣",
-  icon: "ϟ",
+  icon: "storm",
   color: "#ffd17c",
   desc: "瞬发电弧 · 过载引爆",
   detail:

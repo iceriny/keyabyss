@@ -152,6 +152,7 @@ export interface WorldState {
   visualTime: number;
   wallHits: number;
   wave: number;
+  assaultDirection: number;
   waveRest: number;
   waveWaiting: boolean;
   wordStats: Record<
@@ -325,7 +326,7 @@ export interface CombatRuntime extends WorldState {
   chooseRoute(route: Route): void;
   pause(): void;
   resume(): void;
-  end(win: boolean): void;
+  end(win: boolean, reason?: "defeat" | "abandoned"): void;
   home(): void;
   spiritPosition(
     i: number,
