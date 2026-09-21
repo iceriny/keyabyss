@@ -1,15 +1,15 @@
 import type { SpiritFlightProfile } from "../../../contracts/spirit-flight.ts";
 export const spiritFlight: SpiritFlightProfile = {
   orbit: {
-    radiusX: 78,
-    radiusY: 48,
-    speed: 0.95,
+    radiusX: 104,
+    radiusY: 66,
+    speed: 0.5,
     lift: 17,
-    sway: 9,
-    response: 7,
+    sway: 13,
+    response: 5,
   },
-  dive: { speed: 780, minDuration: 0.28, maxDuration: 0.78, bend: 0.32 },
-  return: { speed: 630, minDuration: 0.36, maxDuration: 0.85, bend: 0.46 },
+  dive: { speed: 470, minDuration: 0.48, maxDuration: 1.3, bend: 0.62 },
+  return: { speed: 360, minDuration: 0.62, maxDuration: 1.5, bend: 0.72 },
   cross: {
     speed: 1450,
     minDuration: 0.18,

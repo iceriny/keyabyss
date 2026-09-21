@@ -41,7 +41,9 @@ export function beginFlight(
     ny = (dx / d) * side,
     bank = Math.min(distance, 240) * p.bend;
   const velocity = Math.hypot(s.vx, s.vy);
-  const departure = Math.min(distance * 0.45, (velocity * duration) / 3);
+  const departure = mode === "return"
+    ? Math.min(distance * 0.8, (velocity * duration) / 3 + bank)
+    : Math.min(distance * 0.45, (velocity * duration) / 3);
   s.mode = mode;
   s.flight = {
     start: { x: s.x, y: s.y },
