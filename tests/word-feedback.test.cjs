@@ -24,8 +24,8 @@ test('optional overhead meaning defaults off, fits long text and leaves missing 
  const frame=createOverlayFrame(g),measure=(text,font)=>Array.from(text).length*font;
  const label=()=>layoutWordLabels(frame,measure)[0];
  assert.equal(g.options.labelMeaning,false);const base=label();assert(!base.meaningText);
- g.options.labelMeaning=true;assert.equal(label().meaningText,'守卫');assert.equal(label().h,base.h+18);
- e.meaning='这是一条很长的中文释义。'.repeat(20);assert(label().meaningText.endsWith('…'));assert(label().w<=304);
+ g.options.labelMeaning=true;assert.equal(label().meaningText,'守卫');assert.equal(label().h,base.h+17);
+ e.meaning='这是一条很长的中文释义。'.repeat(20);assert(label().meaningText.endsWith('…'));assert(label().w<=234);assert.equal(label().meaningLines.length,2);assert.equal(label().h,base.h+34);
  e.meaning='';assert.equal(label().h,base.h);
  g.options.labelMeaning=false;e.meaning='守卫';assert(!label().meaningText);
 });

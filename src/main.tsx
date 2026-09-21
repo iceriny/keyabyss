@@ -9,6 +9,7 @@ import "./ui/typography.css";
 import "./ui/results.css";
 import "./ui/open-ui.css";
 import "./ui/desktop.css";
+import "./ui/arrival.css";
 
 if (!document.documentElement.dataset.gameMounted) {
   document.documentElement.dataset.gameMounted = "true";

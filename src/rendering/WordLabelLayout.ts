@@ -34,17 +34,27 @@ export function layoutWordLabels(
         16,
         Math.min(base, 390 / Math.max(1, target.word.length)),
       );
-      let meaningText = frame.options.labelMeaning ? target.meaning?.trim().replace(/\s+/g, " ") : undefined;
-      if (meaningText && measure(meaningText, 12) > 280) {
-        const chars = Array.from(meaningText);
-        while (chars.length && measure(chars.join("") + "…", 12) > 280) chars.pop();
-        meaningText = chars.join("") + "…";
+      const meaning = frame.options.labelMeaning ? target.meaning?.trim().replace(/\s+/g, " ") : undefined;
+      const meaningLines: string[] = [];
+      if (meaning) {
+        const chars = Array.from(meaning);
+        for (let row = 0; row < 2 && chars.length; row++) {
+          let line = "";
+          while (chars.length && measure(line + chars[0], 12) <= 210) line += chars.shift();
+          if (row === 1 && chars.length) {
+            while (line && measure(line + "…", 12) > 210) line = Array.from(line).slice(0, -1).join("");
+            line += "…";
+          }
+          meaningLines.push(line.trim());
+        }
       }
-      const w = Math.max(measure(target.word, font), meaningText ? measure(meaningText, 12) : 0) + 24,
-        h = font + 13 + (meaningText ? 18 : 0);
+      const meaningText = meaningLines.join(" ") || undefined;
+      const w = Math.max(measure(target.word, font), ...meaningLines.map(line => measure(line, 12))) + 24,
+        h = font + 13 + meaningLines.length * 17;
       return {
         target,
         meaningText,
+        meaningLines,
         font,
         w,
         h,

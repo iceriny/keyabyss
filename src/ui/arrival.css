@@ -1,0 +1,25 @@
+.battle-arrival { position:fixed; inset:0; z-index:100; pointer-events:none; color:var(--arrival-color); overflow:hidden; }
+.arrival-veil { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 44%, color-mix(in srgb,var(--arrival-color) 14%,#050b13) 0%,#050910 75%); animation:arrival-veil 2s both; }
+.arrival-gate,.arrival-wave { position:absolute; left:50%; top:44%; width:64vmin; height:64vmin; margin:-32vmin; }
+.arrival-gate { opacity:0; filter:drop-shadow(0 0 16px var(--arrival-color)); animation:arrival-gate 2s both; }
+.arrival-gate svg { width:100%; height:100%; }
+.arrival-wave { border-radius:50%; box-shadow:0 0 18px 2px var(--arrival-color),inset 0 0 34px var(--arrival-color); animation:arrival-wave 2s both; }
+.arrival-book { position:absolute; left:50%; top:44%; width:29vmin; height:29vmin; margin:-14.5vmin; filter:drop-shadow(0 0 24px color-mix(in srgb,var(--arrival-color) 35%,transparent)); animation:arrival-book 2s both; }
+.arrival-book .book-artwork { width:100%; height:100%; }
+.arrival-caption { position:absolute; left:0; right:0; top:69%; display:grid; justify-items:center; gap:13px; animation:arrival-caption 2s both; text-shadow:0 2px 16px #000; }
+.arrival-caption small { font-size:10px; letter-spacing:.38em; }
+.arrival-caption strong { font-size:clamp(26px,3.5vmin,42px); font-weight:400; letter-spacing:.16em; }
+.arrival-caption span { font-size:13px; letter-spacing:.45em; color:#c2c6c6; }
+.arrival-motes { position:absolute; left:50%; top:44%; }
+.arrival-motes i { position:absolute; width:2px; height:2px; border-radius:50%; background:var(--arrival-color); box-shadow:0 0 8px var(--arrival-color); animation:arrival-mote 1.8s var(--delay) both; }
+@keyframes arrival-veil { 0%{opacity:0} 16%,60%{opacity:1} 100%{opacity:0} }
+@keyframes arrival-gate { 0%{opacity:0;transform:scale(.65) rotate(-12deg)} 35%{opacity:.45} 60%{opacity:.9;transform:scale(1) rotate(4deg)} 100%{opacity:0;transform:scale(1.6) rotate(10deg)} }
+@keyframes arrival-book { 0%{opacity:0;transform:translateY(20px) scale(.9)} 25%,53%{opacity:1;transform:translateY(0) scale(1)} 67%,100%{opacity:0;transform:translateY(-30px) scale(1.12)} }
+@keyframes arrival-wave { 0%,55%{opacity:0;transform:scale(.3)} 61%{opacity:.65;transform:scale(.7)} 100%{opacity:0;transform:scale(4)} }
+@keyframes arrival-caption { 0%,12%{opacity:0;transform:translateY(8px)} 28%,53%{opacity:1;transform:translateY(0)} 70%,100%{opacity:0;transform:translateY(-8px)} }
+@keyframes arrival-mote { 0%{opacity:0;transform:rotate(var(--angle)) translateX(32vmin)} 35%,60%{opacity:.65;transform:rotate(var(--angle)) translateX(15vmin)} 100%{opacity:0;transform:rotate(var(--angle)) translateX(var(--travel))} }
+.battle-arrival.reduced > * { animation:none; }
+.battle-arrival.reduced { animation:arrival-soft .24s both; }
+.battle-arrival.reduced .arrival-gate,.battle-arrival.reduced .arrival-wave,.battle-arrival.reduced .arrival-motes { display:none; }
+@keyframes arrival-soft { 0%,100%{opacity:0} 40%{opacity:1} }
+@media(prefers-reduced-motion:reduce) { .battle-arrival > * { animation:none; } .battle-arrival { animation:arrival-soft .24s both; } .battle-arrival .arrival-gate,.battle-arrival .arrival-wave,.battle-arrival .arrival-motes { display:none; } }

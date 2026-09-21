@@ -1,3 +1,4 @@
+import { BattleArrival } from "./BattleArrival";
 import { FirstVisitSetup } from "./FirstVisitSetup";
 import { GameText } from "./GameText";
 import { readRunArchive, settleRun } from "../application/runArchive.ts";
@@ -83,6 +84,7 @@ export function App() {
   const [archive, setArchive] = useState(() => readRunArchive(storage));
   const archiveRef = useRef(archive);
   const [entered, setEntered] = useState(false);
+  const [arrival, setArrival] = useState<{ reveal: () => void; book: BookId } | null>(null);
   const [arriving, setArriving] = useState(false);
   const [loading, setLoading] = useState<LoadingState | null>(null);
   const loadingToken = useRef(0),
@@ -212,7 +214,7 @@ export function App() {
     label: string,
     battle = false,
   ) => {
-    if (loadingBusy.current) return;
+    if (loadingBusy.current || arrival) return;
     loadingBusy.current = true;
     const token = ++loadingToken.current;
     retryLoad.current = () => {
@@ -259,8 +261,9 @@ export function App() {
     if (!game || !selected) return;
     void prepare(
       selected,
-      (words) =>
-        game.start({
+      (words) => {
+        setStack([]);
+        setArrival({ book, reveal: () => game.start({
           book,
           mode,
           words,
@@ -270,7 +273,8 @@ export function App() {
           seed:
             seed.trim() ||
             Math.random().toString(36).slice(2, 10).toUpperCase(),
-        }),
+        }) });
+      },
       "准备战场",
       true,
     );
@@ -494,6 +498,13 @@ export function App() {
       >
         <canvas id="world" ref={canvas} aria-label="键渊战场" />
         <ArcaneCursor />
+        {arrival && game && <BattleArrival
+          book={C.BOOKS[arrival.book]}
+          reduced={settings.reduceMotion}
+          reveal={arrival.reveal}
+          complete={() => setArrival(null)}
+          sound={(cue) => game.playUISound(cue)}
+        />}
         <TooltipHost
           scope={`${entered}:${loading?.label ?? ""}:${screen?.type || state}:${stack.length}`}
         />
@@ -521,7 +532,7 @@ export function App() {
         {(entered || arriving) && state === "home" && (
           <div
             className={arriving ? "home-arrival" : undefined}
-            inert={!entered || !!screen || !!loading}
+            inert={!entered || !!screen || !!loading || !!arrival}
           >
             <Home
               game={game}

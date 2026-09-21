@@ -287,41 +287,50 @@ export class OverlayRenderer {
             : t.boss
               ? "#dcb7a1"
               : "#adc4c3";
-      c.lineWidth = 1;
-      c.strokeStyle = locked ? "#d6c68c99" : "#89a9a02e";
-      c.beginPath();
-      c.moveTo(t.x, t.y);
-      c.lineTo(l.x + l.w / 2, l.y + l.h / 2);
-      c.stroke();
-      c.lineWidth = locked ? 2 : 1;
-      c.fillStyle = locked ? "#263c47fa" : "#0a131df5";
-      c.strokeStyle = locked ? "#ffe0a1" : t.kind ? "#77b59a70" : "#72928744";
-      c.beginPath();
-      c.roundRect(l.x, l.y, l.w, l.h, 6);
-      c.fill();
-      c.stroke();
+      c.save();
+      // Feathered shadow and a single fine rule; no card or enclosing border.
+      c.save();
+      c.translate(l.x + l.w / 2, l.y + l.h / 2);
+      c.scale(l.w * 0.75, l.h * 0.9);
+      const shade = c.createRadialGradient(0, 0, 0, 0, 0, 1);
+      shade.addColorStop(0, locked ? "#060f18b0" : "#060f1880");
+      shade.addColorStop(1, "#060f1800");
+      c.fillStyle = shade;
+      c.beginPath(); c.arc(0, 0, 1, 0, TAU); c.fill();
+      c.restore();
+      const rule = c.createLinearGradient(l.x, 0, l.x + l.w, 0);
+      rule.addColorStop(0, "#c9b78000");
+      rule.addColorStop(0.5, locked ? "#dbc894b0" : "#9fbfbc55");
+      rule.addColorStop(1, "#c9b78000");
+      c.fillStyle = rule;
+      c.fillRect(l.x, l.y + l.font + 9, l.w, 1);
+      c.shadowColor = "#02080e";
+      c.shadowBlur = 5;
       c.font = canvasFont(l.font, 600);
       c.textAlign = "left";
       c.textBaseline = "middle";
       c.fillStyle = col;
-      c.fillText(t.word, l.x + 12, l.y + (l.font + 13) / 2 + 0.5);
+      const wordX = l.x + (l.w - this.textWidth(c, t.word)) / 2;
+      c.fillText(t.word, wordX, l.y + (l.font + 13) / 2 + 0.5);
       if (this.frame.prefix && t.word.startsWith(this.frame.prefix)) {
         c.fillStyle = locked ? "#79d5b9" : "#6ba69b";
-        c.fillText(this.frame.prefix, l.x + 12, l.y + (l.font + 13) / 2 + 0.5);
+        c.fillText(this.frame.prefix, wordX, l.y + (l.font + 13) / 2 + 0.5);
       }
       if (locked) {
-        c.fillStyle = "#ffe0a1";
-        c.fillRect(l.x + 5, l.y + 5, 3, l.h - 10);
+
         const textW = this.textWidth(c, this.frame.prefix);
         const nextW = this.textWidth(c, t.word[this.frame.prefix.length] || "");
         c.fillStyle = "#e5c990";
-        c.fillRect(l.x + 12 + textW, l.y + l.font + 9, nextW, 1.5);
+        c.fillRect(wordX + textW, l.y + l.font + 9, nextW, 1.5);
       }
       if (l.meaningText) {
         c.font = canvasFont(12, 600);
         c.fillStyle = locked ? "#c6bba4" : "#8b9e9f";
-        c.fillText(l.meaningText, l.x + 12, l.y + l.font + 20);
+        c.textAlign = "center";
+        (l.meaningLines || [l.meaningText]).forEach((line, index) =>
+          c.fillText(line, l.x + l.w / 2, l.y + l.font + 21 + index * 17));
       }
+      c.restore();
       c.textBaseline = "alphabetic";
     }
   }

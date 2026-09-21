@@ -163,6 +163,7 @@ export interface RuneNode extends TargetBase {
 export type CombatTarget = Enemy | RuneNode;
 export interface Label extends Box {
   meaningText?: string;
+  meaningLines?: string[];
   target: Readonly<CombatTarget>;
   font: number;
 }
