@@ -48,3 +48,26 @@
   #hud .hud-bottom { grid-template-columns: 160px minmax(0,1fr) 200px; gap: 20px; }
   #hud .level-block { width: 160px; }
 }
+
+/* Transient feedback sits in the upper sightline, separate from persistent HUD. */
+.toast {
+  width: max-content; max-width: min(600px,76vw); padding: 12px 28px;
+  border: 0; border-radius: 0; background: transparent; box-shadow: none;
+  color: #e3d6b9; text-align: center; pointer-events: none;
+  font: 400 16px/1.65 var(--font-small); letter-spacing: .06em;
+  text-shadow: 0 2px 5px #03080f,0 0 16px #03080f;
+  animation: none; isolation: isolate;
+}
+.toast::before {
+  content: ""; position: absolute; inset: -20px -36px; z-index: -1;
+  background: radial-gradient(ellipse, #050b16c4 0%, #050b1655 42%, transparent 72%);
+}
+.toast::after {
+  content: ""; position: absolute; left: 50%; bottom: 1px;
+  width: min(160px,50%); height: 1px; transform: translateX(-50%);
+  background: linear-gradient(90deg,transparent,#c7b28588,transparent);
+}
+.toast.combat-toast { top: 31dvh; bottom: auto; transform: translate(-50%,-50%); }
+.toast-message { display: block; overflow-wrap: anywhere; animation: notice-arrival .3s ease-out both; }
+@keyframes notice-arrival { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@media(prefers-reduced-motion:reduce) { .toast-message { animation: none; } }

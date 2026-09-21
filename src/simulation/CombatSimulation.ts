@@ -466,7 +466,7 @@ export class CombatSimulation {
       hp: Math.max(0, this.player.hp),
       maxHp: this.player.maxHp,
       godMode: this.godMode,
-      version: "0.6.1",
+      version: "0.6.2",
       win,
       chapter: this.chapter + 1,
       stage: this.activeStage,

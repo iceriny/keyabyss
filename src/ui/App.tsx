@@ -590,8 +590,8 @@ export function App() {
           </div>
         )}
         {notice && (
-          <div className="toast" role="status">
-            {notice}
+          <div className={`toast${state === "playing" && !screen ? " combat-toast" : ""}`} role="status" aria-live="polite" aria-atomic="true">
+            <span key={notice} className="toast-message">{notice}</span>
           </div>
         )}
       </KeyboardLayer>
