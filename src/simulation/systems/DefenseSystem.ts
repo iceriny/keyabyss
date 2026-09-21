@@ -54,7 +54,7 @@ export function parry(this: Context) {
   )
     return;
   p.parryTime = DEFENSE.window;
-  p.parryCooldown = DEFENSE.cooldown * (this.stats.parryHaste ? 0.7 : 1);
+  p.parryCooldown = this.combatValue("parry.cooldown");
   p.parrySuccess = false;
   this.sound.parryActivate(p);
   this.burst(p.x, p.y, DEFENSE.radius, "#b8e8df", "impact");

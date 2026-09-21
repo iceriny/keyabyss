@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "每完成5次咒文获得 {ward.hook.0.amount} 点护盾。" },
   grants: { castWard: 1 },
   id: "ward",
   name: "护页结界",

@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "每次熔爆施法获得 {coal.shield} 点护盾，上限60。", castPreview: false },
   id: "coal",
   name: "炽炭书封",
   icon: "coal",

@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "低生命条件生效时提高施法与纸灵伤害，当前倍率 {sacrifice.damageMultiplier}。 施法伤害 {cast.hit}。", castPreview: true },
   grants: { lowHealthPower: 1 },
   id: "sacrifice",
   name: "背水誓书",

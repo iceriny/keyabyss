@@ -39,6 +39,8 @@ export interface BookAbilityContext {
   decoy: (Point & { life: number }) | null;
   readonly fx: VisualEffect[];
   rng(): number;
+  readonly bookData: import("../contracts/content.ts").Book;
+  combatValue(id: string, inputs?: Readonly<Record<string, number>>): number;
   damageMultiplier(): number;
   launchShot(
     from: Point,

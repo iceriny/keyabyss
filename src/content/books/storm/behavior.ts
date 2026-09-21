@@ -17,7 +17,7 @@ const behavior: BookBehavior = {
   duration: (ctx) => (ctx.stats.ultimateChain ? 9 : 6),
   cast(ctx, t, dmg, empowered, critical) {
     ctx.arc(ctx.player, t, "#ffe7ac", empowered ? 8 : 5, 0.36);
-    ctx.strike(t, dmg * (empowered ? 1.5 : 1.12), {
+    ctx.strike(t, dmg * ctx.bookData.castMultiplier[empowered ? "empowered" : "normal"], {
       direct: true,
       empowered,
       from: ctx.player,
@@ -27,10 +27,7 @@ const behavior: BookBehavior = {
     ctx.chain(
       t,
       dmg * 0.78,
-      3 +
-        (ctx.stats.chainTargets || 0) +
-        (empowered ? 2 : 0) +
-        (ctx.stats.overloadPull ? 2 : 0),
+      ctx.combatValue("chain.count", { empoweredChain: empowered ? 2 : 0 }),
     );
   },
   ultimate(ctx) {

@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "灼烧持续 {burn.duration} 秒。", castPreview: false },
   id: "pitch",
   name: "松脂印章",
   icon: "pitch",

@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "普通施法电弧跳跃 {chain.count} 次。", castPreview: false },
   grants: { chainTargets: 1 },
   id: "chain",
   name: "导电墨水",

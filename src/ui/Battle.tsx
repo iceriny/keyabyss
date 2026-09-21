@@ -1,4 +1,7 @@
 import { RelicIcon } from "./RelicIcon";
+import { describeRelic } from "./relic-presentation.ts";
+import { isSupplyReward } from "../contracts/rewards.ts";
+import { useRelicFormulas } from "./useRelicFormulas.ts";
 import { GameText } from "./GameText";
 import { ComboReadout, UpgradeCompanion, VitalBars } from "./BattleReadouts";
 import { assaultDirections } from "../shared/assault.ts";
@@ -170,6 +173,8 @@ export function UpgradePanel({
   choices: import("../contracts/rewards.ts").RewardChoice[];
   onQuit: () => void;
 }) {
+  useGamePulse(game);
+  const formulas = useRelicFormulas();
   return (
     <GameText>
       <>
@@ -189,7 +194,7 @@ export function UpgradePanel({
                     : r.tag
               }
               title={r.name}
-              description={r.desc}
+              description={isSupplyReward(r) ? r.desc : describeRelic(r, C.RELICS, game, formulas, true)}
               className={r.rarity || ""}
               onClick={() => game.chooseUpgrade(r.id)}
             />
@@ -206,7 +211,7 @@ export function UpgradePanel({
           <Button word="quit" onClick={onQuit}>
             结束本局
           </Button>
-          <span>LV {game.level}</span>
+          <span>按住 <Key>{"\\"}</Key> 显示详情</span>
         </div>
         <UpgradeCompanion game={game} />
       </>

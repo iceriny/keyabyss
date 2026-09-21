@@ -9,7 +9,7 @@ export type RelicEffect =
   | { kind: "heal"; amount: number }
   | { kind: "maxHealth"; amount: number; heal: number }
   | { kind: "dashCharge"; amount: number }
-  | { kind: "bloodPrice" }
+  | { kind: "bloodPrice"; amount: number }
   | { kind: "shield"; amount: number; cap: number; color: string }
   | { kind: "pulse"; radius: number; damage: number };
 

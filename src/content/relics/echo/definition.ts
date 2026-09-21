@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "每第3次完词向另一敌人复制法术，伤害 {echo.damage}。", castPreview: true },
   grants: { echoCast: 1 },
   id: "echo",
   name: "双生笔尖",

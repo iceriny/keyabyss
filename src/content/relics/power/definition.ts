@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "锋利笔尖伤害倍率 {power.damageMultiplier}；施法伤害 {cast.hit}。", castPreview: true },
   grants: { directDamage: 1 },
   id: "power",
   name: "锋利笔尖",

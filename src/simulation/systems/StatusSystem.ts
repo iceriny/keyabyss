@@ -15,6 +15,7 @@ type Context = Pick<
   | "fireImpact"
   | "tickBurn"
   | "tickFireField"
+  | "combatValue"
   | "stats"
   | "addField"
   | "applyCold"
@@ -54,14 +55,14 @@ export function applyCold(
   amount: number | null = null,
 ) {
   if (!e || e.dead) return;
-  amount = amount ?? this.bookBehavior.cold + (this.stats.coldStacks || 0) * 45;
+  amount = amount ?? this.bookBehavior.cold + this.combatValue("cold.amount");
   if (!amount) return;
   e.chill = (e.chill || 0) + amount;
   if (e.chill >= 100) {
     e.chill = 0;
     e.freeze = Math.max(
       e.freeze || 0,
-      e.boss ? 0.8 : 1.55 + 0.45 * (this.stats.coldStacks || 0),
+      this.combatValue("cold.duration", { boss: Number(e.boss) }),
     );
     e.windup = 0;
     if (!e.boss) e.charge = 0;
@@ -78,9 +79,7 @@ export function conduct(this: Context, e: Enemy) {
   this.overloads++;
   const radius = this.stats.overloadPull ? 190 : 125,
     dmg =
-      (34 + this.chapter * 8) *
-      (1 + 0.35 * (this.stats.chainConduction || 0)) *
-      this.damageMultiplier();
+      this.combatValue("overload.damage");
   if (this.stats.overloadPull) this.pull(e.x, e.y, radius + 50, 380);
   this.burst(e.x, e.y, radius, "#ffe1a1", "electric");
   this.damage(e, dmg, 1, false);
@@ -102,14 +101,14 @@ export function chain(
     const next = this.nearest(
       from,
       seen,
-      265 + 100 * (this.stats.effectReach || 0),
+      this.combatValue("chain.radius"),
     );
     if (!next) break;
     seen.add(next.id);
     this.arc(from, next, "#ffdd94", 3.5, 0.34 + i * 0.015);
     this.strike(next, dmg, { from, kind: "storm", direct: false, depth: 1 });
     from = next;
-    dmg *= this.stats.chainConduction ? 0.91 : 0.76;
+    dmg *= this.combatValue("chain.retention");
   }
 }
 
@@ -122,14 +121,14 @@ export function strike(
   if (!e || e.dead) return;
   const frozen = e.freeze > 0;
   if (frozen) {
-    dmg *= 1.18 + (this.stats.frozenVulnerability || 0) * 0.4;
+    dmg *= this.combatValue("frozen.multiplier");
     if (opts.empowered && opts.kind === "ice") dmg *= 1.25;
   }
   if (opts.kind === "fire")
     this.applyBurn(e, opts.empowered ? 2 : 1, opts.depth ?? 0);
   if (this.stats.execution && e.boss) dmg *= 1.15;
   if (opts.kind === "ice") this.applyCold(e, opts.direct ? 100 : 48);
-  else if (this.stats.coldStacks) this.applyCold(e, 45 * this.stats.coldStacks);
+  else if (this.stats.coldStacks) this.applyCold(e, this.combatValue("cold.amount"));
   if (opts.direct && this.stats.bleedStacks) {
     e.dot = 4;
     e.dotStacks = Math.min(3, (e.dotStacks || 0) + 1);
@@ -143,7 +142,7 @@ export function strike(
         : opts.kind === "blade"
           ? 190
           : 150) *
-      (1 + 0.6 * (this.stats.impulsePower || 0));
+      this.combatValue("impulse.multiplier");
   this.impulse(e, origin, force);
   this.damage(e, dmg, opts.depth || 0, !!opts.direct, origin);
   if (opts.kind === "fire") this.fireImpact(e, dmg, opts);
@@ -177,8 +176,8 @@ export function strike(
     this.explode(
       e.x,
       e.y,
-      90 + 25 * (this.stats.effectReach || 0),
-      dmg * 0.35 * this.stats.hitExplosion,
+      this.combatValue("blast.radius"),
+      this.combatValue("blast.damage", { hitDamage: dmg }),
       e,
       1,
       "#edba80",
@@ -287,7 +286,7 @@ export function updateEnemyStatus(this: Context, e: Enemy, dt: number) {
     e.dotTick -= dt;
     if (e.dotTick <= 0) {
       e.dotTick = 1;
-      this.damage(e, 8 * (this.stats.bleedStacks || 1) * e.dotStacks, 1, false);
+      this.damage(e, this.combatValue("bleed.damage", { dotStacks: e.dotStacks }), 1, false);
     }
   } else e.dotStacks = 0;
 }

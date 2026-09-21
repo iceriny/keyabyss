@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "最大生命 {player.maxHp}；领取时立即回复30点生命（不超过最大生命）。", castPreview: false },
   grants: { extraHealth: 1 },
   id: "heal",
   name: "生命页签",

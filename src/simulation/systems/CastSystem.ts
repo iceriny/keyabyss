@@ -1,4 +1,3 @@
-import { summonCapacity } from "../../shared/summons.ts";
 import type { RelicContext } from "../RelicRules.ts";
 import type { BookAbilityContext } from "../../content-sdk/BookBehavior.ts";
 
@@ -18,6 +17,7 @@ type Context = Pick<
   | "domainEvents"
   | "roomVisit"
   | "godMode"
+  | "combatValue"
   | "stats"
   | "addResonance"
   | "afterCast"
@@ -42,6 +42,7 @@ type Context = Pick<
   | "perfectWords"
   | "player"
   | "reflectionBoost"
+  | "relics"
   | "relicRules"
   | "relics"
   | "resonance"
@@ -98,7 +99,7 @@ export function cast(
     }
   }
   this.addResonance((perfect ? 8 : 6) * (this.stats.resonanceHaste ? 1.35 : 1));
-  if (this.bookBehavior.summons) this.awakenedSpirits = Math.min(summonCapacity(true, this.stats, this.ultimateTime), (this.spiritTime > 0 ? this.awakenedSpirits : 0) + 1);
+  if (this.bookBehavior.summons) this.awakenedSpirits = Math.min(this.combatValue("summon.capacity"), (this.spiritTime > 0 ? this.awakenedSpirits : 0) + 1);
   if (
     this.bookBehavior.summons ||
     this.stats.summonStacks ||
@@ -107,29 +108,28 @@ export function cast(
     this.spiritTime = Math.min(
       18,
       this.spiritTime +
-        4 +
-        (this.stats.summonStacks || 0) +
-        (this.stats.summonBond || 0) * 2,
+        this.combatValue("summon.duration"),
     );
   if (t.kind) {
     this.triggerNode(t);
     this.afterCast(t, perfect);
     return;
   }
-  let dmg = (35 + word.length * 5.4) * this.damageMultiplier();
-  if (word.length <= 4 && this.stats.shortWordDamage) {
-    dmg *= 1 + 0.6 * this.stats.shortWordDamage;
+  const shortWord = this.relicRules.wordModifierApplies(this.relics, "shortWordDamage", word.length);
+  const longWord = this.relicRules.wordModifierApplies(this.relics, "longWordDamage", word.length);
+  let dmg = this.combatValue("cast.base", {
+    wordLength: word.length, shortWord: Number(shortWord),
+    longWord: Number(longWord), perfect: Number(perfect),
+  });
+  if (shortWord) {
     this.player.dash = Math.min(this.player.maxDash, this.player.dash + 0.1);
   }
-  if (word.length >= 7 && this.stats.longWordDamage) {
-    dmg *= 1 + 0.75 * this.stats.longWordDamage;
+  if (longWord) {
     this.clearBullets(t.x, t.y, 105);
   }
-  if (perfect) dmg *= 1.08 + (this.stats.perfectDamage || 0) * 0.35;
-  dmg *= 1 + Math.min(this.combo, 10) * 0.025 * (this.stats.comboPower ? 2 : 1);
   let critical = !!this.stats.criticalCadence && this.casts % 4 === 0;
   if (critical) {
-    dmg *= 2;
+    dmg *= this.combatValue("crit.multiplier");
     this.floating(t.x, t.y - 68, "暴击", this.bookData.color, 21);
   }
   if (this.reflectionBoost) {
@@ -142,7 +142,7 @@ export function cast(
   if (this.stats.echoCast && this.casts % 3 === 0) {
     const other = this.nearest(t, new Set([t.id]));
     if (other)
-      this.launchShot(this.player, other, "echo", dmg * 0.65, {
+      this.launchShot(this.player, other, "echo", this.combatValue("echo.damage", { castBase: dmg }), {
         direct: false,
       });
   }

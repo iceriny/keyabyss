@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "{description} 纸灵上限 {summon.capacity}；未标记目标单次伤害 {summon.damage}；每词维持 {summon.duration} 秒（累计上限18秒）。", castPreview: false },
   grants: { summonLegion: 1 },
   id: "legion",
   name: "千纸军团",

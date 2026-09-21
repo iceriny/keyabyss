@@ -16,6 +16,7 @@ import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
   | "godMode"
+  | "combatValue"
   | "stats"
   | "addField"
   | "addResonance"
@@ -209,7 +210,7 @@ export function dodge(this: Context) {
 }
 
 export function getDashCooldown(this: Context) {
-  return this.mode.dashCD * (this.stats.extraDash ? 0.72 : 1);
+  return this.combatValue("dash.cooldown");
 }
 
 export function finishDodge(this: Context) {

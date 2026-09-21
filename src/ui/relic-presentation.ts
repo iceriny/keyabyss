@@ -19,3 +19,13 @@ export function sortRelicsByRarity(relics: readonly Relic[]): Relic[] {
       RELIC_RARITIES[relicRarity(b)].order,
   );
 }
+
+import { describeRelic as describe } from "../shared/relic-values.ts";
+import { ValueRules } from "../shared/ValueRules.ts";
+import { combatValues } from "../content/combat-values.ts";
+import { BOOKS } from "../content/catalog.ts";
+import { previewDefaults } from "../content/preview-defaults.ts";
+import type { RelicPreview } from "../shared/relic-values.ts";
+const rules = new ValueRules(combatValues);
+export const describeRelic = (relic: Relic, definitions: readonly Relic[], game?: RelicPreview, formulas = false, candidate = false) =>
+  describe(relic, definitions, rules, BOOKS, previewDefaults, game, formulas, candidate);

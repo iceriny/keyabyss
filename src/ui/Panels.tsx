@@ -1,4 +1,7 @@
 import { RelicIcon } from "./RelicIcon";
+import { describeRelic } from "./relic-presentation.ts";
+import type { SessionView } from "../contracts/session.ts";
+import { useRelicFormulas } from "./useRelicFormulas.ts";
 import { About } from "./About";
 import { GameText } from "./GameText";
 import { TERMS } from "../content/glossary.ts";
@@ -201,10 +204,13 @@ export function HelpPanel() {
 export function CodexPanel({
   held,
   book,
+  game,
 }: {
   held?: Record<string, number>;
   book: BookId;
+  game?: SessionView;
 }) {
+  const formulas = useRelicFormulas();
   const [tab, setTab] = useState("books");
   const [termQuery, setTermQuery] = useState("");
   const [termCategory, setTermCategory] = useState("all");
@@ -340,7 +346,7 @@ export function CodexPanel({
                         {r.name}
                         {held && ` × ${held[r.id]}`}
                       </h3>
-                      <p>{r.desc}</p>
+                      <p>{describeRelic(r, C.RELICS, held ? game : undefined, formulas)}</p>
                       {r.requires && (
                         <p className="accent">
                           觉醒前置：

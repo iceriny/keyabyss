@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "闪避火场半径 {fireTrail.radius}，持续 {fireTrail.duration} 秒。", castPreview: false },
   id: "firewalk",
   name: "灼痕行书",
   icon: "firewalk",

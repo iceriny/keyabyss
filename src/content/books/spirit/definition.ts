@@ -1,5 +1,7 @@
 import type { Book } from "../../../contracts/content.ts";
 export default {
+  combat: { nativeSummons: 3 },
+  castMultiplier: { normal: 0.88, empowered: 0.88 },
   artwork: "book-spirit",
   visual: {
     rays: 8,

@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "弹反冷却 {parry.cooldown} 秒。", castPreview: false },
   id: "rebound",
   name: "回锋笔套",
   tag: "弹反",

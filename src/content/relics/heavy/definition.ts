@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "法术击退倍率 {impulse.multiplier}；碰撞伤害翻倍。", castPreview: false },
   grants: { impulsePower: 1 },
   id: "heavy",
   name: "鲸骨笔杆",

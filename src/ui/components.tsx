@@ -509,6 +509,7 @@ export function KeyboardLayer({
   }, [scope, playing]);
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
+      if (e.code === "Backslash" || e.key === "\\") return;
       const s = state.current,
         target = e.target as HTMLElement;
       if (e.key !== "Shift" && shift.current) shift.current.valid = false;

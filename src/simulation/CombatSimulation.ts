@@ -1,3 +1,6 @@
+import { collectValues } from "../shared/relic-build.ts";
+import { ValueRules } from "../shared/ValueRules.ts";
+import { DEFENSE } from "../shared/defense.ts";
 import { counterWorldDelta, dodgeDirection } from "../shared/defense.ts";
 import { APP_VERSION } from "../shared/version.ts";
 import { enemyInCombat } from "../shared/arena.ts";
@@ -83,6 +86,7 @@ export class CombatSimulation {
   set tasks(tasks: ScheduledTask[]) {
     this.scheduler.replace(tasks);
   }
+  readonly valueRules: ValueRules;
   readonly relicRules: RelicRules;
   readonly stats: import("../contracts/stats.ts").CombatStats;
   readonly content: SimulationContent;
@@ -132,6 +136,7 @@ export class CombatSimulation {
   ) {
     this.content = content;
     this.campaign = new Campaign(content.chapters);
+    this.valueRules = new ValueRules(collectValues(content.values, content.relics));
     this.relicRules = new RelicRules(content.relics);
     this.stats = this.relicRules.createStats(() => this.relics || {});
     this.events = events;
@@ -539,6 +544,19 @@ export class CombatSimulation {
   }
 
   releaseKey = Targeting.releaseKey;
+
+  combatValue(id: string, inputs: Readonly<Record<string, number>> = {}) {
+    return this.valueRules.evaluate(id, this.stats, {
+      damageMultiplier: this.damageMultiplier(), combo: this.combo || 0,
+      chapter: this.chapter || 0, maxHp: this.player.maxHp, maxDash: this.player.maxDash,
+      dashCD: this.mode?.dashCD ?? 0, parryCooldown: DEFENSE.cooldown,
+      nativeChain: this.bookData?.combat?.nativeChain ?? 0,
+      nativeSummons: this.bookData?.combat?.nativeSummons ?? 0,
+      ultimateActive: Number(this.ultimateTime > 0), empoweredChain: 0,
+      schoolMultiplier: this.bookData?.castMultiplier.normal ?? 1,
+      ...inputs,
+    });
+  }
 
   damageMultiplier() {
     return this.relicRules.damageMultiplier(this);

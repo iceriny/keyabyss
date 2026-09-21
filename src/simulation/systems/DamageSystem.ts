@@ -20,6 +20,7 @@ type Context = Pick<
   | "roomVisit"
   | "godMode"
   | "arena"
+  | "combatValue"
   | "stats"
   | "bossDefinition"
   | "addResonance"
@@ -237,10 +238,8 @@ export function kill(this: Context, e: Enemy, depth = 0) {
     this.explode(
       e.x,
       e.y,
-      100 +
-        20 * (this.stats.shatterStacks || 0) +
-        25 * (this.stats.effectReach || 0),
-      28 + 18 * (this.stats.shatterStacks || 0),
+      this.combatValue("shatter.radius"),
+      this.combatValue("shatter.damage"),
       e,
       depth + 1,
       "#94dbff",
@@ -299,7 +298,7 @@ export function explode(
     this.impulse(
       e,
       { x, y },
-      (cold ? 160 : 210) * (1 + 0.6 * (this.stats.impulsePower || 0)),
+      (cold ? 160 : 210) * this.combatValue("impulse.multiplier"),
     );
     this.damage(e, dmg, depth, false, { x, y });
   }
@@ -324,8 +323,7 @@ export function hurt(
   const p = this.player;
   if (p.invuln > 0 || this.state !== "playing" || this.roomEnded) return;
   amount *=
-    Math.pow(0.75, this.stats.damageArmor || 0) *
-    (this.stats.fragileDamage ? 1.3 : 1);
+    this.combatValue("armor.multiplier");
   if (p.shield > 0) {
     const absorbed = Math.min(p.shield, amount);
     p.shield -= absorbed;
@@ -357,7 +355,7 @@ export function hurt(
       this.floating(p.x, p.y - 72, "GOD MODE · 回满", "#ffe5a1", 18);
     } else if (this.stats.lethalRescue && !this.rescued) {
       this.rescued = true;
-      p.hp = p.maxHp * 0.45;
+      p.hp = this.combatValue("rescue.health");
       p.invuln = 3;
       this.clearBullets(p.x, p.y, 1800);
       this.lasers = [];
@@ -375,7 +373,7 @@ export function hurt(
 export function payBloodPrice(this: Context) {
   if (!this.stats.roomHealthCost || this.bloodPaidStage === this.stage) return;
   const p = this.player,
-    cost = Math.min(8, Math.max(0, p.hp - 1));
+    cost = Math.min(this.combatValue("bloodprice.hook.0.amount"), Math.max(0, p.hp - 1));
   p.hp -= cost;
   this.bloodPaidStage = this.stage;
   this.floating(p.x, p.y - 55, "血契 −" + Math.round(cost), "#ffc1b9", 20);

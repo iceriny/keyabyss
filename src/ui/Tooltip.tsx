@@ -14,6 +14,10 @@ import {
   shift,
 } from "@floating-ui/dom";
 import { createTextTokenizer } from "../shared/game-text.ts";
+import { describeRelic } from "./relic-presentation.ts";
+import type { SessionView } from "../contracts/session.ts";
+import { RELICS } from "../content/catalog.ts";
+import { useRelicFormulas } from "./useRelicFormulas.ts";
 
 /** No focus stops or click handlers: works inside buttons and existing manual navigation. */
 export function Tooltip({
@@ -55,8 +59,13 @@ const numericText = (text: string) =>
   );
 
 /** One portal + one set of delegated listeners, regardless of the number of terms. */
-export function TooltipHost({ scope }: { scope: string }) {
+export function TooltipHost({ scope, game }: { scope: string; game?: SessionView }) {
+  const formulas = useRelicFormulas();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [, refresh] = useState(0);
+  useEffect(() => {
+    if (anchor && game) return game.subscribe(() => refresh(value => value + 1));
+  }, [anchor, game]);
   const panel = useRef<HTMLDivElement>(null);
   const current = useRef(anchor);
   current.current = anchor;
@@ -111,6 +120,7 @@ export function TooltipHost({ scope }: { scope: string }) {
       timer = setTimeout(() => setAnchor(null), 160);
     };
     const key = (e: KeyboardEvent) => {
+      if (e.code === "Backslash" || e.key === "\\") return;
       keyboard = true;
       if (e.key === "Escape" && current.current) {
         e.preventDefault();
@@ -211,7 +221,11 @@ export function TooltipHost({ scope }: { scope: string }) {
             {anchor.dataset.tooltipCategory} · 咒典注解
           </div>
           <strong>{anchor.dataset.tooltipTitle}</strong>
-          <p>{numericText(anchor.dataset.tooltipDescription ?? "")}</p>
+          <p>{numericText((() => {
+            const id = anchor.dataset.term?.replace(/^relic-/, "");
+            const relic = anchor.dataset.tooltipCategory === "遗物" && RELICS.find(r => r.id === id);
+            return relic ? describeRelic(relic, RELICS, game, formulas) : anchor.dataset.tooltipDescription ?? "";
+          })())}</p>
           <div className="tooltip-rule" aria-hidden="true" />
         </div>,
         document.body,

@@ -1,4 +1,3 @@
-import { summonCapacity } from "../../../shared/summons.ts";
 import type { BookBehavior } from "../../../content-sdk/BookBehavior.ts";
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
   Math.hypot(a.x - b.x, a.y - b.y);
@@ -22,7 +21,7 @@ const behavior: BookBehavior = {
   cast(ctx, t, dmg, empowered, critical) {
     ctx.focusId = t.id;
     t.mark = 8;
-    ctx.launchShot(ctx.player, t, "paper", dmg * 0.88, {
+    ctx.launchShot(ctx.player, t, "paper", dmg * ctx.bookData.castMultiplier.normal, {
       direct: true,
       refreshWord: true,
       empowered,
@@ -35,7 +34,7 @@ const behavior: BookBehavior = {
   },
   ultimate(ctx) {
     ctx.spiritTime = 18;
-    ctx.awakenedSpirits = Math.min(summonCapacity(true, ctx.stats, ctx.ultimateTime), ctx.awakenedSpirits + 4);
+    ctx.awakenedSpirits = Math.min(ctx.combatValue("summon.capacity"), ctx.awakenedSpirits + 4);
     ctx.spirits.forEach((s) => (s.cooldown = 0));
     ctx.explode(
       ctx.player.x,

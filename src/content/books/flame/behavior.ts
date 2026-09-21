@@ -18,7 +18,7 @@ const behavior: BookBehavior = {
       ctx.player,
       target,
       "fire",
-      damage * (empowered ? 1.45 : 0.85),
+      damage * ctx.bookData.castMultiplier[empowered ? "empowered" : "normal"],
       {
         direct: true,
         refreshWord: true,
@@ -29,7 +29,7 @@ const behavior: BookBehavior = {
     if (empowered && ctx.stats.emberShield)
       ctx.player.shield = Math.min(
         60,
-        ctx.player.shield + 5 * ctx.stats.emberShield,
+        ctx.player.shield + ctx.combatValue("coal.shield"),
       );
   },
   ultimate(ctx) {
@@ -60,8 +60,8 @@ const behavior: BookBehavior = {
       "fire",
       from.x,
       from.y,
-      60 + 20 * ctx.stats.fireTrail,
-      2 + ctx.stats.fireTrail,
+      ctx.combatValue("fireTrail.radius"),
+      ctx.combatValue("fireTrail.duration"),
     );
   },
   tick(ctx) {

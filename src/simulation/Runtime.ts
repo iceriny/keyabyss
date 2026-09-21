@@ -354,6 +354,7 @@ export interface CombatRuntime extends WorldState {
   updateVisual(dt: number): void;
   resetArrays(): void;
   releaseKey(key: string): void;
+  combatValue(id: string, inputs?: Readonly<Record<string, number>>): number;
   damageMultiplier(): number;
   schedule(
     delay: number,

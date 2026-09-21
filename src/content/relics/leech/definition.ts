@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "每完成6次咒文获得 {leech.hook.0.amount} 点生命。" },
   grants: { castLeech: 1 },
   id: "leech",
   name: "朱砂印",

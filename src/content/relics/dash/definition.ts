@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "闪避充能恢复间隔 {dash.cooldown} 秒；充能上限 {player.maxDash}。", castPreview: false },
   command: "fold",
   grants: { extraDash: 1 },
   id: "dash",

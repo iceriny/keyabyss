@@ -1,5 +1,6 @@
 import type { Book } from "../../../contracts/content.ts";
 export default {
+  castMultiplier: { normal: 0.85, empowered: 1.45 },
   id: "flame",
   behavior: "flame",
   command: "flame",

@@ -1,8 +1,11 @@
 import { manifest } from "../src/content/manifest.ts";
 import { validateContent } from "../src/content-sdk/validate.ts";
+import { validateValues } from "../src/content-sdk/validate-values.ts";
+import { baseValues } from "../src/content/combat-values.ts";
 import fs from "node:fs";
 import { enemyActions } from "../src/content/shared/enemy-actions.ts";
 validateContent(manifest);
+validateValues(baseValues, manifest.relics, manifest.books);
 for (const enemy of manifest.enemies)
   if (!enemyActions[enemy.behavior.attack])
     throw new Error(

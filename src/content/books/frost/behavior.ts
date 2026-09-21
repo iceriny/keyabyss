@@ -16,7 +16,7 @@ const behavior: BookBehavior = {
   summons: false,
   duration: (ctx) => 4,
   cast(ctx, t, dmg, empowered, critical) {
-    ctx.launchShot(ctx.player, t, "ice", dmg * (empowered ? 1.9 : 1.12), {
+    ctx.launchShot(ctx.player, t, "ice", dmg * ctx.bookData.castMultiplier[empowered ? "empowered" : "normal"], {
       direct: true,
       refreshWord: true,
       empowered,

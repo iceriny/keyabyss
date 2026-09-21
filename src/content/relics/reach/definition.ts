@@ -1,5 +1,8 @@
+import values from "./values.ts";
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  values,
+  description: { template: "电弧传导范围 {chain.radius}；爆墨瓶范围 {blast.radius}。", castPreview: false },
   grants: { effectReach: 1 },
   id: "reach",
   name: "远行墨迹",

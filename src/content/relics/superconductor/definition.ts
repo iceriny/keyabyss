@@ -1,5 +1,6 @@
 import type { Relic } from "../../../contracts/content.ts";
 export default {
+  description: { template: "{description} 普通施法电弧跳跃 {chain.count} 次。", castPreview: false },
   grants: { overloadPull: 1 },
   id: "superconductor",
   name: "超导禁卷",

@@ -1,3 +1,4 @@
+import { damageModifierValue, wordModifierApplies } from "../shared/relic-build.ts";
 import { combatStats, type CombatStats } from "../contracts/stats.ts";
 import type { Relic } from "../contracts/content.ts";
 import type { DamageModifier, RelicHook } from "../contracts/relic-rules.ts";
@@ -33,6 +34,10 @@ export interface RelicContext {
 
 /** Index once at session construction; levels remain authoritative in the simulation. */
 export class RelicRules {
+  private readonly definitions: readonly Relic[];
+  wordModifierApplies(levels: Readonly<Record<string, number>>, stat: import("../contracts/stats.ts").CombatStat, length: number) {
+    return wordModifierApplies(this.definitions, levels, stat, length);
+  }
   private readonly grants = new Map<string, { id: string; amount: number }[]>();
   createStats(levels: () => Record<string, number>): CombatStats {
     const descriptors: PropertyDescriptorMap = {};
@@ -57,6 +62,7 @@ export class RelicRules {
   > = { acquire: [], afterCast: [] };
 
   constructor(definitions: readonly Relic[]) {
+    this.definitions = definitions;
     for (const definition of definitions)
       for (const [stat, amount] of Object.entries(definition.grants ?? {})) {
         const list = this.grants.get(stat) ?? [];
@@ -82,13 +88,7 @@ export class RelicRules {
     let result = 1;
     for (const { id, rule } of this.modifiers) {
       const stacks = context.relics[id] || 0;
-      if (
-        !stacks ||
-        (rule.belowHealth !== undefined &&
-          context.player.hp >= context.player.maxHp * rule.belowHealth)
-      )
-        continue;
-      result *= Math.pow(rule.factor, rule.perStack ? stacks : 1);
+      result *= damageModifierValue(rule, stacks, context.player);
     }
     return result;
   }

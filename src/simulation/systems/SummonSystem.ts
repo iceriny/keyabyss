@@ -1,4 +1,3 @@
-import { summonCapacity } from "../../shared/summons.ts";
 import type { Point } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
 
@@ -12,6 +11,7 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "combatValue"
   | "stats"
   | "bookBehavior"
   | "bullets"
@@ -40,7 +40,7 @@ export function spiritPosition(this: Context, i: number, n: number) {
 
 export function updateSpirits(this: Context, dt: number) {
   this.spiritTime = Math.max(0, this.spiritTime - dt);
-  const capacity = summonCapacity(this.bookBehavior.summons, this.stats, this.ultimateTime);
+  const capacity = this.combatValue("summon.capacity");
   this.awakenedSpirits = this.spiritTime > 0 ? Math.min(this.awakenedSpirits, capacity) : 0;
   const count = this.spiritTime > 0 ? (this.bookBehavior.summons ? this.awakenedSpirits : capacity) : 0;
   while (this.spirits.length < count) {
@@ -98,10 +98,7 @@ export function updateSpirits(this: Context, dt: number) {
         target.r + 10
       ) {
         const damage =
-          (12 + (this.stats.summonStacks || 0) * 3) *
-          (1 + (this.stats.summonBond || 0) * 0.3) *
-          this.damageMultiplier() *
-          (target.mark > 0 ? 1.45 : 1);
+          this.combatValue("summon.damage", { marked: Number(target.mark > 0) });
         this.strike(target, damage, {
           kind: "blade",
           from: { x: px, y: py },

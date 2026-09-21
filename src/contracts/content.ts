@@ -1,6 +1,8 @@
 import type { CombatStat } from "./stats.ts";
 import type { DamageModifier, RelicHook } from "./relic-rules.ts";
 export interface Book {
+  combat?: { nativeChain?: number; nativeSummons?: number };
+  castMultiplier: { normal: number; empowered: number };
   artwork?: string;
   visual: { rays: number; highlight: string; shadow: string; ultimate: string };
   appearance: string;
@@ -42,6 +44,8 @@ export interface Mode {
 export type RelicRarity = "common" | "rare" | "curse" | "awaken";
 
 export interface Relic {
+  values?: import("./values.ts").ValueDefinitions;
+  description?: import("./values.ts").RelicDescription;
   command?: string;
   grants?: Partial<Record<CombatStat, number>>;
   damageModifiers?: readonly DamageModifier[];

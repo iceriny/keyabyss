@@ -2,6 +2,7 @@ import type { Enemy, SpellOptions, Field } from "../../combat/model.ts";
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "combatValue"
   | "stats"
   | "damageMultiplier"
   | "damage"
@@ -22,7 +23,7 @@ export function applyBurn(
   if (enemy.dead) return;
   const previous = enemy.burn;
   enemy.burn = {
-    life: 3 + this.stats.burnDuration,
+    life: this.combatValue("burn.duration"),
     stacks: Math.min(
       this.stats.inferno ? 5 : 3,
       (previous?.life && previous.life > 0 ? previous.stacks : 0) + stacks,
@@ -30,7 +31,7 @@ export function applyBurn(
     tick: previous && previous.life > 0 ? previous.tick : 0.5,
     damage: Math.max(
       previous?.damage ?? 0,
-      6 * this.damageMultiplier() * (1 + 0.3 * this.stats.burnPower),
+      this.combatValue("burn.damage"),
     ),
     spreadDepth: previous
       ? Math.min(previous.spreadDepth, spreadDepth)
@@ -77,7 +78,7 @@ export function fireImpact(
   damage: number,
   options: SpellOptions,
 ) {
-  const radius = (options.empowered ? 115 : 55) + 25 * this.stats.fireRadius;
+  const radius = this.combatValue("fire.radius", { empowered: Number(!!options.empowered) });
   this.igniteExplosion(
     enemy.x,
     enemy.y,
@@ -103,14 +104,14 @@ export function spreadBurn(this: Context, enemy: Enemy) {
       (e) =>
         !e.dead &&
         Math.hypot(e.x - enemy.x, e.y - enemy.y) <
-          130 + 25 * this.stats.burnSpread,
+          this.combatValue("burn.spreadRadius"),
     )
     .sort(
       (a, b) =>
         Math.hypot(a.x - enemy.x, a.y - enemy.y) -
         Math.hypot(b.x - enemy.x, b.y - enemy.y),
     )
-    .slice(0, 2 + this.stats.burnSpread);
+    .slice(0, this.combatValue("burn.spreadTargets"));
   for (const target of targets)
     this.applyBurn(target, Math.min(2, burn.stacks), burn.spreadDepth + 1);
   if (targets.length) this.burst(enemy.x, enemy.y, 80, "#ffad5e", "flame");

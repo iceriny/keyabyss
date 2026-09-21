@@ -338,6 +338,7 @@ export function App() {
         <CodexPanel
           book={state === "home" ? book : game!.book}
           held={screen.type === "bag" ? game!.relics : undefined}
+          game={screen.type === "bag" ? game ?? undefined : undefined}
         />
       );
     if (screen.type === "vocab")
@@ -492,6 +493,7 @@ export function App() {
           sound={(cue) => game.playUISound(cue)}
         />}
         <TooltipHost
+          game={game && ["playing", "paused", "upgrade", "route"].includes(state) && !["codex", "history", "result"].includes(screen?.type ?? "") ? game : undefined}
           scope={`${entered}:${loading?.label ?? ""}:${screen?.type || state}:${stack.length}`}
         />
         <canvas id="battle-labels" ref={labels} aria-hidden="true" />
