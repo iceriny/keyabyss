@@ -1,6 +1,6 @@
 {
   "name": "keyabyss",
-  "version": "0.6.3",
+  "version": "0.6.3-dev.1",
   "private": true,
   "description": "键渊：失控咒典 · 词令共鸣 — 全键盘交互、打字施法、肉鸽构筑",
   "scripts": {

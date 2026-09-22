@@ -159,7 +159,13 @@ export function Home({
             <Key>A–Z</Key> 施法
           </span>
           <span>
-            <Key>Space</Key> 弹反 · 方向键闪避 · Alt 自动择位
+            <Key>Space</Key> 弹反
+          </span>
+          <span>
+            <Key>Alt</Key> 自动择位闪避
+          </span>
+          <span>
+            <Key>⬆⮕⬇⬅</Key> 手动择位闪避
           </span>
           <span>
             <Key>Shift</Key> 终式

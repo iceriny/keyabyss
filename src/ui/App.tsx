@@ -38,6 +38,7 @@ import { CodexPanel, HelpPanel, SettingsPanel, VocabPanel } from "./Panels";
 import { HUD, RoutePanel, UpgradePanel } from "./Battle";
 import { LoadingScreen, type LoadingState } from "./LoadingScreen";
 import { loadVocabulary, paint, prepareBattle } from "../loading";
+import { DevMark } from "./DevMark.tsx";
 
 type Screen =
   | {
@@ -590,6 +591,7 @@ export function App() {
           </div>
         )}
       </KeyboardLayer>
+      <DevMark />
     </GameText>
   );
 }
