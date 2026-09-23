@@ -89,6 +89,8 @@ with sync_playwright() as playwright:
         mouse_click(page, page.locator('[data-command="talents"]:visible').first)
         page.locator('.talents-modal').wait_for()
         page.locator('.talent-map-region .graph-node').first.wait_for()
+        expect(page.locator('.talent-detail')).not_to_contain_text('出征副书')
+        expect(page.locator('.talent-detail .talent-connections button')).to_have_count(3)
         print('Talent first nodes visible (ms):', round((time.perf_counter() - started) * 1000), flush=True)
         panel = page.locator('.talents-modal .modal-panel').bounding_box()
         assert abs(panel['x']) <= 1 and abs(panel['y']) <= 1
@@ -103,6 +105,15 @@ with sync_playwright() as playwright:
         talent_search.fill('合订')
         talents.get_by_role('option', name=re.compile(r'^合订(?:\s|$)')).click()
         expect(page.locator('.talent-detail h3')).to_have_text('合订')
+        expect(talents.locator('.graph-relation.is-route').first).to_be_visible()
+        expect(page.locator('.talent-path-preview li').first).to_be_visible()
+        # Follow an actual neighboring talent from the floating details.
+        neighbor = page.locator('.talent-connections button').first
+        neighbor_name = neighbor.evaluate('e => e.firstChild.textContent')
+        neighbor.click()
+        expect(page.locator('.talent-detail h3')).to_have_text(neighbor_name)
+        talent_search.fill('合订')
+        talents.get_by_role('option', name=re.compile(r'^合订(?:\s|$)')).click()
         expect(talents.locator('.graph-zoom-value')).not_to_have_text('100%')
         expect(talents.locator('.graph-node.is-selected .graph-node-name')).to_be_visible()
         assert talents.locator('.graph-node.is-selected .graph-node-name').bounding_box()['height'] >= 10

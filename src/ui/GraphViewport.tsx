@@ -40,6 +40,19 @@ function relationPoints(relation: GraphRelation, layout: GraphLayout): readonly 
   if (routed?.length) return routed;
   return [];
 }
+function etchedPath(points: readonly GraphPoint[]): string {
+  if (!points.length) return '';
+  let path = `M${points[0].x},${points[0].y}`;
+  for (let i = 1; i < points.length - 1; i++) {
+    const a = points[i - 1], b = points[i], c = points[i + 1];
+    const before = Math.hypot(b.x - a.x, b.y - a.y), after = Math.hypot(c.x - b.x, c.y - b.y);
+    const radius = Math.min(18, before / 3, after / 3);
+    if (!before || !after) continue;
+    path += ` L${b.x + (a.x - b.x) * radius / before},${b.y + (a.y - b.y) * radius / before} Q${b.x},${b.y} ${b.x + (c.x - b.x) * radius / after},${b.y + (c.y - b.y) * radius / after}`;
+  }
+  const end = points[points.length - 1];
+  return `${path} L${end.x},${end.y}`;
+}
 function clampCamera(prior: Camera, point: GraphPoint, size: { width: number; height: number }, world: GraphBounds, minScale: number, maxScale: number): Camera {
   const scale = Math.max(minScale, Math.min(maxScale, prior.scale));
   const halfW = size.width / scale / 2, halfH = size.height / scale / 2;
@@ -190,7 +203,7 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
     const routed = overlays.length ? { ...layout, routes: { ...layout.routes, ...routeGraphRelations(layout, overlays) } } : layout;
     return relations.map(relation => {
       const points = relationPoints(relation, routed);
-      return { relation, points, bounds: points.length > 1 ? routeBounds(points) : null };
+      return { relation, points, path: etchedPath(points), bounds: points.length > 1 ? routeBounds(points) : null };
     });
   }, [definition, projection.relations, layout]);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -230,6 +243,7 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
     return true;
   });
   const visibleRelations = relationGeometry.filter(({ relation, bounds }) => {
+    if (definition.id === 'talents' && relation.kind !== 'path' && relation.source !== selectedId && relation.target !== selectedId) return false;
     if (relationMode === "related" && !related.has(relation.source) && !related.has(relation.target)) return false;
     if (lod === "overview" && !["path", "evolution", "connection"].includes(relation.kind)) return false;
     return bounds && intersects(bounds, clip);
@@ -256,7 +270,14 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
     </div>
     <div className="graph-frame" ref={frameRef} tabIndex={0} role="application" aria-label={`${label}，方向键移动焦点，Enter 选择，滚轮缩放，拖动平移`} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer} onKeyDown={onKeyDown}>
       <svg className={`graph-canvas graph-lod-${lod}`} viewBox={`${view.x} ${view.y} ${view.width} ${view.height}`} aria-label={`${label}节点与关系`}>
-        <defs><pattern id={`graph-dust-${definition.id}`} width="110" height="110" patternUnits="userSpaceOnUse"><circle cx="10" cy="18" r=".8" fill="#d9d3bb" opacity=".26" /><circle cx="82" cy="67" r=".6" fill="#d9d3bb" opacity=".16" /></pattern></defs>
+        <defs>
+          <radialGradient id={`graph-stone-${definition.id}`} cx="32%" cy="22%" r="85%"><stop stopColor="#718698" stopOpacity=".6" /><stop offset=".42" stopColor="#1b293a" /><stop offset="1" stopColor="#070c14" /></radialGradient>
+          <linearGradient id={`graph-metal-${definition.id}`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f8e9ba" /><stop offset=".3" stopColor="#8e7b51" /><stop offset=".52" stopColor="#3e4144" /><stop offset=".8" stopColor="#bfa771" /><stop offset="1" stopColor="#eed4a0" /></linearGradient>
+          <pattern id={`graph-dust-${definition.id}`} width="180" height="180" patternUnits="userSpaceOnUse"><circle cx="10" cy="18" r=".8" fill="#d9d3bb" opacity=".18" /><circle cx="82" cy="67" r=".6" fill="#d9d3bb" opacity=".1" /></pattern>
+          {visibleRelations.map(({ relation, points }) => <linearGradient key={relation.id} id={`edge-${definition.id}-${relation.id}`} gradientUnits="userSpaceOnUse" x1={points[0].x} y1={points[0].y} x2={points[points.length - 1].x} y2={points[points.length - 1].y}>
+            <stop stopColor={regionById.get(nodeById.get(relation.source)!.region)?.color ?? '#d9c596'} /><stop offset="1" stopColor={regionById.get(nodeById.get(relation.target)!.region)?.color ?? '#d9c596'} />
+          </linearGradient>)}
+        </defs>
         <rect x={view.x} y={view.y} width={view.width} height={view.height} fill={`url(#graph-dust-${definition.id})`} />
         {rooted && <g className="graph-core" aria-hidden="true"><circle r="450" /><circle r="210" /><path d="M-135 0H135M0-135V135M-95-95L95 95M-95 95L95-95" /><text y="8" textAnchor="middle">咒典</text></g>}
         <g className="graph-regions">{!rooted && visibleRegions.map(region => {
@@ -267,10 +288,16 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
             <text x={shape.center.x} y={shape.bounds.y + Math.min(55, shape.bounds.height * .15)} textAnchor="middle" style={{ fontSize: lod === 'overview' ? Math.max(39, 13 / current.scale) : 29 }}>{region.name}</text>
           </g>;
         })}</g>
-        <g className="graph-relations">{visibleRelations.map(({ relation, points }) => {
+        <g className="graph-relations">{visibleRelations.map(({ relation, path }) => {
           const active = projection.states[relation.source] === "active" && projection.states[relation.target] === "active";
           const selected = relation.source === selectedId || relation.target === selectedId;
-          return <polyline key={relation.id} points={points.map(point => `${point.x},${point.y}`).join(" ")} className={`graph-relation graph-relation-${relation.kind}${active ? " is-active" : ""}${selected ? " is-related" : ""}`} aria-label={`${relationNames[relation.kind]}：${nodeById.get(relation.source)?.name ?? relation.source}至${nodeById.get(relation.target)?.name ?? relation.target}`} />;
+          const highlight = projection.highlighted ?? [];
+          const sourceIndex = highlight.indexOf(relation.source), targetIndex = highlight.indexOf(relation.target);
+          const planned = definition.id === 'talents' && relation.kind === 'path' && sourceIndex >= 0 && targetIndex >= 0 && Math.abs(sourceIndex - targetIndex) === 1;
+          return <g key={relation.id} className={`graph-edge${planned ? ' is-route' : ''}`}>
+            <path d={path} className="graph-edge-recess" aria-hidden="true" />
+            <path d={path} style={{ '--edge-ink': `url(#edge-${definition.id}-${relation.id})` } as CSSProperties} className={`graph-relation graph-relation-${relation.kind}${active ? " is-active" : ""}${selected ? " is-related" : ""}${planned ? " is-route" : ""}`} aria-label={`${relationNames[relation.kind]}：${nodeById.get(relation.source)?.name ?? relation.source}至${nodeById.get(relation.target)?.name ?? relation.target}`} />
+          </g>;
         })}</g>
         <g className="graph-nodes">{visibleNodes.map(node => {
           const point = layout.nodes[node.id];
@@ -278,17 +305,19 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
           const selected = node.id === selectedId;
           const focused = node.id === focusedId;
           const color = regionById.get(node.region)?.color ?? "#d8c597";
-          const r = Math.max(point.radius || (node.kind === "keystone" ? 22 : 14), rooted ? (node.kind === 'root' ? 16 : node.kind === 'keystone' ? 7 : 3.5) / current.scale : 0);
+          const r = Math.max(point.radius || (node.kind === "keystone" ? 22 : 14), rooted ? (node.kind === 'root' ? 20 : node.kind === 'keystone' ? 11 : node.kind === 'rule' ? 7 : 4) / current.scale : 0);
           return <g key={node.id} data-graph-id={node.id} transform={`translate(${point.x} ${point.y})`} className={`graph-node graph-node-${node.kind} graph-state-${state}${selected ? " is-selected" : ""}${focused ? " is-focused" : ""}${related.has(node.id) ? " is-related" : ""}`} style={{ "--graph-color": color } as CSSProperties} role="button" tabIndex={0} aria-label={`${node.name}，${stateNames[state]}${node.kind === "relic" ? "" : `，${node.cost}点`}。${node.description}${projection.reasons?.[node.id] ? `。${projection.reasons[node.id]}` : ""}`} aria-pressed={selected} onClick={event => { if (!suppressClick.current && !dragRef.current?.moved) selectNode(node.id); suppressClick.current = false; event.stopPropagation(); }} onFocus={() => { focusRef.current = node.id; setFocusedId(node.id); }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); selectNode(node.id, true); } }}>
             <circle className="graph-node-halo" r={r * 1.6} />
-            <circle className="graph-node-ring" r={r} />
-            {(lod !== "overview" || selected || ["root", "keystone", "junction"].includes(node.kind)) && <g className="graph-node-icon">{renderIcon?.(node, r) ?? defaultIcon(node, r)}</g>}
+            <circle className="graph-node-ring" r={r} style={{ fill: `url(#graph-stone-${definition.id})` }} />
+            {node.kind !== 'path' && <circle className="graph-node-bezel" r={r * 1.18} style={{ stroke: `url(#graph-metal-${definition.id})` }} />}
+            <path className="graph-node-glint" d={`M${-r * .86},${-r * .18} A${r * .88},${r * .88} 0 0 1 ${r * .18},${-r * .86}`} />
+            {(lod !== "overview" || selected || ["root", "rule", "keystone", "junction"].includes(node.kind)) && <g className="graph-node-icon">{renderIcon?.(node, r) ?? defaultIcon(node, r)}</g>}
             {(lod !== "overview" || selected || node.kind === "root") && <text className="graph-node-name" y={r + (lod === 'overview' ? 16 / current.scale : 23)} textAnchor="middle" style={{ fontSize: lod === 'overview' ? 12 / current.scale : 19 }}>{node.name}</text>}
             {lod === "detail" && node.cost > 0 && <text className="graph-node-cost" y={r + 41} textAnchor="middle">{state === "active" ? "已取得" : `${node.kind === "relic" ? "" : `${node.cost} 点 · `}${stateNames[state]}`}</text>}
           </g>;
         })}</g>
       </svg>
-      <div className="graph-frame-hint" aria-hidden="true">拖动平移 · 滚轮缩放 · 方向键寻路</div>
+      <div className="graph-frame-hint" aria-hidden="true">{rooted ? '实线可通行 · 金线为所选路线 · 虚线表示条件或互斥　｜　' : ''}拖动平移 · 滚轮缩放 · 方向键寻路</div>
     </div>
   </div>;
 }

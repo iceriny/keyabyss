@@ -1,7 +1,7 @@
 import type { GraphBounds, GraphDefinition, GraphDiagnostic, GraphLayout, GraphNode, GraphNodeLayout, GraphPoint, GraphRelation, GraphRegionLayout } from '../contracts/graph.ts';
 
 // Bump this when the geometry or routing rules change. Content changes use GraphDefinition.version.
-const LAYOUT_VERSION = 3;
+const LAYOUT_VERSION = 4;
 const RADIUS = 25;
 const LABEL_WIDTH = 176;
 const LABEL_HEIGHT = 32;
@@ -159,6 +159,179 @@ function hash(value: unknown): string {
   return (result >>> 0).toString(16).padStart(8, '0');
 }
 
+/** Build-time spring embedding of the complete growth network. No random seed,
+ * authored coordinates, school ownership, or runtime simulation is involved. */
+function connectedPositions(nodes: readonly GraphNode[], relations: readonly GraphRelation[]): Map<string, GraphPoint> {
+  const roots = nodes.filter(node => node.kind === 'root');
+  const index = new Map(nodes.map((node, i) => [node.id, i]));
+  const edges = relations.filter(edge => ['path', 'requires', 'evolution'].includes(edge.kind))
+    .map(edge => [index.get(edge.source)!, index.get(edge.target)!] as const);
+  const adjacent = nodes.map(() => [] as number[]);
+  for (const [a, b] of edges) { adjacent[a].push(b); adjacent[b].push(a); }
+  const distances = roots.map(root => {
+    const start = index.get(root.id)!;
+    const result = nodes.map(() => Infinity), queue = [start]; result[start] = 0;
+    for (const a of queue) for (const b of adjacent[a]) if (!Number.isFinite(result[b])) {
+      result[b] = result[a] + 1; queue.push(b);
+    }
+    return result;
+  });
+  // Choose the cyclic book order with the shortest connecting paths. Fix the
+  // first root to eliminate rotation/reflection ambiguity in equal solutions.
+  let order = roots.map((_, i) => i), best = Infinity;
+  const visit = (prefix: number[], remaining: number[]) => {
+    if (remaining.length) { for (const value of remaining) visit([...prefix, value], remaining.filter(i => i !== value)); return; }
+    const score = prefix.reduce((sum, r, i) => sum + distances[r][index.get(roots[prefix[(i + 1) % prefix.length]].id)!], 0);
+    if (score < best) { best = score; order = prefix; }
+  };
+  if (roots.length <= 7) visit([0], roots.slice(1).map((_, i) => i + 1));
+  const rootAngles = roots.map((_, i) => -Math.PI / 2 + order.indexOf(i) * Math.PI * 2 / roots.length);
+  const fixed = nodes.map(node => node.kind === 'root');
+  const positions = nodes.map((node, i) => {
+    const r = roots.indexOf(node);
+    if (r >= 0) return { x: Math.cos(rootAngles[r]) * 340, y: Math.sin(rootAngles[r]) * 340 };
+    const closest = Math.min(...distances.map(d => d[i]));
+    let x = 0, y = 0;
+    distances.forEach((d, r) => { const weight = Number.isFinite(d[i]) ? Math.exp(-(d[i] - closest) * .65) : 0;
+      x += Math.cos(rootAngles[r]) * weight; y += Math.sin(rootAngles[r]) * weight; });
+    // ID ordering only breaks coincident symmetry; connectivity drives the embedding.
+    const angle = Math.atan2(y, x) + Math.sin(i * 2.3999632297) * .22;
+    const radius = 500 + (Number.isFinite(closest) ? closest : 2) * 170;
+    return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
+  });
+  for (let iteration = 0; iteration < 1400; iteration++) {
+    const forces = nodes.map(() => ({ x: 0, y: 0 }));
+    for (let a = 0; a < nodes.length; a++) for (let b = a + 1; b < nodes.length; b++) {
+      const dx = positions[a].x - positions[b].x || .01, dy = positions[a].y - positions[b].y || .01;
+      const d = Math.max(1, Math.hypot(dx, dy));
+      const strength = Math.min(90, 160000 / (d * d));
+      forces[a].x += dx / d * strength; forces[a].y += dy / d * strength;
+      forces[b].x -= dx / d * strength; forces[b].y -= dy / d * strength;
+    }
+    for (const [a, b] of edges) {
+      const dx = positions[b].x - positions[a].x, dy = positions[b].y - positions[a].y;
+      const d = Math.max(1, Math.hypot(dx, dy)), strength = (d - 240) * .09;
+      forces[a].x += dx / d * strength; forces[a].y += dy / d * strength;
+      forces[b].x -= dx / d * strength; forces[b].y -= dy / d * strength;
+    }
+    const step = .7 * (1 - iteration / 1600);
+    positions.forEach((p, i) => {
+      if (fixed[i]) return;
+      p.x += Math.max(-35, Math.min(35, forces[i].x)) * step;
+      p.y += Math.max(-35, Math.min(35, forces[i].y)) * step;
+      const d = Math.hypot(p.x, p.y);
+      if (d < 530) { p.x *= 530 / d; p.y *= 530 / d; }
+    });
+  }
+  const crosses = (a: GraphPoint, b: GraphPoint, c: GraphPoint, d: GraphPoint) => {
+    const side = (p: GraphPoint, q: GraphPoint, r: GraphPoint) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+    return side(a, b, c) * side(a, b, d) < 0 && side(c, d, a) * side(c, d, b) < 0;
+  };
+  const crossingCount = () => {
+    let count = 0;
+    for (let i = 0; i < edges.length; i++) for (let j = i + 1; j < edges.length; j++) {
+      const [a, b] = edges[i], [c, d] = edges[j];
+      if (a !== c && a !== d && b !== c && b !== d && crosses(positions[a], positions[b], positions[c], positions[d])) count++;
+    }
+    return count;
+  };
+  const length = () => edges.reduce((sum, [a, b]) => sum + Math.hypot(positions[a].x - positions[b].x, positions[a].y - positions[b].y), 0);
+  // Untangle the spring embedding, preserving the book core. Exclusion and
+  // explanatory edges never influence the growth-path geometry.
+  let crossings = crossingCount();
+  for (let pass = 0; pass < 80 && crossings; pass++) {
+    let improved = false;
+    for (let i = 0; i < edges.length; i++) for (let j = i + 1; j < edges.length; j++) {
+      const [a, b] = edges[i], [c, d] = edges[j];
+      if (a === c || a === d || b === c || b === d || !crosses(positions[a], positions[b], positions[c], positions[d])) continue;
+      for (const [u, v] of [[a, c], [a, d], [b, c], [b, d]]) {
+        if (fixed[u] || fixed[v]) continue;
+        const priorLength = length();
+        [positions[u], positions[v]] = [positions[v], positions[u]];
+        const candidate = crossingCount();
+        if (candidate < crossings && length() < priorLength * 1.12) { crossings = candidate; improved = true; break; }
+        [positions[u], positions[v]] = [positions[v], positions[u]];
+      }
+      // A crossing can require moving a branch around an edge, not merely
+      // swapping its leaves. Try both the opposite side and the two edge ends.
+      for (const [u, v, w] of [[a, c, d], [b, c, d], [c, a, b], [d, a, b]]) {
+        if (fixed[u]) continue;
+        const p = positions[u], q = positions[v], r = positions[w];
+        const dx = r.x - q.x, dy = r.y - q.y, distance = Math.hypot(dx, dy);
+        if (!distance) continue;
+        const side = Math.sign(dx * (p.y - q.y) - dy * (p.x - q.x)) || 1;
+        const t = Math.max(0, Math.min(1, ((p.x - q.x) * dx + (p.y - q.y) * dy) / (distance * distance)));
+        const candidates = [
+          { x: q.x + t * dx + dy / distance * side * 180, y: q.y + t * dy - dx / distance * side * 180 },
+          { x: q.x - dx / distance * 230, y: q.y - dy / distance * 230 },
+          { x: r.x + dx / distance * 230, y: r.y + dy / distance * 230 },
+        ];
+        const priorLength = length();
+        for (const candidate of candidates) {
+          if (Math.hypot(candidate.x, candidate.y) < 530 || positions.some((other, id) => id !== u && Math.hypot(other.x - candidate.x, other.y - candidate.y) < 155)) continue;
+          positions[u] = candidate;
+          const count = crossingCount();
+          if (count < crossings && length() < priorLength * 1.12) { crossings = count; improved = true; break; }
+          positions[u] = p;
+        }
+      }
+    }
+    if (!improved) break;
+  }
+  // Coordinate descent can move a junction with several incident branches out
+  // of a local minimum that pairwise crossing swaps cannot resolve.
+  const placementScore = (id: number, p: GraphPoint): number => {
+    let score = 0;
+    for (const neighbor of adjacent[id]) {
+      const q = positions[neighbor];
+      score += Math.hypot(p.x - q.x, p.y - q.y);
+      for (const [a, b] of edges) if (a !== id && b !== id && a !== neighbor && b !== neighbor && crosses(p, q, positions[a], positions[b])) score += 18000;
+    }
+    for (let other = 0; other < nodes.length; other++) if (other !== id) {
+      const q = positions[other];
+      if (Math.abs(p.x - q.x) < LABEL_WIDTH + 28 && Math.abs(p.y - q.y) < LABEL_ENVELOPE_HEIGHT + 32) score += 24000;
+    }
+    return score;
+  };
+  for (let pass = 0; pass < 24; pass++) {
+    let moved = false;
+    for (let id = 0; id < nodes.length; id++) {
+      if (fixed[id] || !adjacent[id].length) continue;
+      const start = positions[id];
+      let bestPoint = start, bestScore = placementScore(id, start);
+      const center = adjacent[id].reduce((p, other) => ({ x: p.x + positions[other].x / adjacent[id].length, y: p.y + positions[other].y / adjacent[id].length }), { x: 0, y: 0 });
+      for (const origin of [start, center]) for (const distance of [180, 360, 720]) for (let direction = 0; direction < 12; direction++) {
+        const angle = direction * Math.PI / 6;
+        const candidate = { x: origin.x + Math.cos(angle) * distance, y: origin.y + Math.sin(angle) * distance };
+        if (Math.hypot(candidate.x, candidate.y) < 530) continue;
+        const score = placementScore(id, candidate);
+        if (score + 1 < bestScore) { bestPoint = candidate; bestScore = score; }
+      }
+      if (bestPoint !== start) { positions[id] = bestPoint; moved = true; }
+    }
+    if (!moved) break;
+  }
+  // Deterministic label separation. Treat the entire label/body envelope as an
+  // obstacle, including labels hidden at overview zoom, so zoom cannot collide.
+  for (let pass = 0; pass < 600; pass++) {
+    let collisions = 0;
+    for (let a = 0; a < nodes.length; a++) for (let b = a + 1; b < nodes.length; b++) {
+      const p = positions[a], q = positions[b];
+      const dx = q.x - p.x, dy = q.y - p.y;
+      const ox = LABEL_WIDTH + 28 - Math.abs(dx), oy = LABEL_ENVELOPE_HEIGHT + 32 - Math.abs(dy);
+      if (ox <= 0 || oy <= 0 || fixed[a] && fixed[b]) continue;
+      collisions++;
+      const sx = ox < oy ? Math.sign(dx || b - a) * (ox + 1) : 0;
+      const sy = ox < oy ? 0 : Math.sign(dy || b - a) * (oy + 1);
+      const share = fixed[a] || fixed[b] ? 1 : .5;
+      if (!fixed[a]) { p.x -= sx * share; p.y -= sy * share; }
+      if (!fixed[b]) { q.x += sx * share; q.y += sy * share; }
+    }
+    if (!collisions) break;
+  }
+  return new Map(nodes.map((node, i) => [node.id, positions[i]]));
+}
+
 function clearSegment(a: GraphPoint, b: GraphPoint, boxes: readonly GraphBounds[]): boolean {
   for (const box of boxes) {
     let near = 0, far = 1;
@@ -201,18 +374,23 @@ class MinHeap {
   }
 }
 
-function route(layout: GraphLayout, relation: GraphRelation): { points: GraphPoint[]; diagnostic?: GraphDiagnostic } {
+function route(layout: GraphLayout, relation: GraphRelation, priorPaths: readonly (readonly GraphPoint[])[] = []): { points: GraphPoint[]; diagnostic?: GraphDiagnostic } {
   const source = layout.nodes[relation.source]; const target = layout.nodes[relation.target];
   if (!source || !target) throw Error(`Invalid relation ${relation.id}: ${relation.source} -> ${relation.target}`);
   if (source === target) return { points: [{ x: source.x + RADIUS, y: source.y }, { x: source.x + RADIUS + 64, y: source.y }, { x: source.x + RADIUS + 64, y: source.y - 72 }, { x: source.x, y: source.y - 72 }, { x: source.x, y: source.y - RADIUS }] };
   const foreignBoxes = Object.entries(layout.nodes).filter(([id]) => id !== relation.source && id !== relation.target).flatMap(([, node]) => obstacles(node));
   const endpointLabels = [inflate(source.labelBounds, CLEARANCE), inflate(target.labelBounds, CLEARANCE)];
   const clearance = [...foreignBoxes, ...endpointLabels];
+  const traces = priorPaths.flatMap(points => points.slice(1).map((p, i) => [points[i], p] as const));
+  const crossesTrace = (a: GraphPoint, b: GraphPoint) => traces.some(([c, d]) => {
+    const side = (p: GraphPoint, q: GraphPoint, r: GraphPoint) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+    return side(a, b, c) * side(a, b, d) < 0 && side(c, d, a) * side(c, d, b) < 0;
+  });
   const length = Math.hypot(target.x - source.x, target.y - source.y);
   const dx = (target.x - source.x) / length, dy = (target.y - source.y) / length;
   const directStart = { x: source.x + dx * (source.radius + 12), y: source.y + dy * (source.radius + 12) };
   const directEnd = { x: target.x - dx * (target.radius + 12), y: target.y - dy * (target.radius + 12) };
-  if (clearSegment(directStart, directEnd, clearance)) return { points: [directStart, directEnd] };
+  if (clearSegment(directStart, directEnd, clearance) && !crossesTrace(directStart, directEnd)) return { points: [directStart, directEnd] };
   const direction = target.x >= source.x ? 1 : -1;
   const start = { x: source.x + direction * (RADIUS + 12), y: source.y };
   const end = { x: target.x - direction * (RADIUS + 12), y: target.y };
@@ -223,6 +401,11 @@ function route(layout: GraphLayout, relation: GraphRelation): { points: GraphPoi
   const local = rect(Math.min(start.x, end.x) - 320, Math.min(start.y, end.y) - 320, Math.abs(start.x - end.x) + 640, Math.abs(start.y - end.y) + 640);
   const boxes = allBoxes.filter(box => overlap(box, local));
   const blocked = new Set<string>();
+  const occupied = new Set<string>();
+  for (const [a, b] of traces) {
+    const steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / (CELL / 2)));
+    for (let i = 0; i <= steps; i++) occupied.add(cellKey(Math.round((a.x + (b.x - a.x) * i / steps) / CELL), Math.round((a.y + (b.y - a.y) * i / steps) / CELL)));
+  }
   for (const box of boxes) {
     for (let x = Math.ceil(box.x / CELL); x <= Math.floor((box.x + box.width) / CELL); x++)
       for (let y = Math.ceil(box.y / CELL); y <= Math.floor((box.y + box.height) / CELL); y++) blocked.add(cellKey(x, y));
@@ -243,7 +426,7 @@ function route(layout: GraphLayout, relation: GraphRelation): { points: GraphPoi
     for (const [dx, dy] of moves) {
       const x = current.x + dx, y = current.y + dy, nextKey = cellKey(x, y);
       if (x < minX || x > maxX || y < minY || y > maxY || blocked.has(nextKey)) continue;
-      const cost = current.cost + 1;
+      const cost = current.cost + 1 + (occupied.has(nextKey) ? 18 : 0);
       if (cost >= (distance.get(nextKey) ?? Infinity)) continue;
       distance.set(nextKey, cost); previous.set(nextKey, key);
       queue.push({ x, y, cost, estimate: cost + Math.abs(x - endCell.x) + Math.abs(y - endCell.y) });
@@ -265,7 +448,7 @@ function route(layout: GraphLayout, relation: GraphRelation): { points: GraphPoi
   const simplified = [points[0]];
   for (let i = 0; i < points.length - 1;) {
     let next = points.length - 1;
-    while (next > i + 1 && !clearSegment(points[i], points[next], clearance)) next--;
+    while (next > i + 1 && (!clearSegment(points[i], points[next], clearance) || crossesTrace(points[i], points[next]))) next--;
     simplified.push(points[next]); i = next;
   }
   const conflict = simplified.some((current, index) => index > 0 && !clearSegment(simplified[index - 1], current, clearance));
@@ -328,57 +511,12 @@ export function generateGraphLayout(definition: GraphDefinition): GraphLayout {
   }
   const roots = nodes.filter(node => node.kind === 'root');
   if (roots.length > 1) {
-    // A rooted graph shares one centre. Ownership and depth come from topology;
-    // family ordering keeps related branches together without authored positions.
-    const neighbors = new Map(nodes.map(node => [node.id, [] as string[]]));
-    for (const edge of relations) if (['path', 'requires', 'evolution'].includes(edge.kind)) {
-      neighbors.get(edge.source)!.push(edge.target); neighbors.get(edge.target)!.push(edge.source);
-    }
-    const distances = roots.map(root => {
-      const result = new Map([[root.id, 0]]), queue = [root.id];
-      for (let head = 0; head < queue.length; head++) for (const id of neighbors.get(queue[head])!) {
-        if (!result.has(id)) { result.set(id, result.get(queue[head])! + 1); queue.push(id); }
-      }
-      return result;
-    });
-    const sector = Math.PI * 2 / roots.length;
-    const bands = new Map<number, Map<number, GraphNode[]>>();
-    const branchAngles = new Map<string, number>();
-    const place = (node: GraphNode, radius: number, angle: number) => {
-      const x = quantize(Math.cos(angle) * radius), y = quantize(Math.sin(angle) * radius);
+    const positions = connectedPositions(nodes, relations);
+    for (const node of nodes) {
+      const position = positions.get(node.id)!;
+      const x = quantize(position.x), y = quantize(position.y);
       nodeLayouts[node.id] = { x, y, radius: node.kind === 'root' ? 40 : RADIUS,
         labelBounds: rect(x - LABEL_WIDTH / 2, y + (node.kind === 'root' ? 40 : RADIUS) + 9, LABEL_WIDTH, LABEL_HEIGHT) };
-    };
-    roots.forEach((root, index) => place(root, 340, -Math.PI / 2 + sector * index));
-    for (const node of nodes) {
-      if (node.kind === 'root') continue;
-      const own = roots.findIndex(root => root.region === node.region);
-      const ranked = roots.map((_, index) => index).sort((a, b) =>
-        (distances[a].get(node.id) ?? Infinity) - (distances[b].get(node.id) ?? Infinity) || a - b);
-      const owner = own >= 0 ? own : ranked[0];
-      const depth = distances[owner].get(node.id) ?? 1;
-      if (!bands.has(depth)) bands.set(depth, new Map());
-      const band = bands.get(depth)!;
-      if (!band.has(owner)) band.set(owner, []);
-      band.get(owner)!.push(node);
-    }
-    let radius = 340;
-    for (const depth of [...bands.keys()].sort((a, b) => a - b)) {
-      const band = bands.get(depth)!;
-      const maximum = Math.max(...[...band.values()].map(members => members.length));
-      radius = Math.max(radius + NODE_SPACING, NODE_SPACING / (2 * Math.sin(sector * .84 / (2 * Math.max(1, maximum)))));
-      for (const [owner, members] of band) {
-        const angleFromParents = (node: GraphNode) => {
-          const parents = neighbors.get(node.id)!.filter(id => branchAngles.has(id));
-          return parents.length ? parents.reduce((sum, id) => sum + branchAngles.get(id)!, 0) / parents.length : 0;
-        };
-        members.sort((a, b) => angleFromParents(a) - angleFromParents(b) || compare(a.family, b.family) || compare(a.id, b.id));
-        members.forEach((node, index) => {
-          const angle = sector * .84 * ((index + .5) / members.length - .5);
-          branchAngles.set(node.id, angle);
-          place(node, radius, -Math.PI / 2 + sector * owner + angle);
-        });
-      }
     }
     for (const region of regions) {
       const members = byRegion.get(region.id)!.map(node => nodeLayouts[node.id]);
@@ -418,8 +556,13 @@ export function generateGraphLayout(definition: GraphDefinition): GraphLayout {
   const base: GraphLayout = { graphId: definition.id, graphVersion: definition.version, layoutVersion: LAYOUT_VERSION, hash: '', bounds: rect(worldMinX, worldMinY, worldMaxX - worldMinX, worldMaxY - worldMinY), nodes: nodeLayouts, regions: regionLayouts, routes: {}, spatialIndex, cellSize: INDEX_CELL, diagnostics: [] };
   const routes: Record<string, readonly GraphPoint[]> = Object.create(null);
   const diagnostics: GraphDiagnostic[] = [];
-  for (const edge of relations) {
-    const result = route(base, edge);
+  const routingOrder = roots.length > 1 ? [...relations].sort((a, b) => {
+    const distance = (e: GraphRelation) => Math.hypot(nodeLayouts[e.source].x - nodeLayouts[e.target].x, nodeLayouts[e.source].y - nodeLayouts[e.target].y);
+    return Number(b.kind === 'path') - Number(a.kind === 'path') || distance(a) - distance(b) || compare(a.id, b.id);
+  }) : relations;
+  for (const edge of routingOrder) {
+    const prior = roots.length > 1 && edge.kind === 'path' ? routingOrder.filter(e => e.kind === 'path' && routes[e.id] && e.source !== edge.source && e.source !== edge.target && e.target !== edge.source && e.target !== edge.target).map(e => routes[e.id]) : [];
+    const result = route(base, edge, prior);
     routes[edge.id] = result.points;
     if (result.diagnostic) diagnostics.push(result.diagnostic);
   }

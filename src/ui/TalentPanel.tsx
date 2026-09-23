@@ -5,13 +5,13 @@ import type { TalentLoadout, TalentNode } from "../contracts/talents.ts";
 import { TALENT_GRAPH } from "../content/graphs.ts";
 import { TALENT_LAYOUT } from "../generated/graph-layouts.ts";
 import { TALENT_BOOKS, TALENT_BY_ID, TALENT_NODES } from "../content/talents.ts";
-import { removeTalent, resolveTalents, secondaryBookCandidates, talentNeighbors } from "../shared/talents.ts";
+import { removeTalent, resolveTalents, secondaryBookCandidates, talentNeighbors, talentRoute } from "../shared/talents.ts";
 import { Button, Select } from "./components";
 import { GraphViewport } from "./GraphViewport";
 import { C } from "./storage";
 import "./talents.css";
 
-const capabilityNames: Record<string, string> = { cold: "寒气", heat: "热性", conduction: "传导", carrier: "承载", guard: "防御", release: "释放", recovery: "回收" };
+const capabilityNames: Record<string, string> = { cold: "积累寒气", heat: "积累热量", conduction: "积累电荷", carrier: "保存法术", guard: "用法术防御", release: "释放剩余法术", recovery: "回收法力" };
 const MAX_KEYSTONES = 2;
 
 function talentIcon(node: import('../contracts/graph.ts').GraphNode, size: number) {
@@ -23,18 +23,15 @@ function talentIcon(node: import('../contracts/graph.ts').GraphNode, size: numbe
       node.region === 'flame' ? <path d={`M0,${-r * .6} Q${-r},${r * .5} 0,${r * .65} Q${r * .7},${r * .4} 0,${-r * .6} Z`} /> :
       <path d={`M${-r * .55},0 Q0,${-r * .7} ${r * .55},0 Q0,${r * .7} ${-r * .55},0 Z`} />}
   </g>;
-  return undefined;
-}
-
-function shortestPath(target: string, active: Set<string>): string[] {
-  const pending = [...active].map(id => [id]);
-  const seen = new Set(active);
-  for (let i = 0; i < pending.length; i++) {
-    const path = pending[i], last = path[path.length - 1];
-    if (last === target) return path;
-    for (const next of talentNeighbors(last)) if (!seen.has(next)) { seen.add(next); pending.push([...path, next]); }
-  }
-  return [];
+  const tags = node.tags.join(' '), s = size * .6;
+  if (/carrierGuard|guardEfficiency|carrierRetain/.test(tags)) return <path d={`M0,${-s} L${s},${-s * .6} V0 Q${s * .7},${s * .7} 0,${s} Q${-s * .7},${s * .7} ${-s},0 V${-s * .6} Z M0,${-s * .5} V${s * .45}`} />;
+  if (/chain|conduction|Relay/.test(tags)) return <path d={`M${s * .4},${-s} L${-s * .6},${s * .15} H${s * .25} L${-s * .3},${s} M${-s},${-s * .6} L${-s * .65},${-s * .3} M${s * .65},${s * .3} L${s},${s * .6}`} />;
+  if (/heat|burn|thermal/.test(tags)) return <path d={`M0,${-s} C${s * .15},${-s * .1} ${s},${-s * .1} ${s * .65},${s * .55} Q0,${s * 1.2} ${-s * .6},${s * .55} C${-s},0 ${-s * .3},0 0,${-s} Z M0,0 Q${-s * .4},${s * .55} 0,${s * .6}`} />;
+  if (/cold|crystal/.test(tags)) return <path d={`M0,${-s} L${s * .65},0 L0,${s} L${-s * .65},0 Z M0,${-s} V${s} M${-s * .65},0 H${s * .65}`} />;
+  if (/fragment|forkPayload|markSpread/.test(tags)) return <path d={`M0,${-s} L${s * .28},${-s * .5} L0,0 L${-s * .28},${-s * .5} Z M${-s * .65},0 L${-s * .35},${s * .5} L${-s * .65},${s} L${-s},${s * .5} Z M${s * .65},0 L${s},${s * .5} L${s * .65},${s} L${s * .35},${s * .5} Z`} />;
+  if (/recovery|Recovery|materialConserve|reserve/.test(tags)) return <path d={`M${s * .8},0 A${s * .8},${s * .8} 0 1 0 0,${s * .8} M${s * .35},${-s * .3} L${s * .8},0 L${s},${-s * .5} M0,${-s * .35} V${s * .35} M${-s * .35},0 H${s * .35}`} />;
+  if (/copy|carrier|paper|summon|markCarrier/.test(tags)) return <path d={`M${-s * .5},${-s} H${s * .8} V${s * .55} H${-s * .5} Z M${-s * .8},${-s * .55} V${s * .9} H${s * .4} M${-s * .2},${-s * .45} H${s * .45} M${-s * .2},0 H${s * .25}`} />;
+  return <g><path d={`M0,${-s} V${s} M${-s},0 H${s}`} /><circle r={s * .5} /></g>;
 }
 
 export function TalentPanel({ book, onBook, loadout, budget, characters, godMode, onChange, onClearGod }: {
@@ -60,6 +57,10 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
   const resolved = useMemo(() => resolveTalents(book, loadout.allocated, budget, godMode), [book, loadout.allocated, budget, godMode]);
   const active = useMemo(() => new Set(resolved.allocated), [resolved.allocated]);
   const node = TALENT_BY_ID[selected] ?? TALENT_BY_ID[`${book}-root`];
+  useEffect(() => {
+    const scroll = detailRef.current?.querySelector('.talent-detail-scroll');
+    if (scroll) scroll.scrollTop = 0;
+  }, [node.id]);
   const isRoot = node.root === book;
   const preview = useMemo(() => resolveTalents(book, [...resolved.allocated, node.id], budget, godMode), [book, resolved.allocated, node.id, budget, godMode]);
   const available = !active.has(node.id) && preview.allocated.includes(node.id) && resolved.allocated.every(id => preview.allocated.includes(id));
@@ -68,8 +69,7 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
   const candidates = useMemo(() => secondaryBookCandidates(book, resolved.allocated, budget, godMode), [book, resolved, budget, godMode]);
   const exclusives = useMemo(() => new Set(TALENT_NODES.filter(item => active.has(item.id) && item.exclusive).map(item => item.exclusive)), [active]);
   const keystones = useMemo(() => TALENT_NODES.filter(item => active.has(item.id) && item.kind === "keystone").length, [active]);
-  const missing = node.requires?.filter(capability => !resolved.capabilities.includes(capability)) ?? [];
-  const path = useMemo(() => shortestPath(node.id, active), [node.id, active]);
+  const path = useMemo(() => talentRoute(book, node.id, resolved.allocated), [book, node.id, resolved.allocated]);
   const pathToBuy = path.filter(id => !active.has(id));
   const pathCost = pathToBuy.reduce((sum, id) => sum + (TALENT_BY_ID[id]?.cost ?? 0), 0);
   const reasonFor = (item: TalentNode, canBuy: boolean): string => {
@@ -79,7 +79,7 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
     const prerequisites = item.requiresNodes?.filter(id => !active.has(id)) ?? [];
     if (prerequisites.length) return `需要先点亮${prerequisites.map(id => TALENT_BY_ID[id]?.name ?? id).join("、")}`;
     const lacking = item.requires?.filter(capability => !resolved.capabilities.includes(capability)) ?? [];
-    if (lacking.length) return `需要${lacking.map(value => capabilityNames[value] ?? value).join("、")}能力`;
+    if (lacking.length) return `需要先学会${lacking.map(value => capabilityNames[value] ?? value).join("、")}`;
     if (!talentNeighbors(item.id).some(id => active.has(id))) return "尚无已点亮的相邻节点";
     if (!godMode && resolved.spent + item.cost > budget) return `还需 ${resolved.spent + item.cost - budget} 点天赋点`;
     return canBuy ? "可以点亮" : "当前配置不满足前置条件";
@@ -103,18 +103,17 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
     <div className="talent-toolbar">
       <div><strong>{godMode ? "GOD MODE · 自由分配" : `天赋点 ${budget - resolved.spent} / ${budget}`}</strong>
         <span>{godMode ? "独立配置" : `累计有效字符 ${characters.toLocaleString()}${budget < 24 ? ` · 再写 ${120 - characters % 120} 字获得下一点` : " · 已达点数上限"}`}</span></div>
+      {candidates.length > 0 && <div className="talent-binding"><Select id="talentSecondary" word="secondary" label="副书" value={loadout.secondaryBook ?? ""} onChange={value => onChange({ ...loadout, secondaryBook: value ? value as BookId : undefined })} options={[{ value: "", label: "暂不选择" }, ...candidates.map(id => ({ value: id, label: C.BOOKS[id].name }))]} /></div>}
       <div className="talent-books" aria-label="主书起点">{TALENT_BOOKS.map(id => <Button key={id} word={`root${id}`} aria-pressed={book === id} className={book === id ? "selected" : ""} onClick={() => { onBook(id); setSelected(`${id}-root`); }}>{C.BOOKS[id].short}</Button>)}</div>
     </div>
     <div className="talent-workspace">
-      <div className="talent-map-region"><GraphViewport definition={TALENT_GRAPH} layout={TALENT_LAYOUT} projection={projection} selectedId={node.id} onSelect={setSelected} rootId={`${book}-root`} obscuredRight={detailWidth} renderIcon={talentIcon} label="天赋图谱" /></div>
+      <div className="talent-map-region"><GraphViewport definition={TALENT_GRAPH} layout={TALENT_LAYOUT} projection={{ ...projection, highlighted: path }} selectedId={node.id} onSelect={setSelected} rootId={`${book}-root`} obscuredRight={detailWidth} renderIcon={talentIcon} label="天赋图谱" /></div>
       <aside className="talent-detail" ref={detailRef} aria-label="天赋详情" style={{ '--talent-color': node.school === 'shared' ? '#d9c596' : C.BOOKS[node.school].color } as React.CSSProperties}>
         <div className="talent-detail-scroll">
-          <span className="talent-school">{node.school === "shared" ? "共用书脊" : C.BOOKS[node.school].name} · {isRoot ? "免费起点" : `${node.cost} 点`}</span>
+          <span className="talent-school">{node.school === "shared" ? "跨书天赋" : C.BOOKS[node.school].name} · {isRoot ? "免费起点" : `${node.cost} 点`}</span>
           <h3>{node.name}</h3><p>{node.description}</p><p className="talent-status" role="status">{reason}</p>
-          {!active.has(node.id) && pathToBuy.length > 1 && <div className="talent-path-preview"><h4>抵达路径 · {pathCost} 点</h4><p>{pathToBuy.map(id => TALENT_BY_ID[id]?.name ?? id).join(" → ")}</p><p>沿路径逐个点亮；每一步均由天赋规则校验。</p></div>}
-          {missing.length > 0 && <p className="talent-requirements">需要能力：{missing.map(value => capabilityNames[value] ?? value).join("、")}</p>}
-          <div className="talent-binding"><h4>出征副书</h4>{candidates.length ? <Select id="talentSecondary" word="secondary" label="合订法书" value={loadout.secondaryBook ?? ""} onChange={value => onChange({ ...loadout, secondaryBook: value ? value as BookId : undefined })} options={[{ value: "", label: "暂不合订" }, ...candidates.map(id => ({ value: id, label: C.BOOKS[id].name }))]} /> : <p>点亮合订后，可选择另一种法书的副术材料。</p>}</div>
-          <div className="talent-current"><h4>已点亮 · {resolved.allocated.length} 节点</h4><p>{resolved.allocated.map(id => TALENT_BY_ID[id]?.name ?? id).join(" · ")}</p></div>
+          {!active.has(node.id) && pathToBuy.length > 1 && <div className="talent-path-preview"><h4>可行路线 · {pathCost} 点</h4><ol>{pathToBuy.map(id => <li key={id}><button type="button" onClick={() => setSelected(id)}>{TALENT_BY_ID[id]?.name ?? id}</button></li>)}</ol></div>}
+          <div className="talent-connections"><h4>相邻天赋</h4>{talentNeighbors(node.id).map(id => <button key={id} type="button" onClick={() => setSelected(id)}>{TALENT_BY_ID[id]?.name ?? id}<span>{active.has(id) ? "已点亮" : `${TALENT_BY_ID[id]?.cost} 点`}</span></button>)}</div>
         </div>
         <Button word="allocate" variant="primary" disabled={isRoot || (!active.has(node.id) && !available)} onClick={() => onChange({ ...loadout, allocated: active.has(node.id) ? removal : preview.allocated })}>{active.has(node.id) ? "撤回天赋" : "点亮天赋"}</Button>
       </aside>

@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { TALENT_BOOKS, TALENT_NODES } = require("../src/content/talents.ts");
-const { resolveTalents, removeTalent, resolveTalentLoadout, secondaryBookCandidates } = require("../src/shared/talents.ts");
+const { TALENT_BOOKS, TALENT_NODES, TALENT_GRAPH_VERSION, TALENT_BRIDGE_PORTS } = require("../src/content/talents.ts");
+const { resolveTalents, removeTalent, resolveTalentLoadout, secondaryBookCandidates, talentRoute, talentNeighbors } = require("../src/shared/talents.ts");
 const { emptyTalentProgress, earnedTalentPoints, settleTalentProgress, readTalentProgress, readGodTalents, updateTalentLoadout } = require("../src/application/talentProgression.ts");
 const { clearGodModeArchive, emptyCareer, settleRun } = require("../src/application/runArchive.ts");
 const { StorageAdapter } = require("../src/platform/StorageAdapter.ts");
@@ -64,10 +64,10 @@ test("the one graph is structurally traversable from every root; budgets limit a
 });
 
 test("withdrawing a bridge removes disconnected dependent nodes and refunds them", () => {
-  const chain = ["frost-path-4", "rime", "frost-path-6", "frost-path-7", "binding-bridge-1", "binding-bridge-2", "binding"];
+  const chain = ["cold-ink", "rime", "crystal", "binding-bridge-1", "binding-bridge-2", "binding"];
   const before = resolveTalents("frost", chain, 24);
   assert.equal(before.grants.secondaryBinding, 1);
-  const after = removeTalent("frost", before.allocated, "frost-path-7", 24);
+  const after = removeTalent("frost", before.allocated, "crystal", 24);
   assert.equal(after.grants, undefined);
   assert.ok(!after.includes("binding"));
   assert.ok(after.length < before.allocated.length);
@@ -77,13 +77,13 @@ test("withdrawing a bridge removes disconnected dependent nodes and refunds them
 test("release and defense require an actual carrier capability", () => {
   const noCarrier = resolveTalents("frost", ["rime", "paper-ward"], 24);
   assert.equal(noCarrier.grants.carrierGuard, undefined);
-  const carrier = resolveTalents("spirit", ["spirit-path-4", "echo", "paper-ward"], 24);
+  const carrier = resolveTalents("spirit", ["spirit-path-5", "spirit-path-4", "spirit-path-10", "spirit-path-11", "echo", "paper-ward"], 24);
   assert.equal(carrier.grants.carrierGuard, 1);
   assert.equal(carrier.grants.carrierRelease, 1);
 });
 
 test("switching main books revalidates connectivity and binding gates secondary candidates", () => {
-  const frost = ["frost-path-4", "rime", "frost-path-6", "frost-path-7", "binding-bridge-1", "binding-bridge-2", "binding"];
+  const frost = ["cold-ink", "rime", "crystal", "binding-bridge-1", "binding-bridge-2", "binding"];
   assert.deepEqual(secondaryBookCandidates("frost", frost, 8).sort(), ["flame", "spirit", "storm"]);
   assert.deepEqual(secondaryBookCandidates("frost", frost, 7), []);
   assert.deepEqual(secondaryBookCandidates("frost", ["cold-ink", "crystal", "focus"], 8), []);
@@ -133,7 +133,7 @@ test("normal and God loadouts persist separately through the versioned storage a
   const storage = new StorageAdapter(() => ({ getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) }));
   const normal = updateTalentLoadout(emptyTalentProgress(), "frost", { allocated: all }, 2);
   storage.save("talents", normal);
-  storage.save("talents-god", { version: 1, graphVersion: 2, byBook: { flame: { allocated: all, secondaryBook: "storm" } } });
+  storage.save("talents-god", { version: 1, graphVersion: TALENT_GRAPH_VERSION, byBook: { flame: { allocated: all, secondaryBook: "storm" } } });
   assert.equal(readTalentProgress(storage).byBook.frost.allocated.length, 3);
   assert.ok(readGodTalents(storage).byBook.flame.allocated.length > 24);
   assert.equal(readGodTalents(storage).byBook.flame.secondaryBook, "storm");
@@ -187,4 +187,45 @@ test("God loop increments only God career and never invokes ordinary progression
   assert.equal(next.godCareer.casts, 20);
   assert.equal(next.godCareer.elapsed, 60);
   assert.equal(next.godCareer.settlements, 2);
+});
+
+test('shared routes connect named mechanics and the UI uses those exact traversable edges', () => {
+  const { TALENT_GRAPH } = require('../src/content/graphs.ts');
+  for (const [family, [a, b]] of Object.entries(TALENT_BRIDGE_PORTS)) {
+    assert.ok(talentNeighbors(`${family}-bridge-1`).includes(a));
+    assert.ok(talentNeighbors(`${family}-bridge-4`).includes(b));
+    assert.notEqual(TALENT_NODES.find(n => n.id === a).school, TALENT_NODES.find(n => n.id === b).school);
+  }
+  for (const node of TALENT_NODES) for (const target of talentNeighbors(node.id)) {
+    assert.ok(TALENT_GRAPH.relations.some(e => e.kind === 'path' && [e.source, e.target].includes(node.id) && [e.source, e.target].includes(target)));
+  }
+});
+
+test('displayed routes can be purchased in order without losing existing nodes', () => {
+  for (const book of TALENT_BOOKS) for (const target of ['binding', 'focus', 'paper-ward', 'crystal', 'reserve-wide']) {
+    let active = [`${book}-root`];
+    const path = talentRoute(book, target, active);
+    if (!path.length) continue;
+    assert.equal(path.at(-1), target);
+    for (const id of path) {
+      const next = resolveTalents(book, [...active, id], 0, true).allocated;
+      assert.ok(next.includes(id));
+      assert.ok(active.every(id => next.includes(id)));
+      active = next;
+    }
+  }
+  const binding = talentRoute('frost', 'binding', []);
+  assert.ok(binding.length > 1);
+  assert.deepEqual(talentRoute('frost', 'focus', binding), []);
+});
+
+test('graph changes refund allocations while retaining earned progress and receipts', () => {
+  const saved = { ...emptyTalentProgress(), graphVersion: 2, manualCharacters: 720, byRun: { a: 720 }, receipts: { a: { characters: 720, points: 6 } }, byBook: { frost: { allocated: all } } };
+  const actual = readTalentProgress({ read: () => saved });
+  assert.deepEqual(actual.byBook, {});
+  assert.equal(actual.manualCharacters, 720);
+  assert.equal(earnedTalentPoints(actual.manualCharacters), 8);
+  assert.deepEqual(actual.receipts, saved.receipts);
+  assert.deepEqual(actual.byRun, saved.byRun);
+  assert.equal(actual.graphVersion, TALENT_GRAPH_VERSION);
 });

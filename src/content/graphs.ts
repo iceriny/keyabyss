@@ -1,5 +1,5 @@
 import type { GraphDefinition, GraphNode, GraphRelation, GraphRegion } from '../contracts/graph.ts';
-import { TALENT_NODES } from './talents.ts';
+import { TALENT_GRAPH_VERSION, TALENT_NODES } from './talents.ts';
 import { BOOKS, RELICS } from './catalog.ts';
 import { combatCapabilities } from '../contracts/combat-weave.ts';
 
@@ -37,14 +37,14 @@ const relation = (source: string, target: string, kind: GraphRelation['kind'], l
 const deduplicate = (edges: GraphRelation[]) => [...new Map(edges.map(edge => [edge.id, edge])).values()];
 
 export const TALENT_GRAPH: GraphDefinition = {
-  id: 'talents', version: 2,
+  id: 'talents', version: TALENT_GRAPH_VERSION,
   regions: [...Object.values(BOOKS).map(book => ({ id: book.id, name: book.name, color: book.color })), ...[
-    ['binding', '合订书脊'], ['focus', '独卷精修'], ['reserve', '藏量回流'], ['geometry', '分合几何'], ['warding', '护持遗响'], ['letters', '词形复调'], ['transport', '行间运输'], ['transmutation', '材料易形'],
+    ['binding', '法书合订'], ['focus', '主书专精'], ['reserve', '储备回收'], ['geometry', '碎片与连锁'], ['warding', '法术防御'], ['letters', '字母标记'], ['transport', '纸灵接力'], ['transmutation', '冰火转化'],
   ].map(([id, name]) => ({ id, name, color: '#d9c596' }))],
   nodes: TALENT_NODES.map(node => ({ id: node.id, definitionId: node.id, name: node.name, description: node.description, region: node.family ?? node.school, family: node.family ?? node.school, kind: node.root ? 'root' : node.kind ?? 'rule', cost: node.cost, tags: [...(node.capabilities ?? []), ...(node.requires ?? []), ...Object.keys(node.grants ?? {})] })),
   relations: deduplicate(TALENT_NODES.flatMap(node => [
     ...node.links.map(id => relation(...([node.id, id].sort() as [string, string]), 'path')),
-    ...(node.requiresNodes ?? []).map(id => relation(id, node.id, 'requires')),
+    ...(node.requiresNodes ?? []).filter(id => !node.links.includes(id)).map(id => relation(id, node.id, 'requires')),
     ...TALENT_NODES.filter(other => node.exclusive && node.exclusive === other.exclusive && node.id < other.id).map(other => relation(node.id, other.id, 'excludes')),
   ])),
 };

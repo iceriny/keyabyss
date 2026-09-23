@@ -5,11 +5,11 @@
 .talents-modal .heading-pattern { display: none; }
 .talents-modal .modal-heading::after { display: none; }
 .talent-panel { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
-.talent-toolbar { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 20px; }
-.talent-toolbar strong { display: block; color: #eee0ba; font-size: 23px; font-weight: 400; }
+.talent-toolbar { display: flex; flex-wrap: wrap; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 8px 20px; }
+.talent-toolbar strong { display: block; white-space: nowrap; color: #eee0ba; font-size: 23px; font-weight: 400; }
 .talent-toolbar span, .talent-footer > span, .talent-school { font-family: var(--font-small); font-size: 14px; color: #a7abb7; }
-.talent-books { display: flex; gap: 8px; }
-.talent-books .button { min-width: 0; padding: 9px 11px; }
+.talent-books { display: flex; flex-shrink: 0; order: 2; margin-left: auto; gap: 8px; }
+.talent-books .button { min-width: 0; white-space: nowrap; padding: 9px 11px; }
 .talent-workspace { position: relative; flex: 1 1 auto; min-height: 0; }
 .talent-map-region { position: absolute; inset: 0; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .talent-detail { position: absolute; z-index: 2; top: 80px; right: 0; bottom: 32px; width: clamp(270px, 22vw, 370px); display: flex; flex-direction: column; min-height: 0; padding: 12px 0 0 26px; }
@@ -21,9 +21,17 @@
 .talent-detail p { font-family: var(--font-small); font-size: 16px; line-height: 1.85; color: #bfc5cf; }
 .talent-detail .talent-status { font-size: 14px; color: #a6aebe; min-height: 46px; }
 .talent-detail h4 { margin: 0 0 10px; font-size: 18px; font-weight: 400; }
-.talent-binding, .talent-current, .talent-path-preview { margin-top: 24px; padding-top: 12px; }
+.talent-binding { order: 3; margin-left: auto; flex: 0 0 260px; }
+.talent-binding .select-field { display: flex; align-items: center; gap: 12px; margin: 0; }
+.talent-binding .field-label { flex: 0 0 auto; margin: 0; white-space: nowrap; }
+.talent-binding .select-field > .button { flex: 1 1 auto; min-width: 0; margin: 0; padding: 7px 10px; }
+.talent-connections, .talent-path-preview { margin-top: 24px; padding-top: 12px; }
+.talent-connections button, .talent-path-preview button { display: flex; align-items: baseline; gap: 16px; border: 0; background: none; padding: 7px 0; text-align: left; font: inherit; font-size: 16px; color: #cad0d9; cursor: pointer; }
+.talent-connections button:hover, .talent-path-preview button:hover, .talent-connections button:focus-visible, .talent-path-preview button:focus-visible { color: var(--talent-color); outline: none; text-shadow: 0 0 8px var(--talent-color); }
+.talent-connections button span { font-family: var(--font-small); font-size: 13px; color: #929dad; }
+.talent-path-preview ol { padding-left: 22px; color: #d3bb84; font-family: var(--font-small); }
+.talent-path-preview li::marker { font-size: 13px; }
 .talent-path-preview p { margin: 4px 0; }
-.talent-current p { font-size: 14px; }
 .talent-footer { flex: 0 0 auto; margin-top: 0; }
 .deployment-talents { margin-top: 18px; padding-top: 12px; border-top: 1px solid #a6aab526; }
 .deployment-talents p { margin: 7px 0 12px; font-size: 14px; color: #aeb7c6; }

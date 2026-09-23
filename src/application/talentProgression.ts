@@ -1,11 +1,11 @@
 import type { BookId, Report } from "../contracts/game.ts";
 import type { TalentConfiguration, TalentLoadout, TalentProgress, TalentReceipt } from "../contracts/talents.ts";
 import type { StorageAdapter } from "../platform/StorageAdapter.ts";
-import { TALENT_BOOKS } from "../content/talents.ts";
+import { TALENT_BOOKS, TALENT_GRAPH_VERSION } from "../content/talents.ts";
 import { resolveTalentLoadout, MAX_TALENT_POINTS } from "../shared/talents.ts";
 
 const count = (value: unknown): number => typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, Math.floor(value))) : 0;
-const GRAPH_VERSION = 2;
+const GRAPH_VERSION = TALENT_GRAPH_VERSION;
 export const emptyTalentConfiguration = (): TalentConfiguration => ({ version: 1, graphVersion: GRAPH_VERSION, byBook: {} });
 export const emptyTalentProgress = (): TalentProgress => ({ ...emptyTalentConfiguration(), manualCharacters: 0, byRun: {}, receipts: {} });
 export const earnedTalentPoints = (characters: number) => Math.min(MAX_TALENT_POINTS, 2 + Math.floor(count(characters) / 120));

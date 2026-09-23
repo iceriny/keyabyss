@@ -43,3 +43,24 @@ test('rooted graph has one central book core and bounded whole-world queries', (
     assert.ok(Math.hypot(TALENT_LAYOUT.nodes[node.id].x, TALENT_LAYOUT.nodes[node.id].y) > Math.max(...radii));
   assert.equal(visibleGraphNodes(TALENT_LAYOUT, {x:-1e12,y:-1e12,width:2e12,height:2e12}).length, TALENT_GRAPH.nodes.length);
 });
+
+test('growth routes stay local and crossings do not overwhelm the network', () => {
+  const paths = TALENT_GRAPH.relations.filter(e => e.kind === 'path');
+  const side = (a,b,c) => (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+  const crosses = (a,b,c,d) => side(a,b,c)*side(a,b,d)<0 && side(c,d,a)*side(c,d,b)<0;
+  let intersections = 0;
+  const lengths = paths.map(edge => {
+    const points = TALENT_LAYOUT.routes[edge.id];
+    return points.slice(1).reduce((sum,p,i) => sum + Math.hypot(p.x-points[i].x,p.y-points[i].y), 0);
+  }).sort((a,b)=>a-b);
+  for (let i=0;i<paths.length;i++) for (let j=i+1;j<paths.length;j++) {
+    const a=paths[i],b=paths[j];
+    if ([a.source,a.target].some(id=>id===b.source || id===b.target)) continue;
+    const p=TALENT_LAYOUT.routes[a.id],q=TALENT_LAYOUT.routes[b.id];
+    for(let x=1;x<p.length;x++) for(let y=1;y<q.length;y++)
+      if(crosses(p[x-1],p[x],q[y-1],q[y])) intersections++;
+  }
+  assert.ok(intersections <= paths.length * .12, `${intersections} crossings / ${paths.length} paths`);
+  assert.ok(lengths[Math.floor(lengths.length*.95)] < 1400, 'most paths should connect nearby nodes');
+  console.log(JSON.stringify({growthPaths:paths.length, intersections, routeLengthP95:lengths[Math.floor(lengths.length*.95)]}));
+});

@@ -11,7 +11,7 @@ from playwright.sync_api import sync_playwright, expect
 from browser_support import launch_browser
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / '.temp/combat-acceptance/browser/combat-refactor'
+OUT = ROOT / os.environ.get('KEYABYSS_TEST_OUT', '.temp/combat-acceptance/browser/combat-refactor')
 OUT.mkdir(parents=True, exist_ok=True)
 BASE = os.environ.get('KEYABYSS_URL', (ROOT / 'dist/index.html').as_uri())
 URL = BASE + ('&' if '?' in BASE else '?') + 'debug'
@@ -82,8 +82,8 @@ with sync_playwright() as p:
         page.locator('.startup-gate').wait_for(state='detached')
         page.locator('#home').wait_for()
         open_talents(page)
-        allocate(page, '霜·起笔')
-        allocate(page, '霜·留痕')
+        allocate(page, '霜·寒气强度Ⅰ')
+        allocate(page, '霜·寒气强度Ⅱ')
         search = page.get_by_role('searchbox', name='搜索天赋图谱节点')
         search.fill('合订')
         page.get_by_role('option', name=re.compile(r'^合订(?:\s|$)')).click()
@@ -124,7 +124,7 @@ with sync_playwright() as p:
         page.keyboard.type('imsuperman')
         open_talents(page)
         expect(page.locator('.talent-toolbar')).to_contain_text('GOD MODE')
-        for name in ['霜·深刻','霜·承接','霜·回环','霜·远读','合订·入径','合订·承势','合订']:
+        for name in ['霜·寒气强度Ⅰ','霜·寒气强度Ⅱ','晶构','合订·资源积累','合订·复写威力','合订']:
             allocate(page, name)
         page.locator('#talentSecondary').click()
         page.get_by_role('option', name='灰烬之书').click()
@@ -132,6 +132,12 @@ with sync_playwright() as p:
         assert god['byBook']['frost']['secondaryBook'] == 'flame', god
         assert len(god['byBook']['frost']['allocated']) > 5
         assert saved(page, 'talents') == ordinary
+        for width, height in [(1024,640),(1920,1080)]:
+            page.set_viewport_size({'width':width,'height':height})
+            controls = page.locator('.talent-toolbar button').evaluate_all('buttons => buttons.map(b => {const r=b.getBoundingClientRect();return {x:r.x,right:r.right}})')
+            assert all(r['x'] >= 0 and r['right'] <= width for r in controls), controls
+            expect(page.locator('#talentSecondary')).to_be_visible()
+            page.screenshot(path=str(OUT / f'talent-binding-{width}.png'))
         check('God Mode exceeds the earned budget, selects a secondary book and keeps ordinary talents intact')
         command(page, 'back').click()
         page.evaluate(SETUP, 'flame')

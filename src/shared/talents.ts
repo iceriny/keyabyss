@@ -48,6 +48,29 @@ export function resolveTalents(book: string, allocated: readonly string[], budge
 
 export const talentNeighbors = (id: string): readonly string[] => [...(adjacent.get(id) ?? [])];
 
+/** A cost-ordered, executable route, checked one purchase at a time. The route
+ * may exceed today's budget, but never bypasses prerequisites or exclusions. */
+export function talentRoute(book: string, target: string, allocated: readonly string[]): string[] {
+  const active = resolveTalents(book, allocated, 0, true).allocated;
+  const pending = active.map(id => ({ path: [id], cost: 0 }));
+  const visited = new Set<string>();
+  const byId = new Map(TALENT_NODES.map(node => [node.id, node]));
+  while (pending.length) {
+    pending.sort((a, b) => a.cost - b.cost || a.path.join('/').localeCompare(b.path.join('/'), 'en'));
+    const { path, cost } = pending.shift()!, last = path[path.length - 1];
+    if (last === target) return path;
+    if (visited.has(last)) continue;
+    visited.add(last);
+    for (const next of talentNeighbors(last)) {
+      if (visited.has(next) || active.includes(next)) continue;
+      const proposed = [...active, ...path, next];
+      const trial = resolveTalents(book, proposed, 0, true);
+      if (proposed.every(id => trial.allocated.includes(id))) pending.push({ path: [...path, next], cost: cost + byId.get(next)!.cost });
+    }
+  }
+  return [];
+}
+
 export function removeTalent(book: string, allocated: readonly string[], id: string, budget: number, godMode = false): string[] {
   return resolveTalents(book, allocated.filter(value => value !== id), budget, godMode).allocated;
 }
