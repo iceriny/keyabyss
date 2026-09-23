@@ -104,4 +104,4 @@ npm run test:ui
 npm run test:visual
 ```
 
-`tests/assets.test.cjs` 验证缓存去重、错误重试、取消、音轨和 URL 释放；`tests/flame.test.cjs` 验证延迟命中、灼烧周期、熔爆、传播深度、火场、遗物和觉醒；`tests/flame-browser.py` 验证原图逐字节发行、四本插画、真实音频播放、GPU 画面和减少动态。截图与报告在 `docs/test-output-flame/`。
+`tests/assets.test.cjs` 验证缓存去重、错误重试、取消、音轨和 URL 释放；`tests/flame.test.cjs` 验证延迟命中、灼烧周期、熔爆、传播深度、火场、遗物和觉醒；`tests/flame-browser.py` 验证原图逐字节发行、四本插画、真实音频播放、GPU 画面和减少动态。截图与报告在 `.temp/test-output-flame/`。

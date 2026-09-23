@@ -21,6 +21,7 @@ export function createOverlayFrame(game: CombatSimulation): OverlayFrame {
     "content",
   ] as const;
   const descriptors: PropertyDescriptorMap = {
+    letterMotes: { get: () => game.weave.letters, enumerable: true },
     targets: { get: () => game.targets(), enumerable: true },
     elites: { get: () => game.content.elites, enumerable: true },
   };

@@ -22,4 +22,4 @@
 
 本机 Chrome、1920×1080、高画质、150 帧轻负载运行样本：约 59.95 FPS，帧间隔 P95 16.8 ms，CPU 渲染提交 P95 0.8 ms，18 次战场绘制、15 张纹理。菜单为 4 次绘制。该样本不是密集战斗、长时或其他设备的性能结论，也不是与独立 SVG 原稿的同条件基准对比。
 
-截图与原始结果：`docs/test-output-arcane/`，其中 `home-1080.png`、`battle-1080.png`、`casting-1080.png` 和 `report.json` 为主要证据。
+截图与原始结果：`.temp/test-output-arcane/`，其中 `home-1080.png`、`battle-1080.png`、`casting-1080.png` 和 `report.json` 为主要证据。

@@ -1,6 +1,6 @@
 import type { Report } from "./game.ts";
 
-/** Persisted separately from temporary in-run relics. No talents are enabled yet. */
+/** Aggregate career counters; talent allocation has its own versioned progress. */
 export interface CareerProfile {
   version: 1;
   settlements: number;
@@ -26,5 +26,6 @@ export interface RunArchive {
   version: 1;
   records: Report[];
   career: CareerProfile;
-  checkpoints: Record<string, { loop: number; kills: number; casts: number; elapsed: number }>;
+  godCareer?: CareerProfile;
+  checkpoints: Record<string, { loop: number; kills: number; casts: number; elapsed: number; godMode?: boolean }>;
 }

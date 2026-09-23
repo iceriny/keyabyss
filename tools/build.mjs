@@ -151,8 +151,9 @@ const artifacts = files.map((file) => {
     sha256: createHash("sha256").update(data).digest("hex"),
   };
 });
+fs.mkdirSync(path.join(root, ".temp"), { recursive: true });
 fs.writeFileSync(
-  path.join(root, "docs/release-sha256.json"),
+  path.join(root, ".temp/release-sha256.json"),
   JSON.stringify(
     {
       version: JSON.parse(

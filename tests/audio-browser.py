@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 manifest=json.loads((ROOT/'src/generated/audio-manifest.ts').read_text(encoding='utf-8').split(' = ',1)[1].rstrip(';\n'))
 ui_clips={clip['id'] for key,group in manifest.items() if key.startswith('ui.') for clip in group}
 clip_count=len({clip['id'] for group in manifest.values() for clip in group})
-OUT=ROOT/'docs/test-output-audio';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-audio';OUT.mkdir(parents=True, exist_ok=True)
 checks=[];errors=[];requests=[]
 def check(text):checks.append(text);print('PASS',text,flush=True)
 

@@ -6,7 +6,7 @@ from functools import partial
 from threading import Thread
 from browser_support import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-deployment';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-deployment';OUT.mkdir(parents=True, exist_ok=True)
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(SimpleHTTPRequestHandler,directory=str(ROOT/'dist')))
 Thread(target=server.serve_forever,daemon=True).start()
 with sync_playwright() as p:

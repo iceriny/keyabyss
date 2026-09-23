@@ -5,8 +5,8 @@ from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'docs/test-output-menu'
-OUT.mkdir(exist_ok=True)
+OUT = ROOT / '.temp/test-output-menu'
+OUT.mkdir(parents=True, exist_ok=True)
 checks, errors = [], []
 def passed(text):
     checks.append(text)

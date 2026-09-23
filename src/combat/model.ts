@@ -73,6 +73,7 @@ interface TargetBase extends Point, Word {
   phaseLock: number;
 }
 export interface Enemy extends TargetBase {
+  letterMarks?: { word: string; positions: number[] };
   /** Acquired by player targeting in the clear arena; retained until death. */
   combatLocked?: boolean;
   approachDirection?: number;
@@ -83,6 +84,8 @@ export interface Enemy extends TargetBase {
     tick: number;
     damage: number;
     spreadDepth: number;
+    /** Remaining paid input energy; transferred heat never replenishes it. */
+    recoverable?: number;
   };
   bossId?: string;
   countsForClear?: boolean;
@@ -209,6 +212,7 @@ export interface Blast extends Point {
   source: number | null;
 }
 export interface SpellOptions {
+  weave?: import('../contracts/combat-weave.ts').SpellPayload;
   kind?: string;
   direct?: boolean;
   empowered?: boolean;

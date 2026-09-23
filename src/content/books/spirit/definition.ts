@@ -1,6 +1,6 @@
 import type { Book } from "../../../contracts/content.ts";
 export default {
-  combat: { nativeSummons: 3 },
+  combat: { nativeSummons: 3, element: "paper", capabilities: ["carrier"] },
   castMultiplier: { normal: 0.88, empowered: 0.88 },
   artwork: "book-spirit",
   visual: {
@@ -24,7 +24,7 @@ export default {
   color: "#c2a0ff",
   desc: "标记集火 · 飞刃军团",
   detail:
-    "每次完词唤醒一只纸灵，基础上限三只；咒文标记敌人并驱使已唤醒纸灵集火。每第3次施法发动交叉斩；停笔至灵力耗尽后纸灵休眠。",
+    "每次完词唤醒一只纸灵，基础上限三只；咒文标记敌人并驱使已唤醒纸灵集火。每第3次施法发动交叉斩。每12个有效人工字符承载一张35%主术威力的复写页，基础最多一页；停笔至灵力耗尽后纸灵休眠。",
   ultimate: "千纸夜行",
   ultimateDesc: "8秒额外唤醒四只纸灵，并立即展开环形飞刃，强化标记集火。",
   cadence: "灵印",

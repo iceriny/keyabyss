@@ -14,6 +14,8 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "weave"
+  | "canEnemyAct"
   | "spreadBurn"
   | "eliteProfile"
   | "domainEvents"
@@ -157,6 +159,7 @@ export function damage(
 export function kill(this: Context, e: Enemy, depth = 0) {
   if (e.dead) return;
   e.dead = true;
+  this.weave.recover(this, e);
   this.spreadBurn(e);
   this.domainEvents.publish({ type: "death", entity: e.id, depth });
   this.kills++;
@@ -193,6 +196,7 @@ export function kill(this: Context, e: Enemy, depth = 0) {
   this.sound.kill(e.boss, e);
   this.shake = Math.max(this.shake, e.boss ? 13 : 3.2);
   if (this.target === e) {
+    this.weave.scatter(this, e, this.prefix);
     if (this.stats.partialWordShield && this.prefix.length) {
       this.player.shield = Math.min(60, this.player.shield + 10);
       this.floating(
@@ -203,7 +207,8 @@ export function kill(this: Context, e: Enemy, depth = 0) {
         14,
       );
     }
-    this.cancel();
+    if (!this.prefix) this.cancel();
+    else this.emit('hud');
   }
   if (e.mark > 0 && this.stats.summonedMark) this.addResonance(8);
   if (
@@ -259,6 +264,7 @@ export function kill(this: Context, e: Enemy, depth = 0) {
     }
   }
   if (e.boss) {
+    this.cancel(false);
     this.clearBullets(640, 400, 1800);
     for (const other of this.enemies)
       if (!other.dead) {

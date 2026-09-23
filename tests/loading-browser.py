@@ -4,7 +4,7 @@ import json
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-native';checks=[];errors=[]
+OUT=ROOT/'.temp/test-output-native';checks=[];errors=[]
 url=(ROOT/'dist/index.html').as_uri()+'?debug'
 with sync_playwright() as p:
  browser=launch_browser(p)
@@ -48,5 +48,5 @@ with sync_playwright() as p:
  checks.append('Vite startup gate works at DPR 2 with 1080P world and independent crisp labels');print('PASS',checks[-1],flush=True)
  assert not errors,errors
  browser.close()
-OUT.mkdir(exist_ok=True)
+OUT.mkdir(parents=True, exist_ok=True)
 (OUT/'loading-report.json').write_text(json.dumps({'checks':checks,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')

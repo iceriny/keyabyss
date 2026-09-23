@@ -38,7 +38,7 @@ export function Home({
   onBook: (id: BookId) => void;
   settings: Settings;
   onDeploy: () => void;
-  onOpen: (name: "vocab" | "codex" | "help" | "settings" | "history") => void;
+  onOpen: (name: "vocab" | "codex" | "help" | "settings" | "history" | "talents") => void;
 }) {
   const b = C.BOOKS[book],
     copy = [b.headline, b.subtitle, b.eyebrow];
@@ -138,6 +138,9 @@ export function Home({
           </Button>
         </section>
         <nav className="camp-menu" aria-label="营地菜单" inert={deploying || leaving}>
+          <Button word="talents" onClick={() => onOpen("talents")}>
+            天赋
+          </Button>
           <Button word="vocab" onClick={() => onOpen("vocab")}>
             词库
           </Button>
@@ -191,6 +194,13 @@ export function Deployment({
   seed,
   onSeed,
   onLibrary,
+  onTalents,
+  talentSpent,
+  talentPoints,
+  godMode,
+  secondaryBook,
+  secondaryOptions,
+  onSecondary,
 }: {
   books: Vocabulary[];
   vocab: string;
@@ -202,6 +212,13 @@ export function Deployment({
   seed: string;
   onSeed: (value: string) => void;
   onLibrary: () => void;
+  onTalents: () => void;
+  talentSpent: number;
+  talentPoints: number;
+  godMode: boolean;
+  secondaryBook?: BookId;
+  secondaryOptions: readonly BookId[];
+  onSecondary: (book?: BookId) => void;
 }) {
   const notes: Record<ModeId, string> = {
     story: "宽裕预警与生命，适合初次落笔。",
@@ -234,6 +251,10 @@ export function Deployment({
           </Button>
         </div>
         <Toggle id="progressive" label="渐进词长" word="grow" value={progressive} onChange={onProgressive} />
+        <div className="deployment-talents">
+          <Button word="talents" onClick={onTalents}>天赋 · {godMode ? "GOD MODE" : `${talentSpent} / ${talentPoints} 点`}</Button>
+          {secondaryOptions.length ? <Select id="deploymentSecondary" word="secondary" label="合订副书" value={secondaryBook ?? ""} options={[{ value: "", label: "暂不合订" }, ...secondaryOptions.map(id => ({ value: id, label: C.BOOKS[id].name }))]} onChange={value => onSecondary(value ? value as BookId : undefined)} /> : <p>主书独行 · 天赋合订可开放副书</p>}
+        </div>
         </div>
         </section>
         <section className="deployment-wing wing-right" aria-label="难度与种子">

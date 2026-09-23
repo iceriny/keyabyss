@@ -78,4 +78,4 @@ WordPool 构造时用一次 O(N) 遍历建立“长度 × 首字母”桶和词�
 
 `npm test` 包含 5 万词无整库扫描、候选耗尽、所有边缘能力、道具位置、God Mode 和完整词库计数检查。
 
-`npm run test:fullscreen` 使用真实菜单加载完整四级词库；截图逐像素验证边缘及单词受模糊、中央不变；验证三级实际缓冲与图元数量、前景绘制顺序、暂停背景像素一致、720P 减少动态。报告与截图位于 `docs/test-output-fullscreen/`，总验收记录见 [TESTING.md](TESTING.md)。
+`npm run test:fullscreen` 使用真实菜单加载完整四级词库；截图逐像素验证边缘及单词受模糊、中央不变；验证三级实际缓冲与图元数量、前景绘制顺序、暂停背景像素一致、720P 减少动态。报告与截图位于 `.temp/test-output-fullscreen/`，当时的总验收记录见 [验收归档](archive/TESTING.md)。

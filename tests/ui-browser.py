@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'docs' / 'test-output-native-ui'
+OUT = ROOT / '.temp' / 'test-output-native-ui'
 OUT.mkdir(parents=True, exist_ok=True)
 checks, errors, requests = [], [], []
 

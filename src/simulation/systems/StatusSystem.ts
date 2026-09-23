@@ -1,4 +1,5 @@
 import { beginFlight } from "../../shared/spirit-flight.ts";
+import type { WeaveContext } from './WeaveSystem.ts';
 import type { Point, Enemy, SpellOptions } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
 
@@ -12,6 +13,8 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "weave"
+  | keyof WeaveContext
   | "content"
   | "spirits"
   | "applyBurn"
@@ -79,17 +82,21 @@ export function conduct(this: Context, e: Enemy) {
   e.conduct = (e.conduct || 0) + 1;
   if (e.conduct < 3) return;
   e.conduct = 0;
-  this.overloads++;
-  const radius = this.stats.overloadPull ? 190 : 125,
+  discharge(this, e, e);
+}
+
+function discharge(ctx: Context, origin: Point, target: Enemy | null) {
+  ctx.overloads++;
+  const radius = ctx.stats.overloadPull ? 190 : 125,
     dmg =
-      this.combatValue("overload.damage");
-  if (this.stats.overloadPull) this.pull(e.x, e.y, radius + 50, 380);
-  this.burst(e.x, e.y, radius, "#ffe1a1", "electric");
-  this.damage(e, dmg, 1, false);
-  this.explode(e.x, e.y, radius, dmg * 0.7, e, 1, "#fcd57b");
-  if (this.stats.directConduction) this.clearBullets(e.x, e.y, 135);
-  this.floating(e.x, e.y - 44, "过载", "#ffe3a4", 16);
-  this.sound.overload(e);
+      ctx.combatValue("overload.damage");
+  if (ctx.stats.overloadPull) ctx.pull(origin.x, origin.y, radius + 50, 380);
+  ctx.burst(origin.x, origin.y, radius, "#ffe1a1", "electric");
+  if (target && !target.dead) ctx.damage(target, dmg, 1, false);
+  ctx.explode(origin.x, origin.y, radius, dmg * 0.7, target, 1, "#fcd57b");
+  if (ctx.stats.directConduction) ctx.clearBullets(origin.x, origin.y, 135);
+  ctx.floating(origin.x, origin.y - 44, "过载", "#ffe3a4", 16);
+  ctx.sound.overload(origin);
 }
 
 export function chain(
@@ -122,6 +129,8 @@ export function strike(
   opts: SpellOptions = {},
 ) {
   if (!e || e.dead) return;
+  opts = { ...opts, weave: this.weave.capture(opts) };
+  if (!this.weave.accepts(this, opts.weave)) return;
   const frozen = e.freeze > 0;
   if (frozen) {
     dmg *= this.combatValue("frozen.multiplier");
@@ -147,10 +156,17 @@ export function strike(
           : 150) *
       this.combatValue("impulse.multiplier");
   this.impulse(e, origin, force);
+  const conduction = opts.kind === 'storm' || (this.stats.directConduction && opts.direct);
+  const charged = e.conduct;
+  const hitPosition = { x: e.x, y: e.y };
+  const receipt = this.weave.beforeHit(this, e, dmg, opts);
   this.damage(e, dmg, opts.depth || 0, !!opts.direct, origin);
+  this.weave.afterHit(this, receipt);
   if (opts.kind === "fire") this.fireImpact(e, dmg, opts);
-  if (opts.kind === "storm" || (this.stats.directConduction && opts.direct))
-    this.conduct(e);
+  if (conduction) {
+    if (!e.dead) this.conduct(e);
+    else if (charged >= 2 && !this.roomEnded) discharge(this, hitPosition, null);
+  }
   if (
     opts.direct &&
     this.stats.execution &&

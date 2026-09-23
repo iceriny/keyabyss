@@ -1,4 +1,5 @@
 import { enemyInCombat } from "../../shared/arena.ts";
+import { chooseEnemyWord } from "./EliteWords.ts";
 import { directionKeys, dodgeDirection } from "../../shared/defense.ts";
 import type { Point, CombatTarget } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
@@ -15,6 +16,7 @@ type Context = Pick<
   CombatRuntime,
   | "arena"
   | "enemyProfile"
+  | "eliteProfile"
   | "aimKeys"
   | "autofill"
   | "bookData"
@@ -61,21 +63,10 @@ export function wordFor(
   extra = false,
   exclude: CombatTarget | null = null,
 ) {
-  const list = this.targets().filter((t) => t !== exclude);
-  const max = this.config.progressive
-    ? Math.min(
-        24,
-        this.mode.baseLen +
-          this.chapter * (this.mode.rank < 2 ? 1 : 2) +
-          this.loopCount +
-          (extra ? 1 : 0),
-      )
-    : 24;
-  const range =
-    this.config.progressive && this.rng() < 0.28
-      ? [1, this.mode.baseLen]
-      : [1, max];
-  return this.pool.choose(list, range[0], range[1]);
+  const preference = exclude && !exclude.kind
+    ? this.eliteProfile(exclude)?.wordPreference
+    : undefined;
+  return chooseEnemyWord(this, extra, exclude, preference);
 }
 
 export function targets(this: Context) {
@@ -130,7 +121,7 @@ export function input(this: Context, key: string) {
   key = key.toLowerCase();
   this.typedTotal++;
   this.sound.key(this.prefix.length + 1, this.bookData.audio);
-  if (!this.target || this.target.dead) {
+  if (!this.target || (this.target.dead && (!this.prefix || this.target.kind))) {
     this.target = null;
     this.prefix = "";
     const matches = this.targets()
@@ -141,7 +132,7 @@ export function input(this: Context, key: string) {
       this.castError = false;
     }
   }
-  if (this.target && this.target.word[this.prefix.length] !== key) {
+  if (this.target && !this.target.dead && this.target.word[this.prefix.length] !== key) {
     // Resolve shared initials from the typed prefix; no token is rewritten mid-input.
     const alternatives = this.targets()
       .filter((t) => selectable(this, t) && t.word.startsWith(this.prefix + key))
@@ -178,16 +169,19 @@ export function input(this: Context, key: string) {
     this.autofill && this.prefix.length >= 2 && this.target.word.length > 2;
   if (this.prefix === this.target.word || auto) {
     const t = this.target,
-      perfect = !this.castError;
+      perfect = !this.castError,
+      manualChars = this.prefix.length,
+      continuation = t.dead && !t.kind;
     if (auto) this.autofill = false;
     this.cancel(false);
-    this.cast(t, perfect, auto);
+    this.cast(t, perfect, auto, manualChars, continuation);
     this.postCombat();
   }
   return true;
 }
 
 export function cycle(this: Context, direction = 1) {
+  if (this.target?.dead && !this.target.kind && this.prefix) return;
   const prefix = this.prefix || "";
   const list = this.targets()
     .filter((t) => selectable(this, t) && (!prefix || t.word.startsWith(prefix)))

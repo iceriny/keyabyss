@@ -1,4 +1,5 @@
 import { DEFENSE } from "../../shared/defense.ts";
+import type { WeaveContext } from './WeaveSystem.ts';
 import { WordReservations } from "../targeting/WordReservations.ts";
 
 import type {
@@ -20,6 +21,8 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "weave"
+  | keyof WeaveContext
   | "canEnemyAct"
   | "inAttackRange"
   | "reflectBullet"
@@ -68,6 +71,8 @@ export function launchShot(
   opts: SpellOptions = {},
 ) {
   if (this.shots.length >= 110 || !target || target.dead) return;
+  opts = { ...opts, weave: this.weave.capture(opts) };
+  if (!this.weave.accepts(this, opts.weave)) return;
   const angle = Math.atan2(target.y - from.y, target.x - from.x),
     speed =
       kind === "ice"
@@ -166,6 +171,7 @@ export function updateShots(this: Context, dt: number) {
         critical: s.critical,
         from: { x: s.px - s.vx * 0.08, y: s.py - s.vy * 0.08 },
         depth: s.depth || 0,
+        weave: s.weave,
       });
       if (primary) {
         this.releaseShot(s);
@@ -402,6 +408,7 @@ export function updateBullets(this: Context, dt: number) {
     }
     if (d < b.r + p.r) {
       if (p.invuln <= 0) {
+        if (!b.heavy && this.weave.block(this)) { b.dead = true; continue; }
         this.hurt((b.heavy ? 16 : 11) * this.pressure.damage, {
           x: b.px,
           y: b.py,

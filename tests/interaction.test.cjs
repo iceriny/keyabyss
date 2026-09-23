@@ -43,7 +43,7 @@ test('fixed-width imported-library identifiers never create prefix ambiguities',
  const b=make(['grade1','grade2','cet4','cet6','cpp']);assert.equal(type(b,'cet6').command.word,'cet6');
 });
 test('all registered relics plus fallback and page actions are a valid prefix-free vocabulary',()=>{
- const words=C.RELICS.map(r=>r.id==='dash'?'fold':r.id==='dashnova'?'halo':r.id);
+ const words=C.RELICS.map(r=>r.command??r.id);
  assert.doesNotThrow(()=>make([...words,'renewal','reroll','quit']));
 });
 test('reverse target navigation chooses last target when unlocked, preserving typed prefix',()=>{

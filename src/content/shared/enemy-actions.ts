@@ -30,6 +30,11 @@ export const enemyActions: Readonly<Record<string, EnemyAction>> =
         e.id,
       );
     },
+    crossfire(ctx, e) {
+      const warning = Math.max(1.2, 1.5 * ctx.pressure.warning);
+      for (const offset of [-110, 110])
+        ctx.makeBlast(ctx.player.x + offset, ctx.player.y, 65, warning, e.id);
+    },
     heal(ctx, e) {
       const allies = ctx.enemies
         .filter((n) => !n.dead && n !== e && distance(n, e) < 300)

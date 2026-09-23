@@ -1,6 +1,9 @@
 import { useState, type CSSProperties } from "react";
 import type { Report } from "../contracts/game.ts";
 import type { RunArchive } from "../contracts/progression.ts";
+import type { TalentProgress } from "../contracts/talents.ts";
+import { talentReceiptId } from "../application/talentProgression.ts";
+import { TALENT_BY_ID } from "../content/talents.ts";
 import type { SessionView } from "../contracts/session.ts";
 import { C, download, fmt } from "./storage";
 import { Button, Stat } from "./components";
@@ -11,9 +14,10 @@ export const outcomeName = (r: Report) => r.win ? "胜利" : r.outcome === "aban
 const stageLabel = (r: Report) => `第 ${(r.loop ?? 0) + 1} 周目 · 第 ${r.chapter ?? 1} 章${r.room ? ` · 第 ${r.room} / ${r.roomCount ?? "—"} 节` : ""}`;
 const dateLabel = (r: Report) => r.endedAt ? new Date(r.endedAt).toLocaleString("zh-CN", { hour12: false }) : "早期战报 · 时间未记录";
 
-function ReportDetails({ report, compact = false }: { report: Report; compact?: boolean }) {
+function ReportDetails({ report, compact = false, talentProgress }: { report: Report; compact?: boolean; talentProgress?: TalentProgress }) {
   const mistakes = Object.entries(report.words ?? {}).filter(([, s]) => s.errors > 0).sort((a,b) => b[1].errors-a[1].errors).slice(0,12);
   const relics = Object.entries(report.relics ?? {});
+  const receipt = talentProgress?.receipts[talentReceiptId(report)];
   return <div className={`report-details ${compact ? "compact" : ""}`}>
     <div className="report-stage">
       <span>{stageLabel(report)}</span>
@@ -35,6 +39,11 @@ function ReportDetails({ report, compact = false }: { report: Report; compact?: 
       <div><dt>弹反 / 终式</dt><dd>{report.reflections ?? 0} / {report.ultimates ?? 0}</dd></div>
       <div><dt>正确 / 错误输入</dt><dd>{report.correct ?? "—"} / {report.errors ?? "—"}</dd></div>
     </dl>
+    <div className="report-talents"><strong>{report.secondaryBook ? `合订副书 · ${C.BOOKS[report.secondaryBook]?.name ?? report.secondaryBook}` : "主书独行"}</strong>
+      {typeof report.manualCharacters === "number" && <span> · 本局有效字符 {report.manualCharacters.toLocaleString()} · 获得天赋点 {report.godMode ? "0（God Mode）" : receipt ? `+${receipt.points}` : "—"}</span>}
+      {!!report.talents?.length && <div>出征天赋 · {report.talents.map(id => TALENT_BY_ID[id]?.name ?? id).join(" · ")}</div>}
+      {report.weave && <div>法术后效 · 复写 {report.weave.pagesReleased} 次 · 护页拦截 {report.weave.pagesBlocked} 次 · 灼热碎片 {report.weave.fragments} 枚 · 回收余热 {Math.round(report.weave.recoveredHeat)}</div>}
+    </div>
     <div className="report-columns">
       <section><h3>此行构筑 <small>{relics.length} 件遗物</small></h3>
         <div className="report-relics" data-prose>{relics.length ? relics.map(([id, rank]) => { const relic = C.RELICS.find(r => r.id === id); return <span key={id}>{relic ? <Tooltip title={relic.name} description={relic.desc} category="遗物" term={id}>{relic.name}</Tooltip> : id} <b>×{rank}</b></span>; }) : <p>此行尚未获得遗物。</p>}</div>
@@ -47,7 +56,7 @@ function ReportDetails({ report, compact = false }: { report: Report; compact?: 
   </div>;
 }
 
-export function ResultPanel({ report, game, onRetry, onHistory }: { report: Report; game: SessionView; onRetry: () => void; onHistory: () => void }) {
+export function ResultPanel({ report, game, onRetry, onHistory, onTalents, talentProgress }: { report: Report; game: SessionView; onRetry: () => void; onHistory: () => void; onTalents: () => void; talentProgress?: TalentProgress }) {
   const abandoned = report.outcome === "abandoned";
   return <div className="run-result" data-outcome={report.win ? "victory" : abandoned ? "abandoned" : "defeat"}>
     <div className="panel-scroll result-content">
@@ -58,11 +67,12 @@ export function ResultPanel({ report, game, onRetry, onHistory }: { report: Repo
       </div>
       <span className="outcome-stamp">{outcomeName(report)}<small>{dateLabel(report)}</small></span>
     </header>
-    <ReportDetails report={report} />
+    <ReportDetails report={report} talentProgress={talentProgress} />
     </div>
     <div className="modal-footer outcome-actions">
       <Button word="home" onClick={() => game.home()}>返回书库</Button>
       <Button word="history" onClick={onHistory}>远征记录</Button>
+      <Button word="talents" onClick={onTalents}>调整天赋</Button>
       <Button word="report" onClick={() => download(report, "keyabyss-report.json")}>导出战报</Button>
       {report.win ? <Button word="next" variant="primary" onClick={() => game.continueLoop()}>下一周目 →</Button>
         : <Button word="retry" variant="primary" onClick={onRetry}>再写一局 →</Button>}
@@ -77,7 +87,7 @@ export function OutcomeEffects() {
   </div>;
 }
 
-export function HistoryPanel({ archive }: { archive: RunArchive }) {
+export function HistoryPanel({ archive, talentProgress }: { archive: RunArchive; talentProgress?: TalentProgress }) {
   const [selected, setSelected] = useState(0);
   const report = archive.records[selected];
   return <div className="run-history">
@@ -88,7 +98,7 @@ export function HistoryPanel({ archive }: { archive: RunArchive }) {
         <span>{stageLabel(entry)}</span><small>{dateLabel(entry)}</small>
       </Button>)}</nav>
       <article className="history-detail" aria-label="战报详情" key={report.settlementId}>
-        <ReportDetails report={report} compact />
+        <ReportDetails report={report} compact talentProgress={talentProgress} />
         <Button word="export" onClick={() => download(report, "keyabyss-history-report.json")}>导出这份战报</Button>
       </article>
     </div>}

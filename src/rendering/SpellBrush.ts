@@ -1,4 +1,5 @@
 import { effectQuality } from "./EffectQuality";
+import { smoothPaperTrail } from "../shared/spirit-flight.ts";
 import { addShockwave, shockwaveProfile } from "./Shockwave.ts";
 import { counterPulse } from "./CounterPulse.ts";
 import { ultimateEffects } from "./UltimateEffects";
@@ -83,12 +84,21 @@ export class SpellBrush {
     }
   }
   trail(
-    points: Point[] | undefined,
+    points: readonly Point[] | undefined,
     color: string,
     width: number,
     alpha: number,
+    smooth = false,
   ) {
     if (!points) return;
+    if (smooth) {
+      const reduced = this.game.options.reduceMotion;
+      points = smoothPaperTrail(
+        reduced ? points.slice(-6) : points,
+        reduced ? 12 : 24 + effectQuality(this.game.options.fx).layers * 12,
+      );
+      if (reduced) alpha *= 0.55;
+    }
     for (let i = 1; i < points.length; i++) {
       const a = points[i - 1],
         b = points[i],
@@ -154,7 +164,7 @@ export class SpellBrush {
       const dx = f.tx - f.x,
         dy = f.ty - f.y,
         d = Math.hypot(dx, dy) || 1,
-        n = Math.max(4, Math.ceil(d / 32));
+        n = Math.max(4, Math.min(48, Math.ceil(d / 32)));
       let x = f.x,
         y = f.y;
       for (let i = 1; i <= n; i++) {
@@ -176,11 +186,12 @@ export class SpellBrush {
           alpha,
           2,
         );
-        if (quality.layers > 1 && i < n && i % 2 === 0) {
+        if (quality.layers > 1 && i < n && i % (this.game.options.reduceMotion ? 4 : 2) === 0) {
           const side = i % 4 === 0 ? 1 : -1,
-            bx = tx + (dx / n) * 0.45 - (dy / d) * side * 24,
-            by = ty + (dy / n) * 0.45 + (dx / d) * side * 24;
-          fx.line(tx, ty, bx, by, 1.1, f.color, alpha * 0.65, 1.3);
+            reach = Math.min(30, d * 0.14) * (0.7 + 0.3 * Math.sin(i * 3.1 + (f.seed || 7))),
+            bx = tx + (dx / n) * 0.45 - (dy / d) * side * reach,
+            by = ty + (dy / n) * 0.45 + (dx / d) * side * reach;
+          fx.line(tx, ty, bx, by, Math.min(1.1, (f.width || 3) * 0.35), f.color, alpha * 0.55, 1.3);
           fx.line(
             bx,
             by,
@@ -191,6 +202,9 @@ export class SpellBrush {
             alpha * 0.5,
             1,
           );
+          if (quality.layers > 2 && !this.game.options.reduceMotion && i % 4 === 0)
+            fx.line(bx, by, bx + dx / d * 9 - dy / d * side * 7,
+              by + dy / d * 9 + dx / d * side * 7, 0.45, f.color, alpha * 0.3, 1);
         }
         x = tx;
         y = ty;
@@ -280,24 +294,28 @@ export class SpellBrush {
       const count =
         (f.kind === "shard" ? 5 : f.kind === "ultimate" ? 12 : 4) *
         quality.layers;
+      if (f.kind === "shard") {
+        const mist = Math.sin(Math.PI * t) * alpha;
+        for (let i = 0; i < quality.layers + 1; i++) {
+          const angle = (f.seed || 0) + i * 2.4,
+            spread = r * (this.game.options.reduceMotion ? 0.12 : 0.28 + t * 0.2);
+          fx.add(f.x + Math.cos(angle) * spread, f.y + Math.sin(angle) * spread * 0.65,
+            r * 1.4, r * 0.5, f.color, mist * 0.13, 5, angle * 0.15, 0, 0.4);
+        }
+      }
       for (let i = 0; i < count; i++) {
         const a = (i / count) * TAU + Math.sin((f.seed || 1) + i) * 0.18,
           length = r * (0.68 + 0.3 * Math.sin(i * 6.7 + (f.seed || 1)));
         const x = f.x + Math.cos(a) * length,
           y = f.y + Math.sin(a) * length;
-        if (f.kind === "shard")
-          fx.add(
-            x,
-            y,
-            10 * alpha + 2,
-            3 * alpha + 1,
-            f.color,
-            alpha,
-            3,
-            a,
-            0,
-            1.4,
-          );
+        if (f.kind === "shard") {
+          this.crystal(fx, x, y, (9 + (i % 3) * 4) * (0.3 + alpha), a + Math.PI / 2, f.color, alpha);
+          if (quality.layers > 1 && i % 2 === 0) {
+            const chipRadius = length * 1.18;
+            fx.add(f.x + Math.cos(a + 0.13) * chipRadius, f.y + Math.sin(a + 0.13) * chipRadius,
+              2, 4 * alpha + 1, "#e3faff", alpha * 0.6, 3, a, 0, 1.1);
+          }
+        }
         else
           fx.line(
             f.x + Math.cos(a) * length * 0.55,

@@ -20,6 +20,7 @@ import {
   compositeFragment,
 } from "./shaders";
 const TAU = Math.PI * 2;
+const pageColors = { ice: "#a9eaff", fire: "#ffb16b", storm: "#ffe09b", paper: "#e2c4ff" } as const;
 const clamp = (n: number, lo = 0, hi = 1) => THREE.MathUtils.clamp(n, lo, hi);
 export class NativeBattleRenderer {
   readonly menu = new MenuScene();
@@ -643,8 +644,8 @@ export class NativeBattleRenderer {
     for (const s of g.spirits) {
       const cutting = s.mode === "cross";
       if (s.trail) {
-        this.brush.trail(s.trail, cutting ? "#f4e7ff" : "#c7a5ff", cutting ? 4.5 : 2.2, cutting ? 0.95 : 0.5);
-        for (let i = 2; i < s.trail.length; i += 3) {
+        this.brush.trail(s.trail, cutting ? "#f4e7ff" : "#c7a5ff", cutting ? 4.5 : 2.2, cutting ? 0.95 : 0.5, true);
+        for (let i = 2; !g.options.reduceMotion && i < s.trail.length; i += 3) {
           const p = s.trail[i];
           fx.add(
             p.x,
@@ -671,6 +672,26 @@ export class NativeBattleRenderer {
         1,
       );
       fx.glow(s.x, s.y, cutting ? 23 : 17, cutting ? "#f1dbff" : "#bd9af5", cutting ? 0.55 : 0.3, 1);
+    }
+    for (let i = 0; i < Math.min(6, g.carrierPages.length); i++) {
+      const page = g.carrierPages[i];
+      if (page.life <= 0) continue;
+      const color = pageColors[page.element],
+        fade = clamp(Math.min(page.age / 0.14, page.life / 0.2)),
+        flutter = g.options.reduceMotion ? 0 : Math.sin(t * 2.2 + page.id * 1.7),
+        angle = 0.18 * flutter + (page.id % 2 ? 0.16 : -0.16),
+        x = page.x, y = page.y;
+      this.sprite("paper-spirit", x, y, 82, 94, angle, fade * 0.9, 0.4, color);
+      fx.glow(x, y, 11, color, fade * 0.22, 0.65);
+      // Small elemental ink strokes distinguish paid carrier pages from summoned spirits.
+      fx.line(x - 4, y - 2, x + 3, y + 1, 1.1, color, fade * 0.75, 0.9);
+      fx.line(x - 2, y + 3, x + 2, y + 4, 0.7, "#fff3df", fade * 0.65, 0.8);
+      if (page.element === "ice") this.brush.crystal(fx, x + 5, y - 4, 5, angle, color, fade * 0.7);
+      else if (page.element === "storm") {
+        fx.line(x + 4, y - 5, x + 1, y - 1, 0.7, color, fade * 0.8, 1.1);
+        fx.line(x + 1, y - 1, x + 5, y - 2, 0.7, color, fade * 0.8, 1.1);
+      } else if (page.element === "fire")
+        fx.add(x + 4, y - 3, 3, 5, color, fade * 0.75, 3, angle, 0, 1);
     }
     for (const b of g.bullets)
       if (!b.dead) {
@@ -723,7 +744,7 @@ export class NativeBattleRenderer {
         }
         const color =
           s.kind === "ice" ? "#a9eaff" : s.kind === "echo" ? col : "#d6b4ff";
-        this.brush.trail(s.trail, color, s.empowered ? 4 : 2, 0.85);
+        this.brush.trail(s.trail, color, s.empowered ? 4 : 2, 0.85, s.kind === "blade" || s.kind === "paper");
         const size = s.kind === "ice" ? (s.empowered ? 52 : 35) : 25,
           angle = Math.atan2(s.vy, s.vx);
         fx.glow(s.x, s.y, size * 0.8, color, 0.5, 1.3);

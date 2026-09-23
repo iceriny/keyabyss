@@ -29,6 +29,6 @@
 
 `tests/assault-results.test.cjs` 覆盖八向几何、种子复现、每波更新、5000 次偷袭分布、召唤坐标、实际阶段、战报快照、重复结算、跨周目增量、旧档和存储失败。方向抽取改变了玩法随机数序列，四法书 240 帧快照 `ritual-baseline.json` 已更新为八向规则后的基线。
 
-`python -X utf8 tests/assault-results-browser.py` 覆盖真实指示器绘制、致死结算、战役通关、下一周目、主动结束、历史刷新、导出及生涯去重。截图位于 `docs/test-output-assault-results/`。
+`python -X utf8 tests/assault-results-browser.py` 覆盖真实指示器绘制、致死结算、战役通关、下一周目、主动结束、历史刷新、导出及生涯去重。截图位于 `.temp/test-output-assault-results/`。
 
 方向的刷新扇区为 110°（中心方向 ±55°），相邻方向允许重叠。冷区与共享 `inClearArena` 边界一致：敌人身影渐淡虚化，不显示词条或状态标记；进入清晰区域后恢复。

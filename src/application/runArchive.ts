@@ -41,7 +41,7 @@ export function settleRun(archive: RunArchive, report: Report, policy?: Progress
   };
   const outcome = report.outcome ?? (report.win ? "victory" : "defeat");
   const eligible = !report.godMode && outcome !== "abandoned";
-  const career = structuredClone(archive.career);
+  const career = structuredClone(report.godMode ? archive.godCareer ?? emptyCareer() : archive.career);
   career.settlements++;
   career.victories += outcome === "victory" ? 1 : 0;
   career.defeats += outcome === "defeat" ? 1 : 0;
@@ -53,7 +53,20 @@ export function settleRun(archive: RunArchive, report: Report, policy?: Progress
   return {
     version: 1,
     records: [record, ...archive.records].slice(0, HISTORY_LIMIT),
-    career: policy && eligible ? policy(career, { id, report: structuredClone(report), delta, eligible }) : career,
-    checkpoints: { ...archive.checkpoints, [runId]: { loop, kills: report.kills, casts: report.casts, elapsed: report.elapsed } },
+    career: report.godMode ? archive.career : policy && eligible ? policy(career, { id, report: structuredClone(report), delta, eligible }) : career,
+    ...(report.godMode ? { godCareer: career } : archive.godCareer ? { godCareer: archive.godCareer } : {}),
+    checkpoints: { ...archive.checkpoints, [runId]: { loop, kills: report.kills, casts: report.casts, elapsed: report.elapsed, godMode: !!report.godMode } },
   };
+}
+
+/** New God counters are isolated; legacy totals have no reliable mode provenance. */
+export function clearGodModeArchive(archive: RunArchive): RunArchive {
+  const removed = archive.records.filter(report => report.godMode);
+  if (!removed.length && !archive.godCareer && !Object.values(archive.checkpoints).some(checkpoint => checkpoint.godMode)) return archive;
+  const records = archive.records.filter(report => !report.godMode);
+  const runKey = (report: Report) => report.runId ?? report.settlementId ?? `${report.seed}:${report.endedAt ?? "legacy"}`;
+  const ordinaryRuns = new Set(records.map(runKey));
+  const removedRuns = new Set(removed.map(runKey).filter(id => !ordinaryRuns.has(id)));
+  const { godCareer: _godCareer, ...ordinary } = archive;
+  return { ...ordinary, records, checkpoints: Object.fromEntries(Object.entries(archive.checkpoints).filter(([id, checkpoint]) => !checkpoint.godMode && !removedRuns.has(id))) };
 }

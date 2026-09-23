@@ -12,7 +12,7 @@
 
 背景由一个全屏 GPU 材质计算，替代独立 HTML/SVG 的 DOM 图层与循环，不新增纹理或逐帧上传。战场复用原环境 pass 和折射纹理，菜单增加一次绘制；施法继续照亮背景，冲击波和引力继续偏移实际纹路。颜色在线性空间参与战场合成，直出菜单时才编码，避免两处亮度不一致。低档省去第三层等高墨纹并降低纤维和光尘密度；减少动态时固定背景时间、隐藏装饰粒子，暂停和隐藏页面沿用主循环停帧，销毁时释放菜单背景材质与几何。
 
-验收入口：`python -X utf8 tests/arcane-background-browser.py`，截图和短时性能样本在 `docs/test-output-arcane/`。
+验收入口：`python -X utf8 tests/arcane-background-browser.py`，截图和短时性能样本在 `.temp/test-output-arcane/`。
 
 ```text
 战斗模拟 / 施法事件
@@ -64,4 +64,4 @@ Canvas 只在初始化时生成 2048×1024 角色图集，保留四本法书、1
 
 背景刻纹、几何轨道和浮动纸片使用不同相位与速率。低 / 中 / 高统一控制装饰层、粒子及位移 / 辉光分辨率；复用 Quarks、postprocessing 和原生实例图元增强元素爆发与冲击波。前景特效在实体后绘制、关闭深度测试；地面法阵仍位于实体下方。暂停菜单采用开放刻线与无外框统计，减少窗口感。
 
-效果分级与截图见 [全屏与词库实现](FULLSCREEN-AND-VOCABULARY.md) 和 `test-output-fullscreen/`。
+效果分级与截图见 [全屏与词库实现](FULLSCREEN-AND-VOCABULARY.md) 和 `.temp/test-output-fullscreen/`。

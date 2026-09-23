@@ -4,8 +4,8 @@ from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-assault-results'
-OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-assault-results'
+OUT.mkdir(parents=True, exist_ok=True)
 errors=[]
 with sync_playwright() as p:
     browser=launch_browser(p)

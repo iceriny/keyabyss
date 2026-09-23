@@ -109,7 +109,7 @@ export function updateSpirits(this: Context, dt: number) {
         const progress = from + ((to - from) * i) / steps;
         const q = flightPoint(
           f,
-          s.mode === "cross" ? progress ** 1.6 : progress,
+          progress,
         );
         if (
           s.mode === "dive" &&

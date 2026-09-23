@@ -35,4 +35,4 @@
 - `npm run test:menu`：真实 GPU 像素变化、四法书切换、离线 SVG、下拉焦点操作、缩放锚点、减少动态、进出战斗共享上下文。
 - `npm run test:ui`、`npm run test:startup`：现有交互与首屏回归。
 
-最近一轮构建及 32 组相关浏览器检查通过，新增手动导航、光标与法阵说明见 RITUAL-UPDATE.md。1080P/720P 截图和报告位于 `docs/test-output-menu/`。
+最近一轮构建及 32 组相关浏览器检查通过，新增手动导航、光标与法阵说明见 RITUAL-UPDATE.md。1080P/720P 截图和报告位于 `.temp/test-output-menu/`。

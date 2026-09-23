@@ -4,7 +4,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import os from 'node:os';
 import { soundCues } from '../src/content/sound-cues.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -86,7 +85,9 @@ async function loadCatalog() {
 export async function previewAudio(file: string) {
   const catalog = await loadCatalog();
   if (!catalog.sources.some(s=>s.file===file)) throw Error('Unknown audio source');
-  const directory = await fs.mkdtemp(path.join(os.tmpdir(),'keyabyss-audio-'));
+  const temporaryRoot = path.join(root, '.temp');
+  await fs.mkdir(temporaryRoot, { recursive: true });
+  const directory = await fs.mkdtemp(path.join(temporaryRoot, 'audio-preview-'));
   const target = path.join(directory,'preview.flac');
   try {
     await run('ffmpeg',['-v','error','-i',path.join(pack,file),'-map','0:a:0','-map_metadata','-1','-ar','48000','-c:a','flac',target]);

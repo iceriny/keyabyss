@@ -39,13 +39,13 @@ export class RelicRules {
     return wordModifierApplies(this.definitions, levels, stat, length);
   }
   private readonly grants = new Map<string, { id: string; amount: number }[]>();
-  createStats(levels: () => Record<string, number>): CombatStats {
+  createStats(levels: () => Record<string, number>, extra: () => Partial<CombatStats> = () => ({})): CombatStats {
     const descriptors: PropertyDescriptorMap = {};
     for (const stat of combatStats)
       descriptors[stat] = {
         enumerable: true,
         get: () => {
-          let value = 0;
+          let value = extra()[stat] ?? 0;
           for (const grant of this.grants.get(stat) ?? [])
             value += (levels()[grant.id] || 0) * grant.amount;
           return value;

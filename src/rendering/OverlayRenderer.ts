@@ -69,6 +69,7 @@ export class OverlayRenderer {
         ui.restore();
       }
     this.drawTargetLock(ui);
+    this.drawLetterMotes(ui);
     this.drawLabels(ui);
     this.drawCastPreview(ui);
   }
@@ -169,10 +170,30 @@ export class OverlayRenderer {
     return width;
   }
 
+  drawLetterMotes(c: CanvasRenderingContext2D) {
+    if (!this.frame.letterMotes.length) return;
+    c.save();
+    c.font = canvasFont(16, 600);
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillStyle = "#ffe0a3";
+    c.strokeStyle = "#08111de0";
+    c.lineWidth = 2.5;
+    c.shadowColor = "#ddb96e";
+    c.shadowBlur = this.frame.options.reduceMotion ? 0 : 4;
+    for (const mote of this.frame.letterMotes) {
+      c.globalAlpha = Math.min(1, mote.age / 0.08);
+      c.strokeText(mote.letter, mote.x, mote.y);
+      c.fillText(mote.letter, mote.x, mote.y);
+    }
+    c.restore();
+  }
+
   castPreviewBox(c: CanvasRenderingContext2D) {
     if (!this.frame.prefix) return null;
     c.font = canvasFont(22, 600);
-    const w = this.textWidth(c, this.frame.prefix) + 35,
+    const text = this.frame.target?.dead ? this.frame.target.word : this.frame.prefix;
+    const w = this.textWidth(c, text) + 35,
       h = 36;
     return {
       x: clamp(
@@ -188,7 +209,9 @@ export class OverlayRenderer {
 
   drawCastPreview(c: CanvasRenderingContext2D) {
     const box = this.castPreviewBox(c);
-    this.castLabel = box ? { ...box, text: this.frame.prefix } : null;
+    const echo = this.frame.target?.dead ? this.frame.target : null;
+    const text = echo ? echo.word : this.frame.prefix;
+    this.castLabel = box ? { ...box, text } : null;
     if (!box) return;
     const { x, y, w, h } = box;
     c.save();
@@ -205,14 +228,19 @@ export class OverlayRenderer {
     c.textBaseline = "middle";
     c.textAlign = "left";
     c.strokeStyle = "#06101ce6"; c.lineWidth = 3;
-    c.strokeText(this.frame.prefix, x + 12, y + h / 2);
-    c.fillText(this.frame.prefix, x + 12, y + h / 2);
+    c.strokeText(text, x + 12, y + h / 2);
+    c.fillText(text, x + 12, y + h / 2);
+    if (echo) {
+      c.fillStyle = this.frame.bookData.color;
+      c.fillText(this.frame.prefix, x + 12, y + h / 2);
+      c.fillRect(x + 12, y + h, this.textWidth(c, this.frame.prefix), 1.5);
+    }
     if (
       this.frame.options.reduceMotion ||
       Math.sin(this.frame.visualTime * 7) > -0.35
     ) {
       c.fillStyle = this.frame.bookData.color;
-      c.fillRect(x + w - 14, y + 9, 2, 18);
+      c.fillRect(echo ? x + 12 + this.textWidth(c, this.frame.prefix) : x + w - 14, y + 9, 2, 18);
     }
     c.restore();
   }
@@ -315,6 +343,15 @@ export class OverlayRenderer {
       if (this.frame.prefix && t.word.startsWith(this.frame.prefix)) {
         c.fillStyle = locked ? "#79d5b9" : "#6ba69b";
         c.fillText(this.frame.prefix, wordX, l.y + (l.font + 13) / 2 + 0.5);
+      }
+      if (!t.kind && t.letterMarks?.word === t.word) {
+        c.fillStyle = "#ffe0a3";
+        let offset = 0;
+        for (let i = 0; i < t.word.length; i++) {
+          if (t.letterMarks.positions.includes(i))
+            c.fillText(t.word[i], wordX + offset, l.y + (l.font + 13) / 2 + 0.5);
+          offset = this.textWidth(c, t.word.slice(0, i + 1));
+        }
       }
       if (locked) {
 

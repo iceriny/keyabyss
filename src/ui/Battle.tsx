@@ -1,5 +1,5 @@
 import { RelicIcon } from "./RelicIcon";
-import { describeRelic } from "./relic-presentation.ts";
+import { describeRelic, relicRelationLabel } from "./relic-presentation.ts";
 import { isSupplyReward } from "../contracts/rewards.ts";
 import { useRelicFormulas } from "./useRelicFormulas.ts";
 import { GameText } from "./GameText";
@@ -29,7 +29,7 @@ export function HUD({
   useGamePulse(game);
   const p = game.player,
     b = game.bookData,
-    target = game.target && !game.target.dead ? game.target : null,
+    target = game.target && (!game.target.dead || game.prefix) ? game.target : null,
     boss = game.boss && !game.boss.dead ? game.boss : null;
   if (!b || !game.mode) return null;
   return (
@@ -116,7 +116,9 @@ export function HUD({
               {game.precisionTime > 0
                 ? `停笔 ${game.precisionTime.toFixed(1)}s · 继续施法`
                 : target
-                  ? "正在施法"
+                  ? target.dead
+                    ? "残响续写"
+                    : "正在施法"
                   : "输入咒文"}
             </span>
             <div id="castWord" className="cast-word" data-plain-text>
@@ -134,7 +136,9 @@ export function HUD({
                 ? "咒文进度已保留"
                 : target && meaning
                   ? target.meaning || "完成咒文即可施法"
-                  : "Tab 切换目标 · ⌫ 取消锁定"}
+                  : target?.dead
+                    ? "继续输入咒文 · ⌫ 取消锁定"
+                    : "Tab 切换目标 · ⌫ 取消锁定"}
             </div>
           </div>
           <div className="ultimate-block">
@@ -175,6 +179,15 @@ export function UpgradePanel({
 }) {
   useGamePulse(game);
   const formulas = useRelicFormulas();
+  const choiceTag = (relic: (typeof choices)[number]) => {
+    const tag = relic.rarity === "awaken"
+      ? "咒典觉醒"
+      : relic.rarity === "curse" ? "诅咒遗物" : relic.tag;
+    const relation = isSupplyReward(relic)
+      ? ""
+      : relicRelationLabel(relic, game.capabilities);
+    return relation ? `${tag} · 关联：${relation}` : tag;
+  };
   return (
     <GameText>
       <>
@@ -186,13 +199,7 @@ export function UpgradePanel({
               word={r.command ?? r.id}
               shortcut={String(i + 1)}
               icon={<RelicIcon id={r.id} />}
-              tag={
-                r.rarity === "awaken"
-                  ? "咒典觉醒"
-                  : r.rarity === "curse"
-                    ? "诅咒遗物"
-                    : r.tag
-              }
+              tag={choiceTag(r)}
               title={r.name}
               description={isSupplyReward(r) ? r.desc : describeRelic(r, C.RELICS, game, formulas, true)}
               className={r.rarity || ""}

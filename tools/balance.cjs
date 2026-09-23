@@ -49,6 +49,8 @@ function simulate(book,mode,wpm,seconds=150,seed='BALANCE-01',defenses=true){
 if(require.main===module){
  const results=[];
  for(const mode of ['story','normal','hard','nightmare','apocalypse'])for(const book of ['frost','storm','spirit','flame']){const r=simulate(book,mode,60,150);results.push(r);console.log(JSON.stringify(r));}
- fs.writeFileSync(path.join(__dirname,'../docs/balance-probe.json'),JSON.stringify({note:'Heuristic directed-dodge and parry simulation at 60 WPM; simulated combat time; no health, damage, cooldown or invulnerability overrides. Not a human difficulty benchmark.',results},null,2));
+ const probe = path.join(__dirname,'../.temp/balance-probe.json');
+ fs.mkdirSync(path.dirname(probe), {recursive:true});
+ fs.writeFileSync(probe,JSON.stringify({note:'Heuristic directed-dodge and parry simulation at 60 WPM; simulated combat time; no health, damage, cooldown or invulnerability overrides. Not a human difficulty benchmark.',results},null,2));
 }
 module.exports={simulate};

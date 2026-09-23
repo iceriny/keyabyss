@@ -2,6 +2,7 @@ import type { Book, Mode } from "./content.ts";
 import type { Config, Settings, GameState, BookId } from "./game.ts";
 
 export interface HudSnapshot {
+  readonly capabilities: readonly import('./combat-weave.ts').CombatCapability[];
   readonly state: GameState;
   readonly godMode: boolean;
   readonly book: BookId;

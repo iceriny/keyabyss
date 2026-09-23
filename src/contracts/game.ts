@@ -47,6 +47,9 @@ export interface Settings {
   reduceMotion: boolean;
 }
 export interface Config {
+  talents?: string[];
+  talentPoints?: number;
+  secondaryBook?: BookId;
   book: BookId;
   mode: ModeId;
   words: Word[];
@@ -75,6 +78,11 @@ export interface RouteInfo {
   loop: number;
 }
 export interface Report {
+  talents?: string[];
+  talentPoints?: number;
+  secondaryBook?: BookId;
+  manualCharacters?: number;
+  weave?: import('./combat-weave.ts').WeaveSummary;
   schemaVersion?: 2;
   runId?: string;
   settlementId?: string;

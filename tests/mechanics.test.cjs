@@ -64,7 +64,7 @@ test('pause freezes simulation, dash travel, enemies, charge and ultimates',()=>
  const g=game();g.player.dash=0;g.resonance=100;g.ultimate();g.pause();const t=g.elapsed,u=g.ultimateTime;g.update(6);assert.equal(g.elapsed,t);assert.equal(g.player.dash,0);assert.equal(g.ultimateTime,u);g.resume();g.update(.1);assert.ok(g.elapsed>t);
 });
 test('input target is not rewritten by splash or paper effects; partial target death awards shield',()=>{
- const g=isolate(game(['class'])),e=g.spawnEnemy('guard');e.hp=e.maxHp=500;g.relics.shield=1;g.target=e;g.input('c');g.damage(e,1,1,false);assert.equal(e.word,'class');assert.equal(g.prefix,'c');g.kill(e);assert.equal(g.player.shield,10);assert.equal(g.target,null);
+ const g=isolate(game(['class'])),e=g.spawnEnemy('guard');e.hp=e.maxHp=500;g.relics.shield=1;g.target=e;g.input('c');g.damage(e,1,1,false);assert.equal(e.word,'class');assert.equal(g.prefix,'c');g.kill(e);assert.equal(g.player.shield,10);assert.equal(g.target,e);assert.equal(g.prefix,'c');assert.equal(e.word,'class');
 });
 test('rescue prevents one fatal hit and only one',()=>{
  const g=game();g.relics.rescue=1;g.player.invuln=0;g.hurt(999);assert.equal(g.state,'playing');assert.ok(g.rescued);assert.equal(g.player.hp,g.player.maxHp*.45);g.player.invuln=0;g.hurt(999);assert.equal(g.state,'result');

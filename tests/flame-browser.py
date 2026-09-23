@@ -4,7 +4,7 @@ import base64,io,json,wave,hashlib
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-flame';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-flame';OUT.mkdir(parents=True, exist_ok=True)
 checks=[];errors=[];requests=[]
 def check(label):checks.append(label);print('PASS',label,flush=True)
 # A generated one-second silent WAV exercises real decoding, without adding shipped placeholder music.

@@ -4,7 +4,7 @@ import json
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-arcane'; OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-arcane'; OUT.mkdir(parents=True, exist_ok=True)
 errors=[]; report={}
 PIXELS="""()=>{const g=__KEYABYSS__.game;g.render();const c=document.createElement('canvas');c.width=g.canvas.width;c.height=g.canvas.height;const x=c.getContext('2d');x.drawImage(g.canvas,0,0);const a=x.getImageData(0,0,c.width,c.height).data;let hash=0,sum=0;for(let i=0;i<a.length;i+=4){sum+=a[i]+a[i+1]+a[i+2];hash=(Math.imul(hash,31)+a[i]+a[i+1]*3+a[i+2]*7)|0;}return {hash,sum};}"""
 with sync_playwright() as p:

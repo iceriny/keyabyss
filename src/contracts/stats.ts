@@ -1,4 +1,8 @@
 export const combatStats = [
+  "secondaryBinding", "singleFocus", "carrierRelease", "carrierGuard",
+  "heatRecovery", "crystalPayload", "heatPayload", "conductionPayload",
+  "copyPages", "swiftBinding", "scatterPages", "heavyPages",
+  "letterScatter",
   "parryHaste",
   "parryAffinity",
   "burnPower",

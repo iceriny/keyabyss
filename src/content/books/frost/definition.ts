@@ -1,5 +1,6 @@
 import type { Book } from "../../../contracts/content.ts";
 export default {
+  combat: { element: "ice", capabilities: ["cold"] },
   castMultiplier: { normal: 1.12, empowered: 1.9 },
   artwork: "book-frost",
   visual: {

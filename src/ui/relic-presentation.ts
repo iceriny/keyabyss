@@ -1,4 +1,25 @@
 import type { Relic, RelicRarity } from "../contracts/content.ts";
+import type { CombatCapability } from "../contracts/combat-weave.ts";
+import { relicConnections } from "../shared/combat-capabilities.ts";
+
+export const capabilityNames: Readonly<Record<CombatCapability, string>> = {
+  cold: "冰结构",
+  heat: "火载荷",
+  conduction: "传导",
+  carrier: "承载",
+  guard: "防御",
+  release: "释放",
+  recovery: "回收",
+};
+
+export function relicRelationLabel(
+  relic: Relic,
+  capabilities: readonly CombatCapability[],
+): string {
+  return relicConnections(relic, capabilities)
+    .map((capability) => capabilityNames[capability])
+    .join(" · ");
+}
 
 export const RELIC_RARITIES = {
   common: { label: "普通", order: 0 },

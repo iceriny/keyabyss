@@ -25,4 +25,4 @@
 
 构建、TypeScript、内容与架构检查通过；129 项单元检查通过。为本次雷鸣/纸灵平衡记录 `ritual-baseline.json`，寒霜与灰烬轨迹逐帧保持一致，旧防御基线保留。
 
-32 组浏览器检查通过：UI 12、首屏 6、防御 7、菜单渲染 4、本轮综合 3。覆盖真实按键、Alt 长按、音效总线独立调节、光标与焦点、纸灵规则、离线素材、分辨率适配、减少动态和弹反位移。截图位于 `docs/test-output-ritual/`，重点为 `startup-1080.png`、`home-cursor-1080.png`、`audio-settings-1080.png`、`counter-warp-1080.png`。
+32 组浏览器检查通过：UI 12、首屏 6、防御 7、菜单渲染 4、本轮综合 3。覆盖真实按键、Alt 长按、音效总线独立调节、光标与焦点、纸灵规则、离线素材、分辨率适配、减少动态和弹反位移。截图位于 `.temp/test-output-ritual/`，重点为 `startup-1080.png`、`home-cursor-1080.png`、`audio-settings-1080.png`、`counter-warp-1080.png`。

@@ -8,6 +8,7 @@ export interface OverlayFrame extends Pick<
   | "blasts"
   | "bookData"
   | "enemies"
+  | "letterMotes"
   | "lasers"
   | "options"
   | "player"

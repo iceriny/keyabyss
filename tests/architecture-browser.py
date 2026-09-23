@@ -62,6 +62,6 @@ with sync_playwright() as p:
     assert not errors,errors
     browser.close()
 for check in checks:print('PASS',check,flush=True)
-output=ROOT/'docs/test-output-native/architecture-report.json'
-output.parent.mkdir(exist_ok=True)
+output=ROOT/'.temp/test-output-native/architecture-report.json'
+output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(json.dumps({'checks':checks,'errors':errors,'atlas':result},ensure_ascii=False,indent=2),encoding='utf-8')

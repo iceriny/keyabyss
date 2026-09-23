@@ -1,5 +1,15 @@
 import relics_rebound from "./relics/rebound/definition.ts";
+import relics_letterwake from './relics/letterwake/definition.ts';
 import relics_inscription from "./relics/inscription/definition.ts";
+import relics_copyfolio from "./relics/copyfolio/definition.ts";
+import relics_guardseal from "./relics/guardseal/definition.ts";
+import relics_swiftbinding from "./relics/swiftbinding/definition.ts";
+import relics_scatterfolio from "./relics/scatterfolio/definition.ts";
+import relics_heavyfolio from "./relics/heavyfolio/definition.ts";
+import relics_thermalvault from "./relics/thermalvault/definition.ts";
+import relics_crystalframe from "./relics/crystalframe/definition.ts";
+import relics_emberink from "./relics/emberink/definition.ts";
+import relics_wirestitch from "./relics/wirestitch/definition.ts";
 import { assets } from "./assets.ts";
 import books_flame from "./books/flame/definition.ts";
 import relics_cinder from "./relics/cinder/definition.ts";
@@ -188,6 +198,16 @@ export const manifest = {
     relics_inferno,
     relics_inscription,
     relics_rebound,
+    relics_copyfolio,
+    relics_guardseal,
+    relics_swiftbinding,
+    relics_scatterfolio,
+    relics_heavyfolio,
+    relics_thermalvault,
+    relics_crystalframe,
+    relics_emberink,
+    relics_wirestitch,
+    relics_letterwake,
   ],
   modes: [
     modes_story,

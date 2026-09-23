@@ -45,6 +45,8 @@ export function createPresentationPort(game: Game): PresentationPort {
     "fx",
   ] as const satisfies readonly (keyof RenderFrame)[];
   const descriptors: PropertyDescriptorMap = {
+    carrierPages: { get: () => game.weave.pages, enumerable: true },
+    letterMotes: { get: () => game.weave.letters, enumerable: true },
     cues: { value: game.presentationCues.reader(), enumerable: true },
     content: {
       value: Object.freeze({

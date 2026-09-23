@@ -42,4 +42,4 @@ import { Tooltip } from './Tooltip';
 - `npm test`：132 项通过，新增最长术语匹配、数值识别、缓存周转、原始文本保留及数据共源验证。
 - `npm run test:ui`：12 组现有 UI 回归检查。
 - `python -X utf8 tests/text-ui-browser.py`：5 组检查，覆盖提示单实例、移入阅读、关闭、定位、搜索分类、同源说明、数值染色、低档/减少动态效果及战斗输入不被截断。
-- 截图与结果位于 `docs/test-output-text/`，以 1920×1080 为主要基准，另验证窄屏定位。
+- 截图与结果位于 `.temp/test-output-text/`，以 1920×1080 为主要基准。

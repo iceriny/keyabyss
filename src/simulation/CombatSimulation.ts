@@ -1,4 +1,7 @@
 import { collectValues } from "../shared/relic-build.ts";
+import { collectCapabilities } from '../shared/combat-capabilities.ts';
+import { resolveTalents } from '../shared/talents.ts';
+import { WeaveSystem } from './systems/WeaveSystem.ts';
 import { ValueRules } from "../shared/ValueRules.ts";
 import { DEFENSE } from "../shared/defense.ts";
 import { counterWorldDelta, dodgeDirection } from "../shared/defense.ts";
@@ -48,6 +51,17 @@ const W = 1280,
 const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 export interface CombatSimulation extends WorldState {}
 export class CombatSimulation {
+  readonly weave = new WeaveSystem();
+  private talentGrants: Partial<import('../contracts/stats.ts').CombatStats> = {};
+  private talentCapabilities: readonly import('../contracts/combat-weave.ts').CombatCapability[] = [];
+  get capabilities() {
+    const secondary = this.stats.secondaryBinding && !this.stats.singleFocus ? this.content.books[this.config?.secondaryBook ?? ''] : undefined;
+    return collectCapabilities(this.bookData ?? this.content.books.frost, this.content.relics, this.relics ?? {},
+      [...this.talentCapabilities, ...(secondary?.combat?.capabilities ?? [])]);
+  }
+  weaveCast(target: Enemy, damage: number, manualChars: number, release: (recipient: Enemy) => void) {
+    this.weave.cast(this, target, damage, manualChars, release);
+  }
   godMode = false;
   activateGodMode() {
     this.godMode = true;
@@ -138,7 +152,7 @@ export class CombatSimulation {
     this.campaign = new Campaign(content.chapters);
     this.valueRules = new ValueRules(collectValues(content.values, content.relics));
     this.relicRules = new RelicRules(content.relics);
-    this.stats = this.relicRules.createStats(() => this.relics || {});
+    this.stats = this.relicRules.createStats(() => this.relics || {}, () => this.talentGrants);
     this.events = events;
     this.state = "home";
     this.sound = feedback;
@@ -199,6 +213,15 @@ export class CombatSimulation {
     this.mode = this.content.modes[config.mode] || this.content.modes.normal;
     this.book = this.content.books[config.book] ? config.book : "frost";
     this.bookData = this.content.books[this.book];
+    const budget = Number.isFinite(config.talentPoints) ? clamp(Math.floor(config.talentPoints!), 0, 24) : 2;
+    const talents = resolveTalents(this.book, Array.isArray(config.talents) ? config.talents : [], budget, this.godMode);
+    this.talentGrants = talents.grants;
+    this.talentCapabilities = talents.capabilities;
+    this.config.talents = [...talents.allocated];
+    this.config.talentPoints = budget;
+    if (!talents.grants.secondaryBinding || talents.grants.singleFocus || config.secondaryBook === this.book || !this.content.books[config.secondaryBook ?? ''])
+      this.config.secondaryBook = undefined;
+    this.weave.reset();
     this.level = 1;
     this.xp = 0;
     this.nextXP = 27;
@@ -387,6 +410,7 @@ export class CombatSimulation {
       () => this.roomEnded,
     );
     this.updateEncounter(dt);
+    this.weave.update(this, dt);
     this.updateFields(dt);
     this.updateEnemies(dt);
     this.resolveBodies(dt);
@@ -410,7 +434,7 @@ export class CombatSimulation {
     this.blasts = this.blasts.filter((b) => !b.dead);
     this.enemies = this.enemies.filter((e) => !e.dead);
     this.nodes = this.nodes.filter((n) => !n.dead);
-    if (this.target?.dead) this.cancel();
+    if (this.target?.dead && (this.target.kind || !this.prefix)) this.cancel();
     this.safeClock -= dt;
     if (this.safeClock <= 0) {
       const d = dodgeDirection(this.aimKeys);
@@ -454,6 +478,11 @@ export class CombatSimulation {
     this.sound.result(win);
     this.emit("result", {
       schemaVersion: 2,
+      talents: [...(this.config.talents ?? [])],
+      talentPoints: this.config.talentPoints,
+      secondaryBook: this.config.secondaryBook,
+      manualCharacters: this.weave.summary.manualCharacters,
+      weave: this.weave.summary,
       runId: this.runId,
       settlementId: `${this.runId}:${this.loopCount}`,
       endedAt: new Date().toISOString(),
@@ -523,6 +552,7 @@ export class CombatSimulation {
   updateVisual = PresentationSystem.updateVisual;
 
   resetArrays() {
+    this.weave.resetRoom();
     WordReservations.cancel(this.shots ?? [], this.enemies ?? []);
     this.particlePool ??= [];
     for (const p of this.particles || [])
@@ -572,9 +602,14 @@ export class CombatSimulation {
   }
 
   nearest(origin: Point, exclude = new Set<number>(), radius = Infinity) {
-    return this.enemies
-      .filter((e) => !e.dead && !exclude.has(e.id) && dist(e, origin) < radius)
-      .sort((a, b) => dist(a, origin) - dist(b, origin))[0];
+    let nearest: Enemy | undefined;
+    let best = radius;
+    for (const enemy of this.enemies) {
+      if (enemy.dead || exclude.has(enemy.id)) continue;
+      const distance = Math.hypot(enemy.x - origin.x, enemy.y - origin.y);
+      if (distance < best) { best = distance; nearest = enemy; }
+    }
+    return nearest;
   }
 
   launchShot = ProjectileSystem.launchShot;

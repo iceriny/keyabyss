@@ -5,6 +5,7 @@ import { pick } from "../../shared/math.ts";
 import { assaultDirections } from "../../shared/assault.ts";
 type Context = Pick<
   CombatRuntime,
+  | "weave"
   | "pendingRequiredTasks"
   | "domainEvents"
   | "roomVisit"
@@ -233,6 +234,7 @@ export function finishEncounter(this: Context, dt: number) {
     !this.enemies.some((e) => e.countsForClear !== false)
   ) {
     this.roomEnded = true;
+    this.weave.resetRoom();
     this.clearDelay = 0.9;
     this.clearBullets(640, 400, 1800);
     this.lasers = [];

@@ -1,6 +1,5 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 
 function find7Zip() {
@@ -22,7 +21,9 @@ export function archiveRelease(root) {
   if (!/^[\w.+-]+$/.test(version)) throw Error("Invalid release version");
   const output = path.join(root, "releases");
   fs.mkdirSync(output, { recursive: true });
-  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "keyabyss-archives-"));
+  const temporaryRoot = path.join(root, ".temp");
+  fs.mkdirSync(temporaryRoot, { recursive: true });
+  const temporary = fs.mkdtempSync(path.join(temporaryRoot, "archive-staging-"));
   const run = args => {
     const result = spawnSync(executable, args, {
       cwd: path.join(root, "dist"), stdio: "inherit", windowsHide: true,

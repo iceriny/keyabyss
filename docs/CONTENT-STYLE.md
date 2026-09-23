@@ -25,4 +25,4 @@
 - `python -X utf8 tests/codex-browser.py`：1920×1080、1280×720 的图鉴各页、全部稀有度、指南、滚动和键盘切页。
 - `npm run test:ui`：已有交互回归。
 
-截图保存在 `docs/test-output-codex/`。
+截图保存在 `.temp/test-output-codex/`。

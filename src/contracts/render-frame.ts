@@ -22,6 +22,8 @@ import type {
 
 /** Borrowed read-only views, valid for the synchronous render pass; no world copies per frame. */
 export interface RenderFrame {
+  readonly carrierPages: readonly Readonly<import('./combat-weave.ts').CarrierPage>[];
+  readonly letterMotes: readonly Readonly<import('./combat-weave.ts').LetterMote>[];
   readonly roomVisit: number;
   readonly cues: import("./events.ts").EventReader<
     import("./events.ts").PresentationCue

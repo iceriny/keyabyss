@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'docs/test-output-shockwave';OUT.mkdir(exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'.temp/test-output-shockwave';OUT.mkdir(parents=True, exist_ok=True)
 errors=[];checks=[]
 with sync_playwright() as p:
  b=launch_browser(p);page=b.new_page(viewport={'width':1920,'height':1080})

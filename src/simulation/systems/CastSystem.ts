@@ -55,6 +55,8 @@ type Context = Pick<
   | "ultTick"
   | "ultimateTime"
   | "ultimates"
+  | "weaveCast"
+  | "weave"
   | "wordFor"
   | "wordStats"
   | keyof BookAbilityContext
@@ -66,8 +68,10 @@ export function cast(
   t: CombatTarget,
   perfect = true,
   auto = false,
+  manualChars?: number,
+  continuation = false,
 ) {
-  if (!t || t.dead || t.wordPending || this.state !== "playing") return;
+  if (!t || (t.dead && (!continuation || t.kind)) || t.wordPending || this.state !== "playing") return;
   const word = t.word;
   this.domainEvents.publish({ type: "cast", entity: t.id, word });
   this.casts++;
@@ -136,19 +140,24 @@ export function cast(
     dmg *= 2;
     this.reflectionBoost = false;
   }
-  this.bookBehavior.cast(this, t, dmg, empowered, critical);
-  if (this.stats.chainTargets && !this.bookBehavior.nativeChain)
-    this.chain(t, dmg * 0.45, this.stats.chainTargets);
-  if (this.stats.echoCast && this.casts % 3 === 0) {
-    const other = this.nearest(t, new Set([t.id]));
-    if (other)
-      this.launchShot(this.player, other, "echo", this.combatValue("echo.damage", { castBase: dmg }), {
-        direct: false,
-      });
-  }
-  this.bookBehavior.afterCast?.(this, t, dmg);
+  dmg *= (this.stats.singleFocus ? 1.3 : 1) * this.weave.letterMultiplier(t, manualChars ?? (auto ? 0 : word.length));
+  const echoCast = this.stats.echoCast && this.casts % 3 === 0;
+  this.weaveCast(t, dmg, manualChars ?? (auto ? 0 : word.length), (recipient) => {
+    this.bookBehavior.cast(this, recipient, dmg, empowered, critical);
+    if (this.stats.chainTargets && !this.bookBehavior.nativeChain)
+      this.chain(recipient, dmg * 0.45, this.stats.chainTargets);
+    if (echoCast) {
+      const other = this.nearest(recipient, new Set([recipient.id]));
+      if (other)
+        this.launchShot(this.player, other, "echo", this.combatValue("echo.damage", { castBase: dmg }), {
+          direct: false,
+        });
+    }
+    this.bookBehavior.afterCast?.(this, recipient, dmg);
+    if (!recipient.dead && !recipient.wordPending)
+      Object.assign(recipient, this.wordFor(recipient.boss, recipient));
+  });
   this.afterCast(t, perfect);
-  if (!t.dead && !t.wordPending) Object.assign(t, this.wordFor(t.boss, t));
 }
 
 export function afterCast(this: Context, t: CombatTarget, perfect: boolean) {

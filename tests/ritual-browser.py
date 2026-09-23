@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'docs/test-output-ritual';OUT.mkdir(exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'.temp/test-output-ritual';OUT.mkdir(parents=True, exist_ok=True)
 checks=[];errors=[]
 def passed(text):checks.append(text);print('PASS',text,flush=True)
 with sync_playwright() as p:

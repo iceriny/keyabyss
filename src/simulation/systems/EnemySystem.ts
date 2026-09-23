@@ -1,6 +1,7 @@
 import { clearArena } from "../../shared/arena.ts";
 import { AMBUSH_CHANCE, assaultEntry } from "../../shared/assault.ts";
 import type { EnemyActionContext } from "../../content-sdk/EnemyBehavior.ts";
+import { chooseEnemyWord, type EnemyWordContext } from "../targeting/EliteWords.ts";
 
 import { enemyDefaults } from "../../combat/model.ts";
 import type { Point, Enemy, RuneNode } from "../../combat/model.ts";
@@ -25,6 +26,7 @@ type Context = Pick<
   | "bossDefinition"
   | "updateBossPhase"
   | keyof EnemyActionContext
+  | keyof EnemyWordContext
   | "addResonance"
   | "applyCold"
   | "arc"
@@ -92,8 +94,7 @@ export function spawnEnemy(
         (this.pressure?.cap || 10))
   )
     return null;
-  const t = this.content.enemies[type] || this.content.enemies.nib,
-    w = this.wordFor(!!t.behavior.longWord);
+  const t = this.content.enemies[type] || this.content.enemies.nib;
   let approachDirection: number | undefined;
   let ambush = false;
   if (x == null) {
@@ -114,6 +115,7 @@ export function spawnEnemy(
       ? pick(Object.keys(this.content.elites), this.rng)
       : null;
   const traits = elite ? this.content.elites[elite] : undefined;
+  const w = chooseEnemyWord(this, !!t.behavior.longWord, null, traits?.wordPreference);
   const health =
     t.hp *
     (this.pressure?.health || 1) *
@@ -296,9 +298,13 @@ export function bossAttack(this: Context, b: Enemy) {
 export function enemyAttack(this: Context, e: Enemy) {
   if (!this.canEnemyAct(e) || !this.inAttackRange(e)) return;
   const profile = this.enemyProfile(e),
-    action = this.content.enemyActions[profile.attack];
-  if (!action) throw new Error(`Unknown enemy attack ${profile.attack}`);
+    attack = profile.attackSequence
+      ? profile.attackSequence[e.attackIndex % profile.attackSequence.length]
+      : profile.attack,
+    action = this.content.enemyActions[attack];
+  if (!action) throw new Error(`Unknown enemy attack ${attack}`);
   action(this, e);
+  if (profile.attackSequence) e.attackIndex++;
   if (this.eliteProfile(e)?.echoDelay && !profile.chargeSpeed)
     this.schedule(
       this.eliteProfile(e)!.echoDelay!,

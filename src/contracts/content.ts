@@ -1,7 +1,7 @@
 import type { CombatStat } from "./stats.ts";
 import type { DamageModifier, RelicHook } from "./relic-rules.ts";
 export interface Book {
-  combat?: { nativeChain?: number; nativeSummons?: number };
+  combat?: { nativeChain?: number; nativeSummons?: number; element?: import('./combat-weave.ts').SpellElement; capabilities?: readonly import('./combat-weave.ts').CombatCapability[] };
   castMultiplier: { normal: number; empowered: number };
   artwork?: string;
   visual: { rays: number; highlight: string; shadow: string; ultimate: string };
@@ -44,6 +44,11 @@ export interface Mode {
 export type RelicRarity = "common" | "rare" | "curse" | "awaken";
 
 export interface Relic {
+  provides?: readonly import('./combat-weave.ts').CombatCapability[];
+  needs?: readonly import('./combat-weave.ts').CombatCapability[];
+  modifies?: readonly import('./combat-weave.ts').CombatCapability[];
+  excludes?: readonly string[];
+  requiresLevels?: Readonly<Record<string, number>>;
   values?: import("./values.ts").ValueDefinitions;
   description?: import("./values.ts").RelicDescription;
   command?: string;
@@ -77,6 +82,7 @@ export interface EnemyDefinition {
   tip: string;
 }
 export interface EliteDefinition {
+  wordPreference?: 'punctuated';
   health?: number;
   mass?: number;
   speed?: number;
@@ -110,6 +116,7 @@ export interface RouteDefinition {
 }
 
 export interface EnemyProfile {
+  attackSequence?: readonly string[];
   attackRange?: number;
   targetingPriority?: number;
   contactDamage?: number;

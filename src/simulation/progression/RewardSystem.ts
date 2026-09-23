@@ -2,6 +2,8 @@ import { eligibleRelic } from "./EligibilityService.ts";
 import type { RewardChoice } from "../../contracts/rewards.ts";
 import type { RelicContext } from "../RelicRules.ts";
 import type { Relic, Route } from "../../contracts/game.ts";
+import type { CombatCapability } from "../../contracts/combat-weave.ts";
+import { relicConnections } from "../../shared/combat-capabilities.ts";
 
 import type { Point } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
@@ -21,6 +23,7 @@ type Context = Pick<
   | "book"
   | "campaign"
   | "canUpgrade"
+  | "capabilities"
   | "cancel"
   | "completeRoom"
   | "content"
@@ -69,6 +72,49 @@ export function postCombat(this: Context, cleared = false) {
   if (cleared) this.completeRoom();
 }
 
+export function relicWeight(
+  relic: Relic,
+  book: string,
+  levels: Readonly<Record<string, number>>,
+  capabilities: readonly CombatCapability[],
+): number {
+  const level = levels[relic.id] ?? 0;
+  return (
+    1 +
+    (level > 0 && level < relic.max ? 0.35 : 0) +
+    (relicConnections(relic, capabilities).length ? 0.35 : 0) +
+    (relic.affinity?.includes(book) ? 0.15 : 0) +
+    (relic.rarity === "awaken" ? 0.35 : 0)
+  );
+}
+
+/** Seeded weighted draws without replacement retain every eligible option. */
+export function drawRelics(
+  available: readonly Relic[],
+  book: string,
+  levels: Readonly<Record<string, number>>,
+  capabilities: readonly CombatCapability[],
+  rng: () => number,
+  count = 3,
+): Relic[] {
+  const pool = available.map((relic) => ({
+    relic,
+    weight: relicWeight(relic, book, levels, capabilities),
+  }));
+  const choices: Relic[] = [];
+  while (pool.length && choices.length < count) {
+    const total = pool.reduce((sum, entry) => sum + entry.weight, 0);
+    let cursor = rng() * total;
+    let index = 0;
+    for (; index < pool.length - 1; index++) {
+      cursor -= pool[index].weight;
+      if (cursor < 0) break;
+    }
+    choices.push(pool.splice(index, 1)[0].relic);
+  }
+  return choices;
+}
+
 export function upgradeChoices(this: Context): RewardChoice[] {
   const available = this.content.relics.filter((r) => this.canUpgrade(r));
   if (!available.length)
@@ -84,17 +130,13 @@ export function upgradeChoices(this: Context): RewardChoice[] {
         dash: 1,
       },
     ];
-  return available
-    .map((r) => ({
-      r,
-      score:
-        this.rng() +
-        (r.affinity?.includes(this.book) ? 0.19 : 0) +
-        (r.rarity === "awaken" ? 0.8 : 0),
-    }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map((x) => x.r);
+  return drawRelics(
+    available,
+    this.book,
+    this.relics,
+    this.capabilities,
+    this.rng,
+  );
 }
 
 export function canUpgrade(
@@ -106,6 +148,8 @@ export function canUpgrade(
     levels: this.relics,
     shortest: this.pool.shortest,
     longest: this.pool.longest,
+    capabilities: this.capabilities,
+    definitions: this.content.relics,
   });
 }
 

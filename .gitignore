@@ -9,7 +9,8 @@ public/assets/
 public/audio/
 public/word/
 art/Magic UI Designed/
-docs/test-output*/
+.temp/
+/.delete/
 .env
 .env.*
 *.tsbuildinfo

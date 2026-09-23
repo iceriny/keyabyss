@@ -110,8 +110,10 @@ for (const [i, b] of books.entries()) {
       words: n.words,
     };
     const dest = path.join(root, "data", b.id + ".json");
-    fs.writeFileSync(dest + ".tmp", JSON.stringify(result, null, 2) + "\n");
-    fs.renameSync(dest + ".tmp", dest);
+    const temporary = path.join(root, ".temp", "vocab-" + b.id + ".json.tmp");
+    fs.mkdirSync(path.dirname(temporary), { recursive: true });
+    fs.writeFileSync(temporary, JSON.stringify(result, null, 2) + "\n");
+    fs.renameSync(temporary, dest);
     console.log(
       `[${i + 1}/${books.length}] ${b.id}: ${n.words.length} words / ${sources.length} complete source files.`,
     );

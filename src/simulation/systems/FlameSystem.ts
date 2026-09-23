@@ -46,6 +46,7 @@ export function tickBurn(this: Context, enemy: Enemy, dt: number) {
   burn.tick -= active;
   while (burn.tick <= 1e-8 && !enemy.dead) {
     burn.tick += 0.5;
+    if (burn.recoverable) burn.recoverable = Math.max(0, burn.recoverable - burn.damage * burn.stacks);
     this.damage(enemy, burn.damage * burn.stacks, burn.spreadDepth + 1, false);
   }
   if (burn.life <= 0 && !enemy.dead) enemy.burn = undefined;

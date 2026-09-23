@@ -6,7 +6,7 @@ from threading import Thread
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-first-visit';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-first-visit';OUT.mkdir(parents=True, exist_ok=True)
 class Handler(SimpleHTTPRequestHandler):
     def log_message(self,*args): pass
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(Handler,directory=str(ROOT/'dist')))

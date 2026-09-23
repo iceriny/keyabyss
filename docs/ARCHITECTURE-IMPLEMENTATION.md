@@ -1,6 +1,6 @@
 # 架构实施记录
 
-日期：2026-09-20。A–F 迁移阶段已完成。本文描述最终代码和扩展方式；[原始设计](ARCHITECTURE.md)中的示意接口以本文和 `src/contracts/` 为准。
+日期：2026-09-20。A–F 迁移阶段已完成。本文描述最终代码和扩展方式；[原始设计](archive/ARCHITECTURE.md)中的示意接口以本文和 `src/contracts/` 为准。
 
 后续素材与火焰扩展已落地：现有 4 本法书、58 件遗物、27 个外观；新增 AssetManager、BookArtwork 和独立 FlameSystem，模拟层继续不依赖浏览器素材加载。具体接入方式见[外部素材与灰烬之书](ASSETS-AND-FLAME.md)。新增 DefenseSystem 与 BookBehavior.counterHit 扩展钩子，见 [防御设计](DEFENSE-AND-PACING.md)。下表保留 A–F 迁移完成时的范围。
 
@@ -85,7 +85,7 @@ exits: [
 
 ### 遗物
 
-49 件遗物使用三种可组合定义：
+遗物使用三种可组合定义：
 
 - `damageModifiers`：有稳定优先级的伤害倍率。
 - `hooks`：获取与施法后的效果、间隔、条件和互斥组。
@@ -94,6 +94,16 @@ exits: [
 复杂命中、死亡、闪避联动保留在对应公共系统，读取 `stats` 能力而非遗物 ID。新遗物可以组合已有能力；只有新机制才新增共享能力及其结算。这样保留原乘算、触发深度和互斥优先顺序，不为每件遗物重复创建监听器。
 
 `RelicRules` 在会话构造时建立索引，层数始终读取权威状态；重开后不遗留旧层数。`EligibilityService` 同时负责生成与选择验证。满阶后的补给是 `SupplyReward`，没有 Infinity 层数的假遗物。
+
+### 战斗组合与场外天赋
+
+`WeaveSystem` 负责人工字符供给、主术根来源、命中回执、有限载体与热量回收。它通过窄 `WeaveContext` 使用公共能力，不反向依赖模拟宿主。命中先取得后效资格，再提交伤害和死亡，最后从回执兑现后效；残响保留输入并通过同一入口释放。具体顺序、资源上限和清理规则见 [战斗组合规则](COMBAT-RULES.md)。
+
+法书声明元素及能力，遗物以 `provides / needs / modifies / excludes / requiresLevels` 表达供给、关联和结构分支；候选权重保留探索机会。`shared/combat-capabilities.ts` 合并不同来源，模拟结算读取 `stats` 与来源信息，不添加书对书配方。详见 [遗物能力图](RELIC-GRAPH.md)。
+
+`content/talents.ts` 定义统一连通图；`shared/talents.ts` 在 UI 和模拟入口共享预算、连通、互斥与副书校验。`application/talentProgression.ts` 按局累计有效字符结算点数，God 配置及职业累计独立保存，清理不改普通存档。详见 [书脉天赋](TALENTS.md)。
+
+新增纸页、散字与字母标记通过只读显示契约交给渲染器。攻击轮换仍由内容行为和来源受控的调度执行；词条偏好使用所选词库的缓存子池。详见 [敌人变化](ENEMY-VARIETY.md)与[战斗表现](COMBAT-VISUALS.md)。
 
 ## 结算、任务与事件
 
@@ -136,6 +146,6 @@ npm run test:visual
 python -X utf8 tests/loading-browser.py
 ```
 
-最终结果与 1080P 统一采样见 [TESTING.md](TESTING.md)。依赖检查使用 dependency-cruiser / SWC，覆盖 UI、模拟、内容及显示边界；TypeScript 7 兼容性提示不代表未扫描，检查报告必须有实际模块与依赖数量。
+当时的结果与 1080P 统一采样见 [验收归档](archive/TESTING.md)。依赖检查使用 dependency-cruiser / SWC，覆盖 UI、模拟、内容及显示边界；TypeScript 7 兼容性提示不代表未扫描，检查报告必须有实际模块与依赖数量。
 
 全阶段迁移已收尾。后续新增玩法属于在这些扩展入口上开发内容，不再需要先完成旧单体迁移。

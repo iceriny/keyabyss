@@ -3,7 +3,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'docs/test-output-scroll-shell';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'.temp/test-output-scroll-shell';OUT.mkdir(parents=True, exist_ok=True)
 with sync_playwright() as p:
     browser=launch_browser(p)
     page=browser.new_page(viewport={'width':1440,'height':900},reduced_motion='reduce')

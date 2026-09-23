@@ -39,6 +39,8 @@ import type {
 } from "../combat/model.ts";
 import type { FeedbackPort } from "../contracts/feedback.ts";
 export interface WorldState {
+  readonly weave: import('./systems/WeaveSystem.ts').WeaveSystem;
+  readonly capabilities: readonly import('../contracts/combat-weave.ts').CombatCapability[];
   afterUpgrade: "route" | "clear" | "play" | null;
   aimKeys: Record<string, boolean>;
   arena: Arena;
@@ -248,7 +250,8 @@ export interface CombatRuntime extends WorldState {
   cycle(direction?: number): void;
   clickTarget(x: number, y: number, targetId?: number): void;
   cancel(notify?: boolean): void;
-  cast(t: CombatTarget, perfect?: boolean, auto?: boolean): void;
+  cast(t: CombatTarget, perfect?: boolean, auto?: boolean, manualChars?: number, continuation?: boolean): void;
+  weaveCast(target: Enemy, damage: number, manualChars: number, release: (recipient: Enemy) => void): void;
   afterCast(t: CombatTarget, perfect: boolean): void;
   applyCold(e: Enemy, amount?: number | null): void;
   chain(origin: Enemy, dmg: number, count: number): void;
@@ -362,7 +365,7 @@ export interface CombatRuntime extends WorldState {
     source?: number | null,
     options?: { blocksClear?: boolean },
   ): void;
-  nearest(origin: Point, exclude?: Set<number>, radius?: number): Enemy;
+  nearest(origin: Point, exclude?: Set<number>, radius?: number): Enemy | undefined;
   launchShot(
     from: Point,
     target: Enemy | undefined,

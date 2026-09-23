@@ -1,6 +1,6 @@
 import type { Book } from "../../../contracts/content.ts";
 export default {
-  combat: { nativeChain: 3 },
+  combat: { nativeChain: 3, element: "storm", capabilities: ["conduction"] },
   castMultiplier: { normal: 1.12, empowered: 1.5 },
   artwork: "book-storm",
   visual: {

@@ -57,6 +57,7 @@ export class SessionController implements SessionView {
     return Object.freeze({
       state: g.state,
       godMode: g.godMode,
+      capabilities: Object.freeze([...g.capabilities]),
       book: g.book || "frost",
       player: Object.freeze({
         hp: p.hp,

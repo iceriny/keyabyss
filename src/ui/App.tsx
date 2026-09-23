@@ -1,7 +1,11 @@
 import { BattleArrival } from "./BattleArrival";
 import { FirstVisitSetup } from "./FirstVisitSetup";
 import { GameText } from "./GameText";
-import { readRunArchive, settleRun } from "../application/runArchive.ts";
+import { clearGodModeArchive, readRunArchive, settleRun } from "../application/runArchive.ts";
+import { emptyTalentConfiguration, earnedTalentPoints, readGodTalents, readTalentProgress, settleTalentProgress, updateTalentLoadout } from "../application/talentProgression.ts";
+import { resolveTalentLoadout, resolveTalents, secondaryBookCandidates } from "../shared/talents.ts";
+import type { TalentLoadout } from "../contracts/talents.ts";
+import { TalentPanel } from "./TalentPanel.tsx";
 import { ResultPanel, HistoryPanel, OutcomeEffects } from "./RunResults.tsx";
 import { storage } from "./storage.ts";
 import { TooltipHost } from "./Tooltip";
@@ -12,7 +16,7 @@ import { EdgeVeil } from "./EdgeVeil";
 import { builtinVocabularies } from "../platform/vocabulary.ts";
 import { createBrowserSession } from "../bootstrap/browser-session.ts";
 import type { SessionView } from "../contracts/session.ts";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type {
   BookId,
   GameState,
@@ -50,6 +54,7 @@ type Screen =
         | "help"
         | "settings"
         | "history"
+        | "talents"
         | "pause"
         | "quit"
         | "tutorial"
@@ -79,11 +84,15 @@ const titles: Record<Screen["type"], string> = {
   route: "选择下一页",
   result: "未完待续",
   history: "远征记录",
+  talents: "天赋 · 书脉共鸣",
 };
 
 export function App() {
   const [archive, setArchive] = useState(() => readRunArchive(storage));
   const archiveRef = useRef(archive);
+  const [talents, setTalents] = useState(() => readTalentProgress(storage));
+  const talentsRef = useRef(talents);
+  const [godTalents, setGodTalents] = useState(() => readGodTalents(storage));
   const [entered, setEntered] = useState(false);
   const [arrival, setArrival] = useState<{ reveal: () => void; book: BookId; origin?: { x: number; y: number } } | null>(null);
   const [arriving, setArriving] = useState(false);
@@ -96,6 +105,10 @@ export function App() {
     gameRef = useRef<ReturnType<typeof createBrowserSession> | null>(null),
     [game, setGame] = useState<SessionView | null>(null),
     [state, setState] = useState<GameState>("home");
+  const godMode = useSyncExternalStore(
+    useCallback((listener: () => void) => game?.subscribe(listener) ?? (() => {}), [game]),
+    () => game?.getSnapshot().godMode ?? false,
+  );
   const [stack, setStack] = useState<Screen[]>([]),
     screen = stack.at(-1),
     [custom, setCustom] = useState(customBooks);
@@ -160,6 +173,12 @@ export function App() {
           ]);
         },
         result(report) {
+          const settlement = settleTalentProgress(talentsRef.current, report);
+          if (settlement.progress !== talentsRef.current) {
+            talentsRef.current = settlement.progress;
+            setTalents(settlement.progress);
+            if (!save("talents", settlement.progress)) toast("天赋进度未能保存，存储空间不足");
+          }
           const nextArchive = settleRun(archiveRef.current, report);
           archiveRef.current = nextArchive;
           setArchive(nextArchive);
@@ -191,8 +210,43 @@ export function App() {
     save("prefs", { book, mode, vocab });
   }, [book, mode, vocab]);
   const open = (
-    type: "vocab" | "codex" | "help" | "settings" | "deploy" | "bag" | "quit" | "history",
-  ) => setStack((s) => [...s, { type }]);
+    type: "vocab" | "codex" | "help" | "settings" | "deploy" | "bag" | "quit" | "history" | "talents",
+  ) => {
+    if (type === "talents" && state !== "home" && state !== "result") return;
+    setStack((s) => [...s, { type }]);
+  };
+  const talentPoints = earnedTalentPoints(talents.manualCharacters);
+  const loadout = resolveTalentLoadout(book, (godMode ? godTalents : talents).byBook[book], talentPoints, godMode);
+  const resolvedTalents = resolveTalents(book, loadout.allocated, talentPoints, godMode);
+  const changeTalents = (value: TalentLoadout) => {
+    if (state !== "home" && state !== "result") return;
+    if (godMode) {
+      const next = updateTalentLoadout(godTalents, book, value, talentPoints, true);
+      setGodTalents(next);
+      if (!save("talents-god", next)) toast("God Mode 天赋未能保存，存储空间不足");
+    } else {
+      const next = updateTalentLoadout(talentsRef.current, book, value, talentPoints);
+      talentsRef.current = next;
+      setTalents(next);
+      if (!save("talents", next)) toast("天赋配置未能保存，存储空间不足");
+    }
+  };
+  const clearGodData = () => {
+    if (!game?.getSnapshot().godMode || (state !== "home" && state !== "result")) return;
+    const nextArchive = clearGodModeArchive(archiveRef.current);
+    const nextGod = emptyTalentConfiguration();
+    if (!save("archive", nextArchive)) { toast("God Mode 数据清理失败，档案未能保存"); return; }
+    if (!save("talents-god", nextGod)) {
+      save("archive", archiveRef.current);
+      toast("God Mode 天赋清理失败，请检查存储空间");
+      return;
+    }
+    const removed = archiveRef.current.records.length - nextArchive.records.length;
+    archiveRef.current = nextArchive;
+    setArchive(nextArchive);
+    setGodTalents(nextGod);
+    toast(`已清理 God Mode 配置与 ${removed} 份战报`);
+  };
   const back = () => {
     if (loading) {
       cancelLoading();
@@ -267,6 +321,9 @@ export function App() {
         const origin = icon ? { x: icon.x + icon.width / 2, y: icon.y + icon.height / 2 } : undefined;
         setArrival({ book, origin, reveal: () => { setStack([]); game.start({
           book,
+          talents: loadout.allocated,
+          talentPoints,
+          secondaryBook: loadout.secondaryBook,
           mode,
           words,
           vocabTitle: selected.title,
@@ -312,6 +369,7 @@ export function App() {
           onFull={full}
         />
       );
+    if (screen.type === "talents") content = <TalentPanel book={book} onBook={setBook} loadout={loadout} budget={talentPoints} characters={talents.manualCharacters} godMode={godMode} onChange={changeTalents} onClearGod={clearGodData} />;
     if (screen.type === "help" || screen.type === "tutorial")
       content = (
         <>
@@ -465,9 +523,9 @@ export function App() {
       );
     if (screen.type === "result" && game)
       content = (
-        <ResultPanel report={screen.report} game={game} onRetry={launch} onHistory={() => open("history")} />
+        <ResultPanel report={screen.report} game={game} onRetry={launch} onHistory={() => open("history")} onTalents={() => open("talents")} talentProgress={talents} />
       );
-    if (screen.type === "history") content = <HistoryPanel archive={archive} />;
+    if (screen.type === "history") content = <HistoryPanel archive={archive} talentProgress={talents} />;
   }
   return (
     <GameText>
@@ -534,7 +592,7 @@ export function App() {
               onStart={start}
               onBack={back}
               loading={loading ? <>{loading.error || loading.label}{loading.error && <Button word="retry" onClick={() => retryLoad.current()}>重试</Button>}</> : undefined}
-              deployment={<Deployment books={books} vocab={vocab} onVocab={setVocab} mode={mode} onMode={setMode} progressive={progressive} onProgressive={setProgressive} seed={seed} onSeed={setSeed} onLibrary={() => open("vocab")} />}
+              deployment={<Deployment books={books} vocab={vocab} onVocab={setVocab} mode={mode} onMode={setMode} progressive={progressive} onProgressive={setProgressive} seed={seed} onSeed={setSeed} onLibrary={() => open("vocab")} onTalents={() => open("talents")} talentSpent={resolvedTalents.spent} talentPoints={talentPoints} godMode={godMode} secondaryBook={loadout.secondaryBook} secondaryOptions={secondaryBookCandidates(book, loadout.allocated, talentPoints, godMode)} onSecondary={secondaryBook => changeTalents({ ...loadout, secondaryBook })} />}
               onDeploy={() => open("deploy")}
               onOpen={open}
             />
@@ -557,7 +615,7 @@ export function App() {
           <div inert={!!loading}>
             <Modal
               effects={screen.type === "result" ? <OutcomeEffects /> : undefined}
-              variant={screen.type === "result" ? `outcome-modal ${screen.report.win ? "victory" : screen.report.outcome === "abandoned" ? "abandoned" : "defeat"}` : screen.type === "history" ? "history-modal" : ["upgrade", "route"].includes(screen.type) ? "upgrade-modal" : screen.type === "calibration" ? "calibration-modal" : ""}
+              variant={screen.type === "result" ? `outcome-modal ${screen.report.win ? "victory" : screen.report.outcome === "abandoned" ? "abandoned" : "defeat"}` : screen.type === "history" ? "history-modal" : screen.type === "talents" ? "talents-modal" : ["upgrade", "route"].includes(screen.type) ? "upgrade-modal" : screen.type === "calibration" ? "calibration-modal" : ""}
               title={
                 screen.type === "result"
                   ? screen.report.win ? "终稿已改写" : screen.report.outcome === "abandoned" ? "此行暂落笔" : "墨尽 · 未完待续"
@@ -574,6 +632,7 @@ export function App() {
                 "bag",
                 "result",
                 "history",
+                "talents",
               ].includes(screen.type)}
               onBack={
                 ["upgrade", "route", "result", "calibration"].includes(screen.type)

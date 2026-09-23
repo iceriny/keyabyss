@@ -3,15 +3,15 @@ const { createGame, isolate, step } = require('./harness.cjs');
 const { createOverlayFrame } = require('../src/application/overlay.ts');
 const { layoutWordLabels } = require('../src/rendering/WordLabelLayout.ts');
 const make = () => isolate(createGame(['cat','dog','bird']));
-test('passive ice projectile killing the current word does not penalize the next correct word, even after waiting', () => {
+test('passive ice projectile preserves the current word and combo for continuation, even after waiting', () => {
  for (const delay of [0,7]) {
   const g=make();g.combo=12;
   const a=g.spawnEnemy('guard',640,300),b=g.spawnEnemy('guard',900,400);a.word='cat';b.word='dog';a.hp=1;
   g.input('c');g.launchShot({x:a.x-10,y:a.y+9},a,'ice',100,{direct:false,depth:1});g.updateShots(.02);
-  assert(a.dead);assert.equal(g.combo,12);assert.equal(g.prefix,'');
+  assert(a.dead);assert.equal(g.combo,12);assert.equal(g.prefix,'c');assert.equal(g.target,a);
   g.player.invuln=999;step(g,delay);
-  assert.equal(g.combo,12);for(const key of b.word)g.input(key);
-  assert.equal(g.combo,13);assert.equal(g.errors,0);
+  assert.equal(g.combo,12);for(const key of a.word.slice(g.prefix.length))g.input(key);
+  assert.equal(g.combo,13);assert.equal(g.errors,0);assert.equal(g.casts,1);assert.equal(g.wordStats.cat.done,1);
  }
 });
 test('waiting does not drain combo while wrong input and damage still do', () => {

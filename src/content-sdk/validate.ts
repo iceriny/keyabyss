@@ -1,4 +1,5 @@
 import { combatStats } from "../contracts/stats.ts";
+import { combatCapabilities } from "../contracts/combat-weave.ts";
 import type { BossDefinition } from "../contracts/content.ts";
 import type {
   Book,
@@ -45,6 +46,13 @@ export function validateContent(content: ContentManifest) {
             `${scope}: conflicting commands ${values[i]} / ${values[j]}`,
           );
   }
+  function capabilities(values: readonly string[] | undefined, scope: string) {
+    for (const capability of values ?? [])
+      if (!(combatCapabilities as readonly string[]).includes(capability))
+        throw new Error(`${scope}: unknown capability ${capability}`);
+    if (values && new Set(values).size !== values.length)
+      throw new Error(`${scope}: duplicate capability`);
+  }
   commands(
     [
       ...content.books.map((b) => b.command),
@@ -65,6 +73,12 @@ export function validateContent(content: ContentManifest) {
     content.assets.filter((a) => a.kind === "image").map((a) => a.id),
   );
   for (const b of content.books) {
+    capabilities(b.combat?.capabilities, `book ${b.id}`);
+    if (
+      b.combat?.element !== undefined &&
+      !["ice", "fire", "storm", "paper"].includes(b.combat.element)
+    )
+      throw new Error(`book ${b.id}: unknown element ${b.combat.element}`);
     if (b.artwork && !images.has(b.artwork))
       throw new Error(`Missing book artwork ${b.artwork}`);
     if (!/^[a-z][a-z0-9-]*$/.test(b.behavior))
@@ -96,12 +110,21 @@ export function validateContent(content: ContentManifest) {
       positive(e[key], `enemy ${e.id} ${key}`);
     positive(e.speed, `enemy ${e.id} speed`, true);
     if (!e.behavior?.attack) throw new Error(`enemy ${e.id}: missing attack`);
+    if (e.behavior.attackSequence !== undefined) {
+      if (!Array.isArray(e.behavior.attackSequence) || !e.behavior.attackSequence.length)
+        throw new Error(`enemy ${e.id}: empty attack sequence`);
+      for (const attack of e.behavior.attackSequence)
+        if (typeof attack !== "string" || !/^[a-z][a-z0-9-]*$/.test(attack))
+          throw new Error(`enemy ${e.id}: invalid sequence attack ${attack}`);
+    }
     if (e.behavior.cooldown !== undefined)
       positive(e.behavior.cooldown, `enemy ${e.id} cooldown`);
     if (e.behavior.chargeSpeed !== undefined)
       positive(e.behavior.chargeSpeed, `enemy ${e.id} chargeSpeed`);
   }
   for (const elite of content.elites) {
+    if (elite.wordPreference !== undefined && elite.wordPreference !== "punctuated")
+      throw new Error(`elite ${elite.id}: invalid word preference ${elite.wordPreference}`);
     for (const key of [
       "health",
       "mass",
@@ -122,6 +145,21 @@ export function validateContent(content: ContentManifest) {
       if (typeof value === "number")
         positive(value, `mode ${m.id} ${key}`, ["rank", "elite"].includes(key));
   for (const r of content.relics) {
+    for (const key of ["provides", "needs", "modifies"] as const)
+      capabilities(r[key], `relic ${r.id} ${key}`);
+    for (const id of r.excludes ?? []) {
+      if (!relics.has(id))
+        throw new Error(`relic ${r.id}: unknown exclusion ${id}`);
+      if (id === r.id)
+        throw new Error(`relic ${r.id}: cannot exclude itself`);
+    }
+    for (const [id, level] of Object.entries(r.requiresLevels ?? {})) {
+      const required = relics.get(id);
+      if (!required)
+        throw new Error(`relic ${r.id}: unknown prerequisite ${id}`);
+      if (!Number.isInteger(level) || level < 1 || level > required.max)
+        throw new Error(`relic ${r.id}: invalid prerequisite level ${id}:${level}`);
+    }
     if (
       r.rarity !== undefined &&
       !["common", "rare", "curse", "awaken"].includes(r.rarity)
@@ -178,7 +216,11 @@ export function validateContent(content: ContentManifest) {
     if (active.has(id)) throw new Error(`relic dependency cycle at ${id}`);
     if (done.has(id)) return;
     active.add(id);
-    for (const parent of relics.get(id)?.requires || []) visit(parent);
+    const relic = relics.get(id);
+    for (const parent of new Set([
+      ...(relic?.requires ?? []),
+      ...Object.keys(relic?.requiresLevels ?? {}),
+    ])) visit(parent);
     active.delete(id);
     done.add(id);
   }

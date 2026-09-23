@@ -4,6 +4,7 @@ export default {
   behavior: {
     spawnLimit: 2,
     attack: "bind",
+    attackSequence: ["bind", "laser"],
     ranged: true,
     hasteAura: true,
   },
@@ -15,5 +16,5 @@ export default {
   xp: 13,
   color: "#e6bc8f",
   mass: 1.8,
-  tip: "光环内的盟友加速18%。会发射转弯弹幕，击杀后光环消失。",
+  tip: "光环内的盟友加速18%。交替发射转弯弹幕与预警射线，击杀后光环消失。",
 } satisfies EnemyDefinition & { id: string };
