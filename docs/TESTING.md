@@ -15,4 +15,6 @@
 
 游戏面向桌面键盘与鼠标，以 1920×1080 为主要视觉基准。窗口布局检查覆盖 `AGENT.md` 规定的桌面 CSS 视口范围；不把旧记录中的窄屏检查视为移动端适配要求。
 
+战斗重构的本轮工程、浏览器、难度和收益结果见 [统一验收](COMBAT-ACCEPTANCE.md)。图谱与事件界面回归入口为 `python -X utf8 tests/combat-acceptance-browser.py`；通用数值工具支持按阶段运行、分片与严格合并，命令和覆盖边界记录在验收文档中。
+
 浏览器截图和报告写入仓库根目录 `.temp/test-output-*`；平衡探针写入 `.temp/balance-probe.json` 和 `.temp/defense-balance-probe.json`；构建校验清单写入 `.temp/release-sha256.json`。`.temp/` 已忽略，不作为文档或发行物提交。历次验收与旧快照见 [文档归档](archive/README.md)。

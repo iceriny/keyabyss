@@ -44,7 +44,7 @@ export function compileBuild(input: { stats: CombatStats; element: SpellElement;
       ...(shape === 'chain' ? ['conduct'] as const : []),
       ...(shape === 'burst' ? ['burn'] as const : []),
       'split', 'store', 'release',
-    ]), nativeSegments,
+    ] as const), nativeSegments,
   });
   const heavy = !!s.heavyPages, scatter = !!s.scatterPages;
   const baseCapacity = heavy ? 1 : scatter ? 6 : s.copyPages >= 2 ? 3 : 1;

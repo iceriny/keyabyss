@@ -169,6 +169,7 @@ export interface WorldState {
 }
 export interface CombatSimulation extends WorldState {}
 export interface CombatRuntime extends WorldState {
+  readonly buildSourceIds: readonly string[];
   readonly buildEvents: import('./progression/BuildEventSystem.ts').BuildEventSystem;
   refreshBuild(): void;
   openBuildEvent(): boolean;

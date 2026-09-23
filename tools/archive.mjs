@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { archivePath } from "./archive-path.ts";
 
 function find7Zip() {
   const candidates = process.env.SEVEN_ZIP ? [process.env.SEVEN_ZIP] : [
@@ -41,10 +42,11 @@ export function archiveRelease(root) {
       return name;
     });
     for (const name of names) {
+      archivePath(root, path.join(output, name), "build-release");
       fs.copyFileSync(path.join(temporary, name), path.join(output, name));
       console.log(`Release archive: releases/${name}`);
     }
   } finally {
-    fs.rmSync(temporary, { recursive: true, force: true });
+    archivePath(root, temporary, "build-staging");
   }
 }

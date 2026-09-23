@@ -27,7 +27,7 @@
 
 ## 验证
 
-`tests/assault-results.test.cjs` 覆盖八向几何、种子复现、每波更新、5000 次偷袭分布、召唤坐标、实际阶段、战报快照、重复结算、跨周目增量、旧档和存储失败。方向抽取改变了玩法随机数序列，四法书 240 帧快照 `ritual-baseline.json` 已更新为八向规则后的基线。
+`tests/assault-results.test.cjs` 覆盖八向几何、种子复现、每波更新、5000 次偷袭分布、召唤坐标、实际阶段、战报快照、重复结算、跨周目增量、旧档和存储失败。四法书战斗确定性由 `tests/architecture.test.cjs` 验证：相同种子重放一致，视觉设置不改变玩法状态；历史逐帧伤害快照不作为当前数值的约束。
 
 `python -X utf8 tests/assault-results-browser.py` 覆盖真实指示器绘制、致死结算、战役通关、下一周目、主动结束、历史刷新、导出及生涯去重。截图位于 `.temp/test-output-assault-results/`。
 

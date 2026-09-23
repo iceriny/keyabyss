@@ -22,7 +22,12 @@ test('all reinforcements across three waves remain mandatory before routing',()=
  for(let i=0;i<1200&&g.state==='playing';i++){g.enemies=[];g.spawnClock=0;step(g,.1);if(g.wave<3)assert.equal(g.roomEnded,false);}
  assert.equal(g.spawned,g.roomQuota);assert.equal(g.wave,3);assert.equal(g.state,'route');
 });
-test('chapter HP growth is gentler than exponential and remains ordered across modes and loops',()=>{
+test('ordinary HP grows gently through the opening stages, then plateaus within each loop',()=>{
  assert.ok(C.difficulty('normal',8).health<2.2);
- for(const mode of Object.keys(C.MODES))for(let stage=1;stage<=27;stage++)assert.ok(C.difficulty(mode,stage).health>C.difficulty(mode,stage-1).health);
+ for(const mode of Object.keys(C.MODES)){
+  for(let stage=1;stage<=27;stage++)assert.ok(C.difficulty(mode,stage).health>=C.difficulty(mode,stage-1).health);
+  assert.ok(C.difficulty(mode,7).health>C.difficulty(mode,0).health);
+  assert.equal(C.difficulty(mode,8).health,C.difficulty(mode,7).health);
+  assert.ok(C.difficulty(mode,9).health>C.difficulty(mode,8).health);
+ }
 });

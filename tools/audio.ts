@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { soundCues } from '../src/content/sound-cues.ts';
+import { archivePath } from './archive-path.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const pack = path.join(root, 'art/Magic UI Designed');
@@ -92,7 +93,7 @@ export async function previewAudio(file: string) {
   try {
     await run('ffmpeg',['-v','error','-i',path.join(pack,file),'-map','0:a:0','-map_metadata','-1','-ar','48000','-c:a','flac',target]);
     return await fs.readFile(target);
-  } finally { await fs.unlink(target).catch(()=>{}); await fs.rmdir(directory); }
+  } finally { archivePath(root, directory, 'audio-preview'); }
 }
 async function build() {
   const catalog = await loadCatalog(); const sources = new Map(catalog.sources.map(s=>[s.file,s]));
@@ -119,7 +120,7 @@ async function build() {
     // Deferred classic script is also usable from file://, unlike fetch of local audio files.
     await fs.writeFile(target, `globalThis.KA_AUDIO??={};globalThis.KA_AUDIO[${JSON.stringify(id)}]=${JSON.stringify(result.out.toString('base64'))};\n`);
   });
-  for (const file of await fs.readdir(output)) if (/^clip-[a-f0-9]{16}\.js$/.test(file) && !jobs.has(file.slice(0,-3))) await fs.unlink(path.join(output,file));
+  for (const file of await fs.readdir(output)) if (/^clip-[a-f0-9]{16}\.js$/.test(file) && !jobs.has(file.slice(0,-3))) archivePath(root, path.join(output,file), 'build-audio');
   for (const file of await fs.readdir(output)) if (!jobs.has(file.slice(0,-3)) || !file.endsWith('.js')) throw Error(`Unlisted audio asset in public/audio: ${file}`);
   for (const list of Object.values(clips)) for (const clip of list) clip.bytes = (await fs.stat(path.join(output, clip.id+'.js'))).size;
   await fs.mkdir(path.join(root,'src/generated'), { recursive: true });

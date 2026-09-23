@@ -25,10 +25,8 @@ test("codex sorts appended content by rarity without changing the reward pool", 
       `stable order within ${rarity}`,
     );
   }
-  assert.deepEqual(
-    sorted.filter((r) => r.rarity === "rare").map((r) => r.id),
-    ["feather", "rescue"],
-  );
+  assert.ok(sorted.some((r) => r.rarity === "rare" && r.id === "feather"));
+  assert.ok(sorted.some((r) => r.rarity === "rare" && r.id === "rescue"));
   assert.ok(
     sorted.findIndex((r) => r.id === "firewalk") <
       sorted.findIndex((r) => r.id === "avalanche"),

@@ -1,6 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const {createGame,isolate,C}=require('./harness.cjs');
 const {relicArt}=require('../src/ui/relic-art.ts');
+const {expandedRelicArt}=require('../src/ui/expanded-relic-art.ts');
 const make=()=>isolate(createGame());
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 test('automatic dodge returns inward from all four edges without overriding arrow input',()=>{
@@ -39,7 +40,8 @@ test('frost ultimate ice arrives from all four sides with unchanged damage and c
  }
 });
 test('every relic has its own vector engraving and no emoji icon',()=>{
- assert.equal(Object.keys(relicArt).length,C.RELICS.length);
- assert.equal(new Set(Object.values(relicArt)).size,C.RELICS.length);
- for(const r of C.RELICS){assert(relicArt[r.id]?.startsWith('M'),r.id);assert.equal(r.icon,r.id);assert(!/\p{Extended_Pictographic}/u.test(r.icon));}
+ const art={...relicArt,...expandedRelicArt};
+ assert.equal(Object.keys(art).length,C.RELICS.length);
+ assert.equal(new Set(Object.values(art)).size,C.RELICS.length);
+ for(const r of C.RELICS){assert(art[r.id]?.startsWith('M'),r.id);assert.equal(r.icon,r.id);assert(!/\p{Extended_Pictographic}/u.test(r.icon));}
 });

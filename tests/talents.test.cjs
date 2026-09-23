@@ -9,12 +9,12 @@ const { StorageAdapter } = require("../src/platform/StorageAdapter.ts");
 const report = (overrides = {}) => ({ runId: "run-a", settlementId: "run-a:0", loop: 0, manualCharacters: 125, godMode: false, book: "frost", mode: "normal", seed: "SEED", endedAt: "2026-09-23", outcome: "defeat", win: false, kills: 4, casts: 12, elapsed: 30, words: {}, relics: {}, ...overrides });
 const all = TALENT_NODES.map(node => node.id);
 
-test("each book grants its own free root without numerical grants", () => {
+test("each book grants its own free root and native material source", () => {
   for (const book of TALENT_BOOKS) {
     const result = resolveTalents(book, [], 0);
     assert.deepEqual(result.allocated, [`${book}-root`]);
     assert.equal(result.spent, 0);
-    assert.deepEqual(result.grants, {});
+    assert.deepEqual(result.grants, TALENT_NODES.find(node => node.id === `${book}-root`).grants);
     assert.equal(result.capabilities.length, 1);
   }
   assert.deepEqual(resolveTalents("unknown", all, 24).allocated, []);
@@ -23,7 +23,7 @@ test("each book grants its own free root without numerical grants", () => {
 test("unknown, duplicate, disconnected and malformed nodes cannot add power", () => {
   const result = resolveTalents("frost", ["cold-ink", "cold-ink", "missing", "branch", "echo", 123], 2);
   assert.deepEqual(result.allocated, ["frost-root", "cold-ink"]);
-  assert.deepEqual(result.grants, { coldStacks: 1 });
+  assert.deepEqual(result.grants, { crystalPayload: 1, coldStacks: .2 });
   assert.equal(result.spent, 1);
   assert.deepEqual(resolveTalents("frost", { bad: true }, 24).allocated, ["frost-root"]);
 });
@@ -47,38 +47,46 @@ test("node ordering never changes the validated set or grants", () => {
   }
 });
 
-test("the one graph is traversable from every root and crosses elements", () => {
+test("the one graph is structurally traversable from every root; budgets limit allocation", () => {
+  const links = new Map(TALENT_NODES.map(node => [node.id, new Set(node.links)]));
+  for (const node of TALENT_NODES) for (const id of node.links) links.get(id)?.add(node.id);
   for (const book of TALENT_BOOKS) {
+    const reached = new Set([`${book}-root`]), queue = [`${book}-root`];
+    for (const id of queue) for (const neighbor of links.get(id)) if (!reached.has(neighbor)) {
+      reached.add(neighbor);
+      queue.push(neighbor);
+    }
+    assert.equal(reached.size, TALENT_NODES.length);
     const result = resolveTalents(book, all, 24);
-    assert.equal(result.allocated.length, all.length - 1);
-    assert.ok(result.capabilities.includes("cold"));
-    assert.ok(result.capabilities.includes("carrier"));
-    assert.ok(result.capabilities.includes("release"));
+    assert.ok(result.spent <= 24);
+    assert.ok(result.allocated.length < TALENT_NODES.length);
   }
 });
 
 test("withdrawing a bridge removes disconnected dependent nodes and refunds them", () => {
-  const chain = ["cold-ink", "crystal", "binding", "paper-carrier", "echo"];
+  const chain = ["frost-path-4", "rime", "frost-path-6", "frost-path-7", "binding-bridge-1", "binding-bridge-2", "binding"];
   const before = resolveTalents("frost", chain, 24);
-  assert.equal(before.grants.carrierRelease, 1);
-  const after = removeTalent("frost", before.allocated, "crystal", 24);
-  assert.deepEqual(after, ["frost-root", "cold-ink"]);
+  assert.equal(before.grants.secondaryBinding, 1);
+  const after = removeTalent("frost", before.allocated, "frost-path-7", 24);
+  assert.equal(after.grants, undefined);
+  assert.ok(!after.includes("binding"));
+  assert.ok(after.length < before.allocated.length);
   assert.deepEqual(removeTalent("frost", [], "frost-root", 24), ["frost-root"]);
 });
 
 test("release and defense require an actual carrier capability", () => {
   const noCarrier = resolveTalents("frost", ["rime", "paper-ward"], 24);
   assert.equal(noCarrier.grants.carrierGuard, undefined);
-  const carrier = resolveTalents("spirit", ["paper-ward", "copy-page", "paper-carrier", "echo"], 24);
+  const carrier = resolveTalents("spirit", ["spirit-path-4", "echo", "paper-ward"], 24);
   assert.equal(carrier.grants.carrierGuard, 1);
   assert.equal(carrier.grants.carrierRelease, 1);
 });
 
 test("switching main books revalidates connectivity and binding gates secondary candidates", () => {
-  const frost = ["cold-ink", "crystal", "binding"];
-  assert.deepEqual(secondaryBookCandidates("frost", frost, 4).sort(), ["flame", "spirit", "storm"]);
-  assert.deepEqual(secondaryBookCandidates("frost", frost, 2), []);
-  assert.deepEqual(secondaryBookCandidates("frost", ["cold-ink", "crystal", "focus"], 4), []);
+  const frost = ["frost-path-4", "rime", "frost-path-6", "frost-path-7", "binding-bridge-1", "binding-bridge-2", "binding"];
+  assert.deepEqual(secondaryBookCandidates("frost", frost, 8).sort(), ["flame", "spirit", "storm"]);
+  assert.deepEqual(secondaryBookCandidates("frost", frost, 7), []);
+  assert.deepEqual(secondaryBookCandidates("frost", ["cold-ink", "crystal", "focus"], 8), []);
   assert.deepEqual(resolveTalentLoadout("storm", { allocated: frost, secondaryBook: "flame" }, 24), { allocated: ["storm-root"] });
   assert.equal(resolveTalentLoadout("frost", { allocated: frost, secondaryBook: "frost" }, 24).secondaryBook, undefined);
   assert.equal(resolveTalentLoadout("frost", { allocated: frost, secondaryBook: "flame" }, 24).secondaryBook, "flame");
@@ -125,9 +133,9 @@ test("normal and God loadouts persist separately through the versioned storage a
   const storage = new StorageAdapter(() => ({ getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) }));
   const normal = updateTalentLoadout(emptyTalentProgress(), "frost", { allocated: all }, 2);
   storage.save("talents", normal);
-  storage.save("talents-god", { version: 1, byBook: { flame: { allocated: all, secondaryBook: "storm" } } });
+  storage.save("talents-god", { version: 1, graphVersion: 2, byBook: { flame: { allocated: all, secondaryBook: "storm" } } });
   assert.equal(readTalentProgress(storage).byBook.frost.allocated.length, 3);
-  assert.equal(readGodTalents(storage).byBook.flame.allocated.length, 19);
+  assert.ok(readGodTalents(storage).byBook.flame.allocated.length > 24);
   assert.equal(readGodTalents(storage).byBook.flame.secondaryBook, "storm");
   storage.save("talents-god", { version: 1, byBook: {} });
   assert.deepEqual(readTalentProgress(storage), normal);

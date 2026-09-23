@@ -3,7 +3,7 @@ export const clamp01 = value => Math.max(0, Math.min(1, value));
 /** Fixed-budget time integrals; death contributes no further progress and full risk. */
 export function trajectoryMetrics(samples, horizon, characters) {
   if (!(horizon > 0) || !(characters > 0) || !samples.length) throw new Error('Invalid trajectory horizon or character budget');
-  let progressIntegral = 0, riskIntegral = 0, peakRisk = 0;
+  let progressIntegral = 0, riskIntegral = 0, peakRisk = samples[0].risk;
   for (let index = 1; index < samples.length; index++) {
     const before = samples[index - 1], after = samples[index];
     const dt = after.t - before.t;

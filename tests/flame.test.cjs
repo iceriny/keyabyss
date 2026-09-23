@@ -9,9 +9,13 @@ test('fireball delays damage until contact and settles the original word lease',
 });
 test('burn stacks, finite duration and half-second damage cadence pause with the world',()=>{
  const g=game(),e=enemy(g);for(let i=0;i<8;i++)g.applyBurn(e);
- assert.equal(e.burn.stacks,3);const hp=e.hp;g.tickBurn(e,.5);assert.equal(hp-e.hp,18);
+ assert.equal(e.burn.stacks,3);assert.equal(e.burn.contributions.length,8);
+ assert.ok(e.burn.contributions.every(c=>!c.recoverable));
+ const hp=e.hp,balance=e.burn.contributions.reduce((sum,c)=>sum+c.balance,0);
+ g.tickBurn(e,.5);assert.equal(hp-e.hp,15);
+ assert.ok(e.burn.contributions.reduce((sum,c)=>sum+c.balance,0)<balance);
  g.pause();const before=JSON.stringify(e.burn);step(g,1);assert.equal(JSON.stringify(e.burn),before);
- g.setState('playing');g.tickBurn(e,2.5);assert.equal(e.burn,undefined);assert.equal(hp-e.hp,108);
+ g.setState('playing');g.tickBurn(e,2.5);assert.equal(e.burn,undefined);assert.equal(hp-e.hp,90);
 });
 test('third flame cast hits nearby enemies, leaves a fire field and grants ember shields once',()=>{
  const g=game(),e=enemy(g),near=enemy(g,640,320);g.relics.coal=2;g.relics.crucible=2;g.bookCounter=2;
@@ -34,7 +38,7 @@ test('fire fields tick consistently and firewalk extends the dodge field',()=>{
 test('flame relic eligibility, burn scaling and inferno awakening compose through content grants',()=>{
  const g=game(),e=enemy(g);assert(!g.canUpgrade(g.content.relics.find(r=>r.id==='inferno')));
  g.relics.cinder=2;g.relics.pitch=1;assert(g.canUpgrade(g.content.relics.find(r=>r.id==='inferno')));
- g.relics.inferno=1;g.applyBurn(e,10);assert.equal(e.burn.stacks,5);assert.equal(e.burn.life,4);assert(Math.abs(e.burn.damage-9.6)<1e-8);
+ g.relics.inferno=1;g.applyBurn(e,10);assert.equal(e.burn.stacks,1);assert.equal(e.burn.contributions.length,1);assert.equal(e.burn.life,4);assert(Math.abs(e.burn.damage-96)<1e-8);
  g.resonance=100;g.ultimate();assert.equal(g.ultimateTime,7);assert.equal(g.resonance,0);assert(g.fields.some(f=>f.ultimate&&f.kind==='fire'));
  step(g,.3);assert(g.shots.some(s=>s.kind==='fire'));g.beginRoom();assert.equal(g.fields.length,0);assert.equal(g.shots.length,0);
  const frost=createGame();for(const r of frost.content.relics.filter(r=>r.book==='flame'))assert.equal(frost.canUpgrade(r),false);

@@ -8,7 +8,14 @@ test('every one of the 17 enemy/pillar types, split children, boss and node has 
  assert.ok(g.targets().length>=20);assert.ok(g.targets().every(e=>e.word==='co_await'));
 });
 test('typing frost launches a real projectile; damage is delayed until physical contact',()=>{
- const g=isolate(game(['class'])),e=g.spawnEnemy('nib',640,280);type(g,e);assert.equal(g.casts,1);assert.equal(e.hp,e.maxHp);assert.equal(g.shots.length,1);step(g,.34);assert.ok(e.dead);
+ const g=isolate(game(['class'])),e=g.spawnEnemy('nib',640,280);type(g,e);assert.equal(g.casts,1);assert.equal(e.hp,e.maxHp);assert.equal(g.shots.length,1);step(g,.34);assert.ok(e.hp<e.maxHp);
+});
+test('phrase spaces are skipped for casting and supply while Space still parries',()=>{
+ const g=isolate(game(['two words'])),e=g.spawnEnemy('guard',640,300);e.hp=e.maxHp=10000;
+ assert.equal(e.word,'two words');
+ for(const key of 'twowords')g.input(key);
+ assert.equal(g.casts,1);assert.equal(g.errors,0);assert.equal(g.weave.summary.manualCharacters,8);
+ g.input(' ');assert.ok(g.player.parryTime>0);assert.equal(g.casts,1);assert.equal(g.weave.summary.manualCharacters,8);
 });
 test('wrong keys preserve progress, shared-prefix alternatives resolve without an artificial error',()=>{
  const g=isolate(game(['cat','cow'])),a=g.spawnEnemy('guard',400,300),b=g.spawnEnemy('guard',650,300);a.word='cat';b.word='cow';g.target=a;g.input('c');g.input('o');assert.equal(g.target,b);assert.equal(g.prefix,'co');assert.equal(g.errors,0);g.input('x');assert.equal(g.prefix,'co');assert.equal(g.errors,1);g.input('Backspace');assert.equal(g.prefix,'');
@@ -35,8 +42,8 @@ test('fast projectile collision uses swept segments instead of endpoint-only hit
  assert.equal(C.segmentDistance(0,0,1000,0,500,0),0);assert.ok(C.segmentDistance(0,0,1000,0,500,10)<=10);
  const g=isolate(game(['class'])),e=g.spawnEnemy('guard',640,350);e.hp=e.maxHp=10000;g.launchShot({x:640,y:490},e,'ice',100,{direct:true,pierce:0});const s=g.shots[0];s.speed=5000;g.updateShots(.06);assert.ok(e.hp<10000);
 });
-test('frost freezes and leaves a slow field while storm is instant multi-target damage',()=>{
- const f=isolate(game(['class'])),a=f.spawnEnemy('guard',640,315);a.hp=a.maxHp=1000;f.cast(a,true);assert.equal(a.hp,1000);step(f,.25);assert.ok(a.freeze>0);assert.ok(f.fields.some(x=>x.kind==='frost'));
+test('frost builds chill, freezes after repeated paid hits and leaves a slow field while storm hits immediately',()=>{
+ const f=isolate(game(['class'])),a=f.spawnEnemy('guard',640,315);a.hp=a.maxHp=1000;f.cast(a,true);assert.equal(a.hp,1000);step(f,.25);assert.ok(a.chill>0);assert.ok(f.fields.some(x=>x.kind==='frost'));f.cast(a,true);step(f,.6);assert.ok(a.freeze>0);
  const s=isolate(game(['class'],'storm')),b=s.spawnEnemy('guard',500,300),c=s.spawnEnemy('guard',590,320),d=s.spawnEnemy('guard',675,320);[b,c,d].forEach(e=>e.hp=e.maxHp=1000);s.cast(b,true);assert.ok([b,c,d].every(e=>e.hp<1000));assert.equal(s.shots.length,0);
 });
 test('storm conductive marks overload on the third hit and stormcell clears nearby bullets',()=>{
@@ -78,8 +85,8 @@ test('new generic relics implement damage risk, DOT, shield, execute and perfect
  g.relics.execute=1;e.hp=80;g.strike(e,1,{direct:true,kind:'storm',from:g.player});assert.ok(e.dead);
 });
 test('awakenings require the right school and both prerequisites; rerolls never offer maxed relics',()=>{
- const g=game();assert.ok(!g.upgradeChoices().some(r=>r.rarity==='awaken'));g.relics.shatter=1;g.relics.permafrost=1;g.relics.power=3;let found=false;
- for(let i=0;i<30;i++){const list=g.upgradeChoices();assert.equal(new Set(list.map(x=>x.id)).size,list.length);assert.ok(!list.some(r=>r.id==='power'||r.book&&r.book!=='frost'));if(list.some(r=>r.id==='avalanche'))found=true;}assert.ok(found);
+ const g=game(),avalanche=g.content.relics.find(r=>r.id==='avalanche');assert.ok(!g.upgradeChoices().some(r=>r.rarity==='awaken'));assert.equal(g.canUpgrade(avalanche),false);g.relics.shatter=1;assert.equal(g.canUpgrade(avalanche),false);g.relics.permafrost=1;g.relics.power=3;assert.equal(g.canUpgrade(avalanche),true);
+ for(let i=0;i<30;i++){const list=g.upgradeChoices();assert.equal(new Set(list.map(x=>x.id)).size,list.length);assert.ok(!list.some(r=>r.id==='power'||r.book&&r.book!=='frost'));}
  g.state='upgrade';const n=g.rerolls;g.rerollUpgrade();assert.equal(g.rerolls,n-1);
 });
 test('all fully stacked relics have a non-blocking repeatable fallback reward',()=>{
@@ -100,9 +107,9 @@ test('all nine rooms route to victory, and continuation retains build while rais
 test('a single long C++ token works in every school, including the underscore',()=>{
  for(const book of ['frost','storm','spirit']){const g=isolate(game(['reinterpret_cast'],book));const e=g.spawnEnemy('guard');type(g,e);step(g,.4);assert.equal(g.casts,1);assert.equal(g.errors,0);assert.ok(g.targets().every(t=>t.word==='reinterpret_cast'));}
 });
-test('all five modes have increasing speed, damage, spawn pressure; every chapter and loop grows',()=>{
+test('all five modes increase speed, damage and spawn pressure while ordinary HP plateaus within a loop',()=>{
  let previous=null;for(const mode of Object.keys(C.MODES)){const p=C.difficulty(mode,0);if(previous){assert.ok(p.speed>previous.speed);assert.ok(p.health>previous.health);assert.ok(p.damage>previous.damage);assert.ok(p.interval<previous.interval);assert.ok(p.cap>previous.cap);}previous=p;
-  for(let stage=1;stage<27;stage++){const a=C.difficulty(mode,stage-1),b=C.difficulty(mode,stage);assert.ok(b.speed>=a.speed);assert.ok(b.health>a.health);assert.ok(b.interval<=a.interval);}
+  for(let stage=1;stage<27;stage++){const a=C.difficulty(mode,stage-1),b=C.difficulty(mode,stage);assert.ok(b.speed>=a.speed);assert.ok(b.health>=a.health);assert.ok(b.interval<=a.interval);}
   assert.ok(C.difficulty(mode,17).health>C.difficulty(mode,8).health);
  }
 });

@@ -49,6 +49,7 @@ type Context = Pick<
   | "sound"
   | "stage"
   | "state"
+  | "stats"
   | "time"
   | "upgradeAt"
   | "upgradeChoices"

@@ -11,7 +11,7 @@ from playwright.sync_api import sync_playwright, expect
 from browser_support import launch_browser
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / '.temp/combat-refactor/integration/browser'
+OUT = ROOT / '.temp/combat-acceptance/browser/combat-refactor'
 OUT.mkdir(parents=True, exist_ok=True)
 BASE = os.environ.get('KEYABYSS_URL', (ROOT / 'dist/index.html').as_uri())
 URL = BASE + ('&' if '?' in BASE else '?') + 'debug'
@@ -31,11 +31,21 @@ def command(page, word):
     return page.locator(f'[data-command="{word}"]:visible')
 
 
+def open_talents(page):
+    button = command(page, 'talents').bounding_box()
+    page.mouse.click(button['x'] + button['width'] / 2,
+                     button['y'] + button['height'] / 2)
+    page.locator('.talents-modal').wait_for()
+
+
 def allocate(page, name):
-    page.get_by_role('button', name=re.compile('^' + name + '，')).click()
+    search = page.get_by_role('searchbox', name='搜索天赋图谱节点')
+    search.fill(name)
+    page.get_by_role('option', name=re.compile('^' + re.escape(name) + r'(?:\s|$)')).click()
+    expect(page.locator('.talent-detail h3')).to_contain_text(name)
     expect(command(page, 'allocate')).to_be_enabled()
     command(page, 'allocate').click()
-    expect(page.get_by_role('button', name=re.compile('^' + name + '，'))).to_have_attribute('aria-pressed', 'true')
+    expect(command(page, 'allocate')).to_contain_text('撤回天赋')
 
 
 SETUP = """async book => {
@@ -71,10 +81,12 @@ with sync_playwright() as p:
         page.keyboard.press('Enter')
         page.locator('.startup-gate').wait_for(state='detached')
         page.locator('#home').wait_for()
-        command(page, 'talents').click()
-        allocate(page, '凝墨')
-        allocate(page, '晶构')
-        page.get_by_role('button', name=re.compile('^合订，')).click()
+        open_talents(page)
+        allocate(page, '霜·起笔')
+        allocate(page, '霜·留痕')
+        search = page.get_by_role('searchbox', name='搜索天赋图谱节点')
+        search.fill('合订')
+        page.get_by_role('option', name=re.compile(r'^合订(?:\s|$)')).click()
         expect(command(page, 'allocate')).to_be_disabled()
         assert saved(page, 'talents')['manualCharacters'] == 0
         check('normal allocation obeys the initial two-point budget')
@@ -110,9 +122,9 @@ with sync_playwright() as p:
         check('actual completed input settles one cross-run talent point and appears in the report')
 
         page.keyboard.type('imsuperman')
-        command(page, 'talents').click()
+        open_talents(page)
         expect(page.locator('.talent-toolbar')).to_contain_text('GOD MODE')
-        for name in ['凝墨','晶构','合订','热载','温墨','焰页']:
+        for name in ['霜·深刻','霜·承接','霜·回环','霜·远读','合订·入径','合订·承势','合订']:
             allocate(page, name)
         page.locator('#talentSecondary').click()
         page.get_by_role('option', name='灰烬之书').click()
@@ -129,7 +141,7 @@ with sync_playwright() as p:
         assert saved(page, 'archive')['career'] == archive['career']
         page.evaluate('__KEYABYSS__.game.home()')
         page.locator('#home').wait_for()
-        command(page, 'talents').click()
+        open_talents(page)
         command(page, 'cleargod').click()
         assert saved(page, 'talents-god')['byBook'] == {}
         cleared = saved(page, 'archive')
@@ -157,6 +169,13 @@ with sync_playwright() as p:
         assert not errors, errors
     except Exception as error:
         errors.append(str(error))
+        page.screenshot(path=str(OUT / 'failure.png'))
+        (OUT / 'failure-state.json').write_text(json.dumps(page.evaluate("""() => ({
+          home: !!document.querySelector('#home'),
+          menu: document.querySelector('.camp-menu')?.outerHTML,
+          modal: document.querySelector('.modal')?.outerHTML.slice(0, 1000),
+          gameState: globalThis.__KEYABYSS__?.game?.state
+        })"""), ensure_ascii=False, indent=2), encoding='utf-8')
         raise
     finally:
         (OUT / 'report.json').write_text(json.dumps({'checks':checks,'errors':errors},ensure_ascii=False,indent=2),encoding='utf-8')

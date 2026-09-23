@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { obfuscate } from "./obfuscate.mjs";
 import { appDefine } from "./app-metadata.mjs";
 import { archiveRelease } from "./archive.mjs";
+import { archivePath } from "./archive-path.ts";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const audioBuild = spawnSync(process.execPath, ['tools/audio.ts','build'], { cwd:root, stdio:'inherit', windowsHide:true });
 if (audioBuild.status !== 0) throw Error('Audio build failed');
@@ -36,13 +37,13 @@ const nativeName = `battle-renderer-${createHash("sha256").update(nativeCode).di
 const publicAssets = path.join(root, "public/assets");
 for (const file of fs.readdirSync(publicAssets))
   if (/^battle-renderer-[a-f0-9]{8}\.js$/.test(file))
-    fs.unlinkSync(path.join(publicAssets, file));
+    archivePath(root, path.join(publicAssets, file), "build-renderer");
 fs.writeFileSync(path.join(publicAssets, nativeName), nativeCode);
 process.env.VITE_BATTLE_RENDERER = `./assets/${nativeName}`;
 // Separate classic bundles keep the preflight small and retain file:// support.
 const output = path.join(root, "dist");
 if (path.resolve(output) !== path.resolve(root, "dist")) throw Error("Invalid release directory");
-fs.rmSync(output, { recursive: true, force: true });
+archivePath(root, output, "build-dist");
 fs.mkdirSync(path.join(output, "assets"), { recursive: true });
 const generatedFiles = [];
 function artifact(stem, extension, contents) {

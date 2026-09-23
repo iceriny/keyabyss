@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
+import { archivePath } from "./archive-path.ts";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url),
   C = require("../src/vocabulary/index.ts");
@@ -47,12 +48,12 @@ const assetDir = path.join(root, "public", "word");
 fs.mkdirSync(assetDir, { recursive: true });
 for (const file of fs.readdirSync(assetDir))
   if (/^vocab-[a-z0-9]+-[a-f0-9]{8}\.js$/.test(file))
-    fs.unlinkSync(path.join(assetDir, file));
+    archivePath(root, path.join(assetDir, file), "build-vocab");
 const oldAssets = path.join(root, "public", "assets");
 if (fs.existsSync(oldAssets))
   for (const file of fs.readdirSync(oldAssets))
     if (/^vocab-[a-z0-9]+-[a-f0-9]{8}\.js$/.test(file))
-      fs.unlinkSync(path.join(oldAssets, file));
+      archivePath(root, path.join(oldAssets, file), "build-vocab");
 const index = books.map(({ words, ...meta }) => {
   const normalized = C.normalize(words).words;
   const payload = normalized.map((w) => (w.meaning ? w : w.word));

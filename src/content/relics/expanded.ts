@@ -105,7 +105,7 @@ export const expandedRelics: readonly Relic[] = EXPANDED_RELIC_FAMILIES.flatMap(
     if (grants.carrierGuard) supplied.push('guard');
     if (grants.carrierRelease) supplied.push('release');
     if (grants.heatRecovery || grants.paperRecovery || grants.missRecovery) supplied.push('recovery');
-    return { id: entry[0], name: entry[1], desc: entry[2], grants: entry[3], icon: entry[0], tag: family.tag, family: family.id, budget: branch ? 16 : 8, max: 1,
+    return { id: entry[0], command: entry[0].replaceAll('-', ''), name: entry[1], desc: entry[2], grants: entry[3], icon: entry[0], tag: family.tag, family: family.id, budget: branch ? 16 : 8, max: 1,
       rarity: branch ? 'rare' : 'common', provides: supplied, needs: family.needs, modifies: [...new Set([...(family.modifies ?? []), ...(family.provides ?? []).filter(cap => !supplied.includes(cap))])],
       ...(branch ? { requires: [base[0]], evolution: { from: base[0], group: family.id }, excludes: [branchA[0], branchB[0], family.variant[0]].filter(id => id !== entry[0]) } : {}),
       ...(index === 4 ? { connections: [branchA[0], branchB[0]] } : {}), ...(eventOnly ? { eventOnly: true } : {}),

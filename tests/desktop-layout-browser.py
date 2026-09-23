@@ -1,7 +1,7 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'.temp/test-output-desktop';OUT.mkdir(parents=True, exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'.temp/combat-acceptance/browser/desktop-layout';OUT.mkdir(parents=True, exist_ok=True)
 SIZES=[(1024,640),(1280,720),(1366,768),(1440,900),(1536,864),(1600,900),(1920,1080),(2560,1440),(3440,1440),(3840,2160)]
 with sync_playwright() as p:
  b=launch_browser(p);page=b.new_page(viewport={'width':1920,'height':1080},reduced_motion='reduce')

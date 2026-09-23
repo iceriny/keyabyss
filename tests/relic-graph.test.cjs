@@ -118,6 +118,23 @@ test("new content has distinct SVG engravings, valid commands and declared struc
   }
 });
 
+test("finite negative grant deltas and expanded relic commands validate", () => {
+  const copy = structuredClone(manifest);
+  const branching = copy.relics.find(entry => entry.id === "copy-many");
+  assert.ok(branching);
+  assert.ok(branching.grants.copyEfficiency < 0);
+  assert.match(branching.command, /^[a-z]+$/);
+  validateContent(copy);
+  for (const value of [NaN, Infinity, -Infinity]) {
+    const broken = structuredClone(manifest);
+    broken.relics.find(entry => entry.id === "copy-many").grants.copyEfficiency = value;
+    assert.throws(() => validateContent(broken), /copyEfficiency.*finite number/);
+  }
+  const untypeable = structuredClone(manifest);
+  untypeable.relics.find(entry => entry.id === "copy-many").command = "copy-many";
+  assert.throws(() => validateContent(untypeable), /invalid command/);
+});
+
 test("content validation rejects invalid capabilities, exclusions, levels and level dependency cycles", () => {
   const rejects = (change, expression) => {
     const copy = structuredClone(manifest);

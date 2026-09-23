@@ -303,7 +303,10 @@ export function validateContent(content: ContentManifest) {
     for (const [stat, value] of Object.entries(relic.grants ?? {})) {
       if (!(combatStats as readonly string[]).includes(stat))
         throw new Error(`Unknown combat stat ${stat}`);
-      positive(value, `relic ${relic.id} grant ${stat}`, true);
+      // Grants are additive build deltas: a tradeoff may reduce a parameter.
+      // Runtime compilation clamps the resulting parameter, not each source.
+      if (!Number.isFinite(value))
+        throw new Error(`relic ${relic.id} grant ${stat}: expected finite number`);
     }
   commands(
     [...content.relics.map((r) => r.command ?? r.id), "renewal"],

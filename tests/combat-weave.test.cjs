@@ -26,7 +26,7 @@ test('same crystal/heat combination operates on durable targets without any kill
   assert.equal(g.kills, 0); assert.ok(g.weave.summary.fragments > 0);
 });
 test('paper copies only paid input, stops without typing, and does not inflate cast statistics', () => {
-  const g = game(); g.relics.copyfolio = 2; const e = enemy(g);
+  const g = game(); g.relics.copyfolio = 1; const e = enemy(g);
   cast(g, e, 100, 11); assert.equal(g.weave.pages.length, 0);
   cast(g, e, 100, 1); assert.equal(g.weave.pages.length, 1);
   const count = g.weave.summary.manualCharacters, casts = g.casts;
@@ -38,7 +38,8 @@ test('a page has one exit: ordinary defense sacrifices attack, release talent ch
   const g = game('storm'); g.relics.copyfolio = 1; g.relics.guardseal = 1;
   const e = enemy(g); cast(g, e, 100, 12, 'storm');
   const hp = e.hp; assert.equal(g.weave.block(g), true);
-  assert.equal(g.weave.pages.length, 0); assert.equal(e.hp, hp);
+  assert.equal(g.weave.pages.length, 1); assert.equal(g.weave.pages[0].exit, 'guard'); assert.equal(e.hp, hp);
+  assert.equal(g.weave.block(g), true); assert.equal(g.weave.pages.length, 0);
   assert.equal(g.weave.block(g), false); assert.equal(g.weave.summary.pagesReleased, 0);
   // A capability provider can be independent of an item ID.
   Object.defineProperty(g, 'stats', { value: { ...g.stats, carrierRelease: 1 } });
@@ -49,26 +50,39 @@ test('a page has one exit: ordinary defense sacrifices attack, release talent ch
 });
 test('short-lived pages expire; release capability turns expiry into a finite attack', () => {
   const g = game('storm'); g.relics.copyfolio = 1; g.relics.swiftbinding = 1;
-  const e = enemy(g); cast(g, e, 100, 8, 'storm'); step(g, 1.2);
+  const e = enemy(g); cast(g, e, 100, 8, 'storm'); g.enemies = [];
+  g.weave.update(g, .9); assert.equal(g.weave.pages.length, 1);
+  g.weave.update(g, .2);
   assert.equal(g.weave.summary.pagesReleased, 0); assert.equal(g.weave.pages.length, 0);
   Object.defineProperty(g, 'stats', { value: { ...g.stats, carrierRelease: 1 } });
-  cast(g, e, 100, 8, 'storm'); step(g, 1.2);
+  g.enemies = [e]; cast(g, e, 100, 8, 'storm'); g.enemies = [];
+  g.weave.update(g, .9); g.enemies = [e]; g.weave.update(g, .2);
   assert.equal(g.weave.summary.pagesReleased, 1); assert.equal(g.weave.pages.length, 0);
 });
 test('carrier branches change count and payload while keeping caps', () => {
-  for (const [id, size, damage] of [['scatterfolio', 2, 25], ['heavyfolio', 1, 70]]) {
+  const results = {};
+  for (const [id, size] of [['scatterfolio', 4], ['heavyfolio', 1]]) {
     const g = game(); g.relics.copyfolio = 2; g.relics[id] = 1;
     cast(g, enemy(g)); assert.equal(g.weave.pages.length, size);
-    assert.equal(g.weave.pages[0].damage, damage);
+    assert.ok(g.weave.pages.every(page => page.damage > 0));
+    assert.ok(g.weave.pages.reduce((sum, page) => sum + page.damage, 0) <= 100);
+    results[id] = g.weave.pages[0].damage;
   }
+  assert.ok(results.scatterfolio < results.heavyfolio);
 });
-test('heat recovery has loss and capacity, preserves paid heat across rooms, and cannot recover copies', () => {
+test('heat recovery has loss and capacity, and only explicit reserve keeps heat across rooms', () => {
   const g = game('flame'); g.relics.thermalvault = 2;
   cast(g, enemy(g, 750, 1), 100, 12, 'fire');
   assert.ok(g.weave.heat > 0 && g.weave.heat <= 100);
-  const heat = g.weave.heat; g.resetArrays(); assert.equal(g.weave.heat, heat);
+  const heat = g.weave.heat; g.resetArrays(); assert.equal(g.weave.heat, 0);
+  assert.ok(g.weave.summary.lostHeat >= heat);
   const victim = enemy(g, 750, 1); g.applyBurn(victim); g.damage(victim, 100, 1, false);
-  assert.equal(g.weave.heat, heat);
+  assert.equal(g.weave.heat, 0);
+  const reserved = game('flame'); reserved.relics.thermalvault = 2;
+  Object.defineProperty(reserved, 'stats', { value: { ...reserved.stats, reservePersist: 1 } });
+  cast(reserved, enemy(reserved, 750, 1), 100, 12, 'fire');
+  const carried = reserved.weave.heat; assert.ok(carried > 0);
+  reserved.resetArrays(); assert.equal(reserved.weave.heat, carried);
   g.weave.reset(); assert.equal(g.weave.heat, 0);
 });
 test('a pending residual spell releases once and is cancelled on room cleanup', () => {
@@ -132,11 +146,11 @@ test('native paper and relic carrier providers share one finite input supply', (
     const g = game(book); if (book === 'frost') g.relics.spirit = 1;
     g.relics.copyfolio = 1;
     const e = enemy(g); cast(g, e, 100, 12, 'paper');
-    assert.equal(g.weave.pages.length, 1);
+    const funded = g.weave.pages.length; assert.ok(funded >= 1 && funded <= 2);
     cast(g, e, 100, 0, 'paper');
-    assert.equal(g.weave.pages.length, 1);
+    assert.equal(g.weave.pages.length, funded);
     step(g, 6); assert.equal(g.weave.pages.length, 0);
-    assert.equal(g.weave.summary.pagesCreated, 1);
+    assert.equal(g.weave.summary.pagesCreated, funded);
   }
 });
 

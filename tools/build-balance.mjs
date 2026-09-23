@@ -23,13 +23,29 @@ const stable = (items, seed) => [...items].sort((a, b) => key(`${seed}:${a.id}`)
 const toFixed = value => Number.isFinite(value) ? Math.round(value * 1e6) / 1e6 : null;
 
 function argumentsOf(argv) {
-  const options = { config: resolve(root, 'tools/build-balance.config.json'), out: resolve(root, '.temp/build-balance'), limit: Infinity };
+  const options = { config: resolve(root, 'tools/build-balance.config.json'), out: resolve(root, '.temp/build-balance'), limit: Infinity, phase: 'all', shard: null, focus: {}, merge: null };
   for (let index = 0; index < argv.length; index++) {
     const flag = argv[index], value = argv[++index];
-    if (!['--config', '--out', '--limit'].includes(flag) || !value) throw new Error(`Expected --config PATH, --out DIR, or --limit COUNT; got ${flag}`);
+    if (!['--config', '--out', '--limit', '--phase', '--shard', '--focus', '--merge'].includes(flag) || !value) throw new Error(`Expected --config PATH, --out DIR, --limit COUNT, --phase NAME, --shard INDEX/TOTAL, --focus KEY:VALUE, or --merge DIR[,DIR...]; got ${flag}`);
     if (flag === '--limit') { options.limit = Number(value); if (!Number.isInteger(options.limit) || options.limit < 1) throw new Error('--limit must be a positive integer'); }
+    else if (flag === '--phase') { options.phase = value; if (!['all', 'fixed', 'extras', 'full'].includes(value)) throw new Error('--phase must be all, fixed, extras, or full'); }
+    else if (flag === '--shard') {
+      const match = /^(\d+)\/(\d+)$/.exec(value);
+      if (!match) throw new Error('--shard must be INDEX/TOTAL, zero based');
+      options.shard = { index: Number(match[1]), total: Number(match[2]) };
+      if (!Number.isSafeInteger(options.shard.index) || !Number.isSafeInteger(options.shard.total) || options.shard.total < 1 || options.shard.index >= options.shard.total) throw new Error('Invalid --shard INDEX/TOTAL');
+    }
+    else if (flag === '--focus') {
+      const match = /^(book|tier|mode|input|route|wpm|seed|scene):(.+)$/.exec(value);
+      if (!match) throw new Error('--focus must be book|tier|mode|input|route|wpm|seed|scene:VALUE[,VALUE...]');
+      options.focus[match[1]] = match[2].split(',');
+    }
+    else if (flag === '--merge') options.merge = value.split(',').map(path => resolve(path));
     else options[flag.slice(2)] = resolve(value);
   }
+  if (options.shard && !['all', 'fixed'].includes(options.phase)) throw new Error('--shard applies only to fixed cases');
+  if (Object.keys(options.focus).length && !['all', 'full', 'fixed'].includes(options.phase)) throw new Error('--focus applies only to full or fixed cases');
+  if (options.merge && (options.phase !== 'all' || options.shard || Object.keys(options.focus).length)) throw new Error('--merge must be used without phase, shard, or focus');
   return options;
 }
 function validateConfig(config) {
@@ -97,6 +113,7 @@ function relicSequence(target, book, talentIds, words, maxOpportunities) {
   const levels = {}, sequence = [], busy = new Set();
   const shortest = Math.min(...words.map(word => word.length)), longest = Math.max(...words.map(word => word.length));
   const capabilities = () => collectCapabilities(builtinContent.books[book], builtinContent.relics, levels, resolved.capabilities);
+  const stats = new Proxy({}, { get: (_, stat) => typeof stat === 'string' ? (resolved.grants[stat] ?? 0) + builtinContent.relics.reduce((sum, item) => sum + (levels[item.id] ?? 0) * (item.grants?.[stat] ?? 0), 0) : undefined });
   const byId = new Map(builtinContent.relics.map(relic => [relic.id, relic]));
   const acquire = (id, desired = 1) => {
     const relic = byId.get(id);
@@ -123,7 +140,7 @@ function relicSequence(target, book, talentIds, words, maxOpportunities) {
           }
           if (!supplied) throw new Error(`missing_capability:${capability}`);
         }
-        if (!eligibleRelic(relic, { book, levels, shortest, longest, capabilities: capabilities(), definitions: builtinContent.relics })) throw new Error(`ineligible_after_prerequisites:${id}`);
+        if (!eligibleRelic(relic, { book, levels, shortest, longest, capabilities: capabilities(), definitions: builtinContent.relics, stats })) throw new Error(`ineligible_after_prerequisites:${id}`);
         sequence.push(id);
         if (relic.evolution) delete levels[relic.evolution.from];
         levels[id] = (levels[id] ?? 0) + 1;
@@ -208,7 +225,7 @@ function operateTyping(game, clock, dt, wpm, fixedCharacters, actualSent) {
   }
   const letter = game.target?.word?.[game.prefix.length];
   if (letter) { if (game.input(letter)) actualSent++; game.releaseKey(letter); }
-  return { clock: clock + 60 / (wpm * 5), actualSent };
+  return { clock: (letter ? Math.max(-dt, clock) : 0) + 60 / (wpm * 5), actualSent };
 }
 
 function acquireBuild(game, build) {
@@ -241,9 +258,16 @@ function measureEncounter(game, scene, wpm, seed, config) {
   game.pool = new WordPool(config.words, game.rng);
   const targets = configureFixedEncounter(game, scene);
   const horizon = scene.seconds, dt = 1 / 60;
-  let clock = 0, actualSent = 0, clearTime = null, deathTime = null;
+  let clock = 0, actualSent = 0, clearTime = null, deathTime = null, deferredRewards = 0;
   const samples = [{ t: 0, progress: currentProgress(targets), risk: currentRisk(game), terminal: null }];
   for (let tick = 0; tick < Math.ceil(horizon / dt); tick++) {
+    if (game.state === 'upgrade') {
+      if (game.afterUpgrade !== 'play') throw new Error(`unexpected_fixed_reward_continuation:${game.afterUpgrade}`);
+      game.pending = 0;
+      game.afterUpgrade = null;
+      game.setState('playing');
+      deferredRewards++;
+    }
     if (game.state !== 'playing') throw new Error(`unexpected_state:${game.state}`);
     operateDefense(game, true);
     if (game.resonance >= 100 && (game.enemies.filter(enemy => !enemy.dead).length > 2 || game.bossRoom)) game.input('Shift');
@@ -258,7 +282,7 @@ function measureEncounter(game, scene, wpm, seed, config) {
   }
   const metric = trajectoryMetrics(samples, horizon, scene.characters);
   const actualManual = game.weave.summary.manualCharacters;
-  return { status: 'ok', ...metric, clearTime, deathTime, cleared: clearTime !== null, actualSent, actualManual, per100ActualCharacters: actualManual > 0 ? 100 * metric.progressIntegral / (actualManual * horizon) : null, kills: game.kills, casts: game.casts, hp: game.player.hp, maxHp: game.player.maxHp, stage: game.stage, resource: game.weave.summary, trajectory: samples };
+  return { status: 'ok', ...metric, clearTime, deathTime, cleared: clearTime !== null, actualSent, actualManual, deferredRewards, per100ActualCharacters: actualManual > 0 ? 100 * metric.progressIntegral / (actualManual * horizon) : null, kills: game.kills, casts: game.casts, hp: game.player.hp, maxHp: game.player.maxHp, stage: game.stage, resource: game.weave.summary, trajectory: samples };
 }
 
 function favorableRoute(route) { return Number(Boolean(route.relic)) * 100 + (route.heal ?? 0) + (route.shield ?? 0) * .5 - (route.hurt ?? 0) * 2; }
@@ -370,9 +394,16 @@ function simulateBossLifecycle(entry, book, tier, mode, wpm, seed, config) {
   const definition = builtinContent.bosses[boss.bossId];
   if (!definition) throw new Error(`unknown_boss_definition:${boss.bossId}`);
   const phaseVisits = [{ t: 0, phase: boss.phase, hpRatio: 1 }];
-  let clock = 0, actualSent = 0, elapsed = 0;
+  let clock = 0, actualSent = 0, elapsed = 0, deferredRewards = 0;
   const dt = 1 / 60, horizon = config.bossLifecycle.seconds;
-  for (let tick = 0; tick < horizon / dt && !boss.dead && game.state === 'playing'; tick++) {
+  for (let tick = 0; tick < horizon / dt && !boss.dead && game.state !== 'result'; tick++) {
+    if (game.state === 'upgrade' && game.afterUpgrade === 'play') {
+      game.pending = 0;
+      game.afterUpgrade = null;
+      game.setState('playing');
+      deferredRewards++;
+    }
+    if (game.state !== 'playing') break;
     operateDefense(game, true);
     if (game.resonance >= 100) game.input('Shift');
     ({ clock, actualSent } = operateTyping(game, clock, dt, wpm, Infinity, actualSent));
@@ -380,7 +411,7 @@ function simulateBossLifecycle(entry, book, tier, mode, wpm, seed, config) {
     if (boss.phase !== phaseVisits.at(-1).phase) phaseVisits.push({ t: toFixed(elapsed), phase: boss.phase, hpRatio: toFixed(clamp01(boss.hp / boss.maxHp)) });
   }
   const result = boss.dead ? 'boss_defeated' : game.player.hp <= 0 || game.state === 'result' && !game.lastWin ? 'player_defeated' : elapsed >= horizon ? 'timeout' : `interrupted:${game.state}`;
-  return { kind: 'bossLifecycle', status: result.startsWith('interrupted') ? 'failed' : 'ok', room: entry.room, stage: entry.stage, bossId: boss.bossId, expectedPhases: definition.phases.length, phaseVisits, phasesReached: Math.max(...phaseVisits.map(item => item.phase)), result, elapsed: toFixed(elapsed), horizon, book, tier: tier.name, mode, wpm, seed, actualSent, actualManual: game.weave.summary.manualCharacters, hp: toFixed(game.player.hp), bossHpRatio: toFixed(clamp01(boss.hp / boss.maxHp)), scoring: 'lifecycle_only_no_fixed_progress_score' };
+  return { kind: 'bossLifecycle', status: result.startsWith('interrupted') ? 'failed' : 'ok', room: entry.room, stage: entry.stage, bossId: boss.bossId, expectedPhases: definition.phases.length, phaseVisits, phasesReached: Math.max(...phaseVisits.map(item => item.phase)), result, elapsed: toFixed(elapsed), horizon, book, tier: tier.name, mode, wpm, seed, actualSent, actualManual: game.weave.summary.manualCharacters, deferredRewards, hp: toFixed(game.player.hp), bossHpRatio: toFixed(clamp01(boss.hp / boss.maxHp)), scoring: 'lifecycle_only_no_fixed_progress_score' };
 }
 
 function summarize(rows, skipped, config, metadata, partial) {
@@ -396,14 +427,22 @@ function summarize(rows, skipped, config, metadata, partial) {
   const fullRunGroups = [...Map.groupBy(full, row => `${row.book}:${row.tier}:${row.mode}:${row.inputGroup}:${row.routeStrategy}`).entries()].map(([id, items]) => ({ id, samples: items.length, wins: items.filter(row => row.result === 'win').length, defeats: items.filter(row => row.result === 'defeat').length, timeouts: items.filter(row => row.result === 'timeout').length, failures: items.filter(row => row.status === 'failed').length, winRateAmongConcluded: items.filter(row => ['win', 'defeat'].includes(row.result)).length ? items.filter(row => row.result === 'win').length / items.filter(row => ['win', 'defeat'].includes(row.result)).length : null, medianElapsedOfConcluded: quantile(items.filter(row => ['win', 'defeat'].includes(row.result)).map(row => row.elapsed), .5) }));
   const byBuild = Map.groupBy(successful, row => row.build.id);
   const weights = Object.fromEntries(config.scenarios.map(scene => [scene.group, scene.weight]));
-  const expectedObservations = config.scenarios.filter(scene => scene.kind !== 'boss').length * config.modes.length * config.seeds.length * config.inputGroups.reduce((sum, group) => sum + group.wpm.length, 0);
+  const focused = (field, value) => !metadata.focus?.[field] || metadata.focus[field].includes(String(value));
+  const expectedObservations = config.scenarios.filter(scene => scene.kind !== 'boss' && focused('scene', scene.id)).length * config.modes.filter(mode => focused('mode', mode)).length * config.seeds.filter(seed => focused('seed', seed)).length * config.inputGroups.filter(group => focused('input', group.name)).reduce((sum, group) => sum + group.wpm.filter(wpm => focused('wpm', wpm)).length, 0);
   const aggregates = [];
   for (const [id, items] of byBuild) {
     const gain = aggregateGain(items.filter(item => item.G !== null).map(item => ({ group: item.scenario.group, G: item.G })), weights);
     if (!gain) continue;
     const item = items[0], C = budget(item.build.spent, item.build.opportunities);
     const complete = items.length === expectedObservations;
-    aggregates.push({ id, book: item.build.book, tier: item.build.tier, talentTarget: item.build.talentTarget, relicTarget: item.build.relicTarget, costBP: C, ...gain, efficiency: complete && C > 0 ? gain.BP / C : null, observations: items.length, expectedObservations, complete });
+    aggregates.push({ id, book: item.build.book, tier: item.build.tier, talentTarget: item.build.talentTarget, relicTarget: item.build.relicTarget, costBP: C, ...gain, globalBP: gain.BP, incrementalBP: null, efficiency: null, observations: items.length, expectedObservations, complete });
+  }
+  const bookBases = new Map(aggregates.filter(item => item.complete && item.id === `${item.book}:${item.tier}:base`).map(item => [`${item.book}:${item.tier}`, item]));
+  for (const item of aggregates) {
+    const base = bookBases.get(`${item.book}:${item.tier}`);
+    if (!item.complete || !base) continue;
+    item.incrementalBP = item.globalBP - base.globalBP;
+    if (item.costBP > 0) item.efficiency = item.incrementalBP / item.costBP;
   }
   const p = successful.map(item => item.P), risks = successful.map(item => item.R), efficiencies = aggregates.map(item => item.efficiency).filter(Number.isFinite);
   const coverage = { relics: {}, talents: {}, events: {} };
@@ -452,6 +491,33 @@ function reportMarkdown(summary) {
   return `# 完整内容通用数值评估\n\n状态：**${summary.status}**。这是诊断报告，不作“已平衡”结论。\n\n- 案例：${counts.cases}；成功 ${counts.successful}；失败 ${counts.failed}；不支持 ${counts.unsupported}；采样跳过 ${counts.skipped}。事件交易 ${counts.events}（失败 ${counts.failedEvents}，未支持 ${counts.unsupportedEvents}）；Boss 生命周期 ${counts.bosses}（失败 ${counts.failedBosses}）；完整局 ${counts.fullRuns}。\n- P p50/p95：${p50.P ?? '无'}/${p95.P ?? '无'}；R p50/p95：${p50.R ?? '无'}/${p95.R ?? '无'}；效率 p50/p95：${p50.efficiency ?? '无'}/${p95.efficiency ?? '无'}。\n- 死亡率：${summary.deathRate ?? '无'}；清房率：${summary.clearRate ?? '无'}。\n- 同预算支配候选 ${summary.dominance.length}；高效率/交互审查候选 ${summary.interactionCandidates.length}；饱和场景 ${summary.saturation.filter(item => item.flagged).length}。\n\n## 最差组\n\n${summary.worst.map(item => `- ${item.build} / ${item.scenario} / ${item.mode} / ${item.wpm} WPM / ${item.seed}: G=${toFixed(item.G)}, P=${toFixed(item.P)}, R=${toFixed(item.R)}, 死亡=${item.d}`).join('\n') || '无可比较组'}\n\n## 覆盖与限制\n\n- 未覆盖遗物：${Object.entries(summary.coverage.relics).filter(([, value]) => !value.cases).map(([id]) => id).join('、') || '无'}。\n- 未覆盖天赋：${Object.entries(summary.coverage.talents).filter(([, value]) => !value.cases).map(([id]) => id).join('、') || '无'}。\n- 未覆盖事件：${Object.entries(summary.coverage.events).filter(([, value]) => !value.cases).map(([id]) => id).join('、') || '无'}。\n- Boss 仅用真实战役房与阶段生命周期作诊断；固定 P 场景未定义精确阶段目标，逐案 unsupported。阶段最终相位 ${summary.bossLifecycleSummary.reachedFinalPhase}/${summary.bossLifecycleSummary.samples}，Boss 击败 ${summary.bossLifecycleSummary.bossDefeats}，玩家死亡 ${summary.bossLifecycleSummary.playerDefeats}，截断 ${summary.bossLifecycleSummary.timeouts}。\n- 固定场景 healthScale 仅放大独立目标耐久，不作用于玩家、正式难度或完整局。\n- 完整局：胜利 ${summary.fullRunSummary.wins}、死亡失败 ${summary.fullRunSummary.defeats}、时间上限 ${summary.fullRunSummary.timeouts}、执行失败 ${summary.fullRunSummary.failed}。截断不计死亡或通关；按书/点数/难度/输入组/获得路线分组见 summary.json。\n- 配置 hash：${summary.metadata.configHash}；内容 hash：${summary.metadata.contentHash}。\n- 命令：\`${summary.metadata.command}\`；Node ${summary.metadata.node}，${summary.metadata.platform}。\n\n详见 summary.json 与逐案 cases.jsonl；--limit 结果明确为 partial。\n`;
 }
 
+async function mergeFixedReports(options, config, metadata, builds, skipped) {
+  const rows = [], shards = new Set();
+  let expectedTotal = null, focused = null;
+  for (const path of options.merge) {
+    const source = JSON.parse(await readFile(resolve(path, 'summary.json'), 'utf8'));
+    const sourceMeta = source.metadata;
+    if (sourceMeta.phase !== 'fixed' || sourceMeta.configHash !== metadata.configHash || sourceMeta.contentHash !== metadata.contentHash || sourceMeta.plannedBuilds !== builds.length || !sourceMeta.shard || sourceMeta.limit !== null) throw new Error(`Incompatible fixed shard: ${path}`);
+    if (expectedTotal === null) { expectedTotal = sourceMeta.shard.total; focused = sourceMeta.focus; }
+    if (sourceMeta.shard.total !== expectedTotal || JSON.stringify(sourceMeta.focus) !== JSON.stringify(focused) || shards.has(sourceMeta.shard.index)) throw new Error(`Duplicate or mismatched fixed shard: ${path}`);
+    shards.add(sourceMeta.shard.index);
+    for (const line of (await readFile(resolve(path, 'cases.jsonl'), 'utf8')).split('\n')) if (line) rows.push(JSON.parse(line));
+  }
+  if (shards.size !== expectedTotal || [...Array(expectedTotal).keys()].some(index => !shards.has(index))) throw new Error('Missing fixed shard');
+  const cases = rows.filter(row => row.kind === 'case');
+  const focusedMatch = (field, value) => !focused?.[field] || focused[field].includes(String(value));
+  const planned = builds.filter(build => focusedMatch('book', build.book) && focusedMatch('tier', build.tier)).length * config.scenarios.filter(scene => focusedMatch('scene', scene.id)).length * config.modes.filter(mode => focusedMatch('mode', mode)).length * config.seeds.filter(seed => focusedMatch('seed', seed)).length * config.inputGroups.filter(group => focusedMatch('input', group.name)).reduce((sum, group) => sum + group.wpm.filter(wpm => focusedMatch('wpm', wpm)).length, 0);
+  const keys = new Set(cases.map(row => `${row.build.id}:${row.scenario.id}:${row.mode}:${row.wpm}:${row.seed}`));
+  if (cases.length !== planned || keys.size !== planned) throw new Error(`Incomplete or duplicate fixed matrix: ${cases.length} rows, ${keys.size} unique, ${planned} planned`);
+  metadata.phase = 'fixed-merged'; metadata.focus = focused; metadata.mergeSources = options.merge; metadata.plannedBuilds = builds.length; metadata.scheduledCases = cases.length; metadata.selectedCases = cases.length; metadata.finishedAt = new Date().toISOString();
+  const summary = summarize(rows, skipped, config, metadata, true);
+  await writeFile(resolve(options.out, 'summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
+  await writeFile(resolve(options.out, 'report.md'), reportMarkdown(summary));
+  await writeFile(resolve(options.out, 'cases.jsonl'), `${rows.map(row => JSON.stringify(row)).join('\n')}\n`);
+  process.stdout.write(`Balance diagnostic ${summary.status}: ${cases.length} merged fixed cases; ${options.out}\n`);
+  if (summary.counts.failed) process.exitCode = 1;
+}
+
 async function main() {
   const options = argumentsOf(process.argv.slice(2));
   const raw = await readFile(options.config, 'utf8'), config = JSON.parse(raw);
@@ -459,15 +525,20 @@ async function main() {
   const metadata = { version: 1, command: process.argv.map(value => JSON.stringify(value)).join(' '), config: options.config, out: options.out, configHash: sha(raw), contentHash: sha({ books: builtinContent.books, modes: builtinContent.modes, relics: builtinContent.relics, talents: builtinContent.talents, events: builtinContent.buildEvents, enemies: builtinContent.enemies, bosses: builtinContent.bosses, chapters: builtinContent.chapters, routes: builtinContent.routes }), node: process.version, platform: `${process.platform}/${process.arch}`, osRelease: release(), cpu: cpus()[0]?.model ?? 'unknown', cpuCount: cpus().length, memoryBytes: totalmem(), startedAt: new Date().toISOString() };
   await mkdir(options.out, { recursive: true });
   const skipped = [], builds = sampleBuilds(config, skipped), rows = [], refs = new Map();
+  if (options.merge) return mergeFixedReports(options, config, metadata, builds, skipped);
   const stream = createWriteStream(resolve(options.out, 'cases.jsonl'), { encoding: 'utf8' });
   const write = row => { rows.push(row); stream.write(`${JSON.stringify(row)}\n`); };
-  let scheduled = 0, partial = false;
-  outer: for (const build of builds) for (const tier of config.tiers.filter(item => item.name === build.tier)) for (const mode of config.modes) for (const group of config.inputGroups) for (const wpm of group.wpm) for (const seed of config.seeds) for (const scene of config.scenarios) {
-    if (scheduled >= options.limit) { partial = true; break outer; }
-    scheduled++;
-    const referenceKey = `${build.book}:${tier.name}:${mode}:${wpm}:${seed}:${scene.id}`;
+  const matches = (field, value) => !options.focus[field] || options.focus[field].includes(String(value));
+  let scheduled = 0, selected = 0, partial = options.phase === 'fixed' || Boolean(options.shard) || Object.keys(options.focus).length > 0;
+  if (options.phase === 'all' || options.phase === 'fixed') outer: for (const build of builds) for (const tier of config.tiers.filter(item => item.name === build.tier)) for (const mode of config.modes) for (const group of config.inputGroups) for (const wpm of group.wpm) for (const seed of config.seeds) for (const scene of config.scenarios) {
+    if (!matches('book', build.book) || !matches('tier', tier.name) || !matches('mode', mode) || !matches('input', group.name) || !matches('wpm', wpm) || !matches('seed', seed) || !matches('scene', scene.id)) continue;
+    if (options.shard && scheduled++ % options.shard.total !== options.shard.index) continue;
+    if (selected >= options.limit) { partial = true; break outer; }
+    if (!options.shard) scheduled++;
+    selected++;
+    const referenceKey = `${tier.name}:${mode}:${wpm}:${seed}:${scene.id}`;
     if (!refs.has(referenceKey)) {
-      const reference = { id: `reference:${build.book}:${tier.name}`, book: build.book, tier: tier.name, points: tier.points, talents: [], relics: [], spent: 0, opportunities: 0 };
+      const reference = { id: `reference:${config.books[0]}:${tier.name}`, book: config.books[0], tier: tier.name, points: tier.points, talents: [], relics: [], spent: 0, opportunities: 0 };
       let result;
       try { result = simulateFixed(reference, scene, tier, mode, wpm, seed, config); }
       catch (error) { result = { status: 'failed', reason: error.stack ?? String(error) }; }
@@ -485,8 +556,8 @@ async function main() {
     const survivalSensitivity = result.status === 'ok' ? { lambdaHalf: scenarioGain(result, reference, { ...config, lambda: config.lambda * .5 }), lambdaOneHalf: scenarioGain(result, reference, { ...config, lambda: config.lambda * 1.5 }) } : null;
     write({ kind: 'case', build, scenario: { id: scene.id, group: scene.group, seconds: scene.seconds, characters: scene.characters }, mode, wpm, inputGroup: group.name, seed, ...result, G, survivalSensitivity, referenceMismatch, referenceStatus: reference.status });
   }
-  if (!partial) for (const definition of builtinContent.buildEvents ?? []) for (const choiceId of ['rewrite', 'annotate', 'leave']) write(simulateEvent(definition, choiceId, builds, config));
-  if (!partial && config.bossLifecycle) {
+  if ((options.phase === 'all' && !partial || options.phase === 'extras')) for (const definition of builtinContent.buildEvents ?? []) for (const choiceId of ['rewrite', 'annotate', 'leave']) write(simulateEvent(definition, choiceId, builds, config));
+  if ((options.phase === 'all' && !partial || options.phase === 'extras') && config.bossLifecycle) {
     const tier = config.tiers.find(item => item.name === config.bossLifecycle.tier);
     for (const entry of reachableBossStages()) for (const book of config.books) for (const mode of config.bossLifecycle.modes) for (const wpm of config.bossLifecycle.wpm) for (const seed of config.seeds) {
       let result;
@@ -495,14 +566,15 @@ async function main() {
       write(result);
     }
   }
-  if (config.fullRun?.enabled && !partial) for (const book of config.books) for (const tier of config.tiers.filter(item => config.fullRun.tiers.includes(item.name))) for (const routeStrategy of config.fullRun.routes) for (const mode of config.modes) for (const group of config.inputGroups) for (const wpm of group.wpm) for (const seed of config.seeds) {
+  if (config.fullRun?.enabled && (options.phase === 'all' && !partial || options.phase === 'full')) for (const book of config.books) for (const tier of config.tiers.filter(item => config.fullRun.tiers.includes(item.name))) for (const routeStrategy of config.fullRun.routes) for (const mode of config.modes) for (const group of config.inputGroups) for (const wpm of group.wpm) for (const seed of config.seeds) {
+    if (!matches('book', book) || !matches('tier', tier.name) || !matches('route', routeStrategy) || !matches('mode', mode) || !matches('input', group.name) || !matches('wpm', wpm) || !matches('seed', seed)) continue;
     let result;
     try { result = simulateFullRun(book, tier, routeStrategy, mode, wpm, seed, config); }
     catch (error) { result = { kind: 'fullRun', book, tier: tier.name, routeStrategy, mode, wpm, seed, status: 'failed', reason: error.stack ?? String(error) }; }
     write({ inputGroup: group.name, ...result });
   }
   stream.end(); await once(stream, 'finish');
-  metadata.finishedAt = new Date().toISOString(); metadata.plannedBuilds = builds.length; metadata.scheduledCases = scheduled; metadata.limit = Number.isFinite(options.limit) ? options.limit : null;
+  metadata.finishedAt = new Date().toISOString(); metadata.plannedBuilds = builds.length; metadata.scheduledCases = scheduled; metadata.selectedCases = selected; metadata.limit = Number.isFinite(options.limit) ? options.limit : null; metadata.phase = options.phase; metadata.shard = options.shard; metadata.focus = options.focus;
   const summary = summarize(rows, skipped, config, metadata, partial);
   await writeFile(resolve(options.out, 'summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
   await writeFile(resolve(options.out, 'report.md'), reportMarkdown(summary));

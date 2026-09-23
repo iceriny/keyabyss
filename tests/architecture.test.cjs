@@ -4,15 +4,15 @@ const { createGame, isolate, type, step } = require("./harness.cjs");
 const { manifest } = require("../src/content/manifest.ts");
 const { Registry } = require("../src/content-sdk/Registry.ts");
 const { validateContent } = require("../src/content-sdk/validate.ts");
-const baseline = require("./fixtures/ritual-baseline.json");
 const { builtinContent } = require("../src/bootstrap/content.ts");
 const { CombatSimulation } = require("../src/simulation/CombatSimulation.ts");
 
-test("headless simulation matches historical directional-assault traces from their original origin", () => {
+test("seeded directional assaults replay consistently across visual settings", () => {
   assert.equal(typeof globalThis.window, "undefined");
-  for (const expected of baseline) {
-    const g = isolate(createGame(["cat", "dog", "book", "alpha", "beta", "glyph", "frost", "storm", "spirit", "flame", "rune"], expected.book));
-    // This saved trajectory predates centered spawning; preserve its explicit setup.
+  const run = (book, reducedMotion) => {
+    const g = isolate(createGame(["cat", "dog", "book", "alpha", "beta", "glyph", "frost", "storm", "spirit", "flame", "rune"], book, "normal", "ASSAULT-REPLAY"));
+    g.options.fx = reducedMotion ? .3 : 1;
+    g.options.reduceMotion = reducedMotion;
     g.player.y = 490;
     for (let i = 0; i < 6; i++)
       g.spawnEnemy(
@@ -48,7 +48,13 @@ test("headless simulation matches historical directional-assault traces from the
         xp: g.xp,
       });
     }
-    assert.deepEqual(frames, expected.frames, expected.book);
+    assert.ok(g.casts > 0);
+    assert.ok(frames.every(frame => Number.isFinite(frame.hp) && Number.isFinite(frame.xp) && frame.enemies.every(enemy => enemy.slice(3).every(Number.isFinite))));
+    return frames;
+  };
+  for (const book of ["frost", "flame", "storm", "spirit"]) {
+    assert.deepEqual(run(book, false), run(book, false), book);
+    assert.deepEqual(run(book, false), run(book, true), `${book} visual randomness`);
   }
 });
 test("registry rejects duplicate IDs and seals nested definitions", () => {

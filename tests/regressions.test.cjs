@@ -4,6 +4,7 @@ const {C,createGame:game,isolate,type,step}=require('./harness.cjs');
 test('lethal frost and paper casts never refresh the word before or after impact',()=>{
  for(const book of ['frost','spirit']){
   const g=isolate(game(['class','return'],book)),e=g.spawnEnemy('nib',640,280);
+  e.hp=e.maxHp=1;
   let refreshes=0;const wordFor=g.wordFor.bind(g);g.wordFor=(...args)=>{refreshes++;return wordFor(...args);};
   const word=e.word;type(g,e);
   assert.equal(refreshes,0);assert.equal(e.word,word);assert.ok(e.wordPending);assert.ok(!g.targets().includes(e));
