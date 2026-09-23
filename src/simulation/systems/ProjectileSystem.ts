@@ -70,9 +70,19 @@ export function launchShot(
   dmg: number,
   opts: SpellOptions = {},
 ) {
-  if (this.shots.length >= 110 || !target || target.dead) return;
   opts = { ...opts, weave: this.weave.capture(opts) };
+  if (this.shots.length >= 110 || !target || target.dead) { this.weave.miss(opts.weave, this.roomVisit); return; }
   if (!this.weave.accepts(this, opts.weave)) return;
+  if (opts.weave?.source === 'manual' && kind === 'ice')
+    opts.pierce = (opts.pierce ?? 0) + opts.weave.program.payloadPierce;
+  if (opts.weave) {
+    opts.weavePowerAtLaunch = opts.weave.resources.power;
+    this.weave.reserveHits(opts.weave, 1 + Math.max(0, opts.pierce ?? 0));
+  }
+  if (opts.weave?.source === 'manual' && opts.weave.root.basePower > 0) {
+    dmg *= opts.weave.resources.power / opts.weave.root.basePower;
+    opts.weaveScaled = true;
+  }
   const angle = Math.atan2(target.y - from.y, target.x - from.x),
     speed =
       kind === "ice"
@@ -172,6 +182,8 @@ export function updateShots(this: Context, dt: number) {
         from: { x: s.px - s.vx * 0.08, y: s.py - s.vy * 0.08 },
         depth: s.depth || 0,
         weave: s.weave,
+        weaveScaled: s.weaveScaled,
+        weavePowerAtLaunch: s.weavePowerAtLaunch,
       });
       if (primary) {
         this.releaseShot(s);
@@ -191,7 +203,10 @@ export function updateShots(this: Context, dt: number) {
       s.life <= 0
     )
       s.dead = true;
-    if (s.dead) this.releaseShot(s);
+    if (s.dead) {
+      this.weave.miss(s.weave, this.roomVisit);
+      this.releaseShot(s);
+    }
   }
 }
 

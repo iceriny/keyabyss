@@ -105,9 +105,14 @@ export function chain(
   dmg: number,
   count: number,
 ) {
+  const limit = this.stats.singleFocus && this.stats.singleStorm && this.book === 'storm'
+    ? Math.max(1, count - 1) : count;
+  if (limit < count) dmg *= count / limit;
+  const chainPacket = this.weave.capture({ direct: true });
+  this.weave.reserveHits(chainPacket, this.bookBehavior.nativeChain ? 1 + limit : (chainPacket?.hitBudget ?? 0) + limit);
   let from = origin,
     seen = new Set([origin.id]);
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < limit; i++) {
     const next = this.nearest(
       from,
       seen,
@@ -116,7 +121,8 @@ export function chain(
     if (!next) break;
     seen.add(next.id);
     this.arc(from, next, "#ffdd94", 3.5, 0.34 + i * 0.015);
-    this.strike(next, dmg, { from, kind: "storm", direct: false, depth: 1 });
+    this.strike(next, dmg, { from, kind: "storm", direct: false, depth: 1,
+      weave: chainPacket });
     from = next;
     dmg *= this.combatValue("chain.retention");
   }
@@ -131,20 +137,14 @@ export function strike(
   if (!e || e.dead) return;
   opts = { ...opts, weave: this.weave.capture(opts) };
   if (!this.weave.accepts(this, opts.weave)) return;
+  if (!opts.weaveScaled && opts.weave?.source === 'manual' && opts.weave.root.basePower > 0)
+    dmg *= opts.weave.resources.power / opts.weave.root.basePower;
   const frozen = e.freeze > 0;
   if (frozen) {
     dmg *= this.combatValue("frozen.multiplier");
     if (opts.empowered && opts.kind === "ice") dmg *= 1.25;
   }
-  if (opts.kind === "fire")
-    this.applyBurn(e, opts.empowered ? 2 : 1, opts.depth ?? 0);
   if (this.stats.execution && e.boss) dmg *= 1.15;
-  if (opts.kind === "ice") this.applyCold(e, opts.direct ? 100 : 48);
-  else if (this.stats.coldStacks) this.applyCold(e, this.combatValue("cold.amount"));
-  if (opts.direct && this.stats.bleedStacks) {
-    e.dot = 4;
-    e.dotStacks = Math.min(3, (e.dotStacks || 0) + 1);
-  }
   const origin = opts.from || this.player,
     force =
       (opts.kind === "ice"
@@ -155,11 +155,30 @@ export function strike(
           ? 190
           : 150) *
       this.combatValue("impulse.multiplier");
-  this.impulse(e, origin, force);
   const conduction = opts.kind === 'storm' || (this.stats.directConduction && opts.direct);
   const charged = e.conduct;
   const hitPosition = { x: e.x, y: e.y };
   const receipt = this.weave.beforeHit(this, e, dmg, opts);
+  if (opts.weave && !receipt) return;
+  dmg = receipt?.damage ?? dmg;
+  if (opts.kind === "fire") {
+    const radius = this.combatValue('fire.radius', { empowered: Number(!!opts.empowered) });
+    opts.burnSplashShare = opts.weave && this.enemies.some(other => other !== e && !other.dead &&
+      Math.hypot(other.x - e.x, other.y - e.y) <= radius) ? .5 : 0;
+    this.applyBurn(e, opts.empowered ? 2 : 1, opts.depth ?? 0, opts.weave,
+      opts.weave ? 1 - opts.burnSplashShare : 1);
+  }
+  if (opts.kind === "ice") {
+    const share = opts.weave ? Math.min(2, Math.max(0,
+      opts.weave.lastHitPower / Math.max(1, opts.weave.root.basePower))) : 1;
+    this.applyCold(e, (opts.direct ? 100 : 48) * share);
+  }
+  else if (this.stats.coldStacks) this.applyCold(e, this.combatValue("cold.amount"));
+  if (opts.direct && this.stats.bleedStacks) {
+    e.dot = 4;
+    e.dotStacks = Math.min(3, (e.dotStacks || 0) + 1);
+  }
+  this.impulse(e, origin, force);
   this.damage(e, dmg, opts.depth || 0, !!opts.direct, origin);
   this.weave.afterHit(this, receipt);
   if (opts.kind === "fire") this.fireImpact(e, dmg, opts);

@@ -1,4 +1,6 @@
 import { baseValues } from "../content/combat-values.ts";
+import { BUILD_EVENTS } from '../content/build-events.ts';
+import { TALENT_NODES } from '../content/talents.ts';
 import { spiritFlight } from "../content/books/spirit/flight.ts";
 import { manifest } from "../content/manifest.ts";
 import { Registry } from "../content-sdk/Registry.ts";
@@ -16,6 +18,8 @@ import {
 import { bookBehaviors } from "../content/book-behaviors.ts";
 import type { SimulationContent } from "../contracts/SimulationContent.ts";
 export const builtinContent: SimulationContent = Object.freeze({
+  buildEvents: BUILD_EVENTS,
+  talents: TALENT_NODES,
   spiritFlight,
   values: baseValues,
   audio: manifest.audio,

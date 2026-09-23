@@ -1,0 +1,23 @@
+.build-demonstration { grid-column: 1 / -1; padding: 26px 0 10px; border-top: 1px solid #cdbf9b55; color: #d9d4c5; }
+.build-demonstration header h3 { margin: 0 0 6px; color: #e8d9ad; font-size: 20px; }
+.build-demonstration header p { margin: 0 0 16px; color: #aeb9b5; }
+.build-demo-picker { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px 20px; margin-bottom: 18px; }
+.build-demo-picker button, .build-demo-actions button { border: 0; border-bottom: 1px solid #adbaae66; background: transparent; color: #d1d4ca; text-align: left; padding: 9px 3px; font: inherit; cursor: pointer; }
+.build-demo-picker button.selected, .build-demo-picker button:hover, .build-demo-actions button:hover { color: #ffe0a1; border-color: #e7cf87; }
+.build-demo-picker button:focus-visible, .build-demo-actions button:focus-visible { outline: none; color: #fff0c6; text-shadow: 0 0 12px #f0ce89; border-color: #f0ce89; }
+.build-demo-picker small { display: block; color: #8ca6a5; font-size: 11px; }
+.build-demo-description { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0 0 10px; }
+.build-demo-description p { margin: 0; color: #b9c5bf; }
+.build-demo-description strong { display: block; color: #e6d4a9; font-weight: 500; }
+.build-demo-actions { display: flex; align-items: center; gap: 20px; margin: 8px 0 15px; }
+.build-demo-actions button:disabled { opacity: .4; cursor: default; }
+.build-demo-actions span, .build-demo-event { color: #aebdb5; }
+.build-demo-build { color: #9fb0ad; margin: 4px 0; }
+.build-demo-error { color: #dfa89b; }
+.build-demo-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.build-demo-measures { border-top: 1px solid #bcae8755; padding-top: 10px; }
+.build-demo-measures h4 { margin: 0 0 8px; color: #e9d4a0; font-size: 15px; }
+.build-demo-measures dl { margin: 0; }
+.build-demo-measures dl div { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; }
+.build-demo-measures dt { color: #99aaa7; }
+.build-demo-measures dd { margin: 0; color: #e0e6da; font-variant-numeric: tabular-nums; }

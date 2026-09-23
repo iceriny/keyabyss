@@ -1,4 +1,13 @@
 export const combatStats = [
+  "carrierCapacity", "copyEfficiency", "materialRate", "heatCapacity",
+  "recoveryEfficiency", "recoveryExtract", "fragmentCount", "fragmentShare",
+  "chainCount", "chainShare", "chainReach", "carrierLifetime", "carrierDelay",
+  "thermalRelease", "carrierRetain", "carrierRelay", "crystalStorage",
+  "mergePayload", "concentrate", "forkPayload", "guardNewest", "reservePersist",
+  "payloadPierce", "markCarrier", "markSpread", "summonTransport",
+  "singleFrost", "singleFlame", "singleStorm", "singleSpirit", "copyInheritance",
+  "guardEfficiency", "spellPower", "materialConserve", "reactionEfficiency",
+  "paperRecovery", "missRecovery", "reserveThreshold", "copyCadence",
   "secondaryBinding", "singleFocus", "carrierRelease", "carrierGuard",
   "heatRecovery", "crystalPayload", "heatPayload", "conductionPayload",
   "copyPages", "swiftBinding", "scatterPages", "heavyPages",

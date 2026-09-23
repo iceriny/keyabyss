@@ -18,6 +18,9 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 import type { CombatRuntime } from "../Runtime.ts";
 type Context = Pick<
   CombatRuntime,
+  | "buildEvents"
+  | "refreshBuild"
+  | "openBuildEvent"
   | "afterUpgrade"
   | "beginRoom"
   | "book"
@@ -54,6 +57,7 @@ type Context = Pick<
 
 export function postCombat(this: Context, cleared = false) {
   if (this.state !== "playing") return;
+  while (this.pending > 0 && this.buildEvents.consumeRewardDebt()) this.pending--;
   if (this.pending > 0) {
     if (!cleared && !this.upgradeAt) {
       this.upgradeAt = this.time + 0.32;
@@ -110,7 +114,10 @@ export function drawRelics(
       cursor -= pool[index].weight;
       if (cursor < 0) break;
     }
-    choices.push(pool.splice(index, 1)[0].relic);
+    const selected = pool.splice(index, 1)[0].relic;
+    choices.push(selected);
+    // Preserve legal continuations while giving other families room in this offer.
+    if (selected.family) for (const item of pool) if (item.relic.family === selected.family) item.weight *= .55;
   }
   return choices;
 }
@@ -150,6 +157,7 @@ export function canUpgrade(
     longest: this.pool.longest,
     capabilities: this.capabilities,
     definitions: this.content.relics,
+    stats: this.stats,
   });
 }
 
@@ -163,8 +171,12 @@ export function chooseUpgrade(this: Context, id: string) {
   if (id === "renewal") {
     this.heal(25);
     this.player.dash = Math.min(this.player.maxDash, this.player.dash + 1);
-  } else this.relics[id] = (this.relics[id] || 0) + 1;
+  } else {
+    if (r?.evolution) delete this.relics[r.evolution.from];
+    this.relics[id] = (this.relics[id] || 0) + 1;
+  }
   if (id !== "renewal") this.relicRules.run("acquire", this, { id });
+  this.refreshBuild();
   this.sound.reward();
   this.emit("relics");
   if (r?.rarity === "awaken") this.emit("toast", `咒典觉醒 · ${r.name}`);
@@ -175,6 +187,7 @@ export function chooseUpgrade(this: Context, id: string) {
     this.beginRoom(this.queuedRoute);
     return;
   }
+  while (this.pending > 0 && this.buildEvents.consumeRewardDebt()) this.pending--;
   if (this.pending > 0) {
     this.pending--;
     this.afterUpgrade = after;
@@ -235,6 +248,13 @@ export function chooseRoute(this: Context, route: Route) {
   if (route.hurt) this.player.hp = Math.max(1, this.player.hp - route.hurt);
   if (route.shield)
     this.player.shield = Math.min(50, this.player.shield + route.shield);
+  if (route.type === 'event') {
+    if (this.openBuildEvent()) return;
+    this.heal(12);
+    this.emit('toast', '此处没有新的修订，整理手稿恢复 12 生命');
+    this.beginRoom(route);
+    return;
+  }
   if (route.relic) {
     this.afterUpgrade = "route";
     this.setState("upgrade");

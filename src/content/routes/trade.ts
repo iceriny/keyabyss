@@ -3,9 +3,7 @@ export default {
   id: "trade",
   name: "错页商人",
   icon: "trade",
-  desc: "支付 15 点生命，选择一件遗物。不会致死。",
-  type: "normal",
-  hurt: 15,
-  relic: true,
+  desc: "遇见修订事件，查看代价后选择借阅、演化或保留原稿。",
+  type: "event",
   word: "trade",
 } satisfies RouteDefinition;

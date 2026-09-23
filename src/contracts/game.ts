@@ -2,7 +2,7 @@ export type { BookId, ModeId } from "./content-ids.ts";
 import type { BookId, ModeId } from "./content-ids.ts";
 
 export type GameState =
-  "home" | "playing" | "paused" | "upgrade" | "route" | "result";
+  "home" | "playing" | "paused" | "upgrade" | "route" | "event" | "result";
 export interface Word {
   word: string;
   meaning?: string;
@@ -78,11 +78,15 @@ export interface RouteInfo {
   loop: number;
 }
 export interface Report {
+  buildEvents?: readonly import('./build-events.ts').BuildEventRecord[];
+  talentNames?: Readonly<Record<string, string>>;
+  relicDefinitions?: Readonly<Record<string, { name: string; description: string }>>;
   talents?: string[];
   talentPoints?: number;
   secondaryBook?: BookId;
   manualCharacters?: number;
   weave?: import('./combat-weave.ts').WeaveSummary;
+  buildTrace?: import('./build-trace.ts').BuildTrace;
   schemaVersion?: 2;
   runId?: string;
   settlementId?: string;
@@ -130,6 +134,7 @@ export interface Report {
   vocab: string;
 }
 export interface GameEvents {
+  event?(offer: import('./build-events.ts').BuildEventOffer): void;
   state?(state: GameState): void;
   hud?(): void;
   toast?(message: string): void;

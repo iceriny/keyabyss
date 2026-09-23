@@ -1,11 +1,11 @@
-import { RelicIcon } from "./RelicIcon";
-import { describeRelic } from "./relic-presentation.ts";
 import type { SessionView } from "../contracts/session.ts";
 import { useRelicFormulas } from "./useRelicFormulas.ts";
+import { RelicGraphPanel, type RelatedGraphEvent } from "./RelicGraphPanel";
 import { About } from "./About";
 import { GameText } from "./GameText";
 import { TERMS } from "../content/glossary.ts";
 import { BookArtwork } from "./BookArtwork";
+import { BuildDemonstrationPanel } from "./BuildDemonstrationPanel";
 import { TYPES, ELITES } from "../content/catalog.ts";
 import { useEffect, useRef, useState } from "react";
 import type {
@@ -16,11 +16,6 @@ import type {
 } from "../contracts/game.ts";
 import { C, vocabCommand } from "./storage";
 import { Button, Field, Key, Select, Toggle } from "./components";
-import {
-  RELIC_RARITIES,
-  relicRarity,
-  sortRelicsByRarity,
-} from "./relic-presentation.ts";
 
 export function SettingsPanel({
   settings,
@@ -197,6 +192,7 @@ export function HelpPanel() {
             咒文是敌人身上的可输入词条；词令是菜单中的英文指令。连续完词积累「连笔」；「共鸣」蓄满后可释放终式。绿色咒印的咒文写完后，可清除敌弹和危险预警。
           </p>
         </article>
+        <BuildDemonstrationPanel />
       </div>
     </GameText>
   );
@@ -205,10 +201,18 @@ export function CodexPanel({
   held,
   book,
   game,
+  relatedEvents,
+  eligibility,
+  wordLengths,
+  talents,
 }: {
   held?: Record<string, number>;
   book: BookId;
   game?: SessionView;
+  relatedEvents?: readonly RelatedGraphEvent[];
+  eligibility?: Readonly<Record<string, boolean>>;
+  wordLengths?: Readonly<{ shortest: number; longest: number }>;
+  talents?: readonly string[];
 }) {
   const formulas = useRelicFormulas();
   const [tab, setTab] = useState("books");
@@ -222,9 +226,6 @@ export function CodexPanel({
         `${t.name} ${t.aliases?.join(" ") ?? ""} ${t.description}`
           .toLocaleLowerCase()
           .includes(query)),
-  );
-  const relics = sortRelicsByRarity(
-    held ? C.RELICS.filter((r) => held[r.id]) : C.RELICS,
   );
   return (
     <GameText>
@@ -250,9 +251,8 @@ export function CodexPanel({
             ))}
           </div>
         )}
-        {(held || tab === "relics") && (
-          <p className="codex-note">按稀有度编目 · 普通 → 稀有 → 诅咒 → 觉醒</p>
-        )}
+        {(held || tab === "relics") && <RelicGraphPanel book={book} held={held} game={game} formulas={formulas} relatedEvents={relatedEvents} eligibility={eligibility} wordLengths={wordLengths} talents={talents} />}
+        {!held && tab !== "relics" && <>
         {!held && tab === "terms" && (
           <>
             <div className="glossary-tools">
@@ -324,48 +324,14 @@ export function CodexPanel({
                       </article>
                     ),
                   )
-                : relics.map((r) => (
-                    <article
-                      className={`codex-card ${relicRarity(r)}`}
-                      key={r.id}
-                      data-relic={r.id}
-                      data-rarity={relicRarity(r)}
-                    >
-                      <div className="codex-card-meta">
-                        <span className="codex-icon" aria-hidden="true">
-                          <RelicIcon id={r.id} />
-                        </span>
-                        <span className="codex-rarity">
-                          {RELIC_RARITIES[relicRarity(r)].label}
-                        </span>
-                        {r.tag !== RELIC_RARITIES[relicRarity(r)].label && (
-                          <span>{r.tag}</span>
-                        )}
-                      </div>
-                      <h3>
-                        {r.name}
-                        {held && ` × ${held[r.id]}`}
-                      </h3>
-                      <p>{describeRelic(r, C.RELICS, held ? game : undefined, formulas)}</p>
-                      {r.requires && (
-                        <p className="accent">
-                          觉醒前置：
-                          {r.requires
-                            .map(
-                              (id) => C.RELICS.find((x) => x.id === id)?.name,
-                            )
-                            .join(" + ")}
-                        </p>
-                      )}
-                    </article>
-                  ))}
-          {held && !relics.length && <p>尚未获得遗物。</p>}
+                : null}
           {!held && tab === "terms" && !terms.length && (
             <p className="glossary-empty">
               未找到匹配的术语，试试其他关键词或分类。
             </p>
           )}
         </div>
+        </>}
       </>
     </GameText>
   );

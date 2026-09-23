@@ -3,6 +3,7 @@ import { chooseEnemyWord } from "./EliteWords.ts";
 import { directionKeys, dodgeDirection } from "../../shared/defense.ts";
 import type { Point, CombatTarget } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
+import { displayBoundary, playableLength } from "../../vocabulary/index.ts";
 
 const { clamp, pick, random, hash } = C;
 const W = 1280,
@@ -120,7 +121,7 @@ export function input(this: Context, key: string) {
   if (key.length !== 1 || !/[a-zA-Z0-9_'\-]/.test(key)) return false;
   key = key.toLowerCase();
   this.typedTotal++;
-  this.sound.key(this.prefix.length + 1, this.bookData.audio);
+  this.sound.key(playableLength(this.prefix) + 1, this.bookData.audio);
   if (!this.target || (this.target.dead && (!this.prefix || this.target.kind))) {
     this.target = null;
     this.prefix = "";
@@ -160,17 +161,17 @@ export function input(this: Context, key: string) {
   }
   retainLock(this.target);
   this.correct++;
-  this.prefix += key;
+  this.prefix = this.target.word.slice(0, displayBoundary(this.target.word, playableLength(this.prefix) + 1));
   this.player.recoil = Math.max(this.player.recoil, 0.1);
   this.chargePulse = 1;
   this.sparks(this.player.x, this.player.y - 17, 2, this.bookData.color, 45);
   this.emit("hud");
   const auto =
-    this.autofill && this.prefix.length >= 2 && this.target.word.length > 2;
+    this.autofill && playableLength(this.prefix) >= 2 && playableLength(this.target.word) > 2;
   if (this.prefix === this.target.word || auto) {
     const t = this.target,
       perfect = !this.castError,
-      manualChars = this.prefix.length,
+      manualChars = playableLength(this.prefix),
       continuation = t.dead && !t.kind;
     if (auto) this.autofill = false;
     this.cancel(false);

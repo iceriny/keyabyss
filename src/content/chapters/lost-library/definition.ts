@@ -10,7 +10,8 @@ export default {
       boss: false,
       waves: 3,
       opening: ["nib", "quill", "wisp"],
-      enemies: ["nib", "quill", "quill", "guard", "split", "wisp", "ram"],
+      enemies: ["nib", "quill", "quill", "guard", "split", "wisp", "ram", "priest"],
+      formations: [["priest", "guard", "quill"]],
       easyEnemies: {
         belowRank: 2,
         pool: ["nib", "nib", "quill", "wisp"],
@@ -22,7 +23,8 @@ export default {
       boss: false,
       waves: 3,
       opening: ["nib", "quill", "wisp"],
-      enemies: ["nib", "quill", "quill", "guard", "split", "wisp", "ram"],
+      enemies: ["nib", "quill", "quill", "guard", "split", "wisp", "ram", "binder", "mortar", "leech"],
+      formations: [["binder", "ram", "wisp"], ["mortar", "guard", "leech"]],
       routes: ["rest", "trial", ["trade", "forge"]],
     },
     {

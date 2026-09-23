@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "lambda": 1,
+  "kappa": 1.3862943611198906,
+  "seeds": ["BUILD-A01", "BUILD-B02"],
+  "books": ["frost", "flame", "storm", "spirit"],
+  "modes": ["normal", "hard", "nightmare", "apocalypse"],
+  "tiers": [{ "name": "初始", "points": 2, "healthScale": 1 }, { "name": "中期", "points": 12, "healthScale": 2.1 }, { "name": "满点", "points": 24, "healthScale": 3.4 }],
+  "inputGroups": [{ "name": "中等", "wpm": [45, 60] }, { "name": "高手", "wpm": [120, 150] }],
+  "words": ["paper", "crystal", "ember", "thunder", "archive", "letter", "mirror", "shelter", "vessel", "recover", "conduit", "citadel"],
+  "sample": { "perFamily": 2, "maxRelicOpportunities": 5, "secondaryBooks": true },
+  "scenarios": [
+    { "id": "dense", "name": "密集群体", "group": "dense", "weight": 1, "seconds": 42, "characters": 180, "targets": [{ "type": "nib", "x": 550, "y": 280, "weight": 1 }, { "type": "quill", "x": 620, "y": 270, "weight": 1 }, { "type": "nib", "x": 700, "y": 300, "weight": 1 }, { "type": "quill", "x": 630, "y": 370, "weight": 1 }] },
+    { "id": "dispersed", "name": "分散接力", "group": "dispersed", "weight": 1, "seconds": 65, "characters": 255, "targets": [{ "type": "scribe", "x": 190, "y": 180, "weight": 1 }, { "type": "quill", "x": 1080, "y": 190, "weight": 1 }, { "type": "nib", "x": 220, "y": 650, "weight": 1 }, { "type": "scribe", "x": 1060, "y": 640, "weight": 1 }] },
+    { "id": "support", "name": "支援目标", "group": "support", "weight": 1, "seconds": 72, "characters": 270, "targets": [{ "type": "priest", "x": 690, "y": 220, "weight": 2 }, { "type": "guard", "x": 550, "y": 390, "weight": 1 }, { "type": "nib", "x": 790, "y": 450, "weight": 1 }] },
+    { "id": "pressure", "name": "弹幕压力", "group": "pressure", "weight": 1, "seconds": 80, "characters": 300, "targets": [{ "type": "mortar", "x": 860, "y": 220, "weight": 1.5 }, { "type": "binder", "x": 280, "y": 260, "weight": 1 }, { "type": "guard", "x": 660, "y": 520, "weight": 1 }] },
+    { "id": "durable", "name": "耐久单体", "group": "durable", "weight": 1, "seconds": 95, "characters": 360, "targets": [{ "type": "sentinel", "x": 710, "y": 260, "weight": 1 }] },
+    { "id": "boss", "name": "阶段首领", "group": "boss", "weight": 1, "kind": "boss", "seconds": 120, "characters": 450, "targets": [] }
+  ],
+  "fullRun": { "enabled": true, "seconds": 900, "tiers": ["初始", "满点"], "routes": ["ordinary", "favorable"], "weight": 0 },
+  "bossLifecycle": { "seconds": 300, "tier": "满点", "modes": ["normal", "apocalypse"], "wpm": [60, 150] },
+  "saturationThreshold": 0.95
+}

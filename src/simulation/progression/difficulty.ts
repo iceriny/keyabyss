@@ -14,6 +14,8 @@ export function difficulty(
     progress = clamp(time / 55, 0, 1);
   const opening = 1 + 0.3 * Math.max(0, 1 - stage / 3) * (1 - progress);
   const growth = 1 + stage * 0.075 + loop * 0.12;
+  const ordinaryHealthStage = Math.min(stage, 7);
+  const bossCadence = position.room.boss && m.rank >= 3 ? 0.06 * (m.rank - 2) : 0;
   // A route is a modest wager within the selected difficulty, not an extra difficulty tier.
   const trialHealth = elite ? [1.06, 1.08, 1.1, 1.12, 1.14][m.rank] : 1;
   const trialXP = elite ? [1.2, 1.25, 1.3, 1.35, 1.4][m.rank] : 1;
@@ -30,9 +32,8 @@ export function difficulty(
     health:
       m.health *
       (1 +
-        stage * (0.065 + m.rank * 0.009) +
-        stage * stage * 0.0025 +
-        loop * 0.18) *
+        ordinaryHealthStage * (0.055 + m.rank * 0.004) +
+        loop * 0.12) *
       trialHealth,
     damage: m.damage * (1 + stage * 0.045 + loop * 0.08),
     interval: Math.max(
@@ -63,7 +64,7 @@ export function difficulty(
     ),
     attack: Math.max(
       0.42,
-      m.window / (1 + stage * (0.018 + m.rank * 0.004) + loop * 0.04),
+      m.window / (1 + stage * (0.018 + m.rank * 0.004) + loop * 0.04 + bossCadence),
     ),
   };
 }

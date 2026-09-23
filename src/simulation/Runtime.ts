@@ -169,13 +169,17 @@ export interface WorldState {
 }
 export interface CombatSimulation extends WorldState {}
 export interface CombatRuntime extends WorldState {
+  readonly buildEvents: import('./progression/BuildEventSystem.ts').BuildEventSystem;
+  refreshBuild(): void;
+  openBuildEvent(): boolean;
+  chooseEvent(offerId: string, choiceId: string): boolean;
   parry(): void;
   parryFeedback(): void;
   parryContact(enemy: Enemy): boolean;
   reflectBullet(bullet: Bullet): void;
   counterHit(enemy: Enemy, damage?: number): void;
   inAttackRange(enemy: Enemy): boolean;
-  applyBurn(enemy: Enemy, stacks?: number, spreadDepth?: number): void;
+  applyBurn(enemy: Enemy, stacks?: number, spreadDepth?: number, source?: import('../contracts/combat-weave.ts').SpellPacket, sourceShare?: number): void;
   igniteExplosion(
     x: number,
     y: number,
@@ -184,6 +188,8 @@ export interface CombatRuntime extends WorldState {
     exclude?: Enemy | null,
     depth?: number,
     stacks?: number,
+    source?: import('../contracts/combat-weave.ts').SpellPacket,
+    sourceBudgetShare?: number,
   ): void;
   fireImpact(enemy: Enemy, damage: number, options: SpellOptions): void;
   tickBurn(enemy: Enemy, dt: number): void;

@@ -70,7 +70,7 @@
   background: linear-gradient(90deg,transparent,var(--school),#e2f5ed);
   box-shadow: 0 0 14px var(--school); opacity: .8;
 }
-#hud .cast-word { font: 400 32px/1.4 var(--font-display); min-height: 45px; text-shadow: 0 2px 8px #04080c; }
+#hud .cast-word { font: 400 32px/1.4 var(--font-display); min-height: 45px; white-space: pre-wrap; text-shadow: 0 2px 8px #04080c; }
 #hud .cast-word .typed { color: var(--school); text-shadow: 0 0 15px color-mix(in srgb,var(--school) 45%,transparent); }
 #hud .cast-ready { font: 13px/1.4 var(--font-small); letter-spacing: .28em; color: #95aab5; }
 #hud .cast-label { font: 11px var(--font-small); letter-spacing: .24em; color: #829baa; }

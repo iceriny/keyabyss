@@ -1,5 +1,22 @@
 import type { Word } from "../contracts/game.ts";
 type WordGroup = { initial: string; length: number; words: Word[] };
+/** Spaces remain visible, but never represent an input position. */
+export const playableLength = (word: string): number => word.length - (word.match(/ /g)?.length ?? 0);
+
+/** Display cursor immediately after the requested number of manually entered characters. */
+export function displayBoundary(word: string, manualChars: number): number {
+  if (manualChars <= 0) return 0;
+  let accepted = 0;
+  for (let index = 0; index < word.length; index++) {
+    if (word[index] !== " ") accepted++;
+    if (accepted >= manualChars) {
+      let boundary = index + 1;
+      while (word[boundary] === " ") boundary++;
+      return boundary;
+    }
+  }
+  return word.length;
+}
 interface ImportedEntry {
   word?: unknown;
   name?: unknown;
@@ -68,8 +85,9 @@ function normalize(entries: unknown) {
       .replace(/^\uFEFF/, "")
       .trim()
       .normalize("NFKC")
-      .toLowerCase();
-    if (!/^[a-z][a-z0-9_'\-]{0,23}$/.test(normalizedText)) {
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+    if (!/^[a-z][a-z0-9_'\-]*(?: [a-z][a-z0-9_'\-]*){0,5}$/.test(normalizedText) || playableLength(normalizedText) > 24) {
       invalid.push(normalizedText.slice(0, 70));
       continue;
     }
@@ -141,7 +159,7 @@ function parseImport(text: string, filename = "words.txt") {
   const out = normalize(entries);
   if (!out.words.length)
     throw Error(
-      "没有可用词条。支持 1–24 位英文词、数字、下划线、连字符和英文撇号；短语暂不参与战斗。",
+      "没有可用词条。支持 1–24 位可输入字符的英文词或短语，以及数字、下划线、连字符和英文撇号。",
     );
   return { ...out, title: name.slice(0, 80) };
 }
@@ -166,7 +184,7 @@ class WordPool {
     let shortest = 24,
       longest = 1;
     for (const word of this.words) {
-      const length = word.word.length,
+      const length = playableLength(word.word),
         initial = word.word[0],
         key = `${length}:${initial}`;
       let bucket = index.get(key);

@@ -10,6 +10,8 @@ import type {
 } from "./content.ts";
 import type { BookBehavior } from "../content-sdk/BookBehavior.ts";
 export interface SimulationContent {
+  readonly buildEvents?: readonly import('./build-events.ts').BuildEventDefinition[];
+  readonly talents?: readonly import('./talents.ts').TalentNode[];
   readonly spiritFlight: import("./spirit-flight.ts").SpiritFlightProfile;
   readonly values: import("./values.ts").ValueDefinitions;
   readonly elites: Readonly<

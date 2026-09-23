@@ -84,6 +84,7 @@ export interface Enemy extends TargetBase {
     tick: number;
     damage: number;
     spreadDepth: number;
+    contributions?: import('../contracts/spell-packets.ts').BurnContribution[];
     /** Remaining paid input energy; transferred heat never replenishes it. */
     recoverable?: number;
   };
@@ -213,6 +214,10 @@ export interface Blast extends Point {
 }
 export interface SpellOptions {
   weave?: import('../contracts/combat-weave.ts').SpellPayload;
+  /** Damage was fixed from the packet balance when the projectile was launched. */
+  weaveScaled?: boolean;
+  weavePowerAtLaunch?: number;
+  burnSplashShare?: number;
   kind?: string;
   direct?: boolean;
   empowered?: boolean;
@@ -306,6 +311,7 @@ export interface Trail extends Point {
 }
 export interface Spirit extends Point {
   i: number;
+  carryingPageId?: number;
   vx: number;
   vy: number;
   mode: "orbit" | "dive" | "return" | "cross";

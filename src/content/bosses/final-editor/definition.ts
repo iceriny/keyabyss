@@ -4,7 +4,7 @@ export default {
   name: "大校对官",
   behavior: "final-editor",
   appearance: "boss2",
-  health: [800, 1050, 1500, 2100, 2900],
+  health: [800, 1050, 1500, 2340, 3290],
   growth: 1.7,
   reinforcement: "priest",
   movementRadius: 95,
@@ -21,7 +21,10 @@ export default {
       name: "重写",
       above: 0.34,
       floor: 0.335,
-      summons: [],
+      summons: [
+        { enemy: "priest", x: 340, y: 305 },
+        { enemy: "guard", x: 450, y: 360 },
+      ],
     },
     {
       name: "终稿",
@@ -38,6 +41,7 @@ export default {
           x: 930,
           y: 260,
         },
+        { enemy: "reaper", x: 785, y: 380 },
       ],
     },
   ],

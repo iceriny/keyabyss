@@ -3,10 +3,7 @@ export default {
   id: "forge",
   name: "朱砂工坊",
   icon: "forge",
-  desc: "支付 10 点生命，获得 20 点护盾与一件遗物。",
-  type: "normal",
-  hurt: 10,
-  shield: 20,
-  relic: true,
+  desc: "研究构筑的另一种写法；以公开代价改变天赋与遗物的作用关系。",
+  type: "event",
   word: "forge",
 } satisfies RouteDefinition;

@@ -44,6 +44,11 @@ export interface Mode {
 export type RelicRarity = "common" | "rare" | "curse" | "awaken";
 
 export interface Relic {
+  family?: string;
+  budget?: number;
+  evolution?: { readonly from: string; readonly group: string };
+  eventOnly?: boolean;
+  connections?: readonly string[];
   provides?: readonly import('./combat-weave.ts').CombatCapability[];
   needs?: readonly import('./combat-weave.ts').CombatCapability[];
   modifies?: readonly import('./combat-weave.ts').CombatCapability[];
@@ -142,6 +147,7 @@ export interface EnemyProfile {
 }
 
 export interface RoomDefinition {
+  formations?: readonly (readonly string[])[];
   opening?: readonly string[];
   quota?: number;
   spawnDelay?: number;

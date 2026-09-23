@@ -9,8 +9,11 @@ import * as C from "../../shared/math.ts";
 const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 import type { CombatRuntime } from "../Runtime.ts";
+import type { WeaveContext } from './WeaveSystem.ts';
 type Context = Pick<
   CombatRuntime,
+  | keyof WeaveContext
+  | 'weave'
   | "content"
   | "combatValue"
   | "stats"
@@ -62,7 +65,11 @@ export function updateSpirits(this: Context, dt: number) {
       block: 0,
     });
   }
-  if (this.spirits.length > count) this.spirits.length = count;
+  if (this.spirits.length > count) {
+    for (const spirit of this.spirits.slice(count))
+      if (spirit.carryingPageId !== undefined) this.weave.cancelTransport(spirit.carryingPageId);
+    this.spirits.length = count;
+  }
   for (const s of this.spirits) {
     s.cooldown -= dt;
     s.block = Math.max(0, s.block - dt);
@@ -75,11 +82,16 @@ export function updateSpirits(this: Context, dt: number) {
       const target = marked || this.nearest(s, new Set(), 450);
       if (target) {
         s.targetId = target.id;
+        s.carryingPageId = this.weave.assignTransport(s, this.roomVisit);
         beginFlight(s, "dive", target, profile);
       }
     }
     const target = this.enemies.find((e) => !e.dead && e.id === s.targetId);
-    if (s.mode === "dive" && !target) beginFlight(s, "return", orbit, profile);
+    if (s.mode === "dive" && !target) {
+      if (s.carryingPageId !== undefined) this.weave.cancelTransport(s.carryingPageId);
+      s.carryingPageId = undefined;
+      beginFlight(s, "return", orbit, profile);
+    }
     const px = s.x,
       py = s.y;
     let hit = false;
@@ -135,7 +147,10 @@ export function updateSpirits(this: Context, dt: number) {
         s.vy = (s.y - py) / dt;
       }
       if (hit && target) {
-        this.strike(
+        if (s.carryingPageId !== undefined) {
+          this.weave.releaseTransport(this, s.carryingPageId, target);
+          s.carryingPageId = undefined;
+        } else this.strike(
           target,
           this.combatValue("summon.damage", {
             marked: Number(target.mark > 0),
@@ -155,6 +170,8 @@ export function updateSpirits(this: Context, dt: number) {
           s.mode = "orbit";
           s.flight = undefined;
         } else {
+          if (s.carryingPageId !== undefined) this.weave.cancelTransport(s.carryingPageId);
+          s.carryingPageId = undefined;
           s.cooldown = Math.max(s.cooldown, 0.2);
           beginFlight(s, "return", orbit, profile);
         }

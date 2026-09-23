@@ -6,6 +6,12 @@ import { emptyTalentConfiguration, earnedTalentPoints, readGodTalents, readTalen
 import { resolveTalentLoadout, resolveTalents, secondaryBookCandidates } from "../shared/talents.ts";
 import type { TalentLoadout } from "../contracts/talents.ts";
 import { TalentPanel } from "./TalentPanel.tsx";
+import { EventPanel } from "./EventPanel.tsx";
+import type { BuildEventOffer, BuildEventRecord } from "../contracts/build-events.ts";
+import type { CombatStat } from "../contracts/stats.ts";
+import { BUILD_EVENTS } from "../content/build-events.ts";
+import { RELICS } from "../content/catalog.ts";
+import { TALENT_NODES } from "../content/talents.ts";
 import { ResultPanel, HistoryPanel, OutcomeEffects } from "./RunResults.tsx";
 import { storage } from "./storage.ts";
 import { TooltipHost } from "./Tooltip";
@@ -68,6 +74,7 @@ type Screen =
       type: "route";
       offers: readonly import("../contracts/content.ts").RouteDefinition[];
     }
+  | { type: "event"; offer: BuildEventOffer }
   | { type: "result"; report: Report };
 const titles: Record<Screen["type"], string> = {
   calibration: "初入书库 · 调校共鸣",
@@ -82,10 +89,38 @@ const titles: Record<Screen["type"], string> = {
   bag: "当前构筑",
   upgrade: "选择遗物",
   route: "选择下一页",
+  event: "书页异文",
   result: "未完待续",
   history: "远征记录",
   talents: "天赋 · 书脉共鸣",
 };
+
+function relatedBuildEvents(records: readonly BuildEventRecord[]) {
+  return records.map(record => {
+    const definition = BUILD_EVENTS.find(item => item.id === record.definitionId);
+    const statKeys = new Set(Object.entries(record.choice.grants).filter(([, value]) => value !== undefined && value !== 0).map(([stat]) => stat));
+    const hasBuildEffect = statKeys.size > 0 || !!record.choice.replacement || record.choice.nodeIds.length > 0;
+    const requiredCapabilities = new Set(hasBuildEffect ? definition?.needs ?? [] : []);
+    const nodeIds = new Set(record.choice.nodeIds);
+    if (record.choice.replacement) {
+      nodeIds.add(`relic:${record.choice.replacement.from}`);
+      nodeIds.add(`relic:${record.choice.replacement.to}`);
+    }
+    for (const relic of RELICS) {
+      const sameStat = Object.keys(relic.grants ?? {}).some(stat => statKeys.has(stat));
+      const suppliesNeed = relic.provides?.some(capability => requiredCapabilities.has(capability));
+      const matchesDeclaredFamily = !definition?.family || relic.family === definition.family;
+      if ((sameStat || suppliesNeed) && matchesDeclaredFamily) nodeIds.add(`relic:${relic.id}`);
+    }
+    for (const talent of TALENT_NODES) {
+      const sameStat = Object.keys(talent.grants ?? {}).some(stat => statKeys.has(stat) || hasBuildEffect && definition?.talentStats?.includes(stat as CombatStat));
+      const suppliesNeed = talent.capabilities?.some(capability => requiredCapabilities.has(capability));
+      if (sameStat || suppliesNeed) nodeIds.add(`talent:${talent.id}`);
+    }
+    const status = record.status ? { active: "生效中", pending: "等待通过试炼", expired: "已到期", kept: "保留原稿", applied: "已完成改写" }[record.status] : record.active ? "生效中" : "已结束";
+    return { id: record.id, name: record.name, description: `${record.choice.name} · ${status}`, nodeIds: [...nodeIds] };
+  });
+}
 
 export function App() {
   const [archive, setArchive] = useState(() => readRunArchive(storage));
@@ -172,6 +207,9 @@ export function App() {
             },
           ]);
         },
+        event(offer) {
+          setStack([{ type: "event", offer }]);
+        },
         result(report) {
           const settlement = settleTalentProgress(talentsRef.current, report);
           if (settlement.progress !== talentsRef.current) {
@@ -253,6 +291,7 @@ export function App() {
       return;
     }
     if (!screen) return;
+    if (screen.type === "event") return;
     if (stack.length > 1) setStack((s) => s.slice(0, -1));
     else if (screen.type === "pause") game?.resume();
     else if (screen.type === "result") game?.home();
@@ -397,7 +436,10 @@ export function App() {
         <CodexPanel
           book={state === "home" ? book : game!.book}
           held={screen.type === "bag" ? game!.relics : undefined}
-          game={screen.type === "bag" ? game ?? undefined : undefined}
+          game={state === "home" ? undefined : game ?? undefined}
+          talents={state === "home" ? loadout.allocated : game?.talents}
+          wordLengths={state === "home" ? undefined : game?.wordLengths}
+          relatedEvents={state !== "home" && game?.buildEvents ? relatedBuildEvents(game.buildEvents) : undefined}
         />
       );
     if (screen.type === "vocab")
@@ -521,6 +563,8 @@ export function App() {
           onQuit={() => open("quit")}
         />
       );
+    if (screen.type === "event" && game)
+      content = <EventPanel offer={screen.offer} onChoose={choiceId => game.chooseEvent(screen.offer.id, choiceId)} />;
     if (screen.type === "result" && game)
       content = (
         <ResultPanel report={screen.report} game={game} onRetry={launch} onHistory={() => open("history")} onTalents={() => open("talents")} talentProgress={talents} />
@@ -615,7 +659,7 @@ export function App() {
           <div inert={!!loading}>
             <Modal
               effects={screen.type === "result" ? <OutcomeEffects /> : undefined}
-              variant={screen.type === "result" ? `outcome-modal ${screen.report.win ? "victory" : screen.report.outcome === "abandoned" ? "abandoned" : "defeat"}` : screen.type === "history" ? "history-modal" : screen.type === "talents" ? "talents-modal" : ["upgrade", "route"].includes(screen.type) ? "upgrade-modal" : screen.type === "calibration" ? "calibration-modal" : ""}
+              variant={screen.type === "result" ? `outcome-modal ${screen.report.win ? "victory" : screen.report.outcome === "abandoned" ? "abandoned" : "defeat"}` : screen.type === "history" ? "history-modal" : screen.type === "talents" ? "talents-modal" : screen.type === "event" ? "event-modal" : ["upgrade", "route"].includes(screen.type) ? "upgrade-modal" : screen.type === "calibration" ? "calibration-modal" : ""}
               title={
                 screen.type === "result"
                   ? screen.report.win ? "终稿已改写" : screen.report.outcome === "abandoned" ? "此行暂落笔" : "墨尽 · 未完待续"
@@ -629,13 +673,14 @@ export function App() {
                 "tutorial",
                 "upgrade",
                 "route",
+                "event",
                 "bag",
                 "result",
                 "history",
                 "talents",
               ].includes(screen.type)}
               onBack={
-                ["upgrade", "route", "result", "calibration"].includes(screen.type)
+                ["upgrade", "route", "event", "result", "calibration"].includes(screen.type)
                   ? undefined
                   : back
               }

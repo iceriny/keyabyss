@@ -5,6 +5,7 @@ import type { TalentLoadout } from "../contracts/talents.ts";
 import { TALENT_BOOKS, TALENT_NODES } from "../content/talents.ts";
 
 export const MAX_TALENT_POINTS = 24;
+export const MAX_KEYSTONES = 2;
 export const talentBudget = (value: number) => Number.isFinite(value) ? Math.max(0, Math.min(MAX_TALENT_POINTS, Math.floor(value))) : 0;
 const adjacent = new Map(TALENT_NODES.map(node => [node.id, new Set(node.links)]));
 for (const node of TALENT_NODES) for (const id of node.links) adjacent.get(id)?.add(node.id);
@@ -18,18 +19,21 @@ export function resolveTalents(book: string, allocated: readonly string[], budge
   const selected = new Set([root.id]);
   const capabilities = new Set<CombatCapability>(root.capabilities);
   const groups = new Set<string>();
-  const grants: Partial<Record<CombatStat, number>> = {};
+  const grants: Partial<Record<CombatStat, number>> = { ...root.grants };
   const limit = godMode ? Infinity : talentBudget(budget);
-  let spent = 0, changed = true;
+  let spent = 0, keystones = 0, changed = true;
   while (changed) {
     changed = false;
     for (const node of TALENT_NODES) {
       if (!candidates.has(node.id) || selected.has(node.id) || spent + node.cost > limit) continue;
       if (![...adjacent.get(node.id)!].some(id => selected.has(id))) continue;
       if (node.exclusive && groups.has(node.exclusive)) continue;
+      if (node.kind === 'keystone' && keystones >= MAX_KEYSTONES) continue;
       if (node.requires?.some(capability => !capabilities.has(capability))) continue;
+      if (node.requiresNodes?.some(id => !selected.has(id))) continue;
       selected.add(node.id);
       spent += node.cost;
+      if (node.kind === 'keystone') keystones++;
       if (node.exclusive) groups.add(node.exclusive);
       for (const capability of node.capabilities ?? []) capabilities.add(capability);
       for (const [stat, amount] of Object.entries(node.grants ?? {})) {

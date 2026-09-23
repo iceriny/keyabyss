@@ -3,6 +3,7 @@ import type { Route } from "../../contracts/game.ts";
 import { difficulty } from "./difficulty.ts";
 import { pick } from "../../shared/math.ts";
 import { assaultDirections } from "../../shared/assault.ts";
+import { spawnRoomFormation } from "./formations.ts";
 type Context = Pick<
   CombatRuntime,
   | "weave"
@@ -11,6 +12,7 @@ type Context = Pick<
   | "roomVisit"
   | "aimKeys"
   | "allowedEnemies"
+  | "arena"
   | "blasts"
   | "boss"
   | "bossName"
@@ -126,13 +128,14 @@ export function beginRoom(this: Context, route: Route = { type: "normal" }) {
     this.roomQuota = 0;
   } else {
     const n = this.mode.rank < 2 ? 1 : Math.min(3, this.mode.rank);
-    for (let i = 0; i < Math.min(n, this.roomQuota); i++) {
-      this.spawnEnemy(
-        (progress.room.opening ?? progress.room.enemies)[
-          i % (progress.room.opening ?? progress.room.enemies).length
-        ],
-      );
-      this.spawned++;
+    const openingCount = Math.min(n, this.roomQuota, this.pressure.cap);
+    if (this.mode.rank >= 3) this.spawned += Math.max(0, spawnRoomFormation(this, progress.room, openingCount, 0));
+    const opening = (progress.room.opening ?? progress.room.enemies).filter(type => this.allowedEnemies().includes(type));
+    for (let i = 0; i < opening.length && this.spawned < openingCount; i++) {
+      const type = opening[i % opening.length];
+      const living = this.enemies.filter(enemy => !enemy.dead && enemy.type === type).length;
+      if (living >= (this.content.enemies[type].behavior.spawnLimit ?? Infinity)) continue;
+      if (this.spawnEnemy(type)) this.spawned++;
     }
   }
   this.safePoint = null;
@@ -192,12 +195,14 @@ export function updateEncounter(this: Context, dt: number) {
         (this.chapter >= 1 && this.mode.rank >= 1 ? 1 : 0) +
         (this.chapter >= 2 && this.mode.rank >= 3 ? 1 : 0) +
         (this.wave === this.waveCount && this.mode.rank >= 3 ? 1 : 0);
-      for (
-        let i = 0;
-        i < batch &&
-        this.spawned < Math.ceil((this.roomQuota * this.wave) / this.waveCount);
-        i++
-      ) {
+      const remaining = Math.ceil((this.roomQuota * this.wave) / this.waveCount) - this.spawned;
+      const openSlots = this.pressure.cap - this.enemies.filter(e => !e.dead).length;
+      const batchSize = Math.min(batch, remaining, openSlots);
+      const created = this.mode.rank >= 2
+        ? spawnRoomFormation(this, this.campaign.at(this.stage).room, batchSize, Math.floor(this.spawned / 3))
+        : 0;
+      this.spawned += Math.max(0, created);
+      for (let i = Math.max(0, created); created >= 0 && i < batchSize; i++) {
         let allowed = this.allowedEnemies().filter(
           (type) =>
             this.enemies.filter((e) => !e.dead && e.type === type).length <

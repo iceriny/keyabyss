@@ -29,6 +29,7 @@ export default {
         "reaper",
         "vortex",
       ],
+      formations: [["reaper", "priest", "guard"], ["sentinel", "priest", "quill"], ["mortar", "guard", "leech"]],
       routes: ["rest", "gift", "trial"],
     },
     {
@@ -54,6 +55,7 @@ export default {
         "reaper",
         "vortex",
       ],
+      formations: [["binder", "brood", "wisp"], ["mirror", "ram", "scribe"], ["reaper", "priest", "guard"]],
       routes: ["rest", "trial", ["trade", "forge"]],
     },
     {

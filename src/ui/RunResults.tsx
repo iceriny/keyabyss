@@ -9,6 +9,7 @@ import { C, download, fmt } from "./storage";
 import { Button, Stat } from "./components";
 import { Tooltip } from "./Tooltip";
 import { Sigil } from "./Sigil";
+import { BuildTraceDetails } from './BuildTraceDetails';
 
 export const outcomeName = (r: Report) => r.win ? "胜利" : r.outcome === "abandoned" ? "主动结束" : "战败";
 const stageLabel = (r: Report) => `第 ${(r.loop ?? 0) + 1} 周目 · 第 ${r.chapter ?? 1} 章${r.room ? ` · 第 ${r.room} / ${r.roomCount ?? "—"} 节` : ""}`;
@@ -41,17 +42,24 @@ function ReportDetails({ report, compact = false, talentProgress }: { report: Re
     </dl>
     <div className="report-talents"><strong>{report.secondaryBook ? `合订副书 · ${C.BOOKS[report.secondaryBook]?.name ?? report.secondaryBook}` : "主书独行"}</strong>
       {typeof report.manualCharacters === "number" && <span> · 本局有效字符 {report.manualCharacters.toLocaleString()} · 获得天赋点 {report.godMode ? "0（God Mode）" : receipt ? `+${receipt.points}` : "—"}</span>}
-      {!!report.talents?.length && <div>出征天赋 · {report.talents.map(id => TALENT_BY_ID[id]?.name ?? id).join(" · ")}</div>}
+      {!!report.talents?.length && <div>出征天赋 · {report.talents.map(id => report.talentNames?.[id] ?? TALENT_BY_ID[id]?.name ?? id).join(" · ")}</div>}
       {report.weave && <div>法术后效 · 复写 {report.weave.pagesReleased} 次 · 护页拦截 {report.weave.pagesBlocked} 次 · 灼热碎片 {report.weave.fragments} 枚 · 回收余热 {Math.round(report.weave.recoveredHeat)}</div>}
+      {report.weave && <div>资源去向 · 容量拒收 {report.weave.rejectedPages ?? 0} 页 · 消散威力 {Math.round(report.weave.lostPower ?? 0)} · 损失余热 {Math.round(report.weave.lostHeat ?? 0)}</div>}
+      {!!report.buildEvents?.length && <section><h3>此行改写</h3>{report.buildEvents.map(event => <div key={event.id}>
+        <strong>第 {event.chapter + 1} 章 · {event.name} · {event.choice.name}</strong>
+        <p>{event.choice.description}</p>
+        <small>{event.choice.scope === "room" ? "一节有效" : event.choice.scope === "chapter" ? "本章有效" : "本局有效"}{event.choice.maxHealthCost ? ` · 生命上限 −${event.choice.maxHealthCost}` : ""}{event.choice.rewardDebt ? ` · 预支 ${event.choice.rewardDebt} 次遗物机会` : ""}</small>
+      </div>)}</section>}
     </div>
     <div className="report-columns">
       <section><h3>此行构筑 <small>{relics.length} 件遗物</small></h3>
-        <div className="report-relics" data-prose>{relics.length ? relics.map(([id, rank]) => { const relic = C.RELICS.find(r => r.id === id); return <span key={id}>{relic ? <Tooltip title={relic.name} description={relic.desc} category="遗物" term={id}>{relic.name}</Tooltip> : id} <b>×{rank}</b></span>; }) : <p>此行尚未获得遗物。</p>}</div>
+        <div className="report-relics" data-prose>{relics.length ? relics.map(([id, rank]) => { const current = C.RELICS.find(r => r.id === id); const relic = report.relicDefinitions?.[id] ?? (current ? { name: current.name, description: current.desc } : undefined); return <span key={id}>{relic ? <Tooltip title={relic.name} description={relic.description} category="遗物">{relic.name}</Tooltip> : id} <b>×{rank}</b></span>; }) : <p>此行尚未获得遗物。</p>}</div>
       </section>
       <section><h3>待重写的词 <small>按错误次数排列</small></h3>
         <div className="report-mistakes">{mistakes.length ? mistakes.map(([word, stat]) => <span key={word} title={stat.meaning}>{word} <b>×{stat.errors}</b></span>) : <p>{report.schemaVersion ? "本局没有错误词记录。" : "早期战报未保留逐词明细。"}</p>}</div>
       </section>
     </div>
+    <BuildTraceDetails report={report} />
     <div className="report-provenance"><span>{C.BOOKS[report.book]?.name ?? report.book} · {C.MODES[report.mode]?.name ?? report.mode} · {report.vocab}</span><span>种子 {report.seed} · v{report.version}</span></div>
   </div>;
 }

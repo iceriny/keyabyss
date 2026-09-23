@@ -1,4 +1,5 @@
 import relics_rebound from "./relics/rebound/definition.ts";
+import { expandedRelics } from './relics/expanded.ts';
 import relics_letterwake from './relics/letterwake/definition.ts';
 import relics_inscription from "./relics/inscription/definition.ts";
 import relics_copyfolio from "./relics/copyfolio/definition.ts";
@@ -208,6 +209,7 @@ export const manifest = {
     relics_emberink,
     relics_wirestitch,
     relics_letterwake,
+    ...expandedRelics,
   ],
   modes: [
     modes_story,

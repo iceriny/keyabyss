@@ -11,7 +11,7 @@ import type {
 /** Only capabilities needed by book abilities; no browser, renderers, progression or registry writes. */
 export interface BookAbilityContext {
   readonly arena: Readonly<import("../combat/model.ts").Arena>;
-  applyBurn(enemy: Enemy, stacks?: number, spreadDepth?: number): void;
+  applyBurn(enemy: Enemy, stacks?: number, spreadDepth?: number, source?: import('../contracts/combat-weave.ts').SpellPacket, sourceShare?: number): void;
   igniteExplosion(
     x: number,
     y: number,
@@ -20,6 +20,8 @@ export interface BookAbilityContext {
     exclude?: Enemy | null,
     depth?: number,
     stacks?: number,
+    source?: import('../contracts/combat-weave.ts').SpellPacket,
+    sourceBudgetShare?: number,
   ): void;
   effectSource(entity?: number): import("../contracts/effects.ts").EffectSource;
   applyEffect(

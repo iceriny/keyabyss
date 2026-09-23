@@ -3,6 +3,7 @@ import type { BookAbilityContext } from "../../content-sdk/BookBehavior.ts";
 
 import type { Point, CombatTarget } from "../../combat/model.ts";
 import * as C from "../../shared/math.ts";
+import { displayBoundary, playableLength } from "../../vocabulary/index.ts";
 
 const { clamp, pick, random, hash } = C;
 const W = 1280,
@@ -73,6 +74,7 @@ export function cast(
 ) {
   if (!t || (t.dead && (!continuation || t.kind)) || t.wordPending || this.state !== "playing") return;
   const word = t.word;
+  const wordLength = playableLength(word);
   this.domainEvents.publish({ type: "cast", entity: t.id, word });
   this.casts++;
   this.combo++;
@@ -119,10 +121,10 @@ export function cast(
     this.afterCast(t, perfect);
     return;
   }
-  const shortWord = this.relicRules.wordModifierApplies(this.relics, "shortWordDamage", word.length);
-  const longWord = this.relicRules.wordModifierApplies(this.relics, "longWordDamage", word.length);
+  const shortWord = this.relicRules.wordModifierApplies(this.relics, "shortWordDamage", wordLength);
+  const longWord = this.relicRules.wordModifierApplies(this.relics, "longWordDamage", wordLength);
   let dmg = this.combatValue("cast.base", {
-    wordLength: word.length, shortWord: Number(shortWord),
+    wordLength, shortWord: Number(shortWord),
     longWord: Number(longWord), perfect: Number(perfect),
   });
   if (shortWord) {
@@ -140,9 +142,9 @@ export function cast(
     dmg *= 2;
     this.reflectionBoost = false;
   }
-  dmg *= (this.stats.singleFocus ? 1.3 : 1) * this.weave.letterMultiplier(t, manualChars ?? (auto ? 0 : word.length));
+  dmg *= this.weave.letterMultiplier(t, displayBoundary(word, manualChars ?? (auto ? 0 : wordLength)), !!this.stats.markCarrier, dmg * (1 + this.stats.spellPower));
   const echoCast = this.stats.echoCast && this.casts % 3 === 0;
-  this.weaveCast(t, dmg, manualChars ?? (auto ? 0 : word.length), (recipient) => {
+  this.weaveCast(t, dmg, manualChars ?? (auto ? 0 : wordLength), (recipient) => {
     this.bookBehavior.cast(this, recipient, dmg, empowered, critical);
     if (this.stats.chainTargets && !this.bookBehavior.nativeChain)
       this.chain(recipient, dmg * 0.45, this.stats.chainTargets);

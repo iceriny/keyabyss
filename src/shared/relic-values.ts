@@ -7,6 +7,7 @@ import {
   wordModifierApplies,
 } from "./relic-build.ts";
 import { DEFENSE } from "./defense.ts";
+import { playableLength } from "../vocabulary/index.ts";
 export { relicMultiplier } from "./relic-build.ts";
 
 export type RelicPreview = Pick<
@@ -60,7 +61,7 @@ export function describeRelic(
   const book = game ? books[game.book] : undefined;
   const wordLength =
     game?.target && !game.target.dead
-      ? game.target.word.length
+      ? playableLength(game.target.word)
       : (relic.description.wordLength ?? defaults.wordLength);
   const inputs: Record<string, number> = {
     ...Object.fromEntries(

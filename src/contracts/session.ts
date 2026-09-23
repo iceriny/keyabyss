@@ -2,6 +2,10 @@ import type { Book, Mode } from "./content.ts";
 import type { Config, Settings, GameState, BookId } from "./game.ts";
 
 export interface HudSnapshot {
+  readonly buildStats: Readonly<import('./stats.ts').CombatStats>;
+  readonly talents: readonly string[];
+  readonly wordLengths: Readonly<{ shortest: number; longest: number }>;
+  readonly buildEvents: readonly import('./build-events.ts').BuildEventRecord[];
   readonly capabilities: readonly import('./combat-weave.ts').CombatCapability[];
   readonly state: GameState;
   readonly godMode: boolean;
@@ -72,6 +76,7 @@ export type GameCommand =
         | "god-mode";
     }
   | { type: "upgrade"; id: string }
+  | { type: 'event'; offerId: string; choiceId: string }
   | { type: "route"; id: string };
 export interface SessionView extends HudSnapshot {
   getSnapshot(): HudSnapshot;
@@ -94,4 +99,5 @@ export interface SessionView extends HudSnapshot {
   rerollUpgrade(): void;
   chooseUpgrade(id: string): void;
   chooseRoute(id: string): void;
+  chooseEvent(offerId: string, choiceId: string): void;
 }

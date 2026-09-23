@@ -1,4 +1,4 @@
-import { WordPool } from "../../vocabulary/index.ts";
+import { WordPool, playableLength } from "../../vocabulary/index.ts";
 import type { CombatTarget } from "../../combat/model.ts";
 import type { EliteDefinition } from "../../contracts/content.ts";
 import type { CombatRuntime } from "../Runtime.ts";
@@ -19,7 +19,7 @@ const cache = new WeakMap<WordPool, { all: PoolIndex; punctuated: PoolIndex | nu
 function indexPool(pool: WordPool): PoolIndex {
   const counts = new Map<string, PoolIndex["groups"][number]>();
   for (const entry of pool.words) {
-    const length = entry.word.length, initial = entry.word[0];
+    const length = playableLength(entry.word), initial = entry.word[0];
     const key = `${length}:${initial}`;
     const group = counts.get(key);
     if (group) group.count++;
@@ -42,7 +42,7 @@ function selectionTier(
     const result = new Map<string, number>();
     for (const word of new Set(words)) {
       if (!index.members.has(word)) continue;
-      const key = `${word.length}:${word[0]}`;
+      const key = `${playableLength(word)}:${word[0]}`;
       result.set(key, (result.get(key) ?? 0) + 1);
     }
     return result;

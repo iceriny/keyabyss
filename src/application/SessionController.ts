@@ -28,7 +28,8 @@ export class SessionController implements SessionView {
       });
     const hud = game.events.hud,
       upgrade = game.events.upgrade,
-      route = game.events.route;
+      route = game.events.route,
+      event = game.events.event;
     const onHud = () => {
       hud?.();
       this.publish();
@@ -42,19 +43,26 @@ export class SessionController implements SessionView {
       this.publish();
       route?.(info);
     };
+    const onEvent: NonNullable<Game['events']['event']> = offer => { this.publish(); event?.(offer); };
     game.events.hud = onHud;
     game.events.upgrade = onUpgrade;
     game.events.route = onRoute;
+    game.events.event = onEvent;
     this.#release = () => {
       if (game.events.hud === onHud) game.events.hud = hud;
       if (game.events.upgrade === onUpgrade) game.events.upgrade = upgrade;
       if (game.events.route === onRoute) game.events.route = route;
+      if (game.events.event === onEvent) game.events.event = event;
     };
   }
   private read(): HudSnapshot {
     const g = this.#game,
       p = g.player;
     return Object.freeze({
+      buildStats: Object.freeze({ ...g.stats }),
+      talents: Object.freeze([...(g.config?.talents ?? [])]),
+      wordLengths: Object.freeze({ shortest: g.pool?.shortest ?? 0, longest: g.pool?.longest ?? 0 }),
+      buildEvents: Object.freeze([...g.buildEvents.records]),
       state: g.state,
       godMode: g.godMode,
       capabilities: Object.freeze([...g.capabilities]),
@@ -160,7 +168,7 @@ export class SessionController implements SessionView {
         g.home();
         break;
       case "quit":
-        if (!["playing", "paused", "upgrade", "route"].includes(g.state))
+        if (!["playing", "paused", "upgrade", "route", "event"].includes(g.state))
           return false;
         g.end(false, "abandoned");
         break;
@@ -175,6 +183,10 @@ export class SessionController implements SessionView {
         if (!this.#offer.has(command.id) || g.state !== "upgrade") return false;
         this.#offer.clear();
         g.chooseUpgrade(command.id);
+        break;
+      case 'event':
+        if (g.state !== 'event') return false;
+        accepted = g.chooseEvent(command.offerId, command.choiceId);
         break;
       case "route": {
         const route = g.content.routes.find((r) => r.id === command.id);
@@ -259,5 +271,8 @@ export class SessionController implements SessionView {
   }
   chooseRoute(id: string) {
     this.dispatch({ type: "route", id });
+  }
+  chooseEvent(offerId: string, choiceId: string) {
+    this.dispatch({ type: 'event', offerId, choiceId });
   }
 }

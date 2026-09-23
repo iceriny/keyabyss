@@ -2,6 +2,7 @@ import { collectValues } from "../shared/relic-build.ts";
 import { collectCapabilities } from '../shared/combat-capabilities.ts';
 import { resolveTalents } from '../shared/talents.ts';
 import { WeaveSystem } from './systems/WeaveSystem.ts';
+import { BuildEventSystem, type BuildEventContext } from './progression/BuildEventSystem.ts';
 import { ValueRules } from "../shared/ValueRules.ts";
 import { DEFENSE } from "../shared/defense.ts";
 import { counterWorldDelta, dodgeDirection } from "../shared/defense.ts";
@@ -52,12 +53,56 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 export interface CombatSimulation extends WorldState {}
 export class CombatSimulation {
   readonly weave = new WeaveSystem();
+  readonly buildEvents = new BuildEventSystem();
   private talentGrants: Partial<import('../contracts/stats.ts').CombatStats> = {};
+  private activeGrants: Partial<import('../contracts/stats.ts').CombatStats> = {};
+  get buildSourceIds(): readonly string[] {
+    return [`book:${this.book}`, ...(this.config?.talents ?? []).map(id => `talent:${id}`),
+      ...Object.keys(this.relics ?? {}).filter(id => this.relics[id] > 0).sort().map(id => `relic:${id}`),
+      ...this.buildEvents.records.filter(record => record.active).map(record => `event:${record.id}`)];
+  }
+  refreshBuild() {
+    const grants = { ...this.talentGrants };
+    for (const [stat, value] of Object.entries(this.buildEvents.grants)) {
+      const key = stat as import('../contracts/stats.ts').CombatStat;
+      grants[key] = (grants[key] ?? 0) + value!;
+    }
+    this.activeGrants = grants;
+    if (this.config && this.bookData) this.weave.syncBuild(this);
+  }
+  private buildEventContext(): BuildEventContext {
+    return { runId: this.runId, room: this.roomVisit, chapter: this.campaign.at(this.stage).chapter,
+      capabilities: this.capabilities, talentGrants: this.talentGrants, talents: this.config.talents ?? [],
+      talentSources: this.content.talents ?? [], relics: this.relics, definitions: this.content.relics, hp: this.player.hp, maxHp: this.player.maxHp };
+  }
+  openBuildEvent(): boolean {
+    const offer = this.buildEvents.open(this.content.buildEvents ?? [], this.buildEventContext(), this.rng);
+    if (!offer) return false;
+    this.setState('event');
+    this.emit('event', offer);
+    return true;
+  }
+  chooseEvent(offerId: string, choiceId: string): boolean {
+    if (this.state !== 'event') return false;
+    const result = this.buildEvents.commit(offerId, choiceId, this.buildEventContext());
+    if (!result) return false;
+    this.relics = result.relics;
+    this.player.maxHp = result.maxHp;
+    this.player.hp = result.hp;
+    this.refreshBuild();
+    this.emit('relics');
+    this.beginRoom(this.queuedRoute);
+    return true;
+  }
   private talentCapabilities: readonly import('../contracts/combat-weave.ts').CombatCapability[] = [];
   get capabilities() {
     const secondary = this.stats.secondaryBinding && !this.stats.singleFocus ? this.content.books[this.config?.secondaryBook ?? ''] : undefined;
     return collectCapabilities(this.bookData ?? this.content.books.frost, this.content.relics, this.relics ?? {},
-      [...this.talentCapabilities, ...(secondary?.combat?.capabilities ?? [])]);
+      [...this.talentCapabilities, ...(secondary?.combat?.capabilities ?? []),
+        ...(this.activeGrants.carrierGuard ? ['guard' as const] : []),
+        ...(this.activeGrants.carrierRelease ? ['release' as const] : []),
+        ...(this.activeGrants.crystalStorage || this.activeGrants.copyPages ? ['carrier' as const] : []),
+        ...(this.activeGrants.heatRecovery || this.activeGrants.paperRecovery || this.activeGrants.missRecovery ? ['recovery' as const] : [])]);
   }
   weaveCast(target: Enemy, damage: number, manualChars: number, release: (recipient: Enemy) => void) {
     this.weave.cast(this, target, damage, manualChars, release);
@@ -152,7 +197,7 @@ export class CombatSimulation {
     this.campaign = new Campaign(content.chapters);
     this.valueRules = new ValueRules(collectValues(content.values, content.relics));
     this.relicRules = new RelicRules(content.relics);
-    this.stats = this.relicRules.createStats(() => this.relics || {}, () => this.talentGrants);
+    this.stats = this.relicRules.createStats(() => this.relics || {}, () => this.activeGrants);
     this.events = events;
     this.state = "home";
     this.sound = feedback;
@@ -202,6 +247,7 @@ export class CombatSimulation {
   }
 
   start(config: Config) {
+    this.buildEvents.reset();
     this.runId = globalThis.crypto?.randomUUID?.() ?? `run-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     this.domainEvents.reset();
     this.presentationCues.reset();
@@ -216,6 +262,7 @@ export class CombatSimulation {
     const budget = Number.isFinite(config.talentPoints) ? clamp(Math.floor(config.talentPoints!), 0, 24) : 2;
     const talents = resolveTalents(this.book, Array.isArray(config.talents) ? config.talents : [], budget, this.godMode);
     this.talentGrants = talents.grants;
+    this.activeGrants = { ...talents.grants };
     this.talentCapabilities = talents.capabilities;
     this.config.talents = [...talents.allocated];
     this.config.talentPoints = budget;
@@ -301,7 +348,17 @@ export class CombatSimulation {
 
   beginRoom(route?: import("../contracts/game.ts").Route) {
     this.activeStage = this.stage;
+    this.buildEvents.advance(this.roomVisit + 1, this.campaign.at(this.stage).chapter);
+    this.refreshBuild();
     EncounterDirector.beginRoom.call(this, route);
+    this.weave.syncBuild(this);
+    this.applyEventPressure();
+  }
+  private applyEventPressure() {
+    const risk = this.buildEvents.pressure(this.roomVisit);
+    if (!risk) return;
+    this.pressure = { ...this.pressure, damage: this.pressure.damage * (1 + risk),
+      interval: this.pressure.interval / (1 + risk), cap: Math.min(26, this.pressure.cap + Math.ceil(risk * 10)) };
   }
   updateEncounter = EncounterDirector.updateEncounter;
   finishEncounter = EncounterDirector.finishEncounter;
@@ -388,6 +445,7 @@ export class CombatSimulation {
       this.roomMod === "elite",
       this.campaign.at(this.stage),
     );
+    this.applyEventPressure();
     const p = this.player;
     p.invuln = Math.max(0, p.invuln - realDt);
     p.parryCooldown = Math.max(0, p.parryCooldown - realDt);
@@ -453,7 +511,11 @@ export class CombatSimulation {
 
   chooseUpgrade = RewardSystem.chooseUpgrade;
 
-  completeRoom = RewardSystem.completeRoom;
+  completeRoom() {
+    this.buildEvents.completeRoom(this.roomVisit);
+    this.refreshBuild();
+    RewardSystem.completeRoom.call(this);
+  }
 
   chooseRoute = RewardSystem.chooseRoute;
 
@@ -476,13 +538,20 @@ export class CombatSimulation {
     this.cancel(false);
     this.setState("result");
     this.sound.result(win);
+    this.clearSpellResources();
+    const buildTrace = this.weave.trace;
+    const referencedRelics = new Set(buildTrace.entries.flatMap(entry => entry.sourceIds.filter(id => id.startsWith('relic:')).map(id => id.slice(6))));
     this.emit("result", {
       schemaVersion: 2,
+      buildEvents: this.buildEvents.records,
+      talentNames: Object.fromEntries((this.content.talents ?? []).filter(node => this.config.talents?.includes(node.id)).map(node => [node.id, node.name])),
+      relicDefinitions: Object.fromEntries(this.content.relics.filter(relic => this.relics[relic.id] || referencedRelics.has(relic.id)).map(relic => [relic.id, { name: relic.name, description: relic.desc }])),
       talents: [...(this.config.talents ?? [])],
       talentPoints: this.config.talentPoints,
       secondaryBook: this.config.secondaryBook,
       manualCharacters: this.weave.summary.manualCharacters,
       weave: this.weave.summary,
+      buildTrace,
       runId: this.runId,
       settlementId: `${this.runId}:${this.loopCount}`,
       endedAt: new Date().toISOString(),
@@ -551,8 +620,16 @@ export class CombatSimulation {
 
   updateVisual = PresentationSystem.updateVisual;
 
-  resetArrays() {
+  private clearSpellResources() {
+    for (const shot of this.shots ?? []) {
+      this.weave.miss(shot.weave, -1);
+      shot.dead = true;
+    }
     this.weave.resetRoom();
+  }
+
+  resetArrays() {
+    this.clearSpellResources();
     WordReservations.cancel(this.shots ?? [], this.enemies ?? []);
     this.particlePool ??= [];
     for (const p of this.particles || [])
