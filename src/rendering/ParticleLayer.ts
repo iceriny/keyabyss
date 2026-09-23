@@ -162,7 +162,7 @@ export class ParticleLayer {
     }
     // A new burst can arrive in a frozen preview. Otherwise zero delta preserves pause exactly.
     // Even update(0) reevaluates Quarks' life curves, so don't simulate a frozen frame.
-    if (delta > 0 || emitted || reset)
+    if (emitted || reset || (delta > 0 && this.count > 0))
       this.batch.update(delta || (emitted ? 0.001 : 0));
   }
 

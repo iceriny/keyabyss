@@ -2,8 +2,8 @@ import { enemyInCombat } from "../shared/arena.ts";
 import { clamp } from "../shared/math.ts";
 import { canvasFont } from "../shared/typography.ts";
 import { assaultAngle, assaultDirections } from "../shared/assault.ts";
-import { layoutWordLabels } from "./WordLabelLayout.ts";
-import type { Box, Enemy, Label } from "../combat/model.ts";
+import { layoutWordLabels, type WordLabelMetrics } from "./WordLabelLayout.ts";
+import type { Box, Enemy, Label, CombatTarget } from "../combat/model.ts";
 import type { OverlayFrame } from "../contracts/overlay-frame.ts";
 const W = 1280,
   H = 800,
@@ -13,6 +13,7 @@ const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
 /** Owns text layout and pointer hit boxes; never changes simulation state. */
 export class OverlayRenderer {
   readonly textMetrics = new Map<string, number>();
+  private labelMetrics = new WeakMap<Readonly<CombatTarget>, WordLabelMetrics>();
   labels: Label[] = [];
   castLabel: (Box & { text: string }) | null = null;
   constructor(private readonly frame: OverlayFrame) {}
@@ -31,6 +32,7 @@ export class OverlayRenderer {
   dispose() {
     this.clear();
     this.textMetrics.clear();
+    this.labelMetrics = new WeakMap();
   }
   render(ui: CanvasRenderingContext2D) {
     this.drawAssaultCompass(ui);
@@ -301,7 +303,7 @@ export class OverlayRenderer {
     const labels = layoutWordLabels(this.frame, (word, font) => {
       c.font = canvasFont(font, 600);
       return this.textWidth(c, word);
-    });
+    }, this.labelMetrics);
     this.labels = labels;
     for (const l of labels) {
       const t = l.target,

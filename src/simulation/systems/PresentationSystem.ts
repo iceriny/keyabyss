@@ -121,16 +121,18 @@ export function updateVisual(this: Context, dt: number) {
   this.kickX = (this.kickX || 0) * Math.exp(-dt * 14);
   this.kickY = (this.kickY || 0) * Math.exp(-dt * 14);
   for (const f of this.fx) f.life -= dt;
+  const drag = Math.exp(-dt * 2.3);
   for (const p of this.particles) {
     p.life -= dt;
     p.px = p.x;
     p.py = p.y;
     p.x += p.vx * dt;
     p.y += p.vy * dt;
-    p.vx *= Math.exp(-dt * 2.3);
-    p.vy *= Math.exp(-dt * 2.3);
+    p.vx *= drag;
+    p.vy *= drag;
     p.angle += p.spin * dt;
   }
+  const airborneDrag = Math.exp(-dt * 1.2), groundDrag = Math.exp(-dt * 7), spinDrag = Math.exp(-dt * 8);
   for (const d of this.corpses) {
     d.life -= dt;
     d.x += d.vx * dt;
@@ -146,14 +148,14 @@ export function updateVisual(this: Context, dt: number) {
         d.spin *= 0.5;
       } else {
         d.vz = 0;
-        d.spin *= Math.exp(-dt * 8);
+        d.spin *= spinDrag;
       }
       d.vx *= 0.7;
       d.vy *= 0.7;
     }
-    const friction = d.z > 0 ? 1.2 : 7;
-    d.vx *= Math.exp(-dt * friction);
-    d.vy *= Math.exp(-dt * friction);
+    const friction = d.z > 0 ? airborneDrag : groundDrag;
+    d.vx *= friction;
+    d.vy *= friction;
   }
   for (const d of this.decals) d.life -= dt;
   for (const t of this.trails) t.life -= dt;
@@ -163,10 +165,17 @@ export function updateVisual(this: Context, dt: number) {
     else if (this.particlePool.length < 760) this.particlePool.push(particle);
   }
   this.particles.length = live;
-  this.fx = this.fx.filter((f) => f.life > 0);
-  this.trails = this.trails.filter((t) => t.life > 0);
-  this.corpses = this.corpses.filter((d) => d.life > 0);
-  this.decals = this.decals.filter((d) => d.life > 0);
+  compactLiving(this.fx);
+  compactLiving(this.trails);
+  compactLiving(this.corpses);
+  compactLiving(this.decals);
+}
+
+/** Preserve transparent paint order while reusing the frame's backing arrays. */
+function compactLiving<T extends { life: number }>(items: T[]) {
+  let live = 0;
+  for (const item of items) if (item.life > 0) items[live++] = item;
+  items.length = live;
 }
 
 export function arc(

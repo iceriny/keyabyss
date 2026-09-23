@@ -2,12 +2,12 @@
 Run after build; performance samples are collected only after functional checks.
 """
 from pathlib import Path
-import json, sys
+import json, os, sys
 from playwright.sync_api import sync_playwright
 from browser_support import launch_browser
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / '.temp/test-output-native'
+OUT = ROOT / os.environ.get('KEYABYSS_TEST_OUT', '.temp/test-output-native')
 OUT.mkdir(parents=True, exist_ok=True)
 checks, errors, requests, performance = [], [], [], []
 performance_only = '--performance-only' in sys.argv
@@ -37,8 +37,11 @@ with sync_playwright() as p:
     page.on('pageerror', lambda e: errors.append(str(e)))
     page.on('console', lambda m: errors.append(m.text) if m.type == 'error' else None)
     page.on('request', lambda r: requests.append(r.url))
+    page.add_init_script("""localStorage.setItem('keyabyss.preflight-complete','true');localStorage.setItem('keyabyss.calibration-complete','true');localStorage.setItem('keyabyss.intro-complete','true');""")
     page.goto((ROOT/'dist/index.html').as_uri()+'?debug')
-    page.locator("#enterGame").click(timeout=30000)
+    page.locator('.startup-gate[data-ready="true"]').wait_for(timeout=60000)
+    page.keyboard.press('Enter')
+    page.locator('.startup-gate').wait_for(state='detached')
     page.wait_for_function('!!window.__KEYABYSS__')
     assert page.evaluate('__KEYABYSS__.game.nativeRenderer.ready')
     assert any('battle-renderer-' in url for url in requests)
@@ -129,7 +132,7 @@ with sync_playwright() as p:
         check('context loss pauses combat and restored resources are prewarmed')
         page.set_viewport_size({'width':1920,'height':1080})
     # Measurements happen at the end, on moving simulations, never a frozen frame.
-    for scenario in ['combat','dense','fields','ultimate']:
+    for scenario in ['combat','dense','fields','ultimate','particles']:
         page.evaluate(SETUP,'storm')
         page.evaluate("""scenario=>{const g=__KEYABYSS__.game;g.options.fx=1;g.options.reduceMotion=false;g.enemies=[];g.boss=null;g.bossRoom=false;
           const count=scenario==='dense'?24:8;
@@ -140,15 +143,25 @@ with sync_playwright() as p:
           g.player.invuln=999;g.state='playing';g.render=g.originalRender||g.render;g.invalidate();
         }""",scenario)
         page.wait_for_timeout(350)
-        sample=page.evaluate("""()=>new Promise(resolve=>{const g=__KEYABYSS__.game,gaps=[],submits=[];
+        sample=page.evaluate("""scenario=>new Promise(resolve=>{const g=__KEYABYSS__.game,gaps=[],submits=[],costs={},restore=[];let lastBurst=-1,peakParticles=0;
+          for(const [name,object,key] of [['simulation',g,'update'],['visual',g,'updateVisual'],['populate',g.nativeRenderer,'populate'],['particles',g.nativeRenderer.particles,'update'],['overlay',g.overlayPainter,'render']]) {
+            const original=object[key];costs[name]=[];
+            object[key]=function(...args){const start=performance.now();try{return original.apply(this,args);}finally{costs[name].push(performance.now()-start);}};
+            restore.push(()=>object[key]=original);
+          }
           const render=g.render;g.render=function(){const start=performance.now();render.call(this);submits.push(performance.now()-start);};
           const start=performance.now(),elapsed=g.elapsed;let previous=start;
           const percentile=(a,p)=>a.slice().sort((x,y)=>x-y)[Math.min(a.length-1,Math.floor(a.length*p))];
           function frame(now){gaps.push(now-previous);previous=now;
+            if(scenario==='particles' && g.visualTime-lastBurst>=.08) {
+              lastBurst=g.visualTime;
+              g.sparks(640,400,130,'#e7c797',150);g.burst(640,400,75,'#e7c797','ultimate');
+            }
+            peakParticles=Math.max(peakParticles,g.particles.length+g.nativeRenderer.particles.count);
             if(now-start<2200){requestAnimationFrame(frame);return;}
-            g.render=render;resolve({frames:gaps.length,seconds:(now-start)/1000,fps:gaps.length*1000/(now-start),frameP50:percentile(gaps,.5),frameP95:percentile(gaps,.95),submitP50:percentile(submits,.5),submitP95:percentile(submits,.95),simulatedSeconds:g.elapsed-elapsed,renderer:g.nativeRenderer.diagnostics()});
+            g.render=render;restore.forEach(fn=>fn());resolve({frames:gaps.length,seconds:(now-start)/1000,fps:gaps.length*1000/(now-start),frameP50:percentile(gaps,.5),frameP95:percentile(gaps,.95),submitP50:percentile(submits,.5),submitP95:percentile(submits,.95),cpu:Object.fromEntries(Object.entries(costs).map(([name,values])=>[name,{calls:values.length,total:values.reduce((a,b)=>a+b,0),p50:percentile(values,.5),p95:percentile(values,.95)}])),peakParticles,simulatedSeconds:g.elapsed-elapsed,renderer:g.nativeRenderer.diagnostics()});
           }requestAnimationFrame(frame);
-        })""")
+        })""", scenario)
         sample['scenario']=scenario;performance.append(sample)
         assert sample['simulatedSeconds']>0
         page.evaluate("__KEYABYSS__.game.state='paused'")

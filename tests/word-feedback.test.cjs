@@ -29,3 +29,15 @@ test('optional overhead meaning defaults off, fits long text and leaves missing 
  e.meaning='';assert.equal(label().h,base.h);
  g.options.labelMeaning=false;e.meaning='守卫';assert(!label().meaningText);
 });
+
+test('label metric reuse retains moving hit boxes and invalidates on word and settings changes', () => {
+ const g=make(), e=g.spawnEnemy('guard',640,300), frame=createOverlayFrame(g), cache=new WeakMap();
+ let calls=0;const measure=(word,font)=>{calls++;return word.length*font;};
+ const layout=()=>layoutWordLabels(frame,measure,cache)[0];
+ const first=layout(), measured=calls;e.x+=20;const moved=layout();
+ assert.equal(calls,measured);assert.equal(moved.x,first.x+20);
+ e.word='thunder';layout();assert.ok(calls>measured);
+ for(const change of [()=>g.options.largeText=true,()=>{g.options.labelMeaning=true;e.meaning='闪电';},()=>e.meaning='雷鸣']) {
+   const prior=calls;change();assert.deepEqual(layout(),layoutWordLabels(frame,measure)[0]);assert.ok(calls>prior);
+ }
+});

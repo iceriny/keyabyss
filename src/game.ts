@@ -62,7 +62,7 @@ export class Game extends CombatSimulation {
     this.sound.update(this.player, this.state, document.hidden);
     const delta = Math.min(0.055, (now - this.last) / 1000 || 0);
     this.last = now;
-    const paused = ["paused", "upgrade", "route", "result"].includes(
+    const paused = ["paused", "upgrade", "route", "event", "result"].includes(
       this.state,
     );
     if (typeof document !== "undefined" && document.hidden) {
