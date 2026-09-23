@@ -1,7 +1,7 @@
 import type { GraphBounds, GraphDefinition, GraphDiagnostic, GraphLayout, GraphNode, GraphNodeLayout, GraphPoint, GraphRelation, GraphRegionLayout } from '../contracts/graph.ts';
 
 // Bump this when the geometry or routing rules change. Content changes use GraphDefinition.version.
-const LAYOUT_VERSION = 2;
+const LAYOUT_VERSION = 3;
 const RADIUS = 25;
 const LABEL_WIDTH = 176;
 const LABEL_HEIGHT = 32;
@@ -161,8 +161,12 @@ function hash(value: unknown): string {
 
 function clearSegment(a: GraphPoint, b: GraphPoint, boxes: readonly GraphBounds[]): boolean {
   for (const box of boxes) {
-    if (a.x === b.x && a.x >= box.x && a.x <= box.x + box.width && Math.max(a.y, b.y) >= box.y && Math.min(a.y, b.y) <= box.y + box.height) return false;
-    if (a.y === b.y && a.y >= box.y && a.y <= box.y + box.height && Math.max(a.x, b.x) >= box.x && Math.min(a.x, b.x) <= box.x + box.width) return false;
+    let near = 0, far = 1;
+    for (const [origin, delta, lower, upper] of [[a.x, b.x - a.x, box.x, box.x + box.width], [a.y, b.y - a.y, box.y, box.y + box.height]]) {
+      if (delta === 0) { if (origin < lower || origin > upper) { near = 2; break; } }
+      else { const p = (lower - origin) / delta, q = (upper - origin) / delta; near = Math.max(near, Math.min(p, q)); far = Math.min(far, Math.max(p, q)); }
+    }
+    if (near <= far) return false;
   }
   return true;
 }
@@ -201,6 +205,14 @@ function route(layout: GraphLayout, relation: GraphRelation): { points: GraphPoi
   const source = layout.nodes[relation.source]; const target = layout.nodes[relation.target];
   if (!source || !target) throw Error(`Invalid relation ${relation.id}: ${relation.source} -> ${relation.target}`);
   if (source === target) return { points: [{ x: source.x + RADIUS, y: source.y }, { x: source.x + RADIUS + 64, y: source.y }, { x: source.x + RADIUS + 64, y: source.y - 72 }, { x: source.x, y: source.y - 72 }, { x: source.x, y: source.y - RADIUS }] };
+  const foreignBoxes = Object.entries(layout.nodes).filter(([id]) => id !== relation.source && id !== relation.target).flatMap(([, node]) => obstacles(node));
+  const endpointLabels = [inflate(source.labelBounds, CLEARANCE), inflate(target.labelBounds, CLEARANCE)];
+  const clearance = [...foreignBoxes, ...endpointLabels];
+  const length = Math.hypot(target.x - source.x, target.y - source.y);
+  const dx = (target.x - source.x) / length, dy = (target.y - source.y) / length;
+  const directStart = { x: source.x + dx * (source.radius + 12), y: source.y + dy * (source.radius + 12) };
+  const directEnd = { x: target.x - dx * (target.radius + 12), y: target.y - dy * (target.radius + 12) };
+  if (clearSegment(directStart, directEnd, clearance)) return { points: [directStart, directEnd] };
   const direction = target.x >= source.x ? 1 : -1;
   const start = { x: source.x + direction * (RADIUS + 12), y: source.y };
   const end = { x: target.x - direction * (RADIUS + 12), y: target.y };
@@ -250,10 +262,14 @@ function route(layout: GraphLayout, relation: GraphRelation): { points: GraphPoi
   }
   const firstGrid = condensed[0], lastGrid = condensed[condensed.length - 1];
   const points = [start, { x: firstGrid.x, y: start.y }, ...condensed, { x: lastGrid.x, y: end.y }, end];
-  const foreignBoxes = Object.entries(layout.nodes).filter(([id]) => id !== relation.source && id !== relation.target).flatMap(([, node]) => obstacles(node));
-  const endpointLabels = [inflate(source.labelBounds, CLEARANCE), inflate(target.labelBounds, CLEARANCE)];
-  const conflict = points.some((current, index) => index > 0 && !clearSegment(points[index - 1], current, [...foreignBoxes, ...endpointLabels]));
-  return { points, diagnostic: conflict ? { code: 'route-clearance', ids: [relation.id, relation.source, relation.target], message: `Route ${relation.id} crosses another node or label` } : undefined };
+  const simplified = [points[0]];
+  for (let i = 0; i < points.length - 1;) {
+    let next = points.length - 1;
+    while (next > i + 1 && !clearSegment(points[i], points[next], clearance)) next--;
+    simplified.push(points[next]); i = next;
+  }
+  const conflict = simplified.some((current, index) => index > 0 && !clearSegment(simplified[index - 1], current, clearance));
+  return { points: simplified, diagnostic: conflict ? { code: 'route-clearance', ids: [relation.id, relation.source, relation.target], message: `Route ${relation.id} crosses another node or label` } : undefined };
 }
 
 export function routeGraphRelations(layout: GraphLayout, relations: readonly GraphRelation[]): Readonly<Record<string, readonly GraphPoint[]>> {
@@ -269,6 +285,11 @@ export function routeGraphRelations(layout: GraphLayout, relations: readonly Gra
 
 export function visibleGraphNodes(layout: GraphLayout, bounds: GraphBounds): readonly string[] {
   if (![bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite) || bounds.width < 0 || bounds.height < 0) throw Error('Invalid viewport bounds');
+  // A not-yet-measured viewport can span millions of empty cells. Query cost
+  // must never exceed the resident graph, irrespective of zoom or window size.
+  const cells = (Math.ceil(bounds.width / layout.cellSize) + 2) * (Math.ceil(bounds.height / layout.cellSize) + 2);
+  if (cells > Object.keys(layout.spatialIndex).length) return Object.keys(layout.nodes)
+    .filter(id => overlap(nodeBody(layout.nodes[id]), bounds) || overlap(layout.nodes[id].labelBounds, bounds)).sort(compare);
   const ids = new Set<string>();
   for (let col = Math.floor(bounds.x / layout.cellSize); col <= Math.floor((bounds.x + bounds.width) / layout.cellSize); col++)
     for (let row = Math.floor(bounds.y / layout.cellSize); row <= Math.floor((bounds.y + bounds.height) / layout.cellSize); row++)
@@ -305,8 +326,73 @@ export function generateGraphLayout(definition: GraphDefinition): GraphLayout {
       }
     });
   }
-  placeBand(inner, innerRadius);
-  placeBand(outer, outerRadius);
+  const roots = nodes.filter(node => node.kind === 'root');
+  if (roots.length > 1) {
+    // A rooted graph shares one centre. Ownership and depth come from topology;
+    // family ordering keeps related branches together without authored positions.
+    const neighbors = new Map(nodes.map(node => [node.id, [] as string[]]));
+    for (const edge of relations) if (['path', 'requires', 'evolution'].includes(edge.kind)) {
+      neighbors.get(edge.source)!.push(edge.target); neighbors.get(edge.target)!.push(edge.source);
+    }
+    const distances = roots.map(root => {
+      const result = new Map([[root.id, 0]]), queue = [root.id];
+      for (let head = 0; head < queue.length; head++) for (const id of neighbors.get(queue[head])!) {
+        if (!result.has(id)) { result.set(id, result.get(queue[head])! + 1); queue.push(id); }
+      }
+      return result;
+    });
+    const sector = Math.PI * 2 / roots.length;
+    const bands = new Map<number, Map<number, GraphNode[]>>();
+    const branchAngles = new Map<string, number>();
+    const place = (node: GraphNode, radius: number, angle: number) => {
+      const x = quantize(Math.cos(angle) * radius), y = quantize(Math.sin(angle) * radius);
+      nodeLayouts[node.id] = { x, y, radius: node.kind === 'root' ? 40 : RADIUS,
+        labelBounds: rect(x - LABEL_WIDTH / 2, y + (node.kind === 'root' ? 40 : RADIUS) + 9, LABEL_WIDTH, LABEL_HEIGHT) };
+    };
+    roots.forEach((root, index) => place(root, 340, -Math.PI / 2 + sector * index));
+    for (const node of nodes) {
+      if (node.kind === 'root') continue;
+      const own = roots.findIndex(root => root.region === node.region);
+      const ranked = roots.map((_, index) => index).sort((a, b) =>
+        (distances[a].get(node.id) ?? Infinity) - (distances[b].get(node.id) ?? Infinity) || a - b);
+      const owner = own >= 0 ? own : ranked[0];
+      const depth = distances[owner].get(node.id) ?? 1;
+      if (!bands.has(depth)) bands.set(depth, new Map());
+      const band = bands.get(depth)!;
+      if (!band.has(owner)) band.set(owner, []);
+      band.get(owner)!.push(node);
+    }
+    let radius = 340;
+    for (const depth of [...bands.keys()].sort((a, b) => a - b)) {
+      const band = bands.get(depth)!;
+      const maximum = Math.max(...[...band.values()].map(members => members.length));
+      radius = Math.max(radius + NODE_SPACING, NODE_SPACING / (2 * Math.sin(sector * .84 / (2 * Math.max(1, maximum)))));
+      for (const [owner, members] of band) {
+        const angleFromParents = (node: GraphNode) => {
+          const parents = neighbors.get(node.id)!.filter(id => branchAngles.has(id));
+          return parents.length ? parents.reduce((sum, id) => sum + branchAngles.get(id)!, 0) / parents.length : 0;
+        };
+        members.sort((a, b) => angleFromParents(a) - angleFromParents(b) || compare(a.family, b.family) || compare(a.id, b.id));
+        members.forEach((node, index) => {
+          const angle = sector * .84 * ((index + .5) / members.length - .5);
+          branchAngles.set(node.id, angle);
+          place(node, radius, -Math.PI / 2 + sector * owner + angle);
+        });
+      }
+    }
+    for (const region of regions) {
+      const members = byRegion.get(region.id)!.map(node => nodeLayouts[node.id]);
+      if (!members.length) continue;
+      const x = Math.min(...members.map(node => node.labelBounds.x)) - 55;
+      const y = Math.min(...members.map(node => node.y - node.radius)) - 55;
+      const right = Math.max(...members.map(node => node.labelBounds.x + node.labelBounds.width)) + 55;
+      const bottom = Math.max(...members.map(node => node.labelBounds.y + node.labelBounds.height)) + 55;
+      regionLayouts[region.id] = { bounds: rect(x, y, right - x, bottom - y), center: { x: (x + right) / 2, y: (y + bottom) / 2 } };
+    }
+  } else {
+    placeBand(inner, innerRadius);
+    placeBand(outer, outerRadius);
+  }
   const placed = Object.keys(nodeLayouts).sort(compare);
   for (let i = 0; i < placed.length; i++) for (let j = i + 1; j < placed.length; j++) {
     const a = nodeLayouts[placed[i]], b = nodeLayouts[placed[j]];

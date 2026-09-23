@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { BookId } from "../contracts/game.ts";
 import type { GraphNodeState, GraphProjection } from "../contracts/graph.ts";
 import type { TalentLoadout, TalentNode } from "../contracts/talents.ts";
@@ -13,6 +13,18 @@ import "./talents.css";
 
 const capabilityNames: Record<string, string> = { cold: "寒气", heat: "热性", conduction: "传导", carrier: "承载", guard: "防御", release: "释放", recovery: "回收" };
 const MAX_KEYSTONES = 2;
+
+function talentIcon(node: import('../contracts/graph.ts').GraphNode, size: number) {
+  const r = size * .64;
+  if (node.kind === 'root') return <g className="talent-book-sigil">
+    <path d={`M${-r},${-r} Q${-r / 2},${-r * 1.3} 0,${-r * .65} Q${r / 2},${-r * 1.3} ${r},${-r} V${r} Q${r / 2},${r * .7} 0,${r * 1.1} Q${-r / 2},${r * .7} ${-r},${r} Z M0,${-r * .65} V${r * 1.1}`} />
+    {node.region === 'frost' ? <path d={`M${-r * .7},0 H${r * .7} M0,${-r * .5} V${r * .6} M${-r * .4},${-r * .4} L${r * .4},${r * .4} M${r * .4},${-r * .4} L${-r * .4},${r * .4}`} /> :
+      node.region === 'storm' ? <path d={`M${r * .3},${-r * .5} L${-r * .35},${r * .1} H${r * .25} L${-r * .25},${r * .65}`} /> :
+      node.region === 'flame' ? <path d={`M0,${-r * .6} Q${-r},${r * .5} 0,${r * .65} Q${r * .7},${r * .4} 0,${-r * .6} Z`} /> :
+      <path d={`M${-r * .55},0 Q0,${-r * .7} ${r * .55},0 Q0,${r * .7} ${-r * .55},0 Z`} />}
+  </g>;
+  return undefined;
+}
 
 function shortestPath(target: string, active: Set<string>): string[] {
   const pending = [...active].map(id => [id]);
@@ -36,6 +48,15 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
   onClearGod: () => void;
 }) {
   const [selected, setSelected] = useState(`${book}-root`);
+  const detailRef = useRef<HTMLElement>(null);
+  const [detailWidth, setDetailWidth] = useState(340);
+  useEffect(() => {
+    const detail = detailRef.current;
+    if (!detail) return;
+    const observer = new ResizeObserver(() => setDetailWidth(detail.getBoundingClientRect().width + 48));
+    observer.observe(detail);
+    return () => observer.disconnect();
+  }, []);
   const resolved = useMemo(() => resolveTalents(book, loadout.allocated, budget, godMode), [book, loadout.allocated, budget, godMode]);
   const active = useMemo(() => new Set(resolved.allocated), [resolved.allocated]);
   const node = TALENT_BY_ID[selected] ?? TALENT_BY_ID[`${book}-root`];
@@ -44,9 +65,9 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
   const available = !active.has(node.id) && preview.allocated.includes(node.id) && resolved.allocated.every(id => preview.allocated.includes(id));
   const removal = useMemo(() => removeTalent(book, resolved.allocated, node.id, budget, godMode), [book, resolved.allocated, node.id, budget, godMode]);
   const removed = resolved.allocated.length - removal.length;
-  const candidates = secondaryBookCandidates(book, resolved.allocated, budget, godMode);
-  const exclusives = new Set(TALENT_NODES.filter(item => active.has(item.id) && item.exclusive).map(item => item.exclusive));
-  const keystones = TALENT_NODES.filter(item => active.has(item.id) && item.kind === "keystone").length;
+  const candidates = useMemo(() => secondaryBookCandidates(book, resolved.allocated, budget, godMode), [book, resolved, budget, godMode]);
+  const exclusives = useMemo(() => new Set(TALENT_NODES.filter(item => active.has(item.id) && item.exclusive).map(item => item.exclusive)), [active]);
+  const keystones = useMemo(() => TALENT_NODES.filter(item => active.has(item.id) && item.kind === "keystone").length, [active]);
   const missing = node.requires?.filter(capability => !resolved.capabilities.includes(capability)) ?? [];
   const path = useMemo(() => shortestPath(node.id, active), [node.id, active]);
   const pathToBuy = path.filter(id => !active.has(id));
@@ -75,8 +96,8 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
       states[item.id] = item.exclusive && exclusives.has(item.exclusive) ? "excluded" : canBuy ? "available" : "locked";
       reasons[item.id] = reasonFor(item, canBuy);
     }
-    return { states, reasons, highlighted: pathToBuy };
-  }, [active, book, resolved, budget, godMode, exclusives, keystones, pathToBuy]);
+    return { states, reasons };
+  }, [active, book, resolved, budget, godMode, exclusives, keystones]);
 
   return <div className="talent-panel">
     <div className="talent-toolbar">
@@ -85,8 +106,8 @@ export function TalentPanel({ book, onBook, loadout, budget, characters, godMode
       <div className="talent-books" aria-label="主书起点">{TALENT_BOOKS.map(id => <Button key={id} word={`root${id}`} aria-pressed={book === id} className={book === id ? "selected" : ""} onClick={() => { onBook(id); setSelected(`${id}-root`); }}>{C.BOOKS[id].short}</Button>)}</div>
     </div>
     <div className="talent-workspace">
-      <div className="talent-map-region"><GraphViewport definition={TALENT_GRAPH} layout={TALENT_LAYOUT} projection={projection} selectedId={node.id} onSelect={setSelected} rootId={`${book}-root`} label="天赋图谱" /></div>
-      <aside className="talent-detail" aria-label="天赋详情">
+      <div className="talent-map-region"><GraphViewport definition={TALENT_GRAPH} layout={TALENT_LAYOUT} projection={projection} selectedId={node.id} onSelect={setSelected} rootId={`${book}-root`} obscuredRight={detailWidth} renderIcon={talentIcon} label="天赋图谱" /></div>
+      <aside className="talent-detail" ref={detailRef} aria-label="天赋详情" style={{ '--talent-color': node.school === 'shared' ? '#d9c596' : C.BOOKS[node.school].color } as React.CSSProperties}>
         <div className="talent-detail-scroll">
           <span className="talent-school">{node.school === "shared" ? "共用书脊" : C.BOOKS[node.school].name} · {isRoot ? "免费起点" : `${node.cost} 点`}</span>
           <h3>{node.name}</h3><p>{node.description}</p><p className="talent-status" role="status">{reason}</p>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode, type WheelEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import type { GraphBounds, GraphDefinition, GraphNode, GraphNodeState, GraphPoint, GraphLayout, GraphProjection, GraphRelation } from "../contracts/graph.ts";
 import { routeGraphRelations, visibleGraphNodes } from "../shared/graph-layout.ts";
 import "./graph.css";
@@ -12,6 +12,7 @@ interface GraphViewportProps {
   rootId?: string;
   renderIcon?: (node: GraphNode, size: number) => ReactNode;
   label?: string;
+  obscuredRight?: number;
 }
 
 interface Camera { x: number; y: number; scale: number }
@@ -43,8 +44,8 @@ function clampCamera(prior: Camera, point: GraphPoint, size: { width: number; he
   const scale = Math.max(minScale, Math.min(maxScale, prior.scale));
   const halfW = size.width / scale / 2, halfH = size.height / scale / 2;
   return {
-    x: Math.max(world.x + Math.min(halfW, world.width / 2), Math.min(world.x + world.width - Math.min(halfW, world.width / 2), point.x)),
-    y: Math.max(world.y + Math.min(halfH, world.height / 2), Math.min(world.y + world.height - Math.min(halfH, world.height / 2), point.y)),
+    x: Math.max(world.x - halfW, Math.min(world.x + world.width + halfW, point.x)),
+    y: Math.max(world.y - halfH, Math.min(world.y + world.height + halfH, point.y)),
     scale,
   };
 }
@@ -61,25 +62,28 @@ function defaultIcon(node: GraphNode, size: number): ReactNode {
   }
 }
 
-export function GraphViewport({ definition, layout, projection, selectedId, onSelect, rootId, renderIcon, label = "图谱" }: GraphViewportProps) {
+export function GraphViewport({ definition, layout, projection, selectedId, onSelect, rootId, renderIcon, label = "图谱", obscuredRight = 0 }: GraphViewportProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ id: number; x: number; y: number; camera: Camera; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
   const focusRef = useRef<string | null>(null);
-  const priorSelectedRef = useRef(selectedId);
   const [size, setSize] = useState({ width: 1, height: 1 });
   const [camera, setCamera] = useState<Camera | null>(null);
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [relationMode, setRelationMode] = useState<"all" | "related">("all");
+  const pendingCamera = useRef<Camera | null>(null);
+  const cameraFrame = useRef(0);
+  useEffect(() => () => cancelAnimationFrame(cameraFrame.current), []);
   const nodeById = useMemo(() => new Map(definition.nodes.map(node => [node.id, node])), [definition]);
   const regionById = useMemo(() => new Map(definition.regions.map(region => [region.id, region])), [definition]);
   const world = useMemo(() => padded(layout.bounds), [layout]);
-  const fitScale = Math.min(size.width / world.width, size.height / world.height);
+  const usableWidth = Math.max(1, size.width - obscuredRight);
+  const fitScale = Math.min(usableWidth / world.width, size.height / world.height);
   const minScale = fitScale * .72;
   const maxScale = Math.max(fitScale * 14, 2.4);
-  const current = camera ?? { x: world.x + world.width / 2, y: world.y + world.height / 2, scale: fitScale };
+  const current = camera ?? { x: world.x + world.width / 2 + obscuredRight / (2 * fitScale), y: world.y + world.height / 2, scale: fitScale };
   const currentRef = useRef(current);
   currentRef.current = current;
 
@@ -100,35 +104,39 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
     if (target && document.activeElement !== target) target.focus({ preventScroll: true });
   }, [focusedId, camera, size]);
   useEffect(() => {
-    if (priorSelectedRef.current === selectedId) return;
-    priorSelectedRef.current = selectedId;
     const point = layout.nodes[selectedId];
     if (!point) return;
     const prior = currentRef.current;
-    if (Math.abs(point.x - prior.x) > size.width * .42 / prior.scale || Math.abs(point.y - prior.y) > size.height * .42 / prior.scale) {
-      setCamera(clampCamera(prior, point, size, world, minScale, maxScale));
+    const center = prior.x - obscuredRight / (2 * prior.scale);
+    if (Math.abs(point.x - center) > usableWidth * .42 / prior.scale || Math.abs(point.y - prior.y) > size.height * .42 / prior.scale) {
+      setCamera(clampCamera(prior, { x: point.x + obscuredRight / (2 * prior.scale), y: point.y }, size, world, minScale, maxScale));
     }
-  }, [selectedId, layout, size, world, minScale, maxScale]);
+  }, [selectedId, layout, size, world, minScale, maxScale, obscuredRight, usableWidth]);
 
   const clamp = useCallback((next: Camera): Camera => {
     const scale = Math.max(minScale, Math.min(maxScale, next.scale));
-    const halfW = size.width / scale / 2, halfH = size.height / scale / 2;
-    const x = Math.max(world.x + Math.min(halfW, world.width / 2), Math.min(world.x + world.width - Math.min(halfW, world.width / 2), next.x));
-    const y = Math.max(world.y + Math.min(halfH, world.height / 2), Math.min(world.y + world.height - Math.min(halfH, world.height / 2), next.y));
-    return { x, y, scale };
+    return clampCamera({ ...next, scale }, next, size, world, minScale, maxScale);
   }, [minScale, maxScale, size, world]);
-  const moveCamera = useCallback((next: Camera) => setCamera(clamp(next)), [clamp]);
+  const moveCamera = useCallback((next: Camera) => {
+    pendingCamera.current = clamp(next);
+    currentRef.current = pendingCamera.current;
+    if (!cameraFrame.current) cameraFrame.current = requestAnimationFrame(() => {
+      cameraFrame.current = 0;
+      setCamera(pendingCamera.current);
+    });
+  }, [clamp]);
   const focusNode = useCallback((id: string, close = false) => {
     const point = layout.nodes[id];
     if (!point) return;
     const prior = currentRef.current;
-    moveCamera({ x: point.x, y: point.y, scale: close ? Math.max(prior.scale, fitScale * 4) : prior.scale });
-  }, [layout, moveCamera, fitScale]);
+    const scale = close ? Math.max(prior.scale, fitScale * 3, .7) : prior.scale;
+    moveCamera({ x: point.x + obscuredRight / (2 * scale), y: point.y, scale });
+  }, [layout, moveCamera, fitScale, obscuredRight]);
   const selectNode = useCallback((id: string, center = false) => {
     focusRef.current = id;
     setFocusedId(id);
     onSelect(id);
-    if (center) focusNode(id);
+    if (center) focusNode(id, true);
   }, [onSelect, focusNode]);
   const zoomAt = useCallback((factor: number, px = size.width / 2, py = size.height / 2) => {
     const old = currentRef.current;
@@ -137,11 +145,17 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
     const wy = old.y + (py - size.height / 2) / old.scale;
     moveCamera({ x: wx - (px - size.width / 2) / scale, y: wy - (py - size.height / 2) / scale, scale });
   }, [size, minScale, maxScale, moveCamera]);
-  const onWheel = (event: WheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const rect = frameRef.current!.getBoundingClientRect();
-    zoomAt(Math.exp(-event.deltaY * .0013), event.clientX - rect.left, event.clientY - rect.top);
-  };
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const rect = frame.getBoundingClientRect();
+      zoomAt(Math.exp(-event.deltaY * .0013), event.clientX - rect.left, event.clientY - rect.top);
+    };
+    frame.addEventListener('wheel', onWheel, { passive: false });
+    return () => frame.removeEventListener('wheel', onWheel);
+  }, [zoomAt]);
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
     suppressClick.current = false;
@@ -209,7 +223,7 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
   const view: GraphBounds = { x: current.x - size.width / current.scale / 2, y: current.y - size.height / current.scale / 2, width: size.width / current.scale, height: size.height / current.scale };
   const clip: GraphBounds = { x: view.x - 100 / current.scale, y: view.y - 100 / current.scale, width: view.width + 200 / current.scale, height: view.height + 200 / current.scale };
   const lod = current.scale / fitScale < 1.8 ? "overview" : current.scale / fitScale < 3.5 ? "middle" : "detail";
-  const visibleIds = useMemo(() => new Set(visibleGraphNodes(layout, clip)), [layout, clip.x, clip.y, clip.width, clip.height]);
+  const visibleIds = useMemo(() => new Set(size.width > 1 && size.height > 1 ? visibleGraphNodes(layout, clip) : []), [layout, size.width, size.height, clip.x, clip.y, clip.width, clip.height]);
   const visibleNodes = [...visibleIds].map(id => nodeById.get(id)).filter((node): node is GraphNode => !!node).filter(node => {
     const point = layout.nodes[node.id];
     if (!point || !visibleIds.has(node.id)) return false;
@@ -223,7 +237,8 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
   const visibleRegions = definition.regions.filter(region => layout.regions[region.id] && intersects(layout.regions[region.id].bounds, clip));
   const zoomLabel = `${Math.round(current.scale / fitScale * 100)}%`;
 
-  return <div className="graph-viewport" aria-label={label}>
+  const rooted = definition.nodes.filter(node => node.kind === 'root').length > 1;
+  return <div className={`graph-viewport${rooted ? ' graph-rooted' : ''}`} aria-label={label}>
     <div className="graph-toolbar">
       <div className="graph-search-wrap">
         <input className="graph-search" type="search" value={query} onChange={event => { setQuery(event.target.value); setSearchOpen(true); }} onFocus={() => setSearchOpen(true)} aria-label={`搜索${label}节点`} placeholder="搜索名称、描述或功能" />
@@ -235,15 +250,16 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
       <button type="button" onClick={() => zoomAt(1 / 1.35)} aria-label="缩小">−</button>
       <span className="graph-zoom-value">{zoomLabel}</span>
       <button type="button" onClick={() => zoomAt(1.35)} aria-label="放大">＋</button>
-      <button type="button" onClick={() => setCamera(null)}>全图</button>
+      <button type="button" onClick={() => { cancelAnimationFrame(cameraFrame.current); cameraFrame.current = 0; setCamera(null); }}>全图</button>
       {rootId && <button type="button" onClick={() => focusNode(rootId, true)}>起点</button>}
       <button type="button" onClick={() => focusNode(selectedId, true)}>定位所选</button>
     </div>
-    <div className="graph-frame" ref={frameRef} tabIndex={0} role="application" aria-label={`${label}，方向键移动焦点，Enter 选择，滚轮缩放，拖动平移`} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer} onKeyDown={onKeyDown}>
+    <div className="graph-frame" ref={frameRef} tabIndex={0} role="application" aria-label={`${label}，方向键移动焦点，Enter 选择，滚轮缩放，拖动平移`} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer} onKeyDown={onKeyDown}>
       <svg className={`graph-canvas graph-lod-${lod}`} viewBox={`${view.x} ${view.y} ${view.width} ${view.height}`} aria-label={`${label}节点与关系`}>
         <defs><pattern id={`graph-dust-${definition.id}`} width="110" height="110" patternUnits="userSpaceOnUse"><circle cx="10" cy="18" r=".8" fill="#d9d3bb" opacity=".26" /><circle cx="82" cy="67" r=".6" fill="#d9d3bb" opacity=".16" /></pattern></defs>
         <rect x={view.x} y={view.y} width={view.width} height={view.height} fill={`url(#graph-dust-${definition.id})`} />
-        <g className="graph-regions">{visibleRegions.map(region => {
+        {rooted && <g className="graph-core" aria-hidden="true"><circle r="450" /><circle r="210" /><path d="M-135 0H135M0-135V135M-95-95L95 95M-95 95L95-95" /><text y="8" textAnchor="middle">咒典</text></g>}
+        <g className="graph-regions">{!rooted && visibleRegions.map(region => {
           const shape = layout.regions[region.id];
           const rx = shape.bounds.width * .48, ry = shape.bounds.height * .48;
           return <g key={region.id} style={{ "--graph-color": region.color } as CSSProperties}>
@@ -262,8 +278,8 @@ export function GraphViewport({ definition, layout, projection, selectedId, onSe
           const selected = node.id === selectedId;
           const focused = node.id === focusedId;
           const color = regionById.get(node.region)?.color ?? "#d8c597";
-          const r = point.radius || (node.kind === "keystone" ? 22 : 14);
-          return <g key={node.id} data-graph-id={node.id} transform={`translate(${point.x} ${point.y})`} className={`graph-node graph-node-${node.kind} graph-state-${state}${selected ? " is-selected" : ""}${focused ? " is-focused" : ""}${related.has(node.id) ? " is-related" : ""}`} style={{ "--graph-color": color } as CSSProperties} role="button" tabIndex={0} aria-label={`${node.name}，${stateNames[state]}${node.kind === "relic" ? "" : `，${node.cost}点`}。${node.description}${projection.reasons?.[node.id] ? `。${projection.reasons[node.id]}` : ""}`} aria-pressed={selected} onClick={event => { if (!suppressClick.current && !dragRef.current?.moved) selectNode(node.id); suppressClick.current = false; event.stopPropagation(); }} onFocus={() => { focusRef.current = node.id; setFocusedId(node.id); focusNode(node.id); }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); selectNode(node.id, true); } }}>
+          const r = Math.max(point.radius || (node.kind === "keystone" ? 22 : 14), rooted ? (node.kind === 'root' ? 16 : node.kind === 'keystone' ? 7 : 3.5) / current.scale : 0);
+          return <g key={node.id} data-graph-id={node.id} transform={`translate(${point.x} ${point.y})`} className={`graph-node graph-node-${node.kind} graph-state-${state}${selected ? " is-selected" : ""}${focused ? " is-focused" : ""}${related.has(node.id) ? " is-related" : ""}`} style={{ "--graph-color": color } as CSSProperties} role="button" tabIndex={0} aria-label={`${node.name}，${stateNames[state]}${node.kind === "relic" ? "" : `，${node.cost}点`}。${node.description}${projection.reasons?.[node.id] ? `。${projection.reasons[node.id]}` : ""}`} aria-pressed={selected} onClick={event => { if (!suppressClick.current && !dragRef.current?.moved) selectNode(node.id); suppressClick.current = false; event.stopPropagation(); }} onFocus={() => { focusRef.current = node.id; setFocusedId(node.id); }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); selectNode(node.id, true); } }}>
             <circle className="graph-node-halo" r={r * 1.6} />
             <circle className="graph-node-ring" r={r} />
             {(lod !== "overview" || selected || ["root", "keystone", "junction"].includes(node.kind)) && <g className="graph-node-icon">{renderIcon?.(node, r) ?? defaultIcon(node, r)}</g>}

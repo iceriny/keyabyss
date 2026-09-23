@@ -1,5 +1,7 @@
 """Focused desktop check for the shared graphs and a committed build event."""
 import json
+import os
+import time
 import re
 from pathlib import Path
 
@@ -8,7 +10,7 @@ from browser_support import launch_browser
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / '.temp/combat-acceptance/browser/graph-event'
+OUT = ROOT / os.environ.get('KEYABYSS_TEST_OUT', '.temp/combat-acceptance/browser/graph-event')
 OUT.mkdir(parents=True, exist_ok=True)
 checks = []
 errors = []
@@ -33,12 +35,16 @@ def assert_selected_center_in_frame(graph):
     center_y = ring['y'] + ring['height'] / 2
     assert frame['x'] <= center_x <= frame['x'] + frame['width'], (frame, ring)
     assert frame['y'] <= center_y <= frame['y'] + frame['height'], (frame, ring)
+    detail = graph.page.locator('.talent-detail')
+    if detail.count():
+        assert center_x < detail.bounding_box()['x'], 'Selected node is hidden under floating details'
 
 
 with sync_playwright() as playwright:
     browser = launch_browser(playwright)
     page = browser.new_page(viewport={'width': 1920, 'height': 1080}, reduced_motion='reduce')
     page.on('pageerror', lambda error: errors.append(str(error)))
+    page.on('console', lambda message: errors.append(message.text) if message.type == 'error' else None)
     page.add_init_script("""
       localStorage.setItem('keyabyss.preflight-complete','true');
       localStorage.setItem('keyabyss.calibration-complete','true');
@@ -46,7 +52,7 @@ with sync_playwright() as playwright:
       localStorage.setItem('keyabyss.settings',JSON.stringify({reduceMotion:true,music:false,sound:false}));
     """)
     try:
-        page.goto((ROOT / 'dist/index.html').as_uri() + '?debug')
+        page.goto(os.environ.get('KEYABYSS_TEST_URL', (ROOT / 'dist/index.html').as_uri()) + '?debug')
         page.locator('.startup-gate[data-ready="true"]').wait_for(timeout=60000)
         page.keyboard.press('Enter')
         page.locator('.startup-gate').wait_for(state='detached')
@@ -79,18 +85,39 @@ with sync_playwright() as playwright:
         check('relic graph search, zoom, keyboard focus and desktop views')
 
         page.locator('[data-command="back"]').click()
+        started = time.perf_counter()
         mouse_click(page, page.locator('[data-command="talents"]:visible').first)
         page.locator('.talents-modal').wait_for()
+        page.locator('.talent-map-region .graph-node').first.wait_for()
+        print('Talent first nodes visible (ms):', round((time.perf_counter() - started) * 1000), flush=True)
+        panel = page.locator('.talents-modal .modal-panel').bounding_box()
+        assert abs(panel['x']) <= 1 and abs(panel['y']) <= 1
+        assert abs(panel['width'] - page.viewport_size['width']) <= 1
+        assert abs(panel['height'] - page.viewport_size['height']) <= 1
+        page.screenshot(path=str(OUT / 'talent-1024-overview.png'))
+        page.set_viewport_size({'width': 1920, 'height': 1080})
+        page.screenshot(path=str(OUT / 'talent-1920-overview.png'))
+        page.set_viewport_size({'width': 1024, 'height': 640})
         talents = page.locator('.talent-map-region .graph-viewport')
         talent_search = talents.get_by_role('searchbox', name='搜索天赋图谱节点')
         talent_search.fill('合订')
         talents.get_by_role('option', name=re.compile(r'^合订(?:\s|$)')).click()
         expect(page.locator('.talent-detail h3')).to_have_text('合订')
+        expect(talents.locator('.graph-zoom-value')).not_to_have_text('100%')
+        expect(talents.locator('.graph-node.is-selected .graph-node-name')).to_be_visible()
+        assert talents.locator('.graph-node.is-selected .graph-node-name').bounding_box()['height'] >= 10
         assert_selected_center_in_frame(talents)
         page.screenshot(path=str(OUT / 'talent-1024-selected.png'))
         page.set_viewport_size({'width': 1920, 'height': 1080})
         assert_selected_center_in_frame(talents)
         page.screenshot(path=str(OUT / 'talent-1920-selected.png'))
+        details_before = page.locator('.talent-detail').bounding_box()
+        frame_bounds = talents.locator('.graph-frame').bounding_box()
+        page.mouse.move(frame_bounds['x'] + 40, frame_bounds['y'] + 100)
+        page.mouse.down()
+        page.mouse.move(frame_bounds['x'] + 160, frame_bounds['y'] + 160, steps=10)
+        page.mouse.up()
+        assert page.locator('.talent-detail').bounding_box() == details_before
         page.locator('[data-command="back"]').click()
         check('talent graph search keeps the selected node in view after resize')
 

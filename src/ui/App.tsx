@@ -626,7 +626,7 @@ export function App() {
             inert={!entered || (!!screen && screen.type !== "deploy") || !!arrival}
           >
             <Home
-              game={game}
+              game={screen?.type === 'talents' ? null : game}
               book={book}
               onBook={setBook}
               settings={settings}

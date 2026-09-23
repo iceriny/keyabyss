@@ -1,21 +1,27 @@
-.talents-modal .modal-panel.wide { width: min(1320px, calc(100vw - 72px)); height: min(860px, calc(100dvh - 84px)); max-height: none; overflow: hidden; display: flex; flex-direction: column; }
-.talents-modal .modal-heading { flex: 0 0 auto; }
-.talent-panel { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 18px; }
+.modal.talents-modal { inset: 0; padding: 0; background: radial-gradient(ellipse at 40% 48%, #14202d, #080d16 78%); backdrop-filter: none; }
+.talents-modal .modal-panel.wide { width: 100vw; height: 100dvh; max-width: none; max-height: none; padding: 30px 40px 76px; margin: 0; overflow: hidden; display: flex; flex-direction: column; background: none; }
+.talents-modal .modal-panel .modal-heading { flex: 0 0 auto; margin-bottom: 14px; padding-bottom: 10px; }
+.talents-modal .modal-heading h2 { letter-spacing: .22em; }
+.talents-modal .heading-pattern { display: none; }
+.talents-modal .modal-heading::after { display: none; }
+.talent-panel { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
 .talent-toolbar { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 20px; }
 .talent-toolbar strong { display: block; color: #eee0ba; font-size: 23px; font-weight: 400; }
 .talent-toolbar span, .talent-footer > span, .talent-school { font-family: var(--font-small); font-size: 14px; color: #a7abb7; }
 .talent-books { display: flex; gap: 8px; }
 .talent-books .button { min-width: 0; padding: 9px 11px; }
-.talent-workspace { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(230px, 29%); gap: 28px; }
-.talent-map-region { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
-.talent-detail { display: flex; flex-direction: column; min-height: 0; padding-top: 18px; }
+.talent-workspace { position: relative; flex: 1 1 auto; min-height: 0; }
+.talent-map-region { position: absolute; inset: 0; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.talent-detail { position: absolute; z-index: 2; top: 80px; right: 0; bottom: 32px; width: clamp(270px, 22vw, 370px); display: flex; flex-direction: column; min-height: 0; padding: 12px 0 0 26px; }
+.talent-detail::before { content: ''; position: absolute; z-index: -1; inset: -40px -40px -20px -45px; pointer-events: none; background: linear-gradient(90deg, transparent, #0a111bef 24%, #0a111bfa 80%); }
+.talent-detail::after { content: ''; position: absolute; top: 0; left: 26px; width: 64px; height: 1px; background: var(--talent-color); box-shadow: 0 0 14px var(--talent-color); }
 .talent-detail-scroll { overflow: auto; scrollbar-width: none; min-height: 0; padding-right: 7px; }
 .talent-detail > .button { flex: 0 0 auto; margin-top: 14px; align-self: flex-start; }
-.talent-detail h3 { font-size: 32px; font-weight: 400; margin: 12px 0 18px; color: #eddfbe; }
+.talent-detail h3 { font-size: 34px; font-weight: 400; margin: 16px 0 22px; color: var(--talent-color); letter-spacing: .08em; }
 .talent-detail p { font-family: var(--font-small); font-size: 16px; line-height: 1.85; color: #bfc5cf; }
 .talent-detail .talent-status { font-size: 14px; color: #a6aebe; min-height: 46px; }
 .talent-detail h4 { margin: 0 0 10px; font-size: 18px; font-weight: 400; }
-.talent-binding, .talent-current, .talent-path-preview { margin-top: 28px; padding-top: 16px; border-top: 1px solid #a6aab52b; }
+.talent-binding, .talent-current, .talent-path-preview { margin-top: 24px; padding-top: 12px; }
 .talent-path-preview p { margin: 4px 0; }
 .talent-current p { font-size: 14px; }
 .talent-footer { flex: 0 0 auto; margin-top: 0; }
@@ -24,9 +30,10 @@
 .report-talents { margin: 0 0 12px; font-size: 14px; line-height: 1.7; color: #b6bbc6; }
 .report-talents strong { color: #e1d4b5; font-weight: 400; }
 @media (max-height: 760px) {
-  .talents-modal .modal-panel.wide { height: calc(100dvh - 46px); }
+  .talents-modal .modal-panel.wide { height: 100dvh; padding: 16px 28px 70px; }
   .talents-modal .modal-heading { margin-bottom: 10px; }
   .talent-panel { gap: 10px; }
   .talent-toolbar strong { font-size: 20px; }
   .talent-footer { padding-top: 8px; }
+  .talent-detail { top: 58px; bottom: 24px; }
 }

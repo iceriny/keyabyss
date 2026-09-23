@@ -33,3 +33,13 @@ test('graph generation rejects duplicate nodes and dangling dependencies', () =>
   assert.throws(() => generateGraphLayout({ ...TALENT_GRAPH, nodes: [...TALENT_GRAPH.nodes, TALENT_GRAPH.nodes[0]] }), /duplicate node/);
   assert.throws(() => generateGraphLayout({ ...TALENT_GRAPH, relations: [{ id: 'bad', source: TALENT_GRAPH.nodes[0].id, target: 'missing', kind: 'requires' }] }), /Invalid relation/);
 });
+
+test('rooted graph has one central book core and bounded whole-world queries', () => {
+  const roots = TALENT_GRAPH.nodes.filter(node => node.kind === 'root');
+  const radii = roots.map(node => Math.hypot(TALENT_LAYOUT.nodes[node.id].x, TALENT_LAYOUT.nodes[node.id].y));
+  assert.equal(roots.length, 4);
+  assert.ok(Math.max(...radii) - Math.min(...radii) < 1);
+  for (const node of TALENT_GRAPH.nodes.filter(node => node.kind !== 'root'))
+    assert.ok(Math.hypot(TALENT_LAYOUT.nodes[node.id].x, TALENT_LAYOUT.nodes[node.id].y) > Math.max(...radii));
+  assert.equal(visibleGraphNodes(TALENT_LAYOUT, {x:-1e12,y:-1e12,width:2e12,height:2e12}).length, TALENT_GRAPH.nodes.length);
+});
