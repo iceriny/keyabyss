@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, type ReactNode } from "react";
+import { cloneElement, createElement, Fragment, isValidElement, type ReactNode } from "react";
 import { GLOSSARY, glossaryById } from "../content/glossary.ts";
 import { createTextTokenizer } from "../shared/game-text.ts";
 import { Tooltip } from "./Tooltip";
@@ -76,15 +76,22 @@ function enrich(
     node.props["data-prose"] ||
     (typeof node.type === "string" && ["p", "li", "dd"].includes(node.type));
   const heading = typeof node.type === "string" && /^h[1-6]$/.test(node.type);
-  return cloneElement(
-    node,
-    prose ? { "data-prose-rendered": true } : {},
-    enrich(
-      node.props.children,
-      terms,
-      prose ? new Set() : heading ? undefined : seen,
-    ),
+  const children = enrich(
+    node.props.children,
+    terms,
+    prose ? new Set() : heading ? undefined : seen,
   );
+  const props = prose ? { "data-prose-rendered": true } : {};
+  // JSX's fixed siblings are frozen in development. Pass them as individual
+  // children so React keeps their static-child validation when cloning.
+  if (Array.isArray(node.props.children) && Object.isFrozen(node.props.children)) {
+    const cloned = cloneElement(node, props, ...(children as ReactNode[]));
+    // cloneElement validates these siblings, but unlike JSX it leaves its new
+    // children array mutable. Keep the static signal through custom components.
+    if (Array.isArray(cloned.props.children)) Object.freeze(cloned.props.children);
+    return cloned;
+  }
+  return cloneElement(node, props, children);
 }
 
 /** Wrap a paragraph or a UI subtree; custom components wrap their own rendered copy. */
@@ -95,5 +102,8 @@ export function GameText({
   children: ReactNode;
   terms?: boolean;
 }) {
-  return <>{enrich(children, terms)}</>;
+  const enriched = enrich(children, terms);
+  return Array.isArray(children) && Object.isFrozen(children)
+    ? createElement(Fragment, null, ...(enriched as ReactNode[]))
+    : <>{enriched}</>;
 }
