@@ -1,0 +1,13 @@
+# Copy to config.toml; replace <PROJECT> and <GODOT_CONSOLE> with local absolute paths.
+[mcp_servers.keyabyss_godot]
+command = "node"
+args = ["<PROJECT>/.tools/godot-mcp/build/index.js"]
+cwd = "<PROJECT>"
+enabled = true
+startup_timeout_sec = 30
+tool_timeout_sec = 60
+enabled_tools = ["get_godot_version", "get_project_info", "read_scene", "read_project_settings", "validate_script", "run_project", "stop_project", "get_debug_output", "game_screenshot", "game_get_scene_tree", "game_get_ui", "game_get_property", "game_get_audio", "game_key_press", "game_click", "game_get_errors", "game_get_logs", "game_performance", "game_wait"]
+
+[mcp_servers.keyabyss_godot.env]
+GODOT_PATH = "<GODOT_CONSOLE>"
+GODOT_MCP_ALLOWED_DIRS = "<PROJECT>/.temp/godot-mcp/project"
