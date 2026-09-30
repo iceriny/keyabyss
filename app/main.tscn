@@ -1,0 +1,46 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://app/main.gd" id="1_main"]
+[ext_resource type="Theme" path="res://ui/theme/keyabyss.tres" id="2_theme"]
+[ext_resource type="Script" path="res://game/input/input_router.gd" id="3_input"]
+[ext_resource type="Script" path="res://audio/archive_audio.gd" id="4_audio"]
+[ext_resource type="Script" path="res://ui/archive_cursor.gd" id="5_cursor"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_home.tscn" id="6_home"]
+[ext_resource type="Script" path="res://ui/game_display.gd" id="7_display"]
+
+[node name="Keyabyss" type="Node"]
+process_mode = 3
+script = ExtResource("1_main")
+
+[node name="SettingsSaveTimer" type="Timer" parent="."]
+wait_time = 0.35
+one_shot = true
+
+[node name="ArchiveAudio" type="Node" parent="."]
+script = ExtResource("4_audio")
+
+[node name="InputRouter" type="Node" parent="."]
+script = ExtResource("3_input")
+
+[node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="Interface"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme = ExtResource("2_theme")
+script = ExtResource("7_display")
+
+[node name="ArchiveHome" parent="Interface/Root" instance=ExtResource("6_home")]
+layout_mode = 1
+
+[node name="Cursor" type="Control" parent="Interface/Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 100
+script = ExtResource("5_cursor")

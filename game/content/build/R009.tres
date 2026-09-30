@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R009:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+&"dodge_capacity": 1,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R009"
+title = "折叠书页"
+description = "改善闪避充能与容量，新增充能纳入获取效果账；无"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()
+max_stacks = 1

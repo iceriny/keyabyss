@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R082:rule"
+operation = &"base-copy"
+phase = &"compile"
+parameters = {
+&"manufacture_discount_q": 154,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R082"
+title = "空白副本"
+description = "已有复写；T19；复制仅保留基础形状，制作更便宜；移除可选加工继承"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T19")

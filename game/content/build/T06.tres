@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T06:rule"
+operation = &"thin-shell"
+phase = &"compile"
+parameters = {
+&"manufacture_discount_q": 102,
+&"shell_durability_q": -205,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T06"
+title = "薄壁"
+description = "外壳更容易受热破裂，降低制造成本和耐久；可制造外壳；更难长时间保留"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

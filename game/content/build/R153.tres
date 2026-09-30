@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R153:rule"
+operation = &"heat-field"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R153"
+title = "余烬灰"
+description = "热量或持续伤害；无；分出一半灼烧留在地面；带热量的主术也能生成灼烧；附着伤害相应减少，移动敌人可能离开"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="BattleEncounter" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="1"]
+[resource]
+script = ExtResource("1")
+wave_count = 3
+wave_interval = 1.6
+health_multiplier = 1.0

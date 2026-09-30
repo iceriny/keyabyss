@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "source": "legacy/web/data/sources.json",
+  "sources_sha256": "25fbf831913c1e372e632f64246d666671f63d65c032ac10985ca77ba687fd62",
+  "books": [
+    {
+      "id": "primary1",
+      "title": "小学一年级 · 全册",
+      "count": 96,
+      "asset_sha256": "8addc48c25c00328dacab473ec3cd5f9871ee92ee824909f3f1db2aad3ef941c"
+    },
+    {
+      "id": "primary2",
+      "title": "小学二年级 · 全册",
+      "count": 93,
+      "asset_sha256": "0fe2c3cf975f11bb7aab6a771fc74abb205e264d72690efee399efc99f844a86"
+    },
+    {
+      "id": "primary3",
+      "title": "小学三年级 · 全册",
+      "count": 133,
+      "asset_sha256": "8d76afca2d564821b9dd9a995299d34614bbb0093cf9091b3b697417c3b8b061"
+    },
+    {
+      "id": "primary4",
+      "title": "小学四年级 · 全册",
+      "count": 153,
+      "asset_sha256": "953a4465a86d70e4f2e7b9e12067a55dbb08bcbcf40e7f623b2899a4cec37dfe"
+    },
+    {
+      "id": "primary5",
+      "title": "小学五年级 · 全册",
+      "count": 230,
+      "asset_sha256": "e2d04083d370a06ec3e4eff35425e025533b0e3830e0c5ee12c6d2606f2e2a7e"
+    },
+    {
+      "id": "primary6",
+      "title": "小学六年级 · 全册",
+      "count": 204,
+      "asset_sha256": "e5160fe37c6ff403b4ae321b23778f450583541efadbb2bafeda1945262eec55"
+    },
+    {
+      "id": "junior",
+      "title": "初中英语 · 全套教材",
+      "count": 1906,
+      "asset_sha256": "37034d5fd2524ff3a99cb5f348ccfe25284605cb0bedc73cf9258250b58a9e01"
+    },
+    {
+      "id": "senior",
+      "title": "高中英语 · 全套教材",
+      "count": 2941,
+      "asset_sha256": "be6c9912ab2219e8d840a08ed653adba582c49e617b3e89770e156333104d02c"
+    },
+    {
+      "id": "cet4",
+      "title": "大学英语四级 · 完整词表",
+      "count": 2607,
+      "asset_sha256": "82ccbe5b2a1cdffdfd2570bf529f98d54c84e4d5cf389989de2df986d0c6e99c"
+    },
+    {
+      "id": "cet6",
+      "title": "大学英语六级 · 完整词表",
+      "count": 2345,
+      "asset_sha256": "7683031d9fd306d1b297d6cd316fa53f09efafaa8bc2b88c87d5a58879ba3657"
+    },
+    {
+      "id": "cpp",
+      "title": "C++ 关键字 · 标准草案",
+      "count": 93,
+      "asset_sha256": "f199294fcccda31ed2dc9d30b3827a9965ffc383c34492d358d46e12130d9b34"
+    },
+    {
+      "id": "extension",
+      "title": "扩展挑战 · CMUdict 词形",
+      "count": 84620,
+      "asset_sha256": "cacc98a9afdb55299a7c104de779cb353d62dee21bb43ceffdebf56af1f51133"
+    }
+  ]
+}

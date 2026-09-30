@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R119:rule"
+operation = &"cargo-relay"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R119"
+title = "浮页路标"
+description = "有纸灵和传导；T25；运送中的导电法术可成为一个转交点；转交后扣除原运送电荷"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T25")

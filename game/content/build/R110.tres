@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R110:rule"
+operation = &"conduct"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R110"
+title = "字电线圈"
+description = "任意主书；无；用制作额度提供电荷和一次基础传导；与其他材料共享额度"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T27:rule"
+operation = &"merge"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T27"
+title = "并卷"
+description = "同次施法下，同位置、外壳、形状与目标的两份已存法术合成一份，保留各份账目并腾出一个空位；至少两份相容已存法术；原等待后再加 0.5 秒；寿命取短、次数取少，不能重复合页刷新"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

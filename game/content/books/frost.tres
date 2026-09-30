@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BookPresentation" load_steps=6 format=3]
+[ext_resource type="Script" path="res://game/content/book_presentation.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/books/frost.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/runes/frost-seal.svg" id="3"]
+[ext_resource type="Script" path="res://ui/effects/fluid_medium.gd" id="4"]
+[sub_resource type="Resource" id="FluidMaterial"]
+script = ExtResource("4")
+color = Color(0.57, 0.82, 0.95, 1)
+density_scale = 1.00
+temperature = -0.65
+
+[resource]
+script = ExtResource("1")
+fluid_material = SubResource("FluidMaterial")
+id = &"frost"
+title = "寒墨之书"
+color = Color(0.545, 0.871, 1, 1)
+artwork = ExtResource("2")
+seal = ExtResource("3")
+eyebrow = "FROST GRIMOIRE"
+headline = "冻结。穿透。碎裂。"
+subtitle = "每四次施法，唤醒一支重型冰矛。"
+description = "重型冰枪 · 冻结碎裂"
+ultimate = "冰河纪事"

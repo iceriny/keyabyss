@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R056:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+&"ultimate_pulses": 2,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R056"
+title = "不灭灰烬卷"
+description = "保留灰烬终式改写，频率、次数与每次威力一起计价；T49"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T49")
+max_stacks = 1
+allowed_books = PackedStringArray("flame")

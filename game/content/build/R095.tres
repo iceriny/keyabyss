@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R095:rule"
+operation = &"archive"
+phase = &"compile"
+parameters = {
+&"archive_retention_q": 102,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R095"
+title = "章末封蜡"
+description = "已有储备；T11；提高跨房合法储备保留率；跨房仍折损、容量不增"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T11")

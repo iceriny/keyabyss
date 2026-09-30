@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T18:rule"
+operation = &"guard-spacing"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T18"
+title = "绝缘间隙"
+description = "一个外壳被敌弹消耗后，附近同源外壳短暂不再参与自动挡弹；已有多个防御外壳；第二次危险不会自动多挡，换取防止过度消耗"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui/battle_visuals.gd" id="1"]
+[ext_resource type="Shader" path="res://ui/materials/battle_shockwave.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="Material_wave"]
+resource_local_to_scene = true
+shader = ExtResource("2")
+
+[sub_resource type="Gradient" id="Gradient_spark"]
+offsets = PackedFloat32Array(0, 0.18, 0.42, 0.72, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.72, 1, 1, 1, 0.24, 1, 1, 1, 0.035, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="Texture_spark"]
+gradient = SubResource("Gradient_spark")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="BattleWorld" type="Control"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+script = ExtResource("1")
+spark_texture = SubResource("Texture_spark")
+
+[node name="Fields" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="WorldCapture" type="BackBufferCopy" parent="."]
+z_index = 10
+copy_mode = 2
+
+[node name="Shockwave" type="ColorRect" parent="."]
+visible = false
+z_index = 11
+material = SubResource("Material_wave")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

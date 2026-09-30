@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T39:rule"
+operation = &"graze"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T39"
+title = "飞白"
+description = "对每颗敌弹仅一次的擦弹事件，将有限共鸣收益部分改为护盾；实际擦弹；获得的共鸣减少"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

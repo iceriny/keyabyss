@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T43:rule"
+operation = &"pull"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T43"
+title = "牵墨"
+description = "主术命中时用一部分威力推动邻敌靠近落点；可位移敌人；直接伤害份额减少，Boss 位移有单独上限"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

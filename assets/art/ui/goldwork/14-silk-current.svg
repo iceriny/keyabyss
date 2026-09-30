@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="240" viewBox="0 0 480 240" fill="none">
+  <title>游丝 · Silk current</title>
+  <defs><linearGradient id="gold" x1="22" y1="193" x2="457" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".23" stop-color="#C9AE72" stop-opacity=".5"/><stop offset=".55" stop-color="#F0DDAE" stop-opacity=".95"/><stop offset=".8" stop-color="#C9AE72" stop-opacity=".5"/><stop offset="1" stop-color="#C9AE72" stop-opacity="0"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round">
+    <path d="M18 195 C105 193 100 83 202 82 C273 81 282 150 347 136 C398 125 390 59 464 37" stroke-width="1.5"/>
+    <path d="M175 55 C237 29 278 48 306 67 C359 100 409 42 452 20" stroke-width=".7" opacity=".45"/>
+    <path d="M48 207 C149 171 137 104 204 103 C263 102 285 160 338 150 C394 140 419 91 458 84" stroke-width=".6" opacity=".38"/>
+    <path d="M132.88 107.18 C150.59 95.55 153.28 69.11 142.86 52.13 C129.02 71.04 129.25 88.5 132.88 107.18 Z M284.06 119.6 C307.06 101.6 331.06 92.6 355.06 99.6 C336.06 115.6 312.06 123.6 284.06 119.6 Z" stroke-width=".85"/>
+    <path d="M132.88 107.18 Q140.42 79.54 142.86 52.13 M284.06 119.6 Q320.06 104.6 355.06 99.6 M200 82.03 C207 74.03 207 65.03 202 58.03" stroke-width=".5"/>
+  </g>
+</svg>

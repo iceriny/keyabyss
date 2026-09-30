@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"K11:rule"
+operation = &"K11"
+phase = &"compile"
+parameters = {
+&"manufacture_discount_q": 205,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"K11"
+title = "速朽装订"
+description = "保存法术的制造成本降低、寿命短于普通释放等待；必须依靠结束释放，防御窗口极短"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 4
+mode_slot = &"storage-mode"
+requires_all = PackedStringArray("T19", "T22")

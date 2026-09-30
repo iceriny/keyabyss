@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R046:rule"
+operation = &"conduct"
+phase = &"compile"
+parameters = {
+&"chain_targets": 1,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R046"
+title = "超导禁卷"
+description = "改造雷鸣的传导与过载形状，保持每份电荷支出；T13"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T13")
+max_stacks = 1
+allowed_books = PackedStringArray("storm")

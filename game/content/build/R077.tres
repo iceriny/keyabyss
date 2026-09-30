@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R077:rule"
+operation = &"merge"
+phase = &"compile"
+parameters = {
+&"merge_count": 2,
+&"merge_wait_ms": 100,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R077"
+title = "齐页夹"
+description = "已有保存与合页方式；T27；一次最多合页份数增加二，减少空间占用；额外等待增加 0.1 秒，保留相容判定与逐份账"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T27")

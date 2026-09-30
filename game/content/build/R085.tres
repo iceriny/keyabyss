@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R085:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+&"recovery_q": 102,
+&"reserve_capacity_q": -205,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R085"
+title = "细口热匣"
+description = "可回收持续效果；无；提高回收保留比例；储备容量降低"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()

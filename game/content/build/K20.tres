@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"K20:rule"
+operation = &"K20"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"K20"
+title = "一式万用"
+description = "独卷的同一主术形状可在分散或集中两种预定目标策略间自动选择；主书结构固定，切换只改变分配且有固定阈值"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 4
+mode_slot = &"study-mode"
+requires_all = PackedStringArray("T58", "T60")

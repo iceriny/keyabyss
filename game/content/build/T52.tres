@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T52:rule"
+operation = &"summon"
+phase = &"compile"
+parameters = {
+&"summon_efficiency_q": 102,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T52"
+title = "折纸伴行"
+description = "人工完词维持一只基础纸灵，非纸主书也可获得入口；任意主书；消耗制作供给；不同时免费获得复写"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

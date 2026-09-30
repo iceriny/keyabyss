@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BookPresentation" load_steps=7 format=3]
+[ext_resource type="Script" path="res://game/content/book_presentation.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/books/storm.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/runes/storm-seal.svg" id="3"]
+[ext_resource type="Script" path="res://ui/effects/fluid_medium.gd" id="4"]
+[ext_resource type="Resource" path="res://ui/effects/presets/electric_flash.tres" id="5"]
+[sub_resource type="Resource" id="FluidMaterial"]
+script = ExtResource("4")
+color = Color(0.66, 0.75, 0.85, 1)
+density_scale = 0.18
+temperature = 0.12
+
+[resource]
+script = ExtResource("1")
+fluid_material = SubResource("FluidMaterial")
+fluid_effects = {&"cast": ExtResource("5"), &"impact": ExtResource("5")}
+id = &"storm"
+title = "雷鸣之书"
+color = Color(1, 0.820, 0.486, 1)
+artwork = ExtResource("2")
+seal = ExtResource("3")
+eyebrow = "STORM GRIMOIRE"
+headline = "传导。蓄能。过载。"
+subtitle = "连锁四名敌人，以密集墨潮引燃雷暴。"
+description = "瞬发电弧 · 过载引爆"
+ultimate = "雷鸣终章"

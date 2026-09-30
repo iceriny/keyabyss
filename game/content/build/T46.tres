@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T46:rule"
+operation = &"cold-field"
+phase = &"compile"
+parameters = {
+&"field_radius_q": 102,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T46"
+title = "寒径"
+description = "把部分寒气留在命中处；区域范围提高 10%；寒气供给；当前目标获得的寒气减少，多人共分"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

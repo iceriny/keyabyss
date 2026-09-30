@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R086:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+&"reserve_capacity_q": 256,
+&"reserve_cast_cap_q": 4096,
+&"recovery_q": -51,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R086"
+title = "宽口热匣"
+description = "已有储备；无；扩大容量，普通与集中投入上限各增加 4 power 空间；回收保留比例降低"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()

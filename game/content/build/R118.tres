@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R118:rule"
+operation = &"concentrate"
+phase = &"compile"
+parameters = {
+&"chain_targets": -1,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R118"
+title = "单路电桥"
+description = "有导路；K08；较少落点获得更完整电性份额；群体覆盖下降"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("K08")

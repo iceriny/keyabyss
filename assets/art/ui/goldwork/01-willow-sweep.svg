@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="180" viewBox="0 0 480 180" fill="none">
+  <title>流柳 · Willow sweep</title>
+  <defs>
+    <linearGradient id="gold" x1="20" y1="146" x2="455" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".22" stop-color="#C9AE72" stop-opacity=".65"/><stop offset=".57" stop-color="#F0DDAE"/><stop offset=".83" stop-color="#C9AE72" stop-opacity=".6"/><stop offset="1" stop-color="#C9AE72" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 146 C104 141 115 81 207 88 C299 95 357 57 460 43" stroke-width="1.65"/>
+    <path d="M20 146 C104 141 115 81 207 88 C299 95 357 57 460 43" stroke-width=".65" opacity=".38"/>
+    <path d="M119.05 107.53 C132.05 81.53 133.05 46.53 158.05 25.53 C145.05 58.53 146.05 86.53 119.05 107.53 Z M168.72 89.24 C187.72 62.24 211.72 54.24 234.72 51.24 C213.72 71.24 194.72 84.24 168.72 89.24 Z M242.03 88.57 C269.03 95.57 286.03 120.57 323.03 126.57 C294.03 133.57 261.03 121.57 242.03 88.57 Z M316.43 76.73 C339.43 48.73 360.43 34.73 394.43 27.73 C372.43 49.73 354.43 67.73 316.43 76.73 Z M369.88 62.22 C393.88 71.22 419.88 83.22 448.88 75.22 C426.88 93.22 392.88 89.22 369.88 62.22 Z" stroke-width="1"/>
+    <path d="M119.05 107.53 Q145.05 68.53 158.05 25.53 M168.72 89.24 Q206.72 70.24 234.72 51.24 M242.03 88.57 Q282.03 118.57 323.03 126.57 M316.43 76.73 Q361.43 48.73 394.43 27.73 M369.88 62.22 Q413.88 83.22 448.88 75.22" stroke-width=".5" opacity=".65"/>
+    <path d="M207 88 C231 84 249 69 248 46 M284.93 83.62 C308.93 89.62 329.93 100.62 350.93 95.62 M97.59 120.24 C77.59 116.24 63.59 101.24 54.59 81.24" stroke-width=".75"/>
+  </g>
+</svg>

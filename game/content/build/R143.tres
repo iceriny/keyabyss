@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R143:rule"
+operation = &"armor"
+phase = &"compile"
+parameters = {
+&"storage_slots": -1,
+&"armor_q": 154,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R143"
+title = "折页盾片"
+description = "已有保存空间；T54；牺牲一格保存空间换基础承伤能力；保存法术变少"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T54")

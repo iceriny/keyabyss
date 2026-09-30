@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R100:rule"
+operation = &"heat-open"
+phase = &"compile"
+parameters = {
+&"heat_threshold_q": -256,
+&"storage_lifetime_ms": -1000,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R100"
+title = "速燃引线"
+description = "外壳与热量；T05；更少热量即可提前打开；保存寿命缩短"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T05")

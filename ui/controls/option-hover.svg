@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="40" viewBox="0 0 256 40">
+  <defs>
+    <radialGradient id="light"><stop stop-color="#e0c997" stop-opacity=".14"/><stop offset="1" stop-color="#c4a463" stop-opacity="0"/></radialGradient>
+    <linearGradient id="vein"><stop stop-color="#a88b51" stop-opacity="0"/><stop offset=".4" stop-color="#efdfb6" stop-opacity=".65"/><stop offset=".65" stop-color="#b49559" stop-opacity=".2"/><stop offset="1" stop-color="#a88b51" stop-opacity="0"/></linearGradient>
+  </defs>
+  <ellipse cx="102" cy="23" rx="128" ry="24" fill="url(#light)"/>
+  <path d="M8 35 C73 30 144 38 248 33" fill="none" stroke="url(#vein)" stroke-width=".8"/>
+</svg>

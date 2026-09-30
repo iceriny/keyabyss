@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"N15-02:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+&"recovery_q": 20,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"N15-02"
+title = "回收保留"
+description = "回收比例增加 2 个百分点，受总上限限制"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 1

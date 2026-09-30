@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BookPresentation" load_steps=7 format=3]
+[ext_resource type="Script" path="res://game/content/book_presentation.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/books/spirit.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/runes/spirit-seal.svg" id="3"]
+[ext_resource type="Script" path="res://ui/effects/fluid_medium.gd" id="4"]
+[ext_resource type="Resource" path="res://ui/effects/presets/melee.tres" id="5"]
+[sub_resource type="Resource" id="FluidMaterial"]
+script = ExtResource("4")
+color = Color(0.72, 0.59, 0.88, 1)
+density_scale = 0.65
+temperature = 0.08
+
+[resource]
+script = ExtResource("1")
+fluid_material = SubResource("FluidMaterial")
+fluid_effects = {&"impact": ExtResource("5")}
+id = &"spirit"
+title = "纸灵之书"
+color = Color(0.761, 0.627, 1, 1)
+artwork = ExtResource("2")
+seal = ExtResource("3")
+eyebrow = "SPIRIT GRIMOIRE"
+headline = "标记。俯冲。合击。"
+subtitle = "以连贯词咒，驱使纸灵军团。"
+description = "标记集火 · 飞刃军团"
+ultimate = "千纸夜行"

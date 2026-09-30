@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"K16:rule"
+operation = &"K16"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"K16"
+title = "借势回锋"
+description = "成功弹反后，从本次反击中留一部分力量给下一次人工主术；有数量上限，强化部分来自打字积累的力量，不能收回自己的派生攻击"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 4
+mode_slot = &"parry-mode"
+requires_all = PackedStringArray("T40")

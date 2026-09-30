@@ -1,0 +1,882 @@
+{
+  "id": "primary6",
+  "title": "小学六年级 · 全册",
+  "sourceLabel": "Qwerty Learner / RealKai42",
+  "source": "https://github.com/RealKai42/qwerty-learner",
+  "sourceBlob": null,
+  "upstreamFile": "PEPXiaoXue6_1_T.json",
+  "retrievedAt": "2026-09-20T08:28:46.892Z",
+  "snapshot": "complete",
+  "scope": "完整同步 2 个源文件；原始 238 条，过滤 29 条，去重 5 条。",
+  "description": "小学六年级 · 全册；保留源中文释义，完整同步后过滤不支持的短语并去重。",
+  "sourceRecords": 238,
+  "excluded": [
+    "post office",
+    "on foot",
+    "slow down",
+    "pay attention to",
+    "traffic lights",
+    "papa westray",
+    "see a film",
+    "take a trip",
+    "next week",
+    "comic book",
+    "word book",
+    "post card",
+    "mid-autumn festival",
+    "get together",
+    "pen pal",
+    "police officer",
+    "head teacher",
+    "see a doctor",
+    "wear.",
+    "take a deep breath",
+    "count to ten",
+    "had a cold",
+    "went camping",
+    "went fishing",
+    "took pictures",
+    "labour day",
+    "dining hall",
+    "go cycling",
+    "look up"
+  ],
+  "count": 204,
+  "upstreamFiles": [
+    "PEPXiaoXue6_1_T.json",
+    "PEPXiaoXue6_2_T.json"
+  ],
+  "sources": [
+    {
+      "file": "PEPXiaoXue6_1_T.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEPXiaoXue6_1_T.json",
+      "sha256": "8721ebd6f7f2bc5c565bf80c2fad87e17b05600aeb31a748d098a1bb3629b979",
+      "records": 130
+    },
+    {
+      "file": "PEPXiaoXue6_2_T.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEPXiaoXue6_2_T.json",
+      "sha256": "cbe3e2a633c1d420fed6d743c7473b56474354cdb0cf28af051fe568bffb50ec",
+      "records": 108
+    }
+  ],
+  "duplicates": 5,
+  "words": [
+    {
+      "word": "science",
+      "meaning": "科学"
+    },
+    {
+      "word": "museum",
+      "meaning": "博物馆"
+    },
+    {
+      "word": "bookstore",
+      "meaning": "书店"
+    },
+    {
+      "word": "cinema",
+      "meaning": "电影院"
+    },
+    {
+      "word": "hospital",
+      "meaning": "医院"
+    },
+    {
+      "word": "crossing",
+      "meaning": "十字路口"
+    },
+    {
+      "word": "turn",
+      "meaning": "转弯"
+    },
+    {
+      "word": "left",
+      "meaning": "左"
+    },
+    {
+      "word": "by",
+      "meaning": "乘"
+    },
+    {
+      "word": "bus",
+      "meaning": "公共汽车"
+    },
+    {
+      "word": "plane",
+      "meaning": "飞机"
+    },
+    {
+      "word": "taxi",
+      "meaning": "出租汽车"
+    },
+    {
+      "word": "ship",
+      "meaning": "船"
+    },
+    {
+      "word": "subway",
+      "meaning": "地铁"
+    },
+    {
+      "word": "train",
+      "meaning": "火车"
+    },
+    {
+      "word": "slow",
+      "meaning": "慢的"
+    },
+    {
+      "word": "down",
+      "meaning": "减少"
+    },
+    {
+      "word": "stop",
+      "meaning": "停下"
+    },
+    {
+      "word": "mrs",
+      "meaning": "夫人"
+    },
+    {
+      "word": "early",
+      "meaning": "早到的"
+    },
+    {
+      "word": "helmet",
+      "meaning": "头盔"
+    },
+    {
+      "word": "must",
+      "meaning": "必须"
+    },
+    {
+      "word": "wear",
+      "meaning": "戴"
+    },
+    {
+      "word": "attention",
+      "meaning": "注意"
+    },
+    {
+      "word": "traffic",
+      "meaning": "交通"
+    },
+    {
+      "word": "munich",
+      "meaning": "慕尼黑"
+    },
+    {
+      "word": "germany",
+      "meaning": "德国"
+    },
+    {
+      "word": "alaska",
+      "meaning": "阿拉斯加州"
+    },
+    {
+      "word": "sled",
+      "meaning": "雪橇"
+    },
+    {
+      "word": "fast",
+      "meaning": "快的"
+    },
+    {
+      "word": "ferry",
+      "meaning": "轮渡"
+    },
+    {
+      "word": "scotland",
+      "meaning": "苏格兰"
+    },
+    {
+      "word": "visit",
+      "meaning": "拜访"
+    },
+    {
+      "word": "film",
+      "meaning": "电影"
+    },
+    {
+      "word": "trip",
+      "meaning": "旅行"
+    },
+    {
+      "word": "supermarket",
+      "meaning": "超市"
+    },
+    {
+      "word": "evening",
+      "meaning": "晚上"
+    },
+    {
+      "word": "tonight",
+      "meaning": "今晚"
+    },
+    {
+      "word": "tomorrow",
+      "meaning": "明天"
+    },
+    {
+      "word": "dictionary",
+      "meaning": "词典"
+    },
+    {
+      "word": "comic",
+      "meaning": "滑稽的"
+    },
+    {
+      "word": "word",
+      "meaning": "单词"
+    },
+    {
+      "word": "lesson",
+      "meaning": "课"
+    },
+    {
+      "word": "space",
+      "meaning": "太空"
+    },
+    {
+      "word": "travel",
+      "meaning": "旅行"
+    },
+    {
+      "word": "half",
+      "meaning": "一半"
+    },
+    {
+      "word": "price",
+      "meaning": "价格"
+    },
+    {
+      "word": "together",
+      "meaning": "一起"
+    },
+    {
+      "word": "mooncake",
+      "meaning": "月饼"
+    },
+    {
+      "word": "poem",
+      "meaning": "诗"
+    },
+    {
+      "word": "moon",
+      "meaning": "月亮"
+    },
+    {
+      "word": "studies",
+      "meaning": "学习"
+    },
+    {
+      "word": "puzzle",
+      "meaning": "谜"
+    },
+    {
+      "word": "hiking",
+      "meaning": "远足"
+    },
+    {
+      "word": "hobby",
+      "meaning": "业余爱好"
+    },
+    {
+      "word": "jasmine",
+      "meaning": "茉莉"
+    },
+    {
+      "word": "idea",
+      "meaning": "主意"
+    },
+    {
+      "word": "canberra",
+      "meaning": "堪培拉"
+    },
+    {
+      "word": "amazing",
+      "meaning": "令人惊奇的"
+    },
+    {
+      "word": "shall",
+      "meaning": "表示征求意见"
+    },
+    {
+      "word": "goal",
+      "meaning": "射门"
+    },
+    {
+      "word": "join",
+      "meaning": "加入"
+    },
+    {
+      "word": "club",
+      "meaning": "俱乐部"
+    },
+    {
+      "word": "share",
+      "meaning": "分享"
+    },
+    {
+      "word": "factory",
+      "meaning": "工厂"
+    },
+    {
+      "word": "worker",
+      "meaning": "工人"
+    },
+    {
+      "word": "postman",
+      "meaning": "邮递员"
+    },
+    {
+      "word": "businessman",
+      "meaning": "商人"
+    },
+    {
+      "word": "fisherman",
+      "meaning": "渔民"
+    },
+    {
+      "word": "scientist",
+      "meaning": "科学家"
+    },
+    {
+      "word": "pilot",
+      "meaning": "飞行员"
+    },
+    {
+      "word": "coach",
+      "meaning": "教练"
+    },
+    {
+      "word": "country",
+      "meaning": "国家"
+    },
+    {
+      "word": "sea",
+      "meaning": "大海"
+    },
+    {
+      "word": "stay",
+      "meaning": "保持"
+    },
+    {
+      "word": "university",
+      "meaning": "大学"
+    },
+    {
+      "word": "gym",
+      "meaning": "体育馆"
+    },
+    {
+      "word": "if",
+      "meaning": "如果"
+    },
+    {
+      "word": "reporter",
+      "meaning": "记者"
+    },
+    {
+      "word": "use",
+      "meaning": "使用"
+    },
+    {
+      "word": "type",
+      "meaning": "打字"
+    },
+    {
+      "word": "quickly",
+      "meaning": "迅速地"
+    },
+    {
+      "word": "secretary",
+      "meaning": "秘书"
+    },
+    {
+      "word": "angry",
+      "meaning": "生气的"
+    },
+    {
+      "word": "afraid",
+      "meaning": "害怕"
+    },
+    {
+      "word": "sad",
+      "meaning": "难过的"
+    },
+    {
+      "word": "worried",
+      "meaning": "担心的"
+    },
+    {
+      "word": "happy",
+      "meaning": "高兴的"
+    },
+    {
+      "word": "more",
+      "meaning": "更多的"
+    },
+    {
+      "word": "deep",
+      "meaning": "深的"
+    },
+    {
+      "word": "breath",
+      "meaning": "呼吸"
+    },
+    {
+      "word": "count",
+      "meaning": "数数"
+    },
+    {
+      "word": "chase",
+      "meaning": "追赶"
+    },
+    {
+      "word": "mice",
+      "meaning": "老鼠"
+    },
+    {
+      "word": "bad",
+      "meaning": "邪恶的"
+    },
+    {
+      "word": "hurt",
+      "meaning": "受伤"
+    },
+    {
+      "word": "ill",
+      "meaning": "有病"
+    },
+    {
+      "word": "wrong",
+      "meaning": "有毛病"
+    },
+    {
+      "word": "should",
+      "meaning": "应该"
+    },
+    {
+      "word": "feel",
+      "meaning": "觉得"
+    },
+    {
+      "word": "well",
+      "meaning": "健康"
+    },
+    {
+      "word": "sit",
+      "meaning": "坐"
+    },
+    {
+      "word": "grass",
+      "meaning": "草坪"
+    },
+    {
+      "word": "ant",
+      "meaning": "蚂蚁"
+    },
+    {
+      "word": "worry",
+      "meaning": "担心"
+    },
+    {
+      "word": "stuck",
+      "meaning": "陷住"
+    },
+    {
+      "word": "mud",
+      "meaning": "泥"
+    },
+    {
+      "word": "pull",
+      "meaning": "拉"
+    },
+    {
+      "word": "everyone",
+      "meaning": "每人"
+    },
+    {
+      "word": "younger",
+      "meaning": "更年轻的"
+    },
+    {
+      "word": "older",
+      "meaning": "更年长的"
+    },
+    {
+      "word": "taller",
+      "meaning": "更高的"
+    },
+    {
+      "word": "shorter",
+      "meaning": "更矮的"
+    },
+    {
+      "word": "longer",
+      "meaning": "更长的"
+    },
+    {
+      "word": "thinner",
+      "meaning": "更瘦的"
+    },
+    {
+      "word": "heavier",
+      "meaning": "更重的"
+    },
+    {
+      "word": "bigger",
+      "meaning": "更大的"
+    },
+    {
+      "word": "smaller",
+      "meaning": "更小的"
+    },
+    {
+      "word": "stronger",
+      "meaning": "更强壮的"
+    },
+    {
+      "word": "dinosaur",
+      "meaning": "恐龙"
+    },
+    {
+      "word": "hall",
+      "meaning": "大厅"
+    },
+    {
+      "word": "metre",
+      "meaning": "米"
+    },
+    {
+      "word": "meter",
+      "meaning": "米"
+    },
+    {
+      "word": "than",
+      "meaning": "比"
+    },
+    {
+      "word": "both",
+      "meaning": "两个都"
+    },
+    {
+      "word": "kilogram",
+      "meaning": "千克"
+    },
+    {
+      "word": "countryside",
+      "meaning": "乡村"
+    },
+    {
+      "word": "lower",
+      "meaning": "更低地"
+    },
+    {
+      "word": "shadow",
+      "meaning": "影子"
+    },
+    {
+      "word": "smarter",
+      "meaning": "更聪明的"
+    },
+    {
+      "word": "become",
+      "meaning": "变成"
+    },
+    {
+      "word": "cleaned",
+      "meaning": "打扫"
+    },
+    {
+      "word": "stayed",
+      "meaning": "待"
+    },
+    {
+      "word": "washed",
+      "meaning": "洗"
+    },
+    {
+      "word": "watched",
+      "meaning": "看"
+    },
+    {
+      "word": "had",
+      "meaning": "得病（例如 had a cold 得了感冒）"
+    },
+    {
+      "word": "slept",
+      "meaning": "睡觉"
+    },
+    {
+      "word": "read",
+      "meaning": "读"
+    },
+    {
+      "word": "saw",
+      "meaning": "看"
+    },
+    {
+      "word": "last",
+      "meaning": "最近"
+    },
+    {
+      "word": "yesterday",
+      "meaning": "昨天"
+    },
+    {
+      "word": "before",
+      "meaning": "在⋯⋯之前"
+    },
+    {
+      "word": "drank",
+      "meaning": "喝"
+    },
+    {
+      "word": "show",
+      "meaning": "演出"
+    },
+    {
+      "word": "magazine",
+      "meaning": "杂志"
+    },
+    {
+      "word": "better",
+      "meaning": "更好的"
+    },
+    {
+      "word": "faster",
+      "meaning": "更快的"
+    },
+    {
+      "word": "hotel",
+      "meaning": "旅馆"
+    },
+    {
+      "word": "fixed",
+      "meaning": "修理"
+    },
+    {
+      "word": "broken",
+      "meaning": "破损的"
+    },
+    {
+      "word": "lamp",
+      "meaning": "台灯"
+    },
+    {
+      "word": "loud",
+      "meaning": "大声的"
+    },
+    {
+      "word": "enjoy",
+      "meaning": "享受⋯⋯的乐趣"
+    },
+    {
+      "word": "went",
+      "meaning": "去"
+    },
+    {
+      "word": "camp",
+      "meaning": "野营"
+    },
+    {
+      "word": "fish",
+      "meaning": "钓鱼"
+    },
+    {
+      "word": "rode",
+      "meaning": "骑"
+    },
+    {
+      "word": "ate",
+      "meaning": "吃"
+    },
+    {
+      "word": "took",
+      "meaning": "拍照"
+    },
+    {
+      "word": "bought",
+      "meaning": "买"
+    },
+    {
+      "word": "gift",
+      "meaning": "礼物"
+    },
+    {
+      "word": "fell",
+      "meaning": "摔倒"
+    },
+    {
+      "word": "off",
+      "meaning": "落下"
+    },
+    {
+      "word": "mule",
+      "meaning": "骡子"
+    },
+    {
+      "word": "turpan",
+      "meaning": "吐鲁番"
+    },
+    {
+      "word": "could",
+      "meaning": "能"
+    },
+    {
+      "word": "till",
+      "meaning": "直到"
+    },
+    {
+      "word": "beach",
+      "meaning": "沙滩"
+    },
+    {
+      "word": "basket",
+      "meaning": "篮子"
+    },
+    {
+      "word": "part",
+      "meaning": "角色"
+    },
+    {
+      "word": "licked",
+      "meaning": "舔"
+    },
+    {
+      "word": "laughed",
+      "meaning": "笑"
+    },
+    {
+      "word": "ago",
+      "meaning": "以前"
+    },
+    {
+      "word": "cycling",
+      "meaning": "骑自行车运动"
+    },
+    {
+      "word": "ice-skate",
+      "meaning": "滑冰"
+    },
+    {
+      "word": "badminton",
+      "meaning": "羽毛球运动"
+    },
+    {
+      "word": "star",
+      "meaning": "星"
+    },
+    {
+      "word": "easy",
+      "meaning": "容易的"
+    },
+    {
+      "word": "internet",
+      "meaning": "互联网"
+    },
+    {
+      "word": "different",
+      "meaning": "不同的"
+    },
+    {
+      "word": "active",
+      "meaning": "活跃的"
+    },
+    {
+      "word": "race",
+      "meaning": "赛跑"
+    },
+    {
+      "word": "nothing",
+      "meaning": "没有什么"
+    },
+    {
+      "word": "thought",
+      "meaning": "想"
+    },
+    {
+      "word": "felt",
+      "meaning": "感觉"
+    },
+    {
+      "word": "cheetah",
+      "meaning": "猎豹"
+    },
+    {
+      "word": "woke",
+      "meaning": "醒"
+    },
+    {
+      "word": "dream",
+      "meaning": "梦"
+    },
+    {
+      "word": "straight",
+      "meaning": "笔直的"
+    },
+    {
+      "word": "right",
+      "meaning": "右"
+    },
+    {
+      "word": "ask",
+      "meaning": "问"
+    },
+    {
+      "word": "sir",
+      "meaning": "先生"
+    },
+    {
+      "word": "interesting",
+      "meaning": "有趣的"
+    },
+    {
+      "word": "italian",
+      "meaning": "意大利的"
+    },
+    {
+      "word": "restaurant",
+      "meaning": "餐馆"
+    },
+    {
+      "word": "pizza",
+      "meaning": "比萨饼"
+    },
+    {
+      "word": "street",
+      "meaning": "大街"
+    },
+    {
+      "word": "get",
+      "meaning": "到达"
+    },
+    {
+      "word": "gps",
+      "meaning": "全球（卫星）"
+    },
+    {
+      "word": "gave",
+      "meaning": "提供"
+    },
+    {
+      "word": "feature",
+      "meaning": "特点"
+    },
+    {
+      "word": "follow",
+      "meaning": "跟着"
+    },
+    {
+      "word": "far",
+      "meaning": "较远的"
+    },
+    {
+      "word": "tell",
+      "meaning": "告诉"
+    }
+  ]
+}

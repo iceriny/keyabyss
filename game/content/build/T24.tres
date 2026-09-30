@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T24:rule"
+operation = &"newest"
+phase = &"compile"
+parameters = {
+&"guard_efficiency_q": 102,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T24"
+title = "护新"
+description = "防御优先使用最新的合格外壳，护页每份威力可抵挡的伤害提高 10%；已有护页；新法术更难完成原定攻击"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+mode_slot = &"guard-order"

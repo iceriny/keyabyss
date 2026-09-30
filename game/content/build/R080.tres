@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R080:rule"
+operation = &"return"
+phase = &"compile"
+parameters = {
+&"transport_retention_q": 102,
+&"return_wait_ms": 200,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R080"
+title = "回航纸绳"
+description = "已有运输；T26；失去目标后的一次返程损耗更少；返程增加等待"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T26")

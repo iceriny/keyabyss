@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R141:rule"
+operation = &"oldest"
+phase = &"compile"
+parameters = {
+&"guard_efficiency_q": 102,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R141"
+title = "守旧书针"
+description = "已有护页；T23；使用旧页防御时提高少量折算；旧页原攻击更难兑现"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T23")
+mode_slot = &"guard-order"

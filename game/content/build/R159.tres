@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R159:rule"
+operation = &"shared-work"
+phase = &"compile"
+parameters = {
+&"shared_discount_q": 51,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R159"
+title = "同工夹具"
+description = "至少两种材料；T59；同类加工共享少量工序费用；折扣有全局上限"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray("T59")

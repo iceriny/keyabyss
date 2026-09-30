@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"T15:rule"
+operation = &"long-hop"
+phase = &"compile"
+parameters = {
+&"hop_range_q": 256,
+&"chain_targets": -1,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"T15"
+title = "远支"
+description = "减少可访问目标数，换取更长的单次传递距离；已有传递方式；近处密集群体覆盖下降"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])

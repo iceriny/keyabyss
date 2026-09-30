@@ -1,0 +1,641 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://ui/archive_home.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_stage.tscn" id="2"]
+[ext_resource type="Script" path="res://ui/open_button.gd" id="3"]
+[ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="4"]
+[ext_resource type="Texture2D" path="res://ui/controls/menu-diamond.svg" id="5"]
+[ext_resource type="Shader" path="res://ui/materials/archive_floor.gdshader" id="6"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_effects.tscn" id="7"]
+[ext_resource type="Script" path="res://ui/startup_sigil.gd" id="8"]
+[ext_resource type="Theme" path="res://ui/theme/keyabyss.tres" id="9"]
+[ext_resource type="Material" path="res://ui/materials/gold_inlay.tres" id="10_gold"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/goldwork/13-feather-vein.svg" id="11_feather"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/goldwork/04-unfurling-tendril.svg" id="12_tendril"]
+[ext_resource type="Script" path="res://ui/crystal_inlay.gd" id="13_crystal"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_books"]
+
+[sub_resource type="ShaderMaterial" id="Material_floor"]
+resource_local_to_scene = true
+shader = ExtResource("6")
+
+[node name="ArchiveHome" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("9")
+script = ExtResource("1")
+
+[node name="ArchiveStage" parent="." instance=ExtResource("2")]
+layout_mode = 1
+
+[node name="Floor" type="ColorRect" parent="ArchiveStage/World/Scenery"]
+material = SubResource("Material_floor")
+offset_left = 360.0
+offset_top = 452.0
+offset_right = 1560.0
+offset_bottom = 808.0
+mouse_filter = 2
+
+[node name="ArchiveEffects" parent="ArchiveStage/World/Scenery" instance=ExtResource("7")]
+
+[node name="Portal" type="Control" parent="ArchiveStage/World/Scenery"]
+offset_left = 528.0
+offset_top = 51.0
+offset_right = 1392.0
+offset_bottom = 915.0
+modulate = Color(1, 1, 1, 0.009405)
+mouse_filter = 2
+script = ExtResource("8")
+reduced_motion = true
+
+[node name="BookHits" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Book_frost" type="Button" parent="BookHits"]
+layout_mode = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_books")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_books")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_books")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_books")
+
+[node name="Book_storm" type="Button" parent="BookHits"]
+layout_mode = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_books")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_books")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_books")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_books")
+
+[node name="Book_spirit" type="Button" parent="BookHits"]
+layout_mode = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_books")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_books")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_books")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_books")
+
+[node name="Book_flame" type="Button" parent="BookHits"]
+layout_mode = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_books")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_books")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_books")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_books")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_books")
+
+[node name="Decoration" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BookTitles" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FrostTitle" type="Label" parent="BookTitles"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.545, 0.871, 1, 1)
+theme_override_font_sizes/font_size = 38
+text = "寒墨之书"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="StormTitle" type="Label" parent="BookTitles"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.486, 1)
+theme_override_font_sizes/font_size = 38
+text = "雷鸣之书"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SpiritTitle" type="Label" parent="BookTitles"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.761, 0.627, 1, 1)
+theme_override_font_sizes/font_size = 38
+text = "纸灵之书"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="FlameTitle" type="Label" parent="BookTitles"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.306, 1)
+theme_override_font_sizes/font_size = 38
+text = "灰烬之书"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CardCommands" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FrostCommand" type="Label" parent="CardCommands"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.568627, 0.662745, 0.67451, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 11
+text = "frost  |  1"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="StormCommand" type="Label" parent="CardCommands"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.568627, 0.662745, 0.67451, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 11
+text = "storm  |  2"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SpiritCommand" type="Label" parent="CardCommands"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.568627, 0.662745, 0.67451, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 11
+text = "spirit  |  3"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="FlameCommand" type="Label" parent="CardCommands"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.568627, 0.662745, 0.67451, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 11
+text = "flame  |  4"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CaptionLayer" type="Control" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Caption" type="VBoxContainer" parent="CaptionLayer"]
+layout_mode = 0
+offset_left = 499.0
+offset_top = 737.0
+offset_right = 1421.0
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Eyebrow" type="Label" parent="CaptionLayer/Caption"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.72, 0.69, 0.57, 1)
+horizontal_alignment = 1
+
+[node name="Headline" type="Label" parent="CaptionLayer/Caption"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.84, 0.86, 0.82, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Description" type="Label" parent="CaptionLayer/Caption"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.71, 0.70, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Traits" type="Label" parent="CaptionLayer/Caption"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.49, 0.57, 0.59, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="TitleGroup" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 61.0
+offset_right = 676.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Kicker" type="Label" parent="TitleGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.576471, 0.639216, 0.709804, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 9
+text = "K E Y A B Y S S  /  SEALED ARCHIVE"
+autowrap_mode = 3
+
+[node name="Heading" type="HBoxContainer" parent="TitleGroup"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="TitleStart" type="Label" parent="TitleGroup/Heading"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.909804, 0.894118, 0.847059, 1)
+theme_override_font_sizes/font_size = 70
+text = "键"
+
+[node name="TitleAccent" type="Label" parent="TitleGroup/Heading"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.545098, 0.870588, 1, 1)
+theme_override_font_sizes/font_size = 70
+text = "渊"
+
+[node name="Subtitle" type="Label" parent="TitleGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.584314, 0.615686, 0.592157, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 12
+text = "失  控  咒  典"
+autowrap_mode = 3
+
+[node name="ArchiveLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1504.0
+offset_top = 71.0
+offset_right = 1714.0
+offset_bottom = 141.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.584314, 0.615686, 0.592157, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 12
+text = "封 印 书 库\n触碰法书，唤醒共鸣"
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="Counter" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1724.0
+offset_top = 81.0
+offset_right = 1824.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.72549, 0.701961, 0.576471, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="Menu" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 800.0
+offset_right = 331.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Vocab" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 40
+theme_override_font_sizes/font_size = 14
+text = "词库    vocab"
+icon = ExtResource("5")
+script = ExtResource("3")
+
+[node name="Help" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 40
+theme_override_font_sizes/font_size = 14
+text = "施法指南    help"
+icon = ExtResource("5")
+script = ExtResource("3")
+
+[node name="Settings" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 40
+theme_override_font_sizes/font_size = 14
+text = "设置    settings"
+icon = ExtResource("5")
+script = ExtResource("3")
+
+[node name="Quit" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 40
+theme_override_font_sizes/font_size = 14
+text = "离开    quit"
+icon = ExtResource("5")
+script = ExtResource("3")
+
+[node name="PrepareButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 830.0
+offset_top = 938.0
+offset_right = 1090.0
+offset_bottom = 990.0
+theme_override_font_sizes/font_size = 17
+text = "准备出征  →"
+alignment = 1
+script = ExtResource("3")
+caption_alignment = 1
+filament_extension = 44.0
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 85.0
+offset_right = 228.0
+offset_bottom = 125.0
+visible = false
+text = "收起书页"
+script = ExtResource("3")
+
+[node name="LeftWingLayer" type="Control" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+z_index = 20
+
+[node name="LeftWing" type="VBoxContainer" parent="LeftWingLayer"]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 233.0
+offset_right = 486.0
+mouse_filter = 2
+theme_override_constants/separation = 18
+
+[node name="Heading" type="Label" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.756863, 0.705882, 0.560784, 1)
+theme_override_font_sizes/font_size = 30
+text = "书 页  ·  词 库"
+autowrap_mode = 3
+
+[node name="Separator" type="HSeparator" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+
+[node name="GoldFeather" type="TextureRect" parent="LeftWingLayer/LeftWing/Heading"]
+show_behind_parent = true
+script = ExtResource("13_crystal")
+backdrop_gain = 0.45
+material = ExtResource("10_gold")
+modulate = Color(1, 1, 1, 0.65)
+layout_mode = 0
+offset_left = -75.0
+offset_top = -104.0
+offset_right = 29.0
+offset_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource("11_feather")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VocabularyLabel" type="Label" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.54902, 0.6, 0.556863, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+text = "本局词库"
+autowrap_mode = 3
+
+[node name="VocabularySelect" type="OptionButton" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+focus_mode = 0
+
+[node name="ManageVocabulary" type="Button" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+text = "管理词库 / 导入"
+script = ExtResource("3")
+
+[node name="Progressive" type="CheckButton" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+focus_mode = 0
+text = "渐进词长"
+
+[node name="ProgressiveDescription" type="Label" parent="LeftWingLayer/LeftWing"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.584314, 0.615686, 0.592157, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+text = "从较短词咒起步，随推进逐步增加词长。"
+autowrap_mode = 3
+
+[node name="RightWingLayer" type="Control" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+z_index = 20
+
+[node name="RightWing" type="VBoxContainer" parent="RightWingLayer"]
+layout_mode = 0
+offset_left = 1434.0
+offset_top = 233.0
+offset_right = 1824.0
+mouse_filter = 2
+theme_override_constants/separation = 18
+
+[node name="Heading" type="Label" parent="RightWingLayer/RightWing"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.756863, 0.705882, 0.560784, 1)
+theme_override_font_sizes/font_size = 30
+text = "远 征  ·  难 度"
+autowrap_mode = 3
+
+[node name="Separator" type="HSeparator" parent="RightWingLayer/RightWing"]
+layout_mode = 2
+
+[node name="GoldTendril" type="TextureRect" parent="RightWingLayer/RightWing/Heading"]
+show_behind_parent = true
+script = ExtResource("13_crystal")
+backdrop_gain = 0.45
+material = ExtResource("10_gold")
+modulate = Color(1, 1, 1, 0.65)
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = -117.0
+offset_right = 72.0
+offset_bottom = 27.0
+mouse_filter = 2
+texture = ExtResource("12_tendril")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Modes" type="GridContainer" parent="RightWingLayer/RightWing"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="Story" type="Button" parent="RightWingLayer/RightWing/Modes"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "启程"
+script = ExtResource("3")
+
+[node name="Normal" type="Button" parent="RightWingLayer/RightWing/Modes"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "冒险"
+script = ExtResource("3")
+
+[node name="Hard" type="Button" parent="RightWingLayer/RightWing/Modes"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "深渊"
+script = ExtResource("3")
+
+[node name="Nightmare" type="Button" parent="RightWingLayer/RightWing/Modes"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "噩梦"
+script = ExtResource("3")
+
+[node name="Apocalypse" type="Button" parent="RightWingLayer/RightWing/Modes"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "灭世"
+script = ExtResource("3")
+
+[node name="DifficultyText" type="Label" parent="RightWingLayer/RightWing"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.584314, 0.615686, 0.592157, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="SeedLabel" type="Label" parent="RightWingLayer/RightWing"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.54902, 0.6, 0.556863, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+text = "远征种子"
+autowrap_mode = 3
+
+[node name="SeedEdit" type="LineEdit" parent="RightWingLayer/RightWing"]
+layout_mode = 2
+focus_mode = 1
+placeholder_text = "留空则随机"
+
+[node name="BottomHint" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1363.0
+offset_top = 904.0
+offset_right = 1824.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.505882, 0.576471, 0.647059, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 11
+text = "← / →  切换法书\nEnter  进入战斗\n输入词令  直达页面"
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="CommandLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 1036.0
+offset_right = 746.0
+offset_bottom = 1074.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.709804, 0.717647, 0.623529, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+text = "›  输入词令"
+autowrap_mode = 3
+
+[node name="BookCommand" type="Label" parent="."]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.568627, 0.662745, 0.67451, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1450.0
+offset_top = 1038.0
+offset_right = 1820.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.509804, 0.568627, 0.54902, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 12
+text = "点击或输入词令"
+horizontal_alignment = 2
+autowrap_mode = 3

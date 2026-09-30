@@ -1,0 +1,1011 @@
+{
+  "id": "primary5",
+  "title": "小学五年级 · 全册",
+  "sourceLabel": "Qwerty Learner / RealKai42",
+  "source": "https://github.com/RealKai42/qwerty-learner",
+  "sourceBlob": null,
+  "upstreamFile": "PEPXiaoXue5_1_T.json",
+  "retrievedAt": "2026-09-20T08:28:46.013Z",
+  "snapshot": "complete",
+  "scope": "完整同步 2 个源文件；原始 287 条，过滤 54 条，去重 3 条。",
+  "description": "小学五年级 · 全册；保留源中文释义，完整同步后过滤不支持的短语并去重。",
+  "sourceRecords": 287,
+  "excluded": [
+    "wash my clothes",
+    "watch tv",
+    "do homework",
+    "read books",
+    "play football",
+    "play sports",
+    "ice cream",
+    "sing english songs",
+    "play the pipa",
+    "kung fu",
+    "do kung fu",
+    "draw cartoons",
+    "play basketball",
+    "play ping-pong",
+    "speak english",
+    "no problem",
+    "water bottle",
+    "in front of",
+    "lots of",
+    "house.",
+    "go boating",
+    "eat breakfast",
+    "have...class",
+    "play sports",
+    "do morning exercise",
+    "eat dinner",
+    "clean my room",
+    "go for a walk",
+    "go shopping",
+    "take a dancing class",
+    "a.m.",
+    "p.m.",
+    "go swimming",
+    "go on a picnic",
+    "pick apples",
+    "make a snowman",
+    "go swimming.",
+    "good job",
+    "a few",
+    "sports meet",
+    "the great wall",
+    "national day",
+    "look for",
+    "each other",
+    "doing morning exercises",
+    "having...class",
+    "eating lunch",
+    "reading a book",
+    "listening to music",
+    "keep to the right",
+    "keep your desk clean",
+    "talk quietly",
+    "take turns",
+    "have a look"
+  ],
+  "count": 230,
+  "upstreamFiles": [
+    "PEPXiaoXue5_1_T.json",
+    "PEPXiaoXue5_2_T.json"
+  ],
+  "sources": [
+    {
+      "file": "PEPXiaoXue5_1_T.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEPXiaoXue5_1_T.json",
+      "sha256": "b2c99c04b0cfc8653c9b0459829d069971d2f3c4c5a58e225e645f79be815e1c",
+      "records": 131
+    },
+    {
+      "file": "PEPXiaoXue5_2_T.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEPXiaoXue5_2_T.json",
+      "sha256": "95d92ff91afa4c9083b0005e7950508d0e3ff726ed6e7ea056bbfd871ac3b7fc",
+      "records": 156
+    }
+  ],
+  "duplicates": 3,
+  "words": [
+    {
+      "word": "old",
+      "meaning": "老的"
+    },
+    {
+      "word": "young",
+      "meaning": "年轻的"
+    },
+    {
+      "word": "funny",
+      "meaning": "滑稽的"
+    },
+    {
+      "word": "kind",
+      "meaning": "体贴的"
+    },
+    {
+      "word": "strict",
+      "meaning": "严厉的"
+    },
+    {
+      "word": "polite",
+      "meaning": "有礼貌的"
+    },
+    {
+      "word": "hard-working",
+      "meaning": "努力的"
+    },
+    {
+      "word": "helpful",
+      "meaning": "有用的"
+    },
+    {
+      "word": "clever",
+      "meaning": "聪明的"
+    },
+    {
+      "word": "shy",
+      "meaning": "羞怯的"
+    },
+    {
+      "word": "know",
+      "meaning": "知道"
+    },
+    {
+      "word": "our",
+      "meaning": "我们的"
+    },
+    {
+      "word": "ms",
+      "meaning": "女士"
+    },
+    {
+      "word": "will",
+      "meaning": "将要"
+    },
+    {
+      "word": "sometimes",
+      "meaning": "有时"
+    },
+    {
+      "word": "robot",
+      "meaning": "机器人"
+    },
+    {
+      "word": "him",
+      "meaning": "他"
+    },
+    {
+      "word": "speak",
+      "meaning": "会说"
+    },
+    {
+      "word": "finish",
+      "meaning": "完成"
+    },
+    {
+      "word": "monday",
+      "meaning": "星期一"
+    },
+    {
+      "word": "tuesday",
+      "meaning": "星期二"
+    },
+    {
+      "word": "wednesday",
+      "meaning": "星期三"
+    },
+    {
+      "word": "thursday",
+      "meaning": "星期四"
+    },
+    {
+      "word": "friday",
+      "meaning": "星期五"
+    },
+    {
+      "word": "saturday",
+      "meaning": "星期六"
+    },
+    {
+      "word": "sunday",
+      "meaning": "星期日"
+    },
+    {
+      "word": "weekend",
+      "meaning": "周末"
+    },
+    {
+      "word": "wash",
+      "meaning": "洗"
+    },
+    {
+      "word": "watch",
+      "meaning": "看"
+    },
+    {
+      "word": "do",
+      "meaning": "做"
+    },
+    {
+      "word": "read",
+      "meaning": "看"
+    },
+    {
+      "word": "play",
+      "meaning": "玩"
+    },
+    {
+      "word": "cooking",
+      "meaning": "烹饪"
+    },
+    {
+      "word": "often",
+      "meaning": "时常"
+    },
+    {
+      "word": "park",
+      "meaning": "公园"
+    },
+    {
+      "word": "tired",
+      "meaning": "疲倦的"
+    },
+    {
+      "word": "sport",
+      "meaning": "体育运动"
+    },
+    {
+      "word": "should",
+      "meaning": "应该"
+    },
+    {
+      "word": "every",
+      "meaning": "每一个"
+    },
+    {
+      "word": "day",
+      "meaning": "一天"
+    },
+    {
+      "word": "schedule",
+      "meaning": "工作计划"
+    },
+    {
+      "word": "sandwich",
+      "meaning": "三明治"
+    },
+    {
+      "word": "salad",
+      "meaning": "沙拉"
+    },
+    {
+      "word": "hamburger",
+      "meaning": "汉堡包"
+    },
+    {
+      "word": "tea",
+      "meaning": "茶"
+    },
+    {
+      "word": "fresh",
+      "meaning": "新鲜的"
+    },
+    {
+      "word": "healthy",
+      "meaning": "健康的"
+    },
+    {
+      "word": "delicious",
+      "meaning": "美味的"
+    },
+    {
+      "word": "hot",
+      "meaning": "辣的"
+    },
+    {
+      "word": "sweet",
+      "meaning": "甜的"
+    },
+    {
+      "word": "drink",
+      "meaning": "喝"
+    },
+    {
+      "word": "thirsty",
+      "meaning": "渴的"
+    },
+    {
+      "word": "favourite",
+      "meaning": "特别喜欢的"
+    },
+    {
+      "word": "food",
+      "meaning": "食物"
+    },
+    {
+      "word": "dear",
+      "meaning": "亲爱的"
+    },
+    {
+      "word": "onion",
+      "meaning": "洋葱"
+    },
+    {
+      "word": "sing",
+      "meaning": "唱"
+    },
+    {
+      "word": "song",
+      "meaning": "歌曲"
+    },
+    {
+      "word": "dance",
+      "meaning": "跳舞"
+    },
+    {
+      "word": "draw",
+      "meaning": "画"
+    },
+    {
+      "word": "cartoon",
+      "meaning": "漫画"
+    },
+    {
+      "word": "cook",
+      "meaning": "烹饪"
+    },
+    {
+      "word": "swim",
+      "meaning": "游泳"
+    },
+    {
+      "word": "ping-pong",
+      "meaning": "乒乓球"
+    },
+    {
+      "word": "we'll",
+      "meaning": "我们将……（=we will）"
+    },
+    {
+      "word": "party",
+      "meaning": "聚会"
+    },
+    {
+      "word": "next",
+      "meaning": "下一个的"
+    },
+    {
+      "word": "wonderful",
+      "meaning": "极好的"
+    },
+    {
+      "word": "learn",
+      "meaning": "学习"
+    },
+    {
+      "word": "any",
+      "meaning": "任何的"
+    },
+    {
+      "word": "problem",
+      "meaning": "没问题"
+    },
+    {
+      "word": "want",
+      "meaning": "要"
+    },
+    {
+      "word": "send",
+      "meaning": "邮寄"
+    },
+    {
+      "word": "email",
+      "meaning": "电子邮件"
+    },
+    {
+      "word": "at",
+      "meaning": "（接邮件地址）"
+    },
+    {
+      "word": "clock",
+      "meaning": "时钟"
+    },
+    {
+      "word": "plant",
+      "meaning": "植物"
+    },
+    {
+      "word": "bottle",
+      "meaning": "瓶子"
+    },
+    {
+      "word": "bike",
+      "meaning": "自行车"
+    },
+    {
+      "word": "photo",
+      "meaning": "照片"
+    },
+    {
+      "word": "front",
+      "meaning": "正面"
+    },
+    {
+      "word": "between",
+      "meaning": "在⋯⋯中间"
+    },
+    {
+      "word": "above",
+      "meaning": "在⋯⋯上面"
+    },
+    {
+      "word": "beside",
+      "meaning": "在旁边"
+    },
+    {
+      "word": "behind",
+      "meaning": "在⋯⋯后面"
+    },
+    {
+      "word": "there",
+      "meaning": "（存在或发生）"
+    },
+    {
+      "word": "grandparent",
+      "meaning": "（外）祖父母"
+    },
+    {
+      "word": "their",
+      "meaning": "他们的"
+    },
+    {
+      "word": "house",
+      "meaning": "房子"
+    },
+    {
+      "word": "lot",
+      "meaning": "大量"
+    },
+    {
+      "word": "flower",
+      "meaning": "花"
+    },
+    {
+      "word": "move",
+      "meaning": "搬家"
+    },
+    {
+      "word": "dirty",
+      "meaning": "肮脏的"
+    },
+    {
+      "word": "everywhere",
+      "meaning": "处处"
+    },
+    {
+      "word": "mouse",
+      "meaning": "老鼠"
+    },
+    {
+      "word": "live",
+      "meaning": "住"
+    },
+    {
+      "word": "nature",
+      "meaning": "自然界"
+    },
+    {
+      "word": "forest",
+      "meaning": "森林"
+    },
+    {
+      "word": "river",
+      "meaning": "河"
+    },
+    {
+      "word": "lake",
+      "meaning": "湖"
+    },
+    {
+      "word": "mountain",
+      "meaning": "山"
+    },
+    {
+      "word": "hill",
+      "meaning": "小山"
+    },
+    {
+      "word": "tree",
+      "meaning": "树"
+    },
+    {
+      "word": "bridge",
+      "meaning": "桥"
+    },
+    {
+      "word": "building",
+      "meaning": "建筑"
+    },
+    {
+      "word": "village",
+      "meaning": "村庄"
+    },
+    {
+      "word": "boating",
+      "meaning": "划船"
+    },
+    {
+      "word": "aren't",
+      "meaning": "不是（= are not）"
+    },
+    {
+      "word": "rabbit",
+      "meaning": "兔"
+    },
+    {
+      "word": "high",
+      "meaning": "高的"
+    },
+    {
+      "word": "exercise",
+      "meaning": "练习；运动；运用"
+    },
+    {
+      "word": "take",
+      "meaning": "上（课）"
+    },
+    {
+      "word": "dancing",
+      "meaning": "跳舞"
+    },
+    {
+      "word": "when",
+      "meaning": "什么时候"
+    },
+    {
+      "word": "after",
+      "meaning": "在⋯⋯之后"
+    },
+    {
+      "word": "start",
+      "meaning": "开始"
+    },
+    {
+      "word": "usually",
+      "meaning": "通常地"
+    },
+    {
+      "word": "spain",
+      "meaning": "西班牙"
+    },
+    {
+      "word": "late",
+      "meaning": "晚"
+    },
+    {
+      "word": "why",
+      "meaning": "为什么"
+    },
+    {
+      "word": "shop",
+      "meaning": "购物"
+    },
+    {
+      "word": "work",
+      "meaning": "工作"
+    },
+    {
+      "word": "last",
+      "meaning": "上一个的"
+    },
+    {
+      "word": "sound",
+      "meaning": "听起来好像"
+    },
+    {
+      "word": "also",
+      "meaning": "还"
+    },
+    {
+      "word": "busy",
+      "meaning": "忙的"
+    },
+    {
+      "word": "need",
+      "meaning": "需要"
+    },
+    {
+      "word": "letter",
+      "meaning": "信"
+    },
+    {
+      "word": "island",
+      "meaning": "岛"
+    },
+    {
+      "word": "always",
+      "meaning": "总是"
+    },
+    {
+      "word": "cave",
+      "meaning": "山洞"
+    },
+    {
+      "word": "win",
+      "meaning": "获胜"
+    },
+    {
+      "word": "spring",
+      "meaning": "春天"
+    },
+    {
+      "word": "summer",
+      "meaning": "夏天"
+    },
+    {
+      "word": "autumn",
+      "meaning": "秋天"
+    },
+    {
+      "word": "winter",
+      "meaning": "冬天"
+    },
+    {
+      "word": "season",
+      "meaning": "季节"
+    },
+    {
+      "word": "picnic",
+      "meaning": "野餐"
+    },
+    {
+      "word": "pick",
+      "meaning": "摘"
+    },
+    {
+      "word": "snowman",
+      "meaning": "雪人"
+    },
+    {
+      "word": "which",
+      "meaning": "哪一个"
+    },
+    {
+      "word": "best",
+      "meaning": "最"
+    },
+    {
+      "word": "snow",
+      "meaning": "雪"
+    },
+    {
+      "word": "because",
+      "meaning": "因为"
+    },
+    {
+      "word": "vacation",
+      "meaning": "假期"
+    },
+    {
+      "word": "all",
+      "meaning": "完全"
+    },
+    {
+      "word": "pink",
+      "meaning": "粉色"
+    },
+    {
+      "word": "lovely",
+      "meaning": "可爱的"
+    },
+    {
+      "word": "leaf",
+      "meaning": "叶子"
+    },
+    {
+      "word": "fall",
+      "meaning": "落下"
+    },
+    {
+      "word": "paint",
+      "meaning": "绘画"
+    },
+    {
+      "word": "january",
+      "meaning": "一月"
+    },
+    {
+      "word": "february",
+      "meaning": "二月"
+    },
+    {
+      "word": "march",
+      "meaning": "三月"
+    },
+    {
+      "word": "april",
+      "meaning": "四月"
+    },
+    {
+      "word": "may",
+      "meaning": "五月"
+    },
+    {
+      "word": "june",
+      "meaning": "六月"
+    },
+    {
+      "word": "july",
+      "meaning": "七月"
+    },
+    {
+      "word": "august",
+      "meaning": "八月"
+    },
+    {
+      "word": "september",
+      "meaning": "九月"
+    },
+    {
+      "word": "october",
+      "meaning": "十月"
+    },
+    {
+      "word": "november",
+      "meaning": "十一月"
+    },
+    {
+      "word": "december",
+      "meaning": "十二月"
+    },
+    {
+      "word": "few",
+      "meaning": "不多"
+    },
+    {
+      "word": "thing",
+      "meaning": "事情"
+    },
+    {
+      "word": "meet",
+      "meaning": "集会"
+    },
+    {
+      "word": "easter",
+      "meaning": "复活节"
+    },
+    {
+      "word": "trip",
+      "meaning": "旅行"
+    },
+    {
+      "word": "year",
+      "meaning": "年"
+    },
+    {
+      "word": "contest",
+      "meaning": "比赛"
+    },
+    {
+      "word": "national",
+      "meaning": "国家的"
+    },
+    {
+      "word": "american",
+      "meaning": "美国的"
+    },
+    {
+      "word": "thanksgiving",
+      "meaning": "感恩节"
+    },
+    {
+      "word": "christmas",
+      "meaning": "圣诞节"
+    },
+    {
+      "word": "holiday",
+      "meaning": "节日"
+    },
+    {
+      "word": "game",
+      "meaning": "游戏"
+    },
+    {
+      "word": "roll",
+      "meaning": "滚动"
+    },
+    {
+      "word": "chocolate",
+      "meaning": "巧克力"
+    },
+    {
+      "word": "bunny",
+      "meaning": "兔子"
+    },
+    {
+      "word": "rsvp",
+      "meaning": "请赐复"
+    },
+    {
+      "word": "by",
+      "meaning": "在⋯⋯之前"
+    },
+    {
+      "word": "first",
+      "meaning": "第一"
+    },
+    {
+      "word": "second",
+      "meaning": "第二"
+    },
+    {
+      "word": "third",
+      "meaning": "第三"
+    },
+    {
+      "word": "fourth",
+      "meaning": "第四"
+    },
+    {
+      "word": "fifth",
+      "meaning": "第五"
+    },
+    {
+      "word": "twelfth",
+      "meaning": "第十二"
+    },
+    {
+      "word": "twentieth",
+      "meaning": "第二十"
+    },
+    {
+      "word": "twenty-first",
+      "meaning": "第二十一"
+    },
+    {
+      "word": "twenty-third",
+      "meaning": "第二十三"
+    },
+    {
+      "word": "thirtieth",
+      "meaning": "第三十"
+    },
+    {
+      "word": "special",
+      "meaning": "特殊的"
+    },
+    {
+      "word": "fool",
+      "meaning": "蠢人"
+    },
+    {
+      "word": "kitten",
+      "meaning": "小猫"
+    },
+    {
+      "word": "diary",
+      "meaning": "日记"
+    },
+    {
+      "word": "still",
+      "meaning": "仍然"
+    },
+    {
+      "word": "noise",
+      "meaning": "噪音"
+    },
+    {
+      "word": "fur",
+      "meaning": "动物皮毛"
+    },
+    {
+      "word": "open",
+      "meaning": "开着的"
+    },
+    {
+      "word": "walk",
+      "meaning": "行走"
+    },
+    {
+      "word": "mine",
+      "meaning": "我的"
+    },
+    {
+      "word": "yours",
+      "meaning": "你的"
+    },
+    {
+      "word": "his",
+      "meaning": "他的"
+    },
+    {
+      "word": "hers",
+      "meaning": "她的"
+    },
+    {
+      "word": "theirs",
+      "meaning": "他们的"
+    },
+    {
+      "word": "ours",
+      "meaning": "我们的"
+    },
+    {
+      "word": "climbing",
+      "meaning": "攀登"
+    },
+    {
+      "word": "eating",
+      "meaning": "吃"
+    },
+    {
+      "word": "playing",
+      "meaning": "玩"
+    },
+    {
+      "word": "jumping",
+      "meaning": "跳"
+    },
+    {
+      "word": "drinking",
+      "meaning": "喝"
+    },
+    {
+      "word": "sleeping",
+      "meaning": "睡觉"
+    },
+    {
+      "word": "each",
+      "meaning": "每个"
+    },
+    {
+      "word": "other",
+      "meaning": "其他"
+    },
+    {
+      "word": "excited",
+      "meaning": "兴奋地"
+    },
+    {
+      "word": "like",
+      "meaning": "像⋯⋯那样"
+    },
+    {
+      "word": "keep",
+      "meaning": "保持"
+    },
+    {
+      "word": "turn",
+      "meaning": "顺序"
+    },
+    {
+      "word": "bamboo",
+      "meaning": "竹子"
+    },
+    {
+      "word": "its",
+      "meaning": "它的"
+    },
+    {
+      "word": "show",
+      "meaning": "指导，引导"
+    },
+    {
+      "word": "anything",
+      "meaning": "任何事物"
+    },
+    {
+      "word": "else",
+      "meaning": "另外"
+    },
+    {
+      "word": "exhibition",
+      "meaning": "展览"
+    },
+    {
+      "word": "say",
+      "meaning": "说；讲"
+    },
+    {
+      "word": "sushi",
+      "meaning": "寿司"
+    },
+    {
+      "word": "teach",
+      "meaning": "教"
+    },
+    {
+      "word": "sure",
+      "meaning": "当然"
+    },
+    {
+      "word": "canadian",
+      "meaning": "加拿大的"
+    },
+    {
+      "word": "spanish",
+      "meaning": "西班牙的"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"K18:rule"
+operation = &"K18"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"K18"
+title = "满卷生息"
+description = "将清房剩余优先用于恢复而非跨房攻击储备；失去下一房的爆发准备"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 4
+mode_slot = &"clear-surplus-use"
+requires_all = PackedStringArray("T56")

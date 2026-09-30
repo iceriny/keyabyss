@@ -1,0 +1,13 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://crw6xmnsc6h11"
+path="res://.godot/imported/fluid_solver.glsl-8c73bc816c7de92a676767b0043ebd78.res"
+
+[deps]
+
+source_file="res://ui/effects/fluid_solver.glsl"
+dest_files=["res://.godot/imported/fluid_solver.glsl-8c73bc816c7de92a676767b0043ebd78.res"]
+
+[params]

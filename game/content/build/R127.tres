@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R127:rule"
+operation = &"letter-heavy"
+phase = &"compile"
+parameters = {
+&"letter_positions": -3,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R127"
+title = "重音墨点"
+description = "有字母机会；无；一个亮字母使用双份机会并兑换双份收益；每次位置数减少三个，总机会不增加"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()

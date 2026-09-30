@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="FluidEffectProfile" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/effects/fluid_effect_profile.gd" id="1"]
+[ext_resource type="Script" path="res://ui/effects/fluid_influence.gd" id="2"]
+
+[sub_resource type="Resource" id="Source"]
+script = ExtResource("2")
+shape = 2
+extent = Vector2(145, 52)
+velocity = Vector2(0, -950)
+spin = 3.0
+
+[resource]
+script = ExtResource("1")
+influences = Array[ExtResource("2")]([SubResource("Source")])
+duration = 0.22
+fade_out = 1.00
+light_color = Color(1, 0.8, 0.5, 1)
+light_energy = 0.60
+light_radius = 170.0

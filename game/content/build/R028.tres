@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R028:rule"
+operation = &"dot"
+phase = &"compile"
+parameters = {
+&"dot_retention_q": 31,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R028"
+title = "腐蚀墨迹"
+description = "分出主术已有伤害转为灼烧，每层改善加工保留 3%；剩余可统一抽取或回收；无"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()
+max_stacks = 2

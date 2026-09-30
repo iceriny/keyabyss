@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"K14:rule"
+operation = &"K14"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"K14"
+title = "词令复调"
+description = "四分之一字母收益用于复制制作，余量继续分给主术与聚字成页；制作有损耗，不能重复领取，总份额固定"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 4
+mode_slot = &"mark-reward-use"
+requires_all = PackedStringArray("T31", "T32")

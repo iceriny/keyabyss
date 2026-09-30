@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <title>抱月 · Crescent spray</title>
+  <defs><linearGradient id="gold" x1="210" y1="285" x2="115" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".25" stop-color="#C9AE72" stop-opacity=".7"/><stop offset=".6" stop-color="#F0DDAE" stop-opacity=".95"/><stop offset="1" stop-color="#C9AE72" stop-opacity=".05"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M239 279 C131 301 53 237 58 158 C61 87 105 49 171 25" stroke-width="1.6"/>
+    <path d="M239 279 C131 301 53 237 58 158 C61 87 105 49 171 25" stroke-width=".6" opacity=".45"/>
+    <path d="M118.46 264.18 C97.46 265.18 64.46 251.18 52.46 225.18 C81.46 228.18 102.46 242.18 118.46 264.18 Z M71.1 217.39 C45.09 213.85 26.96 191.66 25.4 165.54 C50.48 175.33 64.62 192.13 71.1 217.39 Z M57.9 159.9 C30.04 147.69 22.86 116.25 28.58 93.95 C49.43 116.16 59.17 137.09 57.9 159.9 Z M74.25 96.79 C59.25 51.79 70.25 25.79 90.25 26.79 C90.25 54.79 88.25 75.79 74.25 96.79 Z M58.66 179.17 C78.66 157.17 101.66 149.17 122.66 150.17 C106.66 172.17 87.66 184.17 58.66 179.17 Z M81.28 232.78 C97.28 207.78 115.28 198.78 135.28 197.78 C125.28 219.78 106.28 232.78 81.28 232.78 Z M107.72 58.37 C129.72 64.37 149.72 53.37 161.72 38.37" stroke-width="1"/>
+    <path d="M71.1 217.39 Q39.42 187.44 25.4 165.54 M58.66 179.17 Q92.66 163.17 122.66 150.17 M81.28 232.78 Q109.28 213.78 135.28 197.78 M145.96 275.93 C159.96 252.93 181.96 249.93 198.96 255.93" stroke-width=".55"/>
+  </g>
+</svg>

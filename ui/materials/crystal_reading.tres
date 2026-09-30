@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://ui/materials/open_wash.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/transmission = 0.06
+shader_parameter/shade = 0.025
+shader_parameter/blur_lod = 2.4
+shader_parameter/refraction_pixels = 1.4
+shader_parameter/facet_strength = 0.65

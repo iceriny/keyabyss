@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TalentDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/talent_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"N27-02:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+&"dodge_recovery_q": 31,
+}
+
+[resource]
+script = ExtResource("1")
+id = &"N27-02"
+title = "移动恢复"
+description = "闪避充能恢复速度 +3%"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+point_cost = 1
