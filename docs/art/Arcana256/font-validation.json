@@ -1,0 +1,941 @@
+{
+  "status": "pass",
+  "preservation_checks": {
+    "original128_mappings": "unchanged",
+    "original128_source_geometry": "unchanged",
+    "original16_ligature_rules_and_paths": "unchanged"
+  },
+  "refinements": {
+    "fixed_centering_offsets_across_all_weights": true,
+    "quadratic_round_caps_and_joins": true,
+    "font_version": 2.0
+  },
+  "source_hashes": {
+    "glyphs.json": "a445e8382d3930290dae3bd176e7072c26affe5ebc1cd041e6a846f3d90df1ea",
+    "concepts.json": "995fda21ed1580b86a90d8cb0d858f1a772cfb9f36d1dfffd601dace42a088ad",
+    "ligature-glyphs.json": "d23d09b2d47ef6f66d519857f555637bec83b2826a45e47d27da841539829d63"
+  },
+  "source_glyph_version": 6,
+  "source_edition": "concept-led-256",
+  "concept_version": 3,
+  "glyph_count": 290,
+  "base_runes": 256,
+  "discretionary_ligatures": 32,
+  "blank_service_glyphs": [
+    ".notdef",
+    "space"
+  ],
+  "cmap_count": 513,
+  "axis": {
+    "tag": "wght",
+    "min": 300,
+    "default": 400,
+    "max": 750
+  },
+  "intermediate_weight_checks": [
+    {
+      "weight": 300,
+      "outline_sha256": "30b54863c912694a65b1bbca8e4859df8611e679971f7389954cf75310dd5af6"
+    },
+    {
+      "weight": 350,
+      "outline_sha256": "f0b52a9caa83da2a243520b4abb2e47fdf6bbc019affcd71c85b5c6fa3716c91"
+    },
+    {
+      "weight": 400,
+      "outline_sha256": "ed62f0d1a7d8cd7955af02f90cffa9b1af669ba02585547b6fdf01f2ffac31b0"
+    },
+    {
+      "weight": 450,
+      "outline_sha256": "1d213b18f5cbdfbc623d0d06b85a3ca17170c1248ff4a78833af8d139942a75f"
+    },
+    {
+      "weight": 500,
+      "outline_sha256": "0bf498c3764c4c1576151e92c6a7451da568059b3a4366029abc9ac4b93d2ee3"
+    },
+    {
+      "weight": 550,
+      "outline_sha256": "803189e76c5aaef049093329a0a586fc1c2c1d43a3d6f64c2598ed8a4c28e87c"
+    },
+    {
+      "weight": 600,
+      "outline_sha256": "b6f98c9b28e72a56fee7ef34ddc240f240bb7a33e6492e160b97e75a11351411"
+    },
+    {
+      "weight": 650,
+      "outline_sha256": "4401cec94a5019e6d34813f95d5070ec2aa219849ec46fab16b8dcf4da46d8d1"
+    },
+    {
+      "weight": 700,
+      "outline_sha256": "0e0d941f01ba88e05220e17e1c9f1e7cc9157170a227f251019c173bc61440c1"
+    },
+    {
+      "weight": 750,
+      "outline_sha256": "553804c27207c7e707063194ebc444e1d750dedf27d1722f1c932d43f230131b"
+    }
+  ],
+  "shaping_checks": [
+    {
+      "pair": "始终",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        6,
+        7
+      ],
+      "dlig_glyphs": [
+        258
+      ]
+    },
+    {
+      "pair": "始终",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        6,
+        7
+      ],
+      "dlig_glyphs": [
+        258
+      ]
+    },
+    {
+      "pair": "生灭",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        4,
+        5
+      ],
+      "dlig_glyphs": [
+        259
+      ]
+    },
+    {
+      "pair": "生灭",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        4,
+        5
+      ],
+      "dlig_glyphs": [
+        259
+      ]
+    },
+    {
+      "pair": "虚实",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        78,
+        79
+      ],
+      "dlig_glyphs": [
+        260
+      ]
+    },
+    {
+      "pair": "虚实",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        78,
+        79
+      ],
+      "dlig_glyphs": [
+        260
+      ]
+    },
+    {
+      "pair": "真幻",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        16,
+        17
+      ],
+      "dlig_glyphs": [
+        261
+      ]
+    },
+    {
+      "pair": "真幻",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        16,
+        17
+      ],
+      "dlig_glyphs": [
+        261
+      ]
+    },
+    {
+      "pair": "时空",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        18,
+        34
+      ],
+      "dlig_glyphs": [
+        262
+      ]
+    },
+    {
+      "pair": "时空",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        18,
+        34
+      ],
+      "dlig_glyphs": [
+        262
+      ]
+    },
+    {
+      "pair": "契誓",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        96,
+        97
+      ],
+      "dlig_glyphs": [
+        263
+      ]
+    },
+    {
+      "pair": "契誓",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        96,
+        97
+      ],
+      "dlig_glyphs": [
+        263
+      ]
+    },
+    {
+      "pair": "内外",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        35,
+        36
+      ],
+      "dlig_glyphs": [
+        264
+      ]
+    },
+    {
+      "pair": "内外",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        35,
+        36
+      ],
+      "dlig_glyphs": [
+        264
+      ]
+    },
+    {
+      "pair": "越界",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        48,
+        41
+      ],
+      "dlig_glyphs": [
+        265
+      ]
+    },
+    {
+      "pair": "越界",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        48,
+        41
+      ],
+      "dlig_glyphs": [
+        265
+      ]
+    },
+    {
+      "pair": "因果",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        50,
+        51
+      ],
+      "dlig_glyphs": [
+        266
+      ]
+    },
+    {
+      "pair": "因果",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        50,
+        51
+      ],
+      "dlig_glyphs": [
+        266
+      ]
+    },
+    {
+      "pair": "合一",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        60,
+        10
+      ],
+      "dlig_glyphs": [
+        267
+      ]
+    },
+    {
+      "pair": "合一",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        60,
+        10
+      ],
+      "dlig_glyphs": [
+        267
+      ]
+    },
+    {
+      "pair": "梦醒",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        74,
+        75
+      ],
+      "dlig_glyphs": [
+        268
+      ]
+    },
+    {
+      "pair": "梦醒",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        74,
+        75
+      ],
+      "dlig_glyphs": [
+        268
+      ]
+    },
+    {
+      "pair": "意志",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        88,
+        89
+      ],
+      "dlig_glyphs": [
+        269
+      ]
+    },
+    {
+      "pair": "意志",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        88,
+        89
+      ],
+      "dlig_glyphs": [
+        269
+      ]
+    },
+    {
+      "pair": "命运",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        14,
+        15
+      ],
+      "dlig_glyphs": [
+        270
+      ]
+    },
+    {
+      "pair": "命运",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        14,
+        15
+      ],
+      "dlig_glyphs": [
+        270
+      ]
+    },
+    {
+      "pair": "聚散",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        102,
+        103
+      ],
+      "dlig_glyphs": [
+        271
+      ]
+    },
+    {
+      "pair": "聚散",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        102,
+        103
+      ],
+      "dlig_glyphs": [
+        271
+      ]
+    },
+    {
+      "pair": "光暗",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        80,
+        81
+      ],
+      "dlig_glyphs": [
+        272
+      ]
+    },
+    {
+      "pair": "光暗",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        80,
+        81
+      ],
+      "dlig_glyphs": [
+        272
+      ]
+    },
+    {
+      "pair": "感应",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        94,
+        95
+      ],
+      "dlig_glyphs": [
+        273
+      ]
+    },
+    {
+      "pair": "感应",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        94,
+        95
+      ],
+      "dlig_glyphs": [
+        273
+      ]
+    },
+    {
+      "pair": "刚柔",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        130,
+        131
+      ],
+      "dlig_glyphs": [
+        274
+      ]
+    },
+    {
+      "pair": "刚柔",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        130,
+        131
+      ],
+      "dlig_glyphs": [
+        274
+      ]
+    },
+    {
+      "pair": "轻重",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        132,
+        133
+      ],
+      "dlig_glyphs": [
+        275
+      ]
+    },
+    {
+      "pair": "轻重",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        132,
+        133
+      ],
+      "dlig_glyphs": [
+        275
+      ]
+    },
+    {
+      "pair": "强弱",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        134,
+        135
+      ],
+      "dlig_glyphs": [
+        276
+      ]
+    },
+    {
+      "pair": "强弱",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        134,
+        135
+      ],
+      "dlig_glyphs": [
+        276
+      ]
+    },
+    {
+      "pair": "深浅",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        140,
+        141
+      ],
+      "dlig_glyphs": [
+        277
+      ]
+    },
+    {
+      "pair": "深浅",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        140,
+        141
+      ],
+      "dlig_glyphs": [
+        277
+      ]
+    },
+    {
+      "pair": "松紧",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        144,
+        145
+      ],
+      "dlig_glyphs": [
+        278
+      ]
+    },
+    {
+      "pair": "松紧",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        144,
+        145
+      ],
+      "dlig_glyphs": [
+        278
+      ]
+    },
+    {
+      "pair": "对称",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        146,
+        147
+      ],
+      "dlig_glyphs": [
+        279
+      ]
+    },
+    {
+      "pair": "对称",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        146,
+        147
+      ],
+      "dlig_glyphs": [
+        279
+      ]
+    },
+    {
+      "pair": "疏密",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        154,
+        153
+      ],
+      "dlig_glyphs": [
+        280
+      ]
+    },
+    {
+      "pair": "疏密",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        154,
+        153
+      ],
+      "dlig_glyphs": [
+        280
+      ]
+    },
+    {
+      "pair": "繁简",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        155,
+        156
+      ],
+      "dlig_glyphs": [
+        281
+      ]
+    },
+    {
+      "pair": "繁简",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        155,
+        156
+      ],
+      "dlig_glyphs": [
+        281
+      ]
+    },
+    {
+      "pair": "推演",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        187,
+        188
+      ],
+      "dlig_glyphs": [
+        282
+      ]
+    },
+    {
+      "pair": "推演",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        187,
+        188
+      ],
+      "dlig_glyphs": [
+        282
+      ]
+    },
+    {
+      "pair": "概率",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        189,
+        190
+      ],
+      "dlig_glyphs": [
+        283
+      ]
+    },
+    {
+      "pair": "概率",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        189,
+        190
+      ],
+      "dlig_glyphs": [
+        283
+      ]
+    },
+    {
+      "pair": "安宁",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        200,
+        206
+      ],
+      "dlig_glyphs": [
+        284
+      ]
+    },
+    {
+      "pair": "安宁",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        200,
+        206
+      ],
+      "dlig_glyphs": [
+        284
+      ]
+    },
+    {
+      "pair": "喜悲",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        194,
+        195
+      ],
+      "dlig_glyphs": [
+        285
+      ]
+    },
+    {
+      "pair": "喜悲",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        194,
+        195
+      ],
+      "dlig_glyphs": [
+        285
+      ]
+    },
+    {
+      "pair": "传承",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        171,
+        234
+      ],
+      "dlig_glyphs": [
+        286
+      ]
+    },
+    {
+      "pair": "传承",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        171,
+        234
+      ],
+      "dlig_glyphs": [
+        286
+      ]
+    },
+    {
+      "pair": "盈亏",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        232,
+        233
+      ],
+      "dlig_glyphs": [
+        287
+      ]
+    },
+    {
+      "pair": "盈亏",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        232,
+        233
+      ],
+      "dlig_glyphs": [
+        287
+      ]
+    },
+    {
+      "pair": "破立",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        236,
+        237
+      ],
+      "dlig_glyphs": [
+        288
+      ]
+    },
+    {
+      "pair": "破立",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        236,
+        237
+      ],
+      "dlig_glyphs": [
+        288
+      ]
+    },
+    {
+      "pair": "数理",
+      "input": "Han",
+      "script": "Hani",
+      "default_glyphs": [
+        246,
+        178
+      ],
+      "dlig_glyphs": [
+        289
+      ]
+    },
+    {
+      "pair": "数理",
+      "input": "PUA",
+      "script": "None",
+      "default_glyphs": [
+        246,
+        178
+      ],
+      "dlig_glyphs": [
+        289
+      ]
+    }
+  ],
+  "files": [
+    {
+      "file": "Arcana256-Bold.ttf",
+      "bytes": 230320,
+      "family": "Arcana256",
+      "subfamily": "Bold",
+      "postscript": "Arcana256-Bold",
+      "weight": 700,
+      "variable": false
+    },
+    {
+      "file": "Arcana256-Bold.woff2",
+      "bytes": 67956,
+      "family": "Arcana256",
+      "subfamily": "Bold",
+      "postscript": "Arcana256-Bold",
+      "weight": 700,
+      "variable": false
+    },
+    {
+      "file": "Arcana256-Medium.ttf",
+      "bytes": 225292,
+      "family": "Arcana256 Medium",
+      "subfamily": "Regular",
+      "postscript": "Arcana256-Medium",
+      "weight": 500,
+      "variable": false
+    },
+    {
+      "file": "Arcana256-Medium.woff2",
+      "bytes": 66500,
+      "family": "Arcana256 Medium",
+      "subfamily": "Regular",
+      "postscript": "Arcana256-Medium",
+      "weight": 500,
+      "variable": false
+    },
+    {
+      "file": "Arcana256-Regular.ttf",
+      "bytes": 222004,
+      "family": "Arcana256",
+      "subfamily": "Regular",
+      "postscript": "Arcana256-Regular",
+      "weight": 400,
+      "variable": false
+    },
+    {
+      "file": "Arcana256-Regular.woff2",
+      "bytes": 64900,
+      "family": "Arcana256",
+      "subfamily": "Regular",
+      "postscript": "Arcana256-Regular",
+      "weight": 400,
+      "variable": false
+    },
+    {
+      "file": "Arcana256-VF.ttf",
+      "bytes": 585660,
+      "family": "Arcana256 VF",
+      "subfamily": "Regular",
+      "postscript": "Arcana256VF-Regular",
+      "weight": 400,
+      "variable": true
+    },
+    {
+      "file": "Arcana256-VF.woff2",
+      "bytes": 170328,
+      "family": "Arcana256 VF",
+      "subfamily": "Regular",
+      "postscript": "Arcana256VF-Regular",
+      "weight": 400,
+      "variable": true
+    }
+  ],
+  "preview_checks": {
+    "embedded_font": true,
+    "external_dependencies": false,
+    "javascript_syntax": "pass",
+    "interaction_logic": "pass",
+    "browser_integration": "not_verified"
+  },
+  "visual_checks": {
+    "base256_weights": [
+      300,
+      400,
+      700
+    ],
+    "new129_192_maximum_weight": 750,
+    "all32_ligatures_weights": [
+      400,
+      750
+    ],
+    "result": "reviewed_clear_counters_and_bounds"
+  }
+}

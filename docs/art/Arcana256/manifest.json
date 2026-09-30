@@ -1,0 +1,1423 @@
+{
+  "name": "秘序 · Arcana 256",
+  "font_version": "2.000",
+  "source_version": 6,
+  "concept_version": 3,
+  "files": [
+    {
+      "path": "svg/rune-001.svg",
+      "bytes": 365,
+      "sha256": "27b453682c9e53f5ce5c651e62e89954a37b5ee47f4b43c700b2bcb0e6c21706"
+    },
+    {
+      "path": "svg/rune-002.svg",
+      "bytes": 406,
+      "sha256": "373ff9f2b0338d7c2e867558669d07e11a6ae200805716e9e2fdc734e2dbe6e0"
+    },
+    {
+      "path": "svg/rune-003.svg",
+      "bytes": 366,
+      "sha256": "ca5046252028baf8c30068cb48d9318835f46ddeddf6fbd06d7c33a9ae37e2b4"
+    },
+    {
+      "path": "svg/rune-004.svg",
+      "bytes": 366,
+      "sha256": "1bfc7fc9f1b4387cce4a0c8a242751532a3d9192fec2a6cf9719599a6769759c"
+    },
+    {
+      "path": "svg/rune-005.svg",
+      "bytes": 350,
+      "sha256": "f3a12978e658b455cb5d95c22a1e9787400c44b552474b3885ccfdd42be3747a"
+    },
+    {
+      "path": "svg/rune-006.svg",
+      "bytes": 366,
+      "sha256": "defe0a16229112ba0ef84737868fe0434a60b15ef3d4ced2b226ff80c1f52c82"
+    },
+    {
+      "path": "svg/rune-007.svg",
+      "bytes": 359,
+      "sha256": "2a661e7e0de665056db26e9ee485e25b1617640c99baed07cd3b6d80032139a8"
+    },
+    {
+      "path": "svg/rune-008.svg",
+      "bytes": 354,
+      "sha256": "e7f570f1a9131b58dcee8d15ead3fa44fd4e79ef7c260e37db1ed29e90e53c87"
+    },
+    {
+      "path": "svg/rune-009.svg",
+      "bytes": 364,
+      "sha256": "1331c6cc8c72f5b16ff6808314402fe58d1ae503af4902711602f9fe5590eb05"
+    },
+    {
+      "path": "svg/rune-010.svg",
+      "bytes": 441,
+      "sha256": "c1c04cf0e28dc860170b67bad7939457ddba92e5b9e3a519b3a9bc3e2f1f0e7e"
+    },
+    {
+      "path": "svg/rune-011.svg",
+      "bytes": 384,
+      "sha256": "27882f256e03c4fe1ebcd3d301b593d3b2a6dfa79a7a26e0846d176016a230e2"
+    },
+    {
+      "path": "svg/rune-012.svg",
+      "bytes": 387,
+      "sha256": "5bf12205daea46fb3effffba7ab4662753b53a09586611f740c728b663e7813a"
+    },
+    {
+      "path": "svg/rune-013.svg",
+      "bytes": 367,
+      "sha256": "09952a7acd62fa92b087670666afede15dc1b3fa8a32ee267183845f35ce888f"
+    },
+    {
+      "path": "svg/rune-014.svg",
+      "bytes": 373,
+      "sha256": "74919b470b493aa98120325e84e831044ee7b7eabfc8c4f8bd0f92fd77efb181"
+    },
+    {
+      "path": "svg/rune-015.svg",
+      "bytes": 345,
+      "sha256": "fad5e857e3fc889b693bba19a2d66093de90e548dbb2fb20e867bdaad120efcd"
+    },
+    {
+      "path": "svg/rune-016.svg",
+      "bytes": 357,
+      "sha256": "80bee513ad4f8cfd00ad562760c281da0cafd2a752e1e159fdc0f08c94db87a7"
+    },
+    {
+      "path": "svg/rune-017.svg",
+      "bytes": 405,
+      "sha256": "4e92deaa8d6a422bfba927f8cb78dbf5513c3e953c0e65388bbd1ad2fb3cc9be"
+    },
+    {
+      "path": "svg/rune-018.svg",
+      "bytes": 374,
+      "sha256": "eebecb259d7fecb3e15575f187259512760757d598a2bc6db929d9de32b751f7"
+    },
+    {
+      "path": "svg/rune-019.svg",
+      "bytes": 384,
+      "sha256": "8a782ca67fe6dc322112031c95bc0fa2a79bddc9ffe806ac6705c2e0cbd48ff9"
+    },
+    {
+      "path": "svg/rune-020.svg",
+      "bytes": 341,
+      "sha256": "570e2f501a5bca821906b8daa183177090397b3cd9ff9addc72bb538585c57f5"
+    },
+    {
+      "path": "svg/rune-021.svg",
+      "bytes": 371,
+      "sha256": "5eaa088b8f837aeafa42e2a7c62a35c74e3371a87ecc45d9f647e404acb44615"
+    },
+    {
+      "path": "svg/rune-022.svg",
+      "bytes": 382,
+      "sha256": "b106f34449d3e68d67340cdbb1d07c4b7b4cb7418b2df89da20b927729894266"
+    },
+    {
+      "path": "svg/rune-023.svg",
+      "bytes": 380,
+      "sha256": "519b41800afd2d5402c4f76d3240429296f4f434e0803e4d63f14973ce27f57c"
+    },
+    {
+      "path": "svg/rune-024.svg",
+      "bytes": 359,
+      "sha256": "1a7305fa6955f7f9228272a6941cbd7a9ae7edfc6ed1f38568f644ac652c1ba0"
+    },
+    {
+      "path": "svg/rune-025.svg",
+      "bytes": 362,
+      "sha256": "ad4a8c2ab7ce1135552a8978cd04392be36ffc40174d797d33c30461a7c89067"
+    },
+    {
+      "path": "svg/rune-026.svg",
+      "bytes": 347,
+      "sha256": "0f2e17cab2c8ffada5bdff79a5ffc36fbddd9f631e8536ec6f448e543e78e3d4"
+    },
+    {
+      "path": "svg/rune-027.svg",
+      "bytes": 348,
+      "sha256": "21a4e6c56f43c179e7a2e897e8380168625dd1d74234ecec73062e5c7fd7ac6e"
+    },
+    {
+      "path": "svg/rune-028.svg",
+      "bytes": 357,
+      "sha256": "ba913e61f6c9754e1142a2aaa9b35f2a4ebb9356df959504520a18ccbbf66d89"
+    },
+    {
+      "path": "svg/rune-029.svg",
+      "bytes": 380,
+      "sha256": "73f40bda818bd5b7fbe7dcf01c51a5bada8ac93be2087030c03b9b68a1d18d0f"
+    },
+    {
+      "path": "svg/rune-030.svg",
+      "bytes": 420,
+      "sha256": "4badbe8bcd9f41deb8b77ab983a6396dbaa2b2e9f4b476f77332bc28826bff80"
+    },
+    {
+      "path": "svg/rune-031.svg",
+      "bytes": 371,
+      "sha256": "4cc17b16e7de4dd15c19ec1b981e4789c1e3d0949f77b6809aa57de0d3a829cf"
+    },
+    {
+      "path": "svg/rune-032.svg",
+      "bytes": 355,
+      "sha256": "cac236bb785013e41ffd0eecb134b3e86c84bd85bac1f77bfaea5bc4a9d91714"
+    },
+    {
+      "path": "svg/rune-033.svg",
+      "bytes": 351,
+      "sha256": "f7c838d10abc6a669ea730cad3bf0208f99f4c84da603d2aec71a35407ab0c51"
+    },
+    {
+      "path": "svg/rune-034.svg",
+      "bytes": 372,
+      "sha256": "40e70975abd8034e0f88a19ffc09fcfac99f33c742ae5c241cfc108fa230f984"
+    },
+    {
+      "path": "svg/rune-035.svg",
+      "bytes": 360,
+      "sha256": "b08684c77c863e0a5c19694d56374bcf681d95df5def4ce9d5b5996e4943271c"
+    },
+    {
+      "path": "svg/rune-036.svg",
+      "bytes": 335,
+      "sha256": "49d29bd98f6c59fcf6b1f9974e2c0a4f057ab35ba4b68ae54270c9ca9d5e49c8"
+    },
+    {
+      "path": "svg/rune-037.svg",
+      "bytes": 378,
+      "sha256": "bd15c9354045e0a0585059a40e5aa63f57f275bb4c50405144a72e5c2e565c95"
+    },
+    {
+      "path": "svg/rune-038.svg",
+      "bytes": 394,
+      "sha256": "192e550549f149d5fb2d8a189f065ebf14ea056fdf3b80b04e65930d959807cb"
+    },
+    {
+      "path": "svg/rune-039.svg",
+      "bytes": 343,
+      "sha256": "2283db809d58562d76da5fd06d9079096adb54d803dfdc1666b53d7f1f777d4d"
+    },
+    {
+      "path": "svg/rune-040.svg",
+      "bytes": 368,
+      "sha256": "c8304822102fd5f15580edac248f5d8eea3f726c28d0b7ab0b69488fe8132c01"
+    },
+    {
+      "path": "svg/rune-041.svg",
+      "bytes": 366,
+      "sha256": "208ca5e501c10ff08188aa6485aa62648856d8c11704165c2c0965c4879f2ec3"
+    },
+    {
+      "path": "svg/rune-042.svg",
+      "bytes": 372,
+      "sha256": "10d939e5994b778bb7a9779caec7723f82c27f6dc483428c90e9e9870540bd99"
+    },
+    {
+      "path": "svg/rune-043.svg",
+      "bytes": 386,
+      "sha256": "13d92c3c930ccd999e247a362d11ea31dd1b61ce4221eccae88e6f17673bb8ab"
+    },
+    {
+      "path": "svg/rune-044.svg",
+      "bytes": 382,
+      "sha256": "79f86ac56264c6c71cf28c1811499f0cbabdf45c9af9129f077fa83c1116372d"
+    },
+    {
+      "path": "svg/rune-045.svg",
+      "bytes": 342,
+      "sha256": "4dec22d52dbce5550111075eabf784d0b3a68372553329257bb09db5749af1ad"
+    },
+    {
+      "path": "svg/rune-046.svg",
+      "bytes": 342,
+      "sha256": "9bd37a73160e9ba7a6e755a907026e3dd2be044fc38ad3dbf4d776cdb053161d"
+    },
+    {
+      "path": "svg/rune-047.svg",
+      "bytes": 360,
+      "sha256": "9752f9093f56c276cc3c4925a858f00b965a6100ab9d6c87a245405f9405738e"
+    },
+    {
+      "path": "svg/rune-048.svg",
+      "bytes": 360,
+      "sha256": "0269068125a5558968b448dd6a10a2ed72b20ecdbd0fd4857f0e8a1c3c8eba50"
+    },
+    {
+      "path": "svg/rune-049.svg",
+      "bytes": 417,
+      "sha256": "80331995df43c4ea99f37d29112519c288bb88a7255dc93d8ff3724c3cb797f6"
+    },
+    {
+      "path": "svg/rune-050.svg",
+      "bytes": 373,
+      "sha256": "7e04a20f5231a5d2b4e42cfeb2b5a394894eb21355a8f9c745b60d0ab20b25b4"
+    },
+    {
+      "path": "svg/rune-051.svg",
+      "bytes": 379,
+      "sha256": "b33996822f5139854d9ea78e9d8bfebda2bac6ba594781b35ad997ad1100633a"
+    },
+    {
+      "path": "svg/rune-052.svg",
+      "bytes": 353,
+      "sha256": "d0a35930001a7dbdd941e0c5352168e7ca8d6285317f5ab9e34e61c3df3d09c8"
+    },
+    {
+      "path": "svg/rune-053.svg",
+      "bytes": 374,
+      "sha256": "d763a7f7972cc245ec5fd7c488102116931b4f8472fead8515a5c1de958fc743"
+    },
+    {
+      "path": "svg/rune-054.svg",
+      "bytes": 373,
+      "sha256": "c02d3e448542a8524c25287052ef6f30de6ccf7230f42ade9293985b82fe135d"
+    },
+    {
+      "path": "svg/rune-055.svg",
+      "bytes": 370,
+      "sha256": "530f41e903d03a5a7d197485f5ebbe3b6870bdc0972b982113a86b2ba36175dd"
+    },
+    {
+      "path": "svg/rune-056.svg",
+      "bytes": 384,
+      "sha256": "17a9fc2c619ed70fdaffcd87a623591151bfead5f3bbb9dc15d47dc513d1040e"
+    },
+    {
+      "path": "svg/rune-057.svg",
+      "bytes": 378,
+      "sha256": "c324c9817bd778e3e226452327889e496d78fd6e17d6b4718bf14dfc700c19ac"
+    },
+    {
+      "path": "svg/rune-058.svg",
+      "bytes": 373,
+      "sha256": "b43c4e35c2a3e705ce08fc7a6d0b00b4320a492efb9df485238d9ae0bdaf4cef"
+    },
+    {
+      "path": "svg/rune-059.svg",
+      "bytes": 364,
+      "sha256": "4f74e8aacd8ffccefef81e537921d9f1594911aac0eb1f63c6f7ca6b9dbea3ff"
+    },
+    {
+      "path": "svg/rune-060.svg",
+      "bytes": 358,
+      "sha256": "fb7adac7dc7eb8156cf9785da282acfc3933d685e526b212306eca5da81836f3"
+    },
+    {
+      "path": "svg/rune-061.svg",
+      "bytes": 371,
+      "sha256": "cc772b2f7ff276eb5b4ea5523b9096ad5ef497d96967d75c8d24cfac8b130448"
+    },
+    {
+      "path": "svg/rune-062.svg",
+      "bytes": 340,
+      "sha256": "2989bd345aea61ed025a02d3286b16dbaea555a9708153b1368629ac99293f60"
+    },
+    {
+      "path": "svg/rune-063.svg",
+      "bytes": 376,
+      "sha256": "e5880575836998402d7196d3ae9efd59faad297ed295926a26f1f9b920ec9344"
+    },
+    {
+      "path": "svg/rune-064.svg",
+      "bytes": 341,
+      "sha256": "cba6253e75467873dab97263b102aacbef37cbd29153a17a1910075eed0a68ab"
+    },
+    {
+      "path": "svg/rune-065.svg",
+      "bytes": 391,
+      "sha256": "1c8be2ece9e00663cfe4c9f0b44d6e4387ac6e5cfe64cd29c586a3d64d9976cf"
+    },
+    {
+      "path": "svg/rune-066.svg",
+      "bytes": 367,
+      "sha256": "a6a71bbf4d63c499d7267dc723ef2d2ce5dfe624c19e5c7a3c629dd4ed019255"
+    },
+    {
+      "path": "svg/rune-067.svg",
+      "bytes": 366,
+      "sha256": "1f550d8f4545436bce10727860712db42343f10bd972f6b0d6cb40e22cc6ed8f"
+    },
+    {
+      "path": "svg/rune-068.svg",
+      "bytes": 367,
+      "sha256": "64cfd47dc5b6d320a53e58a987c961c8ac217644bfb672093dc0f3db332b43ce"
+    },
+    {
+      "path": "svg/rune-069.svg",
+      "bytes": 375,
+      "sha256": "b9e6a45d12cd247cdf4556d8e425c34822cce271a3d822a3650cb69dc2ff54d6"
+    },
+    {
+      "path": "svg/rune-070.svg",
+      "bytes": 387,
+      "sha256": "c3187c03dad7ba19d0eba9b3615a42a02f6e039e9bea8ef9ef268feac8cc0e54"
+    },
+    {
+      "path": "svg/rune-071.svg",
+      "bytes": 366,
+      "sha256": "db9e591718cc57e2b3b080ec6b44df6f9e06697331d7d2f7964af9c91ebe1147"
+    },
+    {
+      "path": "svg/rune-072.svg",
+      "bytes": 399,
+      "sha256": "90858b517a30e4b2bf4995375f65b48cf138c5c210a1b810940f796bd0b6c45d"
+    },
+    {
+      "path": "svg/rune-073.svg",
+      "bytes": 372,
+      "sha256": "06d16af2915134c1f95e9b2b63f7aa5b80e2c6f028a5638268354d16e325e2cb"
+    },
+    {
+      "path": "svg/rune-074.svg",
+      "bytes": 341,
+      "sha256": "318cb01cea03c016a6ef218d13e7cf85a1760be87401df480735706a46d51e7f"
+    },
+    {
+      "path": "svg/rune-075.svg",
+      "bytes": 348,
+      "sha256": "7570a7a95168790ee3079bd25cc6fe38eb1fcff1c70d15708b32210b619e82e3"
+    },
+    {
+      "path": "svg/rune-076.svg",
+      "bytes": 363,
+      "sha256": "a753f0e82199e371ac550c080e2f7def0b99fee3a8e2a7bf0c69328edfa66085"
+    },
+    {
+      "path": "svg/rune-077.svg",
+      "bytes": 341,
+      "sha256": "5da2e34e28d63cb14576c37ae9ec3f5ebe235882e194f66f32dafd9418e55a06"
+    },
+    {
+      "path": "svg/rune-078.svg",
+      "bytes": 351,
+      "sha256": "a4299dad69fc565d45121ef0cecb4545bb00ffd43a0ce32b66ca14e7b44e5ba7"
+    },
+    {
+      "path": "svg/rune-079.svg",
+      "bytes": 362,
+      "sha256": "f9569044f3d197aa68afa23724b8918b839f552746c37383c1a27ec76ec4e13b"
+    },
+    {
+      "path": "svg/rune-080.svg",
+      "bytes": 351,
+      "sha256": "0c2e25a7a863ee05a00dae4bd6b8a56c635558bb6a92cbdfdc6097941eaac6eb"
+    },
+    {
+      "path": "svg/rune-081.svg",
+      "bytes": 351,
+      "sha256": "877095fde3c367d0fba1cc9126b187b1d6a3aa72afb22b3500bf0ab4f1052cda"
+    },
+    {
+      "path": "svg/rune-082.svg",
+      "bytes": 373,
+      "sha256": "6aaba0b913136c567bcea839fd5aceb6bca45d66b9d3a36a6b330235d621f1bf"
+    },
+    {
+      "path": "svg/rune-083.svg",
+      "bytes": 342,
+      "sha256": "e03bfac99d3f6f378e074ac6a3920268c3412ec864d2f19dec5e8eccb9870fe1"
+    },
+    {
+      "path": "svg/rune-084.svg",
+      "bytes": 393,
+      "sha256": "fe45e6d92ad76990c4687a9124eb67d0c41dda9c51eeeb2ccea586106186699f"
+    },
+    {
+      "path": "svg/rune-085.svg",
+      "bytes": 356,
+      "sha256": "0d1e7cfe6ac3190a770ef5d028d18700f85eb1ca7b46003a5c3f00b6b684a003"
+    },
+    {
+      "path": "svg/rune-086.svg",
+      "bytes": 337,
+      "sha256": "ad12ad777bede348ee667b5d2ec633bc130cd85ea1d1666a8397f9b4295dcf74"
+    },
+    {
+      "path": "svg/rune-087.svg",
+      "bytes": 339,
+      "sha256": "1b94398a389356fc088c5a5c00f84da1922b9f5057068be81721a5074c01593d"
+    },
+    {
+      "path": "svg/rune-088.svg",
+      "bytes": 374,
+      "sha256": "99b60177c7cdb8814f2d476d56454e40d5faad56b71837f2a9f00022c066b24b"
+    },
+    {
+      "path": "svg/rune-089.svg",
+      "bytes": 374,
+      "sha256": "36af38f84db3aed2f172796d61454f5d62d894a3ee9257f255f623ffa36fd6b6"
+    },
+    {
+      "path": "svg/rune-090.svg",
+      "bytes": 368,
+      "sha256": "4adbce92ba485338412593f5172dea8dcec0209a939ed3f2edb76402115b8151"
+    },
+    {
+      "path": "svg/rune-091.svg",
+      "bytes": 349,
+      "sha256": "89b023f4273d2ff9fa0104446adf3a9b901158e208f99cc8a21f89762115cb81"
+    },
+    {
+      "path": "svg/rune-092.svg",
+      "bytes": 348,
+      "sha256": "77fc5dc7f146c97f752253ec3376c9246346f5e784330be1a365571d4cb62090"
+    },
+    {
+      "path": "svg/rune-093.svg",
+      "bytes": 372,
+      "sha256": "7c16307415d1fd4686b0ac12d3f563823a8c3df10709555923de93400a4c77e4"
+    },
+    {
+      "path": "svg/rune-094.svg",
+      "bytes": 360,
+      "sha256": "347353c803b41444eb41362a068a38210f02ce3ad73839d521f9bc9fde8ba9c4"
+    },
+    {
+      "path": "svg/rune-095.svg",
+      "bytes": 357,
+      "sha256": "5de4a4c77b556e7337815e999539a946185b17ccda896c5c19602bb36fe0fcb4"
+    },
+    {
+      "path": "svg/rune-096.svg",
+      "bytes": 337,
+      "sha256": "4d52f4671458f2e07083168e2c0c558844ab779327469d32db02c0cc0467a2ea"
+    },
+    {
+      "path": "svg/rune-097.svg",
+      "bytes": 354,
+      "sha256": "5795b2a85d7fb0d4c5a780abedd1e68cbb8a8a42cc6137b9a0cf0aa51930394d"
+    },
+    {
+      "path": "svg/rune-098.svg",
+      "bytes": 367,
+      "sha256": "8dde26354680e91dc339afcd34f90cea3a62caf922ce2ad0f080e5e5498b9f8c"
+    },
+    {
+      "path": "svg/rune-099.svg",
+      "bytes": 378,
+      "sha256": "ea0436462ad5f962747f904845e409cf7832a735025e7c438b5144230e057fd3"
+    },
+    {
+      "path": "svg/rune-100.svg",
+      "bytes": 352,
+      "sha256": "86553f0c96d9b6e17dbc5cb83ac587410384a81068f9319a9273d69ceb1985e4"
+    },
+    {
+      "path": "svg/rune-101.svg",
+      "bytes": 371,
+      "sha256": "cf8630e50e2d8a88e30d10c4fa67b632d0ce06b64269337125c49f2c2fb3ecac"
+    },
+    {
+      "path": "svg/rune-102.svg",
+      "bytes": 398,
+      "sha256": "d9c1d6e62eb2fbfe131800c6548448471a96575bcac7ac8d3dcb7bfa31602835"
+    },
+    {
+      "path": "svg/rune-103.svg",
+      "bytes": 360,
+      "sha256": "7e34233776f361ea415c6204bbfd73cd64448485f0cab08321e85231d8226945"
+    },
+    {
+      "path": "svg/rune-104.svg",
+      "bytes": 354,
+      "sha256": "06ed2b439f548ad7d6e969b27ea997668e3a9acbcff680f34416e75e4e237974"
+    },
+    {
+      "path": "svg/rune-105.svg",
+      "bytes": 375,
+      "sha256": "404b9101c2a5e7c905a688b278b5504181dd8354fcb2e6878ea8044b38ef33b6"
+    },
+    {
+      "path": "svg/rune-106.svg",
+      "bytes": 370,
+      "sha256": "3c16a99e32f0d653442cd4332053e365f840e8a79e2b47d3d9c091073012b5f7"
+    },
+    {
+      "path": "svg/rune-107.svg",
+      "bytes": 355,
+      "sha256": "5b672c930fedb2af20515fbb6f261630ac3b48fd48eadc57ed51810f99cb9ce4"
+    },
+    {
+      "path": "svg/rune-108.svg",
+      "bytes": 361,
+      "sha256": "91a7a4aa0901522ef1840fcd6ccf132a259c3be1bfdb1f9bacb5f407bf23fd1e"
+    },
+    {
+      "path": "svg/rune-109.svg",
+      "bytes": 382,
+      "sha256": "084498f4d12bc46c8fe250cec9944223f2e86090baa7c3ff72fe215b042a0e90"
+    },
+    {
+      "path": "svg/rune-110.svg",
+      "bytes": 370,
+      "sha256": "d94c54a4e1f811a85b8394e3df05dcf64be7af64d142a831cff008dfa34fa9c3"
+    },
+    {
+      "path": "svg/rune-111.svg",
+      "bytes": 376,
+      "sha256": "fb9a4f0b23e957461b41801ba2a2059eb1d09cd98a9f09373aa347ed5dbfed92"
+    },
+    {
+      "path": "svg/rune-112.svg",
+      "bytes": 371,
+      "sha256": "64b5d5c921a6ebb65b7900d8a6f2b17f4cf26f14f64ebc9cf3b1707aabde0a96"
+    },
+    {
+      "path": "svg/rune-113.svg",
+      "bytes": 353,
+      "sha256": "b2a4d1b98c00982948f2462582ed513668719f2563029d897029ef4360b6675a"
+    },
+    {
+      "path": "svg/rune-114.svg",
+      "bytes": 400,
+      "sha256": "c4d3140e6f88e2d7258affc97c4d96c07a8256b507ca280d1174ed7080ae0ea4"
+    },
+    {
+      "path": "svg/rune-115.svg",
+      "bytes": 351,
+      "sha256": "0497b2a8e1a303ed097b477b7304ab6c15225bcd834cc7b558c7a19b02b7c115"
+    },
+    {
+      "path": "svg/rune-116.svg",
+      "bytes": 392,
+      "sha256": "6b68e8dab35d5a12facca02d6266142d30f7b6232a6c18775723cdb12253c011"
+    },
+    {
+      "path": "svg/rune-117.svg",
+      "bytes": 392,
+      "sha256": "57c104103445b3b6a5b091e0dfed117f71b597d27ec384a61fde9a4f5311a956"
+    },
+    {
+      "path": "svg/rune-118.svg",
+      "bytes": 378,
+      "sha256": "4f49fc43c55ebc63c1285a918f7f4febd7fcf4e15db831ec6fcfd15d4100640c"
+    },
+    {
+      "path": "svg/rune-119.svg",
+      "bytes": 396,
+      "sha256": "f82411b6d2f2cde1e6ae15607bad3e1549e8a6deb96ff341ad9e3f2e3415bbf7"
+    },
+    {
+      "path": "svg/rune-120.svg",
+      "bytes": 355,
+      "sha256": "03714d4212571e706a6a4da710912a2428a00c027b1fcaa0a353f1b051c23eb9"
+    },
+    {
+      "path": "svg/rune-121.svg",
+      "bytes": 371,
+      "sha256": "abd6d72fbe1f788a205b46a44110ad4331af06210dae5af3e3a6acd897eb4b9e"
+    },
+    {
+      "path": "svg/rune-122.svg",
+      "bytes": 394,
+      "sha256": "526c81a89cf185ab7f7190c34875578a7896986fcb2d8889b8b171543f792b0c"
+    },
+    {
+      "path": "svg/rune-123.svg",
+      "bytes": 359,
+      "sha256": "8bd69754726cbba652d68b85d5c7c05accf20ff26bd89cc889e03d936dfa20db"
+    },
+    {
+      "path": "svg/rune-124.svg",
+      "bytes": 363,
+      "sha256": "93d0132f4868ab8435a36fff5cf0058511fa4610d23b09580accd3b2fe4e1418"
+    },
+    {
+      "path": "svg/rune-125.svg",
+      "bytes": 340,
+      "sha256": "d9cb14ba1b09cda1180d6120e8f3bc6f46de4e9896c950c147625db5bebf3b53"
+    },
+    {
+      "path": "svg/rune-126.svg",
+      "bytes": 386,
+      "sha256": "36909ef5354f9a8778635294ebbfa126144ecf990913228d019d1c139809b19b"
+    },
+    {
+      "path": "svg/rune-127.svg",
+      "bytes": 393,
+      "sha256": "ca95bc08343b8bcfb554629aedbe217e057cb72bca485401eba72082b5c3aa8e"
+    },
+    {
+      "path": "svg/rune-128.svg",
+      "bytes": 375,
+      "sha256": "aec4cbf03c2f6a08af7aabcddd07614b5f7a4279cd24029d26b0e2151e89b2fd"
+    },
+    {
+      "path": "svg/rune-129.svg",
+      "bytes": 307,
+      "sha256": "3bfe4c6d072970fcded249e042eb2a0fe2df4a83ba132806392695dbaf373baa"
+    },
+    {
+      "path": "svg/rune-130.svg",
+      "bytes": 312,
+      "sha256": "a0710258733b34a7ff96a004e0685c308cdb041808e1c5a0e255bb6c729a13db"
+    },
+    {
+      "path": "svg/rune-131.svg",
+      "bytes": 294,
+      "sha256": "76adff1fb9f0afb5ee0b0780e03205cb3fa119d272301d7aa38ad4a8108d77a4"
+    },
+    {
+      "path": "svg/rune-132.svg",
+      "bytes": 305,
+      "sha256": "16de2dd40f219cfe61f09e4c5f63c2b3e6b9dc6c9eb0aeb70cb9930fce83a533"
+    },
+    {
+      "path": "svg/rune-133.svg",
+      "bytes": 313,
+      "sha256": "29155626e5a88768e282b22838dd746301935a125d47dc924b3ded38f565117b"
+    },
+    {
+      "path": "svg/rune-134.svg",
+      "bytes": 315,
+      "sha256": "72fc380a9af8479da81dbca3be40c9099eda06585cd1786043a4f184fdbb9e02"
+    },
+    {
+      "path": "svg/rune-135.svg",
+      "bytes": 336,
+      "sha256": "40ec1b7b085dba615fb4d9df1f84b53113fcfb3d2b6cfe4a0dc5feb984a4a117"
+    },
+    {
+      "path": "svg/rune-136.svg",
+      "bytes": 354,
+      "sha256": "fd0a09bcf9b94a3739de93d176ae982544a027c27e40bd401072d14515bc6184"
+    },
+    {
+      "path": "svg/rune-137.svg",
+      "bytes": 340,
+      "sha256": "a1879a4c6d2646a7d3ca435fe5bc03c31ee9ed1007d84aabcc158c4650311f4b"
+    },
+    {
+      "path": "svg/rune-138.svg",
+      "bytes": 335,
+      "sha256": "13368ea8066a585e227ef63a1e1530ce6a480194d9b5e98057b841512f1b77fd"
+    },
+    {
+      "path": "svg/rune-139.svg",
+      "bytes": 345,
+      "sha256": "82506c1ee336bcdb7c86e7fb5d1bc1a9d4ee99a43ead9f3754c84ccfbec88cc0"
+    },
+    {
+      "path": "svg/rune-140.svg",
+      "bytes": 294,
+      "sha256": "8d4570bbd258e0670fb40e33d6b8e9a6b20bf91b2d75f270da438ee32bed57c7"
+    },
+    {
+      "path": "svg/rune-141.svg",
+      "bytes": 336,
+      "sha256": "bea282fad33305d03a9ed250a8be7d109c18c98d371fe79107eec8a27e148dae"
+    },
+    {
+      "path": "svg/rune-142.svg",
+      "bytes": 319,
+      "sha256": "3354564046f0f7f686ecf7ab18de9795fba24a3f9dd37a0f0f1a264c904c772a"
+    },
+    {
+      "path": "svg/rune-143.svg",
+      "bytes": 325,
+      "sha256": "c9ab19b3e9761ad92cbaaf31887545b8576eca9293a8350c11d13f286f975fa5"
+    },
+    {
+      "path": "svg/rune-144.svg",
+      "bytes": 336,
+      "sha256": "e096e19d26650a56c61155d765459a294417f88518766aca6d6efdddd9f724df"
+    },
+    {
+      "path": "svg/rune-145.svg",
+      "bytes": 336,
+      "sha256": "e3670e10eaa1948b51d4595c1c1f65117528b1318bdefc33b476fd42af3ec7fe"
+    },
+    {
+      "path": "svg/rune-146.svg",
+      "bytes": 340,
+      "sha256": "663cc06a33d03b10b413afe289b083e87303784b2a0699c96163c9d4019592ea"
+    },
+    {
+      "path": "svg/rune-147.svg",
+      "bytes": 347,
+      "sha256": "c6a3febdd6b5fa973ce1455c5e266ea66bb11d77b685a21c17c5e06878c852ff"
+    },
+    {
+      "path": "svg/rune-148.svg",
+      "bytes": 312,
+      "sha256": "8e9a251923a14d4a5b6b2afb67c9944c331be01f7332081bdc1720a33554e848"
+    },
+    {
+      "path": "svg/rune-149.svg",
+      "bytes": 306,
+      "sha256": "3db08fc4fcf4839d3d6fe26e7255458b0763372f3e20b638183f7c942582a91c"
+    },
+    {
+      "path": "svg/rune-150.svg",
+      "bytes": 340,
+      "sha256": "b9cb9dbfcaafbd54ad482909c2e279d64c8375174ebc8c6189ed8d690b461d82"
+    },
+    {
+      "path": "svg/rune-151.svg",
+      "bytes": 354,
+      "sha256": "c388273fcd90c5c154caab0041954ab24df0e44b0f6434cd2eb459b088e005ca"
+    },
+    {
+      "path": "svg/rune-152.svg",
+      "bytes": 352,
+      "sha256": "40860ec98c4b40af560735510a584b1d3b9137bd33f140ee343dc1c55b46ed83"
+    },
+    {
+      "path": "svg/rune-153.svg",
+      "bytes": 331,
+      "sha256": "042cf13fca440ce3eef8489b25362a162b152ddc3384c52aac4ad5ed6dbb6d54"
+    },
+    {
+      "path": "svg/rune-154.svg",
+      "bytes": 349,
+      "sha256": "d88ca8916b4e0d82b09e5b1012027489dad4df8c1a546e9e07bbe1ae7b570ef8"
+    },
+    {
+      "path": "svg/rune-155.svg",
+      "bytes": 288,
+      "sha256": "5e06f7a69f17ac7599679526f0c13708676eeadc0e6f304093ca079a71c89755"
+    },
+    {
+      "path": "svg/rune-156.svg",
+      "bytes": 328,
+      "sha256": "9543157d754001c1f1853640aaf249033700f04de50048b30014ad3f3908f99a"
+    },
+    {
+      "path": "svg/rune-157.svg",
+      "bytes": 315,
+      "sha256": "10dab82c80ea367559e92d772e40498b086d197df5bbc1f9da4337c939d6f28e"
+    },
+    {
+      "path": "svg/rune-158.svg",
+      "bytes": 334,
+      "sha256": "c28347246550b1edfa2f487ee02443abca21cf53912adf2e9bd9ce97c10ba03f"
+    },
+    {
+      "path": "svg/rune-159.svg",
+      "bytes": 294,
+      "sha256": "4c37da097f246c70fe102434a887654b44e9577e51c38b0756603908afb99089"
+    },
+    {
+      "path": "svg/rune-160.svg",
+      "bytes": 330,
+      "sha256": "ffdd77eab769f3515711f5221dfb96f3ace8ec2bab7bae34309ed45450c6447e"
+    },
+    {
+      "path": "svg/rune-161.svg",
+      "bytes": 349,
+      "sha256": "5f6f22ab8c2de3dcbff87b5ba87134428fad4fcce52538263381333e329f0f6b"
+    },
+    {
+      "path": "svg/rune-162.svg",
+      "bytes": 324,
+      "sha256": "1b23dce27adce917857b5c07b40b196779f734f7458c826a4892aa9860f0625e"
+    },
+    {
+      "path": "svg/rune-163.svg",
+      "bytes": 344,
+      "sha256": "85b43cfe541b76b0e977ed8abba29189f67d116bb59cb57638de13c4fe66c904"
+    },
+    {
+      "path": "svg/rune-164.svg",
+      "bytes": 319,
+      "sha256": "182eca902ab9c40cfeb9eb4e4b56e1149c9d1024da5af0b17f1adb47a93511c3"
+    },
+    {
+      "path": "svg/rune-165.svg",
+      "bytes": 337,
+      "sha256": "064d615fd929bb70e5f6ec5e666128c000d9ec5a4b9421bac147d09bff6fec14"
+    },
+    {
+      "path": "svg/rune-166.svg",
+      "bytes": 333,
+      "sha256": "9c082e80ed70eda786ecbffe87fa5305762eb3f2506d19d48eef37b317dc1390"
+    },
+    {
+      "path": "svg/rune-167.svg",
+      "bytes": 341,
+      "sha256": "1d2cb8fdea72692bbf7158a9839090006c9cf3a7bbebd191bbab1674bf779363"
+    },
+    {
+      "path": "svg/rune-168.svg",
+      "bytes": 310,
+      "sha256": "18c2e8c592862e64b9b3b3ddec119c46eb09a5ce4cdedbf10765e3ad89d6449c"
+    },
+    {
+      "path": "svg/rune-169.svg",
+      "bytes": 304,
+      "sha256": "f5ef0f410f860f089d465cf5a3992a72249f26eb1683c423c8a80bc1bd9a8cb6"
+    },
+    {
+      "path": "svg/rune-170.svg",
+      "bytes": 336,
+      "sha256": "2b4c03dfd2da170bd134f598f013bb7ec56cfac08b57a1ca1744e1a6529beb2e"
+    },
+    {
+      "path": "svg/rune-171.svg",
+      "bytes": 342,
+      "sha256": "ff53d6173246662ac06dd63640e70a07fe695c5eb814e5632903b4cb6b9f5412"
+    },
+    {
+      "path": "svg/rune-172.svg",
+      "bytes": 342,
+      "sha256": "051d33db0daf4dbf49f24d4e7d05f590d5f8c109e08f9b560a90337a015841d1"
+    },
+    {
+      "path": "svg/rune-173.svg",
+      "bytes": 330,
+      "sha256": "b16a59e04bbfc55629039eff9f7b0f1df74d95d1838b3911603564617eaec764"
+    },
+    {
+      "path": "svg/rune-174.svg",
+      "bytes": 325,
+      "sha256": "7d7c611e550235c77350dd8587944b96404d91e065bb0cf38ec802736a067366"
+    },
+    {
+      "path": "svg/rune-175.svg",
+      "bytes": 331,
+      "sha256": "2b5ac9728609751d75a9b808be86c38096af083ae1f8b55b45ad525fcd56127a"
+    },
+    {
+      "path": "svg/rune-176.svg",
+      "bytes": 325,
+      "sha256": "cb38ffed26708afbe4f7f749ded1263fa9728adf0c775e1b81bf741d99b24902"
+    },
+    {
+      "path": "svg/rune-177.svg",
+      "bytes": 354,
+      "sha256": "0bee832196a5ee1f3e204b7a1d69cea06704187503372f143592a514f6e8eea0"
+    },
+    {
+      "path": "svg/rune-178.svg",
+      "bytes": 328,
+      "sha256": "a360f636aedbe1b8003e7d146878b31cee286efdc9347e779bef685c5c98157c"
+    },
+    {
+      "path": "svg/rune-179.svg",
+      "bytes": 328,
+      "sha256": "de448c0d1eeac966ae2f6d1f0c4969386b1eb426c8f8466e59bb95c0310bde9f"
+    },
+    {
+      "path": "svg/rune-180.svg",
+      "bytes": 352,
+      "sha256": "fedaf58685116c37c3b902d34de765dd01aecba6439905773423e33fe52746b4"
+    },
+    {
+      "path": "svg/rune-181.svg",
+      "bytes": 315,
+      "sha256": "a9bf99457ea67ca8f4ee87a1dd650bc59e741c1353f4d28671da28decd7abe53"
+    },
+    {
+      "path": "svg/rune-182.svg",
+      "bytes": 327,
+      "sha256": "a75fa73667c7f0643588394221510e769ebaa10b11da54582d35b809683dfd9c"
+    },
+    {
+      "path": "svg/rune-183.svg",
+      "bytes": 327,
+      "sha256": "41d29ea6fa338574599c0b9725908c4d3633f0724c62a294fa35a8f05b8aa738"
+    },
+    {
+      "path": "svg/rune-184.svg",
+      "bytes": 339,
+      "sha256": "05a83619a8bc4400731730648562bbe4c4858a4db099e9acd8e857aa5f3170d4"
+    },
+    {
+      "path": "svg/rune-185.svg",
+      "bytes": 331,
+      "sha256": "0e30b6ae8ca5350453da8bfd68ac754f4742bf03839a6e59a820e7aaff25180e"
+    },
+    {
+      "path": "svg/rune-186.svg",
+      "bytes": 340,
+      "sha256": "bae831814a96c6f580d6b9f1d13748b474fee43a2f8bc9df0472c0212b88bf8a"
+    },
+    {
+      "path": "svg/rune-187.svg",
+      "bytes": 357,
+      "sha256": "c6d0fd44d1a276b32d3979b43efb454b95b138e4cc4e368c0316e39703a99520"
+    },
+    {
+      "path": "svg/rune-188.svg",
+      "bytes": 342,
+      "sha256": "890d16daa44c38d041e2118818c9ec9118873143db40211719809f3afe93d9c8"
+    },
+    {
+      "path": "svg/rune-189.svg",
+      "bytes": 329,
+      "sha256": "db5c3f86f308ab999dfba7cc1e187eab609a8da9a8bd391d95f417acf7dcce13"
+    },
+    {
+      "path": "svg/rune-190.svg",
+      "bytes": 309,
+      "sha256": "7b53bf18f97800123687cf77c442a1a3418c8e931908207e17f006cd33758411"
+    },
+    {
+      "path": "svg/rune-191.svg",
+      "bytes": 295,
+      "sha256": "fa8b93cce6c0152a8038749e43736b26237788846195cd96fb86318a7662ed23"
+    },
+    {
+      "path": "svg/rune-192.svg",
+      "bytes": 324,
+      "sha256": "c8de8e94f5072166848df40147c1637c7c3fd2703d39263b02174bdabba945fd"
+    },
+    {
+      "path": "svg/rune-193.svg",
+      "bytes": 326,
+      "sha256": "3c5d67df48ba0c169c7a3b11e619ee6f4ba920f6b1b8e8bf2f6d9398591fd604"
+    },
+    {
+      "path": "svg/rune-194.svg",
+      "bytes": 334,
+      "sha256": "839c6f60bd285d80c976bc5179308eae2a4f1e4f8008ebd5bf19315d34ad6d0d"
+    },
+    {
+      "path": "svg/rune-195.svg",
+      "bytes": 346,
+      "sha256": "9311a0c72372c6d1cf95528fd1ce29d669a03a34668a05f60937824b8c5618db"
+    },
+    {
+      "path": "svg/rune-196.svg",
+      "bytes": 356,
+      "sha256": "9f725b756485533613faf2809a67cac0a6d8d688faa4ad7f0c8592eee9ee3feb"
+    },
+    {
+      "path": "svg/rune-197.svg",
+      "bytes": 327,
+      "sha256": "6da72111d20bf056bbcd8dd9fdeaf544388099cc54bb188cf1090b46618274ff"
+    },
+    {
+      "path": "svg/rune-198.svg",
+      "bytes": 334,
+      "sha256": "52171a6dc6d1a2f43b114955510eb12d7bfd7fb8b062cb0edec9de840fa7b558"
+    },
+    {
+      "path": "svg/rune-199.svg",
+      "bytes": 311,
+      "sha256": "c08331f86f15a85ced9539f37bf93852f37d6d7fd658dc5cacdad8342506d8c1"
+    },
+    {
+      "path": "svg/rune-200.svg",
+      "bytes": 346,
+      "sha256": "7f2ea30afe5ccd9e11408a3ac9affbdac52e600b9fefc234c4659b7ed788d2db"
+    },
+    {
+      "path": "svg/rune-201.svg",
+      "bytes": 337,
+      "sha256": "cd3660e6553e39707921ccce840715b7739a86cb8e12ceeaf661d09ccac6ab58"
+    },
+    {
+      "path": "svg/rune-202.svg",
+      "bytes": 332,
+      "sha256": "78d0aaeda959a81fcd1dc2f3e4780f504738038584b598dc61f270a5eb57914f"
+    },
+    {
+      "path": "svg/rune-203.svg",
+      "bytes": 335,
+      "sha256": "8606098ef05c9d2976cb008e8737b16cc92c8611ffb8d408daba7f2c6badf46d"
+    },
+    {
+      "path": "svg/rune-204.svg",
+      "bytes": 337,
+      "sha256": "d828d095c2f173719aa35075112d3f8c8cff045e4461f6d578980594a33ab687"
+    },
+    {
+      "path": "svg/rune-205.svg",
+      "bytes": 320,
+      "sha256": "cf26876df85a89cee24c8e1329565cea2630961f08332b94df7da8e30d6c2e31"
+    },
+    {
+      "path": "svg/rune-206.svg",
+      "bytes": 335,
+      "sha256": "42ee4c7dab9d4e13b6b19468297d6d39233f5112973b11ecb8b8f176c7d2b1c6"
+    },
+    {
+      "path": "svg/rune-207.svg",
+      "bytes": 322,
+      "sha256": "b1bff52180016e452aae0a28b08d13ce2f4d070889b4d16fafcfb7b044a77869"
+    },
+    {
+      "path": "svg/rune-208.svg",
+      "bytes": 332,
+      "sha256": "09f8d28f3f983caf5c400650c7af62ac679dece9a28ec4aa1b6ec1b2fe172327"
+    },
+    {
+      "path": "svg/rune-209.svg",
+      "bytes": 338,
+      "sha256": "4a6eef3cbb1aebb535171d2b045cf1264bdaacd13499c147788cf642268b2806"
+    },
+    {
+      "path": "svg/rune-210.svg",
+      "bytes": 339,
+      "sha256": "7890cdb0ef71f2d5112b94847cc7d40fab3a33d69db76c307f390127913d5c06"
+    },
+    {
+      "path": "svg/rune-211.svg",
+      "bytes": 341,
+      "sha256": "a9cedce268c547f4a805b7267176e79b9dd4f0f93bf954a771737c566ac1513e"
+    },
+    {
+      "path": "svg/rune-212.svg",
+      "bytes": 318,
+      "sha256": "0dfe3e954fdf5ca52a838a75288f68e667012ae9f7a2e881dbcf347f423fdf60"
+    },
+    {
+      "path": "svg/rune-213.svg",
+      "bytes": 310,
+      "sha256": "a317d06a16307d179504aeec48c3a155f9185f7cd8a340e1c1ebc0e51839a50a"
+    },
+    {
+      "path": "svg/rune-214.svg",
+      "bytes": 318,
+      "sha256": "d1b958f1cf3db858aa8d9038c6c85cfe37e4456d7c17084e41ef0a64b0097c94"
+    },
+    {
+      "path": "svg/rune-215.svg",
+      "bytes": 336,
+      "sha256": "996db77029d46735fd5351d2431263b65cc64354aa59146df4a748d064d44a35"
+    },
+    {
+      "path": "svg/rune-216.svg",
+      "bytes": 360,
+      "sha256": "2f6d97ae5d2c5843e5bad108ccebb179407908b7a7912e2d1fad3d5e67f4e4d0"
+    },
+    {
+      "path": "svg/rune-217.svg",
+      "bytes": 344,
+      "sha256": "eb60de033e1f44bcd5ed085586303b6d156720b17c949ccfb41fda5b223dcb47"
+    },
+    {
+      "path": "svg/rune-218.svg",
+      "bytes": 350,
+      "sha256": "9667a1efada90ed15d205c15e3222718e3d81dadb868fcf0fca77cdece89b489"
+    },
+    {
+      "path": "svg/rune-219.svg",
+      "bytes": 328,
+      "sha256": "8ff3e7372f10f6480af19bb81a6229d5692317385ffff2bb9466ec7399b4a19e"
+    },
+    {
+      "path": "svg/rune-220.svg",
+      "bytes": 361,
+      "sha256": "494e2d862ee2225bbb416637283d398283d74ab05fa9b18362a637db3d3a9187"
+    },
+    {
+      "path": "svg/rune-221.svg",
+      "bytes": 338,
+      "sha256": "96bae4f2bf9c79da72413fa3022d0c1e117d91aa07a9eeb8c357018594a14a80"
+    },
+    {
+      "path": "svg/rune-222.svg",
+      "bytes": 336,
+      "sha256": "aa2f0d0d2da55686c7892dca13aef906ce33081584174de9081ee6349519f698"
+    },
+    {
+      "path": "svg/rune-223.svg",
+      "bytes": 328,
+      "sha256": "4534c87f5d4ff91d892d95bf48c80b5c4f87b44be7ad4836d8c657dd7437e115"
+    },
+    {
+      "path": "svg/rune-224.svg",
+      "bytes": 368,
+      "sha256": "d427cccb03cc824cc79538b6ec8f5f28a39d8fe0a2d9c92ddbd3e55466688bdb"
+    },
+    {
+      "path": "svg/rune-225.svg",
+      "bytes": 336,
+      "sha256": "9a0fad6999bc0e73417708b19921d78e9c0318628de4e7ccea148f86a356b132"
+    },
+    {
+      "path": "svg/rune-226.svg",
+      "bytes": 329,
+      "sha256": "9722fc05c61e49763f39086533651d9b8a31d9ef64cc97e632b2ff86ca144348"
+    },
+    {
+      "path": "svg/rune-227.svg",
+      "bytes": 379,
+      "sha256": "a0b8d19055c6e84a70c0b651c2054e8a561e7870d48c31a226070ec4b3ff98ab"
+    },
+    {
+      "path": "svg/rune-228.svg",
+      "bytes": 351,
+      "sha256": "e379a9b124cd7c65c64a7a038b827ddbe16b8815dd2a283f157e1ba38bc1f192"
+    },
+    {
+      "path": "svg/rune-229.svg",
+      "bytes": 344,
+      "sha256": "d16ba741aae75809ce9271060b3444c6db3dedf99e1213acbc81c833621bffd6"
+    },
+    {
+      "path": "svg/rune-230.svg",
+      "bytes": 362,
+      "sha256": "0ef43b7f56f1073806a1ace02d3f1a81ea73f5bfb601cd3ff09cb07e4460ee53"
+    },
+    {
+      "path": "svg/rune-231.svg",
+      "bytes": 336,
+      "sha256": "79044759d979c7590d4565b891e29c8aeb4dc7a9a87a911f628942370181b3e7"
+    },
+    {
+      "path": "svg/rune-232.svg",
+      "bytes": 358,
+      "sha256": "6175a9b18e1cbff60a5f6bbddc1f96620412b8eff570ac9bffb867b40b953615"
+    },
+    {
+      "path": "svg/rune-233.svg",
+      "bytes": 335,
+      "sha256": "3563f437c667adcfb35d5b080185c4480dba0045325f7f87081bee50211dc6de"
+    },
+    {
+      "path": "svg/rune-234.svg",
+      "bytes": 349,
+      "sha256": "51a5afc386fa1e689305df954eb6d81e5516bf25868fc770612bc4535bfa47a4"
+    },
+    {
+      "path": "svg/rune-235.svg",
+      "bytes": 330,
+      "sha256": "379fca740d1dcb0173713568a6b9d51d429432a7c5c4bfabc5a0afe4486056e2"
+    },
+    {
+      "path": "svg/rune-236.svg",
+      "bytes": 322,
+      "sha256": "82b0f9aa077f34fb15e7861cf433087072beed875468884c92d4f7a792e04dc2"
+    },
+    {
+      "path": "svg/rune-237.svg",
+      "bytes": 344,
+      "sha256": "d060cbca9871246b5887579a1d2920685425d9c09a6acb0413f1c7bd3b441c2d"
+    },
+    {
+      "path": "svg/rune-238.svg",
+      "bytes": 343,
+      "sha256": "06ab6edf685d3eb5adc37bd7eff9eeb6852688bc3edee6f5ea4a71d2ed49b66c"
+    },
+    {
+      "path": "svg/rune-239.svg",
+      "bytes": 340,
+      "sha256": "a0c41ee96649e50c39c3865f7a3b59d7c548322bfd2bf99e2eaa8f0f36dea113"
+    },
+    {
+      "path": "svg/rune-240.svg",
+      "bytes": 353,
+      "sha256": "a4318edf778707afacfb3d6b36201efa70e90991321397ae5fd8fa8cfeb80827"
+    },
+    {
+      "path": "svg/rune-241.svg",
+      "bytes": 314,
+      "sha256": "15c6c0593800306f34ead9f538f69e9c4342d7a13208495a1e567b6a217805d6"
+    },
+    {
+      "path": "svg/rune-242.svg",
+      "bytes": 335,
+      "sha256": "e5a88f0daff1d7818bd87018e319d8e07e6da0de622ead8cbbca43db2090ae4a"
+    },
+    {
+      "path": "svg/rune-243.svg",
+      "bytes": 327,
+      "sha256": "4a9df9808474b86fc6238b090906073ff045f783ec3939bd707635a7f691e9f5"
+    },
+    {
+      "path": "svg/rune-244.svg",
+      "bytes": 357,
+      "sha256": "0497d94e0cd36a3acff3eb3d98dabd9929857725364ac234a85305ec61531a5c"
+    },
+    {
+      "path": "svg/rune-245.svg",
+      "bytes": 374,
+      "sha256": "04bf4bf7134715ebaf6f3382b0ac0c22ca265a664662c83c51a9177feee0310d"
+    },
+    {
+      "path": "svg/rune-246.svg",
+      "bytes": 323,
+      "sha256": "7b607abc2f4afb06eafbda63fb82e28d56777da05620f42904d0b7a13ae307a7"
+    },
+    {
+      "path": "svg/rune-247.svg",
+      "bytes": 347,
+      "sha256": "8b510159b0ba08e9dd0bc9a1d51b49d483217e47187ee4197ffc8794b67f64ff"
+    },
+    {
+      "path": "svg/rune-248.svg",
+      "bytes": 347,
+      "sha256": "d0cc52f836d8bbe0052cb56cfc37af2cc887a588025b1cc3963db41445815a83"
+    },
+    {
+      "path": "svg/rune-249.svg",
+      "bytes": 357,
+      "sha256": "7a480f8f331169e1ce294fcf546c80748e0c864f61084a6ab39ae5311f975587"
+    },
+    {
+      "path": "svg/rune-250.svg",
+      "bytes": 336,
+      "sha256": "9468736c01fa85d8ccaa116a54ae5ad4ca8194104e7a408e37f330cce2b420ba"
+    },
+    {
+      "path": "svg/rune-251.svg",
+      "bytes": 336,
+      "sha256": "fb72f0fb1a795aed2220c9980a438c2c1fab5cbc7b4926408483c252c80da6b7"
+    },
+    {
+      "path": "svg/rune-252.svg",
+      "bytes": 332,
+      "sha256": "3e2a28991070b2773fabf567366d3f5345da8027328767a31fa0a5c61fdc0a55"
+    },
+    {
+      "path": "svg/rune-253.svg",
+      "bytes": 355,
+      "sha256": "31183fa47d49f9b980a453a672f89fca91a7a31f2b15cc62cab6cd6718a585cd"
+    },
+    {
+      "path": "svg/rune-254.svg",
+      "bytes": 354,
+      "sha256": "c32d5050bc2dc2a624b9958e18155118815f62452c5482652b3a60d9f87e2799"
+    },
+    {
+      "path": "svg/rune-255.svg",
+      "bytes": 349,
+      "sha256": "8d065b8c1d6d299850842898564a2101838cb5cd41ae9ba08ab3db9fd691647d"
+    },
+    {
+      "path": "svg/rune-256.svg",
+      "bytes": 343,
+      "sha256": "80f184d8fcb69d370682e0c55a77d8d4033af1c384447fab6e10514d6dafbd92"
+    },
+    {
+      "path": "fonts/Arcana256-Bold.ttf",
+      "bytes": 230320,
+      "sha256": "ff58753465340a8572f5727643df9b6332bbc97373bf4f6e396cd8f6e9888949"
+    },
+    {
+      "path": "fonts/Arcana256-Bold.woff2",
+      "bytes": 67956,
+      "sha256": "70aaab515ee9df9b29b92f76a32a4d360bec3d0c87feac9d112e4f2a8d0f9767"
+    },
+    {
+      "path": "fonts/Arcana256-Medium.ttf",
+      "bytes": 225292,
+      "sha256": "8b71b8dd7c7fe38a5852abd1def6988ffa93cd64ad95f344e1cf29e69773c4a8"
+    },
+    {
+      "path": "fonts/Arcana256-Medium.woff2",
+      "bytes": 66500,
+      "sha256": "1a524334365b4368842e1ea00a5b181818e28cfb3f8353d03a9dadf82242d113"
+    },
+    {
+      "path": "fonts/Arcana256-Regular.ttf",
+      "bytes": 222004,
+      "sha256": "3b193ff770da1f367db93427de2f021151f5a5ca29f084b5d319e4c3e408cdb2"
+    },
+    {
+      "path": "fonts/Arcana256-Regular.woff2",
+      "bytes": 64900,
+      "sha256": "e0c4c1021f65f53552227485b002eb9785243c9a8a985aca2283fe2bae1b0e5d"
+    },
+    {
+      "path": "fonts/Arcana256-VF.ttf",
+      "bytes": 585660,
+      "sha256": "8bd2a3fa52df5c80b7c6955e9e48ac80c14befc98f870953cda86358b89ed9d3"
+    },
+    {
+      "path": "fonts/Arcana256-VF.woff2",
+      "bytes": 170328,
+      "sha256": "54bd5fca56d0d8ea71e3dcc81b9ccc0ee95a033badd3ff74a765b1f5950b9f97"
+    },
+    {
+      "path": "preview.html",
+      "bytes": 306479,
+      "sha256": "735e85f2c75e08cd9106f1849c8fe7dc24ae845d8aeb347209e332bde090b278"
+    },
+    {
+      "path": "Arcana256.css",
+      "bytes": 446,
+      "sha256": "58362e0f7be335f4604a70e49ecd00f383f12baaa9818b4d2123ba4968acd1db"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5694,
+      "sha256": "e85a540f54f1b6508dea01bb725630384e4379ca4f30b3e62d766452413144f1"
+    },
+    {
+      "path": "README-CONCEPTS.md",
+      "bytes": 29316,
+      "sha256": "ab326c4cd53e50927b09dbac684e3ac968b86a78186e9555e30f442df5d0b7ef"
+    },
+    {
+      "path": "overview.svg",
+      "bytes": 438582,
+      "sha256": "a352f5e714d589ea318b16ff6aef5a22886b1e1826de0f17397eb4b6e3395262"
+    },
+    {
+      "path": "overview.png",
+      "bytes": 1302839,
+      "sha256": "f016d080f4075a13581d4c7706169ee5ef52f3fce3a918194c077967f203a538"
+    },
+    {
+      "path": "sprite.svg",
+      "bytes": 73248,
+      "sha256": "6e10315555aa263054996a2ead7abaccb0dbd3f970d872782dbcc28e2cdf7064"
+    },
+    {
+      "path": "concepts.json",
+      "bytes": 87853,
+      "sha256": "995fda21ed1580b86a90d8cb0d858f1a772cfb9f36d1dfffd601dace42a088ad"
+    },
+    {
+      "path": "concepts.csv",
+      "bytes": 28531,
+      "sha256": "590c24496088977171814db52d4bb974a469699e93b31337c55abac6297f4abd"
+    },
+    {
+      "path": "concepts-design.json",
+      "bytes": 175031,
+      "sha256": "f3becb279a04b9b9be52358c69fd949087db4db19654bd02a983ac19416c310b"
+    },
+    {
+      "path": "glyphs.json",
+      "bytes": 65339,
+      "sha256": "a445e8382d3930290dae3bd176e7072c26affe5ebc1cd041e6a846f3d90df1ea"
+    },
+    {
+      "path": "ligature-glyphs.json",
+      "bytes": 18418,
+      "sha256": "d23d09b2d47ef6f66d519857f555637bec83b2826a45e47d27da841539829d63"
+    },
+    {
+      "path": "font-specimen-300.png",
+      "bytes": 823131,
+      "sha256": "5ec9c2d6069ae6420b54845ec5c776559f6c4e3ba36dc1b968488b2279f86217"
+    },
+    {
+      "path": "font-specimen-400.png",
+      "bytes": 835938,
+      "sha256": "826a12e1c5ffa4308f67a331e2ad233226737e7ebb06edb3b3ee1c3d5e44d9a7"
+    },
+    {
+      "path": "font-specimen-700.png",
+      "bytes": 855412,
+      "sha256": "85b31f467bab9a3acec115fd492649b35dd1b010a68eb7f87cbb96be2f6bb1ff"
+    },
+    {
+      "path": "font-weights.png",
+      "bytes": 130737,
+      "sha256": "8dfc80ca9e68278daf2c464ffb6f73a3066c46da7c9d269901d41d685c8937df"
+    },
+    {
+      "path": "font-refinements.png",
+      "bytes": 81536,
+      "sha256": "7b6aeeda5d0a00aeb1e572be246444ba9f733c8590e6e4e5211886ef59771a33"
+    },
+    {
+      "path": "font-ligatures.png",
+      "bytes": 315970,
+      "sha256": "b72ed5f3a0f19f452225dc2e73d163e95135082db812fc66ba7ee91cbd4ff673"
+    },
+    {
+      "path": "font-validation.json",
+      "bytes": 16339,
+      "sha256": "d68024fb688243e11ea5e4c5064d69f4dca2728455c472999aefc2dce39f1367"
+    }
+  ]
+}
