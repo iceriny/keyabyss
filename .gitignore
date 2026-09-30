@@ -14,3 +14,14 @@ art/Magic UI Designed/
 .env
 .env.*
 *.tsbuildinfo
+/.godot/
+/.tools/
+/builds/
+/.codex/config.toml
+/tools/godot/local.paths.json
+/export_credentials.cfg
+/.vscode/settings.json
+/legacy/web/public/assets/
+/legacy/web/public/audio/
+/legacy/web/public/word/
+/legacy/web/art/Magic UI Designed/

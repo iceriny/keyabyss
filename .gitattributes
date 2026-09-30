@@ -3,3 +3,6 @@
 *.wav -text
 *.flac -text
 *.xlsx -text
+*.ttf -text
+*.otf -text
+*.woff2 -text
