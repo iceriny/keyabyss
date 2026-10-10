@@ -189,7 +189,14 @@ export function run({ command, profile, root = defaultRoot, repo }) {
   if (command === 'sync') prepareRepo(root, repo, lock);
   const entries = loadCatalog(root, repo, lock, command), selected = entries.filter(entry => entry.profiles.includes(profile));
   if (command === 'sync') {
-    for (const include of lfsIncludes(selected)) git(repo, 'lfs', 'pull', `--include=${include}`, '--exclude=');
+    const batches = lfsIncludes(selected);
+    for (const [index, include] of batches.entries()) {
+      console.log(`Downloading locked assets: batch ${index + 1}/${batches.length} (${profile})`);
+      execFileSync('git', ['-C', repo, 'lfs', 'pull', `--include=${include}`, '--exclude='], {
+        env: { ...process.env, GIT_LFS_SKIP_SMUDGE: '1' }, stdio: 'inherit',
+      });
+    }
+    console.log(`Checking and installing ${selected.length} ${profile} files...`);
     install(root, repo, entries, selected, lock, profile); return true;
   }
   let valid = true;

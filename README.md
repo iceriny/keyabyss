@@ -35,7 +35,7 @@ node tools/dev.mjs push "说明本次修改"
 
 `push` 自动收集配置目录中的新增／变动素材，先上传私有资产与 LFS，再更新版本锁、提交并推送当前代码分支。另一台设备 `pull` 会拉取该分支并恢复同一套资产。请在前一台推送完成后再开始另一台的工作。要使用其他范围，首次执行 `node tools/dev.mjs setup runtime` 或 `setup library`；后续拉取沿用本机范围。
 
-本机已配置引擎路径，也可在 PowerShell 中运行：
+配置好本机引擎路径后，可在 PowerShell 中运行：
 
 ```powershell
 pwsh -File tools/godot/godot.ps1 doctor
