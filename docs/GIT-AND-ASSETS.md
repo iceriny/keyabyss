@@ -4,6 +4,8 @@
 
 ## 首次准备
 
+`main` 是 Godot 主工程。原 Web 工程保存为 [`preview`（预览版）](https://github.com/iceriny/keyabyss/tree/preview)，基于原主分支 `b713c6e`，独立保留原玩法与画面。要使用它，请克隆到另一个目录并按该分支 README 执行 `npm run setup` 与 `npm run dev`；预览音频按相同资产版本锁恢复到 Web 所需路径。日常 Godot 开发继续使用下文流程。
+
 需要 Git、Git LFS、Node.js 22+、PowerShell 7、Godot 4.7.2 .NET、.NET SDK 9.0.201。Git 登录账号须能读取私有资产仓库；可以使用 Git Credential Manager，或可选的 GitHub CLI 登录后执行 `gh auth setup-git`。认证与机器路径不进入项目。
 
 ```powershell
@@ -46,7 +48,7 @@ node tools/dev.mjs push "说明本次修改"
 
 该命令会提交当前工作区所有未提交代码变化，使用你提供的提交说明。想分成多个主题提交时，可先用普通 `git add`／`git commit` 整理，再执行 `push` 完成交接。它不会自动合并其他人的变更，也不会强制推送。网络失败时保留已有提交，修复网络后重试；资产先成功、代码后失败时不会产生引用不存在素材的公开版本。
 
-主线为 `main`，功能使用 `codex/任务名` 等短期分支，通过 PR 合入。换设备前不只保存 stash；另一台需要同一远端分支。已推送的共享历史不重写。
+仓库保留两个分支：`main` 为最新 Godot 主工程，`preview` 为原 Web 预览版。Godot 开发与跨设备同步使用 `main`。换设备前不只保存 stash；另一台需要远端已经保存的提交。已推送的共享历史不重写。
 
 ## 素材如何保存与选用
 

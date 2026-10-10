@@ -2,6 +2,8 @@
 
 更新日期：2026-10-10。分支：`main`。
 
+2026-10-10 分支交接：公开仓库保留 `main`（最新 Godot 主工程与默认分支）和 [`preview`](https://github.com/iceriny/keyabyss/tree/preview)（原 Web 预览版）。`preview` 从原主分支 `b713c6e` 建立，交付提交 `d4435fd`；`src/` 与 `data/` 保持原样，补充版本锁、旧 Web 音频恢复入口及 README，启动／构建直接验证原有117个片段，不依赖原件时间戳或 FFmpeg。已确认原开发分支全部包含在 `main`，随后移除其本地与远端分支。预览副本从GitHub实际恢复117文件，首次依赖安装、启动前检查、TypeScript与架构检查及离线构建通过；159个发行文件共83.26MiB，7z／ZIP完整性检查通过，开发服务器页面、启动脚本、音频与字体均HTTP 200。未进行真人整局或浏览器视觉复验；本次没有修改玩法与视觉源码。
+
 2026-10-10 GitHub 与跨设备交付：Godot 工程经 [PR #1](https://github.com/iceriny/keyabyss/pull/1) 合入默认 `main`；私有 [keyabyss-assets](https://github.com/iceriny/keyabyss-assets) 的资产与 LFS 均实际上传，代码锁定 `92b5212` 及清单哈希。1,100 个目标路径映射到893个唯一文件，共2,425.08MiB，包含144音频原件、576完整片段、196选用音频、23字体、图片及未选用／旧Web快照。README 的首次 `setup` 与日常 `pull/push` 自动完成两仓交接，保持本地修改保护；公开历史不改写，原未发布提交已备份，上传规则基线为 `c39c032`。过程与两项交接问题修正见[实施记录](migration/ASSET-UPLOAD-IMPLEMENTATION.md)。
 
 恢复验收：从GitHub克隆代码与独立空LFS缓存，下载876个真实LFS对象；authoring全部1,100路径核对、144原件／576片段及56池／196选用WAV验证通过。新目录locked .NET构建0警告／错误、主脚本检查通过，真实Vulkan窗口音频2,227项检查0失败，工作区无新增导入设置差异。首次headless导入出现Godot原生0xc0000005访问异常；原样复跑退出0，无脚本错误，保留原始日志及Windows事件，没有改变视觉设置或加入自动重试。工具6项同步／回滚回归、大路径分批回归及2项真实双仓交接回归通过；快捷入口也完成真实GitHub推送。证据在 `.temp/github-assets/` 与 `.temp/*assets*-validation.txt`、`.temp/dev-workflow-validation.txt`，Git bundle与实际LFS同盘恢复副本保留。未做第二台硬件性能、完整玩法或新发行包验收。

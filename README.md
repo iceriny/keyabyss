@@ -8,6 +8,8 @@
 
 ## 开发入口
 
+默认主分支 [`main`](https://github.com/iceriny/keyabyss/tree/main) 为 Godot 工程；原 Web 工程保存在 [`preview`（预览版）](https://github.com/iceriny/keyabyss/tree/preview)，可按该分支 README 启动或构建离线包。两个工程请克隆到不同目录。`legacy/web/` 保留迁移参考及制作工具，不作为预览版的启动入口。
+
 开发需 Git LFS、Node.js 22+、PowerShell 7、**Godot 4.7.2 .NET** 与 **.NET SDK 9.0.201**。战斗逻辑以 GDScript 为主，自动闪避评分由 C# 批量计算，启动脚本会按锁文件构建程序集。
 
 代码位于本仓库，字体、音频及素材源件位于私有的 [keyabyss-assets](https://github.com/iceriny/keyabyss-assets)。使用有权访问两个仓库的 GitHub 账号，在新设备执行：

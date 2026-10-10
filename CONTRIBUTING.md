@@ -43,4 +43,4 @@ pwsh -File tools/godot/godot.ps1 export
 
 检查按风险选择，见[验证范围](docs/TESTING.md)。文档修改不启动游戏；局部规则优先最小现有测试；完整数值在内容与正式流程贯通后统一进行。清理内容移至 `.delete/`，保留用户已有改动。
 
-旧版需要回看或维护时，在 `legacy/web` 执行其原 Node 命令，具体见[旧版贡献指南](legacy/web/CONTRIBUTING.md)。这些命令不参与默认 Godot 启动和导出。
+旧版需要运行或维护时，使用独立目录中的 [`preview` 分支](https://github.com/iceriny/keyabyss/tree/preview)，按该分支 README 准备并启动。`legacy/web/` 保留迁移参考与制作工具，不参与默认 Godot 启动和导出。
