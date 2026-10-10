@@ -13,3 +13,5 @@ docs/test-output*/
 .env
 .env.*
 *.tsbuildinfo
+.temp/
+.delete/

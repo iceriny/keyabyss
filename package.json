@@ -4,6 +4,7 @@
   "private": true,
   "description": "键渊：失控咒典 · 词令共鸣 — 全键盘交互、打字施法、肉鸽构筑",
   "scripts": {
+    "setup": "node tools/assets/assets.mjs sync --profile runtime && npm ci",
     "build": "npm run validate:content && npm run check:architecture && tsc --noEmit && tsc -p tsconfig.audio-tools.json --noEmit && node tools/build.mjs",
     "test": "node tools/test.mjs",
     "serve": "vite --host 127.0.0.1",
@@ -16,8 +17,8 @@
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "test:ui": "python -X utf8 tests/ui-browser.py",
-    "predev": "node tools/font-assets.mjs && node tools/assets.mjs && node tools/content.mjs && node tools/bundle-vocab.mjs && node tools/audio.ts build",
-    "preserve": "node tools/font-assets.mjs && node tools/assets.mjs && node tools/content.mjs && node tools/bundle-vocab.mjs && node tools/audio.ts build",
+    "predev": "node tools/assets/assets.mjs verify --profile runtime && node tools/font-assets.mjs && node tools/assets.mjs && node tools/content.mjs && node tools/bundle-vocab.mjs",
+    "preserve": "node tools/assets/assets.mjs verify --profile runtime && node tools/font-assets.mjs && node tools/assets.mjs && node tools/content.mjs && node tools/bundle-vocab.mjs",
     "test:visual": "python -X utf8 tests/native-renderer-browser.py",
     "test:performance": "python -X utf8 tests/native-renderer-browser.py --performance-only",
     "validate:content": "node tools/content.mjs",

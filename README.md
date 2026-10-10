@@ -1,4 +1,22 @@
-# 键渊 · 失控咒典
+# 键渊 · 失控咒典 · 预览版
+
+此分支 `preview` 保存原 Web 工程，基于原主分支提交 `b713c6e`，保留当时的玩法与视觉。当前 Godot 工程与后续开发位于 [main](https://github.com/iceriny/keyabyss/tree/main)；两者使用各自的存档。
+
+## 本地启动
+
+安装 Node.js 22.18+、Git 与 Git LFS，使用能读取私有 [keyabyss-assets](https://github.com/iceriny/keyabyss-assets) 的账号：
+
+```sh
+git lfs install
+git clone --branch preview --single-branch https://github.com/iceriny/keyabyss.git keyabyss-preview
+cd keyabyss-preview
+npm run setup
+npm run dev
+```
+
+打开终端给出的地址。`setup` 自动安装依赖并恢复版本锁固定的 117 个 Web 音频片段，约 40.64 MiB；字体和插画随代码保留，词库从仓库数据生成。资产仓库自动建在同级 `keyabyss-preview-assets`，与 Godot 开发用的资产副本分开。启动与构建核对音频哈希，直接使用原有片段，不依赖原始音频的机器时间戳，也无需 FFmpeg 或音频格式转换。
+
+更新副本执行 `git pull --ff-only` 后再执行 `npm run setup`。构建离线预览执行 `npm run build`，需安装 7-Zip；产物在 `dist/` 与 `releases/`。详细说明见[贡献指南](CONTRIBUTING.md)。
 
 **用键盘施法，在失控的咒典中写出下一章。**
 

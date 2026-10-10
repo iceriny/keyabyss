@@ -4,14 +4,15 @@
 
 ## 本地运行
 
-需要 Node.js 22.18 或更高版本。在自己的 Fork 或本仓库副本中执行：
+本分支是原 Web 工程的预览版；Godot 开发使用 [main](https://github.com/iceriny/keyabyss/tree/main)。需要 Node.js 22.18 或更高版本、Git LFS 和私有资产仓库访问权限。在预览分支副本中执行：
 
 ```sh
-npm ci
+git lfs install
+npm run setup
 npm run dev
 ```
 
-打开终端显示的本地地址（默认 `http://127.0.0.1:4318`）。开发启动会准备素材、字体、词库和音效；不需要手动打开源码根目录的 HTML。
+打开终端显示的本地地址（默认 `http://127.0.0.1:4318`）。首次准备自动恢复固定版本的 Web 音频；开发启动会核对音频、准备素材、字体和词库。更新后执行 `git pull --ff-only` 与 `npm run setup`；不需要手动打开源码根目录的 HTML。
 
 生成可离线游玩的版本：
 

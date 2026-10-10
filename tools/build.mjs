@@ -11,7 +11,7 @@ import { obfuscate } from "./obfuscate.mjs";
 import { appDefine } from "./app-metadata.mjs";
 import { archiveRelease } from "./archive.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
-const audioBuild = spawnSync(process.execPath, ['tools/audio.ts','build'], { cwd:root, stdio:'inherit', windowsHide:true });
+const audioBuild = spawnSync(process.execPath, ['tools/assets/assets.mjs','verify','--profile','runtime'], { cwd:root, stdio:'inherit', windowsHide:true });
 if (audioBuild.status !== 0) throw Error('Audio build failed');
 // Classic deferred bundle preserves file:// distribution without module CORS.
 const native = await build({
