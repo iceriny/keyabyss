@@ -16,6 +16,7 @@ const DEFENSE_WINDOW := 0.30
 const PERFECT_DEFENSE_WINDOW := 0.10
 const PERFECT_REFLECT_WINDOW := 0.30
 const DEFENSE_PREDICTION := 0.06
+const PERFECT_DODGE_WINDOW := 0.10
 const SPIRIT_MOVEMENT_SCALE := 0.75
 # Counter recovery crosses precision's 0.1 scale at this real-time age:
 # 0.06 + 0.94 * smoothstep(0, 1, (age - 0.06) / 0.46) == 0.1.
@@ -62,6 +63,7 @@ var _perfect_reflect_remaining: float = 0.0
 var parry_cooldown: float = 0.0
 var counter_slow_remaining: float = 0.0
 var precision_slow_remaining: float = 0.0
+var perfect_dodge_remaining: float = 0.0
 var _parry_succeeded: bool = false
 var _settled_player_attacks: Dictionary[String, bool] = {}
 var dodge_window: float = 0.0
@@ -78,7 +80,7 @@ var world_time_scale: float:
 		var age := 0.52 - counter_slow_remaining
 		var recovery := clampf((age - 0.06) / 0.46, 0.0, 1.0)
 		var scale := 0.06 + 0.94 * recovery * recovery * (3.0 - 2.0 * recovery)
-		return minf(scale, 0.1) if precision_slow_remaining > 0.0 else scale
+		return minf(scale, 0.1) if maxf(precision_slow_remaining, perfect_dodge_remaining) > 0.0 else scale
 var encounter: BattleEncounter = preload("res://game/content/single_room.tres")
 var wave: int = 0
 var intermission: float = -1.0
@@ -336,6 +338,7 @@ func _start_room(selected_book: StringName, entries: Array[VocabularyEntry], sel
 	parry_cooldown = 0.0
 	counter_slow_remaining = 0.0
 	precision_slow_remaining = 0.0
+	perfect_dodge_remaining = 0.0
 	_parry_succeeded = false
 	_settled_player_attacks.clear()
 	dodge_window = 0.0
@@ -526,6 +529,7 @@ func step(delta: float) -> void:
 	var world_step := world_delta(delta)
 	counter_slow_remaining = maxf(0.0, counter_slow_remaining - delta)
 	precision_slow_remaining = maxf(0.0, precision_slow_remaining - delta)
+	perfect_dodge_remaining = maxf(0.0, perfect_dodge_remaining - delta)
 	world_time += world_step
 	if intermission < 0.0:
 		spirit_time = 8.0 if book_id == &"spirit" and ultimate_time > 0.0 else maxf(0.0, spirit_time - delta)
@@ -1019,7 +1023,6 @@ func _advance_enemy_motion(delta: float) -> void:
 			var hit := CombatGeometry.sweep_discs(enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, previous_player_position * ARENA_SIZE, player_position * ARENA_SIZE, enemy.radius + 21.0)
 			var attack_id := "%s:%s:charge:%s" % [ledger.room_id, enemy.id, enemy.attack_serial]
 			if hit != INF and not _settled_player_attacks.has(attack_id):
-				var keep_charging := parry_window > 0.0 and _defense_grade() == &"success"
 				if parry_window > 0.0:
 					_settled_player_attacks[attack_id] = true
 					_counter_contact(enemy, &"charge")
@@ -1028,9 +1031,8 @@ func _advance_enemy_motion(delta: float) -> void:
 					_take_player_damage(enemy.attack_damage_q, "%s:%s:charge:%s" % [ledger.room_id, enemy.id, enemy.attack_serial])
 					hurt_window = _hurt_iframe
 					event_committed.emit({"kind": &"enemy_attack", "at": player_position, "from": enemy.position, "outcome": &"hit", "damage_q": enemy.attack_damage_q})
-				if not keep_charging:
-					enemy.charge_time = 0.0
-					enemy.stagger_time = maxf(enemy.stagger_time, 0.6)
+				enemy.charge_time = 0.0
+				enemy.stagger_time = maxf(enemy.stagger_time, 0.6)
 			if enemy.charge_time > 0.0:
 				# Count travelled charge time so slows affect speed, not its reach.
 				enemy.charge_time = maxf(0.0, enemy.charge_time - delta * desired.length() / enemy.charge_speed)
@@ -1443,7 +1445,7 @@ func _advance_threats(delta: float) -> void:
 				threats.remove_at(index)
 				continue
 		var contact_time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, previous_player_position * ARENA_SIZE, player_position * ARENA_SIZE, 21.0 + threat.radius)
-		var predicted_contact := parry_window > 0.0 and _threat_will_hit_player(threat)
+		var predicted_contact := parry_window > 0.0 and _threat_will_hit_player(threat, minf(DEFENSE_PREDICTION, parry_window))
 		if (contact_time != INF or predicted_contact) and (parry_window > 0.0 or (dodge_window <= 0.0 and hurt_window <= 0.0)):
 			if contact_time != INF:
 				threat.position = threat.previous_position.lerp(threat.position, contact_time)
@@ -1503,6 +1505,7 @@ func _commit_action(action: StringName) -> void:
 	if ((destination - player_position) * ARENA_SIZE).length() < 8.0:
 		event_committed.emit({"kind": &"action_rejected", "action": action, "at": player_position})
 		return
+	var perfect_source := _imminent_dodge_source() if dodge_window <= 0.0 and hurt_window <= 0.0 else &""
 	_dodge_from = player_position
 	_dodge_to = destination
 	_dodge_time = 0.0
@@ -1513,15 +1516,19 @@ func _commit_action(action: StringName) -> void:
 	parry_window = 0.0
 	_perfect_reflect_remaining = 0.0
 	event_committed.emit({"kind": &"dodge", "at": player_position, "target": destination})
+	if perfect_source != &"":
+		perfect_dodge_remaining = dodge_window
+		add_resonance(5 * Q)
+		event_committed.emit({"kind": &"perfect_dodge", "at": player_position, "until": dodge_window, "source": perfect_source})
 
 
 func world_delta(real_delta: float) -> float:
 	## Read-only conversion for render consumers; only step consumes slow timers.
 	assert(real_delta >= 0.0)
 	if result != 0 or real_delta == 0.0: return 0.0
-	if counter_slow_remaining <= 0.0 and precision_slow_remaining <= 0.0: return real_delta
+	if counter_slow_remaining <= 0.0 and precision_slow_remaining <= 0.0 and perfect_dodge_remaining <= 0.0: return real_delta
 	var age := 0.52 - counter_slow_remaining
-	var precision_duration := minf(real_delta, precision_slow_remaining)
+	var precision_duration := minf(real_delta, maxf(precision_slow_remaining, perfect_dodge_remaining))
 	# Integrate the pointwise minimum, splitting at recovery's crossing and
 	# precision expiry. Taking min of whole integrals depends on step size.
 	var counter_duration := minf(precision_duration, maxf(0.0, COUNTER_PRECISION_CROSSOVER - age))
@@ -1539,9 +1546,9 @@ func _defense_grade() -> StringName:
 	return &"perfect" if _perfect_reflect_remaining > 0.0 or parry_window >= DEFENSE_WINDOW - PERFECT_DEFENSE_WINDOW else &"success"
 
 
-func _threat_will_hit_player(threat: BattleThreat) -> bool:
+func _threat_will_hit_player(threat: BattleThreat, horizon: float) -> bool:
 	# Predict the real collision disc, never a larger interception radius.
-	var horizon := minf(DEFENSE_PREDICTION, minf(parry_window, threat.life))
+	horizon = minf(horizon, threat.life)
 	var at := threat.position * ARENA_SIZE
 	var velocity := threat.velocity
 	var player_at := player_position * ARENA_SIZE
@@ -1555,6 +1562,26 @@ func _threat_will_hit_player(threat: BattleThreat) -> bool:
 		at = next
 		player_at = player_next
 	return false
+
+
+func _imminent_dodge_source() -> StringName:
+	# The timing window is real time; trajectories advance by the current world clock.
+	var horizon := world_delta(PERFECT_DODGE_WINDOW)
+	for threat in threats:
+		if not threat.reflected and _threat_will_hit_player(threat, horizon): return threat.source_id
+	for enemy in enemies:
+		if not enemy.alive() or not enemy_in_combat(enemy) or enemy.frozen_time > 0.0 or enemy.stagger_time > 0.0: continue
+		if enemy.charge_time > 0.0:
+			var from := enemy.position * ARENA_SIZE
+			var to := from + enemy.charge_direction * enemy.charge_speed * enemy.cold_move_scale() * minf(horizon, enemy.charge_time)
+			if CombatGeometry.sweep_discs(from, to, player_position * ARENA_SIZE, player_position * ARENA_SIZE, enemy.radius + 21.0) != INF: return enemy.id
+		elif enemy.behavior == &"melee" and ((enemy.melee_strike > 0.0 and not enemy.melee_hit) or (enemy.aiming and enemy.attack_clock <= horizon * enemy.cold_attack_scale())):
+			var offset := (player_position - enemy.melee_origin) * ARENA_SIZE
+			if CombatGeometry.disc_in_sector(offset, 21.0, enemy.melee_direction, BattleEnemy.MELEE_REACH, BattleEnemy.MELEE_HALF_ANGLE): return enemy.id
+	for hazard in hazards:
+		var source := enemy_by_id(hazard.source_id)
+		if source != null and source.alive() and enemy_in_combat(source) and not _settled_player_attacks.has(hazard.attack_id) and hazard.warning_remaining <= horizon and hazard.contains(player_position): return hazard.source_id
+	return &""
 
 
 func _reflect_threat(threat: BattleThreat) -> void:
@@ -1651,6 +1678,12 @@ func _separate_player(enemy: BattleEnemy) -> void:
 func _counter_contact(enemy: BattleEnemy, attack_kind: StringName = &"melee") -> void:
 	var grade := _defense_grade()
 	_parry_feedback(enemy.id, grade)
+	if grade == &"success" and attack_kind == &"charge":
+		var direction := enemy.charge_direction
+		player_impulse += direction * 300.0
+		enemy.impulse = -direction * 900.0 / sqrt(enemy.mass)
+		enemy.velocity = Vector2.ZERO
+		enemy.charge_time = 0.0
 	if grade == &"perfect":
 		_separate_player(enemy)
 		_interrupt_enemy(enemy)

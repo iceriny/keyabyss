@@ -234,11 +234,11 @@ func _refresh() -> void:
 	for index in 2 + session.compiled_build.value(&"dodge_capacity"):
 		charge_marks += "◆" if session.dodge_charges >= index + 1 else "◇"
 	dodge_label.text = "闪避  " + charge_marks
-	progress_label.text = "%d" % session.completed_words
+	progress_label.text = "施法  %d" % session.completed_words
 	var cycle: int = session.compiled_build.value(&"cadence", BattleSession.MAIN_SPELL_CYCLES[session.book_id])
 	var cadence: String = {&"frost": "霜印", &"flame": "焰印", &"storm": "雷印", &"spirit": "灵印"}[session.book_id]
 	var counter := session.runtime.book_cast_count() % cycle
-	cadence_label.text = "施法\n\n%s" % cadence
+	cadence_label.text = cadence
 	cadence_label.modulate = Color("ffe7b2") if counter == cycle - 1 else Color.WHITE
 	defense_keys.description = "御术%s" % ["  %.1fs" % session.parry_cooldown if session.parry_cooldown > 0.0 else ""]
 	var living := 0
@@ -306,32 +306,32 @@ func _place_targets(delta: float = 0.0) -> void:
 	var arena_scale := BattleStage.arena_scale(size)
 	# HUD global coordinates include the UI scale; words use this page's coordinates.
 	var page_transform := get_global_transform().affine_inverse()
+	# One continuous reading field leaves no pockets between HUD groups.
 	var top_limit := 12.0
-	var bottom_limit := (page_transform * cast_label.get_global_rect()).position.y - 12.0
-	var fixed_obstacles: Array[Rect2] = [
-		(page_transform * ($HUD/BattleHeading as Control).get_global_rect()).merge(page_transform * health_label.get_global_rect()).merge(page_transform * dodge_label.get_global_rect()).grow(10.0),
-		(page_transform * progress_label.get_global_rect()).merge(page_transform * cadence_label.get_global_rect()).grow(10.0),
-		(page_transform * chapter_label.get_global_rect()).merge(page_transform * wave_label.get_global_rect()).grow(10.0),
-		(page_transform * timer_label.get_global_rect()).merge(page_transform * pause_button.get_global_rect()).grow(10.0),
-		(page_transform * ultimate_indicator.get_global_rect()).grow(8.0),
-	]
+	for control: Control in [dodge_label, progress_label, wave_label, pause_button]:
+		top_limit = maxf(top_limit, (page_transform * control.get_global_rect()).end.y + 12.0)
+	var bottom_limit := size.y
+	for control: Control in [cast_label, bottom_label, ultimate_indicator]:
+		bottom_limit = minf(bottom_limit, (page_transform * control.get_global_rect()).position.y - 12.0)
 	var ordered := _word_targets()
 	# Entity order is stable: selection only changes the reading emphasis, not layout priority.
 	for enemy in ordered:
 		var point := slow_lens.project(BattleStage.arena_point(enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset)
 		var word_label := enemy_words[enemy.id]
-		var bounds := Rect2(point + Vector2(-word_label.size.x * 0.5, -enemy.radius * arena_scale - word_label.size.y - 8), word_label.size)
+		var head_radius: float = BattleActorVisual.word_clearance(enemy) if enemy is BattleEnemy else enemy.radius
+		var bounds := Rect2(point + Vector2(-word_label.size.x * 0.5, -head_radius * arena_scale - word_label.size.y - 8), word_label.size)
 		var arena_left := BattleStage.arena_origin(size).x
 		bounds.position.x = clampf(bounds.position.x, arena_left + 8.0, maxf(arena_left + 8.0, arena_left + BattleSession.ARENA_SIZE.x * arena_scale - bounds.size.x - 8.0))
 		bounds.position.y = clampf(bounds.position.y, top_limit, maxf(top_limit, bottom_limit - bounds.size.y))
 		var ideal := bounds.position
 		if word_label.visible:
-			var obstacles := fixed_obstacles + occupied
+			var obstacles := occupied
 			var previous := ideal + word_label.layout_offset
-			# Keep the previous side available while easing back toward the head when space clears.
-			var candidates: Array[Vector2] = [ideal, previous, ideal + word_label.layout_offset * 0.85]
+			# Keep a committed destination, rather than feeding the in-flight easing back
+			# into the solver. A small gain cannot repeatedly switch avoidance sides.
+			var candidates: Array[Vector2] = [previous, ideal]
 			for obstacle in obstacles:
-				if bounds.intersects(obstacle.grow(4.0)):
+				if bounds.intersects(obstacle.grow(6.0)) or Rect2(previous, bounds.size).intersects(obstacle.grow(6.0)):
 					candidates.append(Vector2(obstacle.end.x + 6.0, ideal.y))
 					candidates.append(Vector2(obstacle.position.x - bounds.size.x - 6.0, ideal.y))
 					candidates.append(Vector2(ideal.x, obstacle.position.y - bounds.size.y - 6.0))
@@ -341,16 +341,18 @@ func _place_targets(delta: float = 0.0) -> void:
 				candidate.x = clampf(candidate.x, arena_left + 8.0, arena_left + BattleSession.ARENA_SIZE.x * arena_scale - bounds.size.x - 8.0)
 				candidate.y = clampf(candidate.y, top_limit, maxf(top_limit, bottom_limit - bounds.size.y))
 				var trial := Rect2(candidate, bounds.size)
-				var cost := candidate.distance_squared_to(ideal) + candidate.distance_squared_to(previous) * 2.0
+				var cost := candidate.distance_squared_to(ideal) + candidate.distance_squared_to(previous) * 0.35
+				if candidate.distance_squared_to(previous) > 1.0:
+					cost += 24.0 * 24.0
 				for obstacle in obstacles:
-					if trial.intersects(obstacle):
-						cost += trial.intersection(obstacle).get_area() * 100.0
+					if trial.intersects(obstacle.grow(4.0)):
+						cost += trial.intersection(obstacle.grow(4.0)).get_area() * 100.0
 				if cost < best:
 					best = cost
 					bounds.position = candidate
 		word_label.place(ideal, bounds.position - ideal, delta)
 		if word_label.visible:
-			occupied.append(Rect2(word_label.position, word_label.size))
+			occupied.append(bounds)
 
 
 func _present(event: Dictionary) -> void:
@@ -372,6 +374,8 @@ func _present(event: Dictionary) -> void:
 	elif event.kind == &"counter_pulse":
 		var perfect: bool = event.get("grade", &"success") == &"perfect"
 		_float_feedback("完美御术" if perfect else "御术", event.at, Color("ffe4a0") if perfect else Color("b9d6ce"), 23 if perfect else 19)
+	elif event.kind == &"perfect_dodge":
+		_float_feedback("完美闪避", event.at, Color("e8dcb5"), 23)
 	elif event.kind == &"enemy_attack" and event.outcome == &"hit":
 		_float_feedback("−%d" % roundi(float(event.damage_q) / BattleSession.Q), event.at, Color("eeae9f"), 23)
 
@@ -419,7 +423,7 @@ func _draw_details() -> void:
 		hud_details.draw_line(at, at + Vector2(0, health_track.size.y), Color("101b20", 0.5), 1)
 	var cycle: int = session.compiled_build.value(&"cadence", BattleSession.MAIN_SPELL_CYCLES[session.book_id])
 	for i in cycle:
-		var at := cadence_label.position + Vector2(i * 18, 28)
+		var at := cadence_label.position + Vector2(i * 18, 24)
 		hud_details.draw_line(at, at + Vector2(13, 0), school_color if i < session.runtime.book_cast_count() % cycle else Color("4b595e", 0.6), 2.0, true)
 	for i in session.encounter.wave_count:
 		var at := Vector2(hud.size.x * 0.5 - 36 + i * 28, 65)
@@ -427,7 +431,7 @@ func _draw_details() -> void:
 	for enemy in _word_targets():
 		var word := enemy_words[enemy.id]
 		if word.visible:
-			var center := BattleStage.arena_point(enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset - hud.position
+			var center := slow_lens.project(BattleStage.arena_point(enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset) - hud.position
 			var label_end := word.position - hud.position + Vector2(word.size.x * 0.5, word.size.y)
 			if center.y < word.position.y + word.size.y * 0.5:
 				label_end.y -= word.size.y

@@ -3,6 +3,14 @@ extends "res://tests/godot/test_s1_rules.gd"
 
 
 func _run() -> void:
+	if "--combat-feedback" in OS.get_cmdline_user_args():
+		_four_flame()
+		_four_frost()
+		_four_clear_feedback()
+		for session in sessions: session.free()
+		print("COMBAT_FEEDBACK_RULES: ", "PASS" if failures == 0 else "FAIL ", failures)
+		quit(0 if failures == 0 else 1)
+		return
 	if "--four-books" in OS.get_cmdline_user_args():
 		_run_four_books()
 		return
@@ -215,15 +223,17 @@ func _run() -> void:
 
 
 func _run_four_books() -> void:
-	_four_input_contract()
-	_four_dead_target()
-	_four_paper()
-	_four_flame()
-	_four_frost()
+	var storm_only := "--book=storm" in OS.get_cmdline_user_args()
+	if not storm_only:
+		_four_input_contract()
+		_four_dead_target()
+		_four_paper()
+		_four_flame()
+		_four_frost()
 	_four_storm()
 	_four_defenses()
 	for session in sessions: session.free()
-	print("FOUR_BOOKS: ", "PASS" if failures == 0 else "FAIL ", failures)
+	print("STORM_RULES: " if storm_only else "FOUR_BOOKS: ", "PASS" if failures == 0 else "FAIL ", failures)
 	quit(0 if failures == 0 else 1)
 
 
@@ -369,13 +379,17 @@ func _four_flame() -> void:
 	var target := burn.enemies[0]
 	var hp := target.hp_q
 	burn.runtime.add_burn(target, 70, "cold-burn")
-	for index in 12: burn.runtime.advance(0.1)
+	burn.runtime.advance(0.1)
+	_check(target.hp_q == hp and target.burn == 70, "burn no longer deals damage at the former 0.1 second boundary")
+	burn.runtime.advance(0.05)
+	_check(hp - target.hp_q == 6 * 1024 and target.burn == 65, "first burn tick occurs after 0.15 world seconds")
+	for index in 11: burn.runtime.advance(0.15)
 	_check(target.burn == 10 and hp - target.hp_q == 72 * 1024, "cold target spends twelve finite burn ticks and retains ten points")
 	hp = target.hp_q
 	burn.runtime.advance(1.0)
 	_check(target.burn == 10 and target.hp_q == hp, "residual heat does no damage without a new source")
 	burn.runtime.add_burn(target, 70, "warm-burn")
-	for index in 14: burn.runtime.advance(0.1)
+	for index in 14: burn.runtime.advance(0.15)
 	_check(target.burn == 10 and hp - target.hp_q == 84 * 1024, "inherited residual heat yields fourteen ticks on the next hit")
 	burn.runtime.add_burn(target, 999, "cap")
 	_check(target.burn == 127, "burn points saturate at 127")
@@ -393,9 +407,61 @@ func _four_flame() -> void:
 	var front_hp := blocked.enemies[1].hp_q
 	blocked._advance_projectiles(0.5)
 	_check(blocked.enemies[0].hp_q == original_hp and blocked.enemies[1].hp_q < front_hp and blocked.enemies[1].burn == 70, "fire projectile stops at its first actual collision")
+	_check(absf(float(front_hp - blocked.enemies[1].hp_q) / 1024 - 5 * 12 * 1.025 * 1.08 * 0.5) < 0.002, "ordinary flame impact pays 0.50B without increasing its burn budget")
 	for index in 2: _word(blocked, "abcde")
 	blocked._advance_projectiles(0.5)
 	_check(blocked.runtime.fields.size() == 1 and blocked.runtime.fields[0].center == blocked.enemies[1].position, "third flame cast leaves its fire mist at the actual blocking target")
+	var delayed := _four_session(&"flame")
+	var ordinary := delayed.enemies[0]
+	ordinary.hp_q = 100 * 1024
+	ordinary.max_hp_q = ordinary.hp_q
+	_word(delayed, "abcde")
+	delayed._advance_projectiles(0.5)
+	_check(ordinary.alive() and ordinary.burn == 70, "a five-letter flame impact leaves the 100-health reference target alive for delayed damage")
+	delayed.runtime.advance(1.0)
+	_check(ordinary.alive(), "the cold 100-health reference target survives the first second of ordinary burning")
+	delayed.runtime.advance(0.81)
+	_check(not ordinary.alive(), "the same finite burn budget can finish the reference target by its 1.8-second tail")
+
+
+func _four_clear_feedback() -> void:
+	var paragraph := _four_session(&"spirit", {&"R029": 1})
+	var events := _four_events(paragraph)
+	for index in 2: _word(paragraph, "abcde")
+	_check(not events.any(func(event: Dictionary) -> bool: return event.kind == &"clear_pulse"), "perfect paragraph does not pulse before its third word")
+	var near := BattleThreat.new()
+	near.position = paragraph.player_position + Vector2(80, 0) / BattleSession.ARENA_SIZE
+	var outside := BattleThreat.new()
+	outside.position = paragraph.player_position + Vector2(160, 0) / BattleSession.ARENA_SIZE
+	var reflected := BattleThreat.new()
+	reflected.position = paragraph.player_position
+	reflected.reflected = true
+	paragraph.threats.assign([near, outside, reflected])
+	_word(paragraph, "abcde")
+	_check(paragraph.threats.size() == 2 and not paragraph.threats.has(near) and paragraph.threats.has(outside) and paragraph.threats.has(reflected), "third perfect word clears only hostile bullets within its actual radius")
+	_check(events.any(func(event: Dictionary) -> bool: return event.kind == &"clear_pulse" and event.source == &"R029" and event.radius == 150.0 and event.at == paragraph.player_position), "perfect paragraph emits its own correctly positioned clear wave")
+	paragraph.threats.clear()
+	events.clear()
+	for index in 3: _word(paragraph, "abcde")
+	_check(events.any(func(event: Dictionary) -> bool: return event.kind == &"clear_pulse" and event.source == &"R029"), "the clear wave is committed even with no bullets present")
+	var combined := _four_session(&"spirit", {&"R020": 1, &"R029": 1})
+	var combined_events := _four_events(combined)
+	for index in 15: _word(combined, "abcde")
+	var paragraphs := 0
+	var resets := 0
+	for event in combined_events:
+		if event.kind != &"clear_pulse": continue
+		if event.source == &"R029": paragraphs += 1
+		elif event.source == &"R020": resets += 1
+	_check(paragraphs == 5 and resets == 3, "five-word and three-perfect-word relics both fire when their cycles coincide")
+	var landing := _four_session(&"storm", {&"R010": 1, &"R037": 1})
+	var landing_events := _four_events(landing)
+	var at := Vector2(0.6, 0.5)
+	landing.runtime.on_dodge_landed(at)
+	var waves: Array[Dictionary] = []
+	for event in landing_events:
+		if event.kind == &"clear_pulse": waves.append(event)
+	_check(waves.size() == 1 and waves[0].source == &"dodge_clear" and waves[0].at == at and waves[0].radius == 135.0, "overlapping dodge relics emit one wave at the landing point and maximum clear radius")
 
 
 func _four_frost() -> void:
@@ -403,6 +469,7 @@ func _four_frost() -> void:
 	_word(ice, "abcde")
 	var spear := ice.projectiles[0].effect
 	var damage := spear.damage_q
+	_check(absf(float(damage) / 1024 - 5 * 12 * 1.025 * 1.08 * 0.7) < 0.002, "ordinary frost impact pays 0.70B per actual target")
 	var hp0 := ice.enemies[0].hp_q
 	var hp1 := ice.enemies[1].hp_q
 	ice.runtime.contact(spear, ice.enemies[1], ice.player_position, false)
@@ -415,11 +482,11 @@ func _four_frost() -> void:
 	control.runtime._apply_cold(target, 90 * 1024, control.compiled_build)
 	_check(target.frozen_time == 0.0 and is_equal_approx(target.cold_move_scale(), 0.5) and is_equal_approx(target.cold_attack_scale(), 0.65), "ninety cold slows movement and attack without freezing")
 	control.runtime._apply_cold(target, 1 * 1024, control.compiled_build)
-	_check(target.cold == 31 and is_equal_approx(target.frozen_time, 0.9), "strictly above ninety cold consumes sixty and freezes for 0.9 seconds")
+	_check(target.cold == 31 and is_equal_approx(target.frozen_time, 2.0), "strictly above ninety cold consumes sixty and freezes for two world seconds")
 	var attack_clock := target.attack_clock
 	control._advance_enemies(0.2)
 	_check(target.attack_clock == attack_clock, "freeze pauses enemy attack progress")
-	control.runtime.advance(0.9)
+	control.runtime.advance(2.0)
 	_check(target.frozen_time == 0.0 and is_equal_approx(target.freeze_cooldown, 1.0), "ordinary thaw starts one second of freeze immunity")
 	control._advance_enemies(0.1)
 	_check(target.attack_clock < attack_clock, "thaw resumes the existing enemy attack progress")
@@ -430,8 +497,8 @@ func _four_frost() -> void:
 	var boss := control.enemies[1]
 	boss.boss = true
 	control.runtime._apply_cold(boss, 91 * 1024, control.compiled_build)
-	_check(is_equal_approx(boss.frozen_time, 0.45), "Boss uses its shorter freeze duration")
-	control.runtime.advance(0.45)
+	_check(is_equal_approx(boss.frozen_time, 1.5), "Boss freezes for one and a half world seconds")
+	control.runtime.advance(1.5)
 	_check(is_equal_approx(boss.freeze_cooldown, 3.0), "Boss thaw grants three seconds of freeze immunity")
 	var outside := _four_session(&"frost")
 	var pushed := outside.enemies[0]
@@ -461,21 +528,58 @@ func _four_storm() -> void:
 			_check(not visited.has(hit.enemy), "one chain never revisits %s" % hit.enemy)
 			visited[hit.enemy] = true
 		if hits.size() >= 3:
-			_check(absf(float(hits[1].damage_q) / hits[0].damage_q - 0.6) < 0.002 and absf(float(hits[2].damage_q) / hits[0].damage_q - 0.2) < 0.002, "charged=%s chain preserves 100/60/20 percent natural decay" % charged)
+			_check(absf(float(hits[1].damage_q) / hits[0].damage_q - 0.65) < 0.002 and absf(float(hits[2].damage_q) / hits[0].damage_q - 0.3) < 0.002, "charged=%s chain preserves 100/65/30 percent natural decay" % charged)
 		if charged:
-			_check(storm.enemies[0].shock == 37 and absf(float(hits[-1].damage_q) / hits[0].damage_q - 0.2) < 0.002, "pre-hit shock spends thirty before new points and the extra hit keeps the tail floor")
+			_check(storm.enemies[0].shock == 57 and absf(float(hits[-1].damage_q) / hits[0].damage_q - 0.3) < 0.002, "pre-hit shock spends ten before new points and the extra hit keeps the absolute tail floor")
 		else:
 			_check(storm.enemies[0].shock == 36 and storm.enemies[-1].shock == 0, "new shock does not charge its own hit or spend the untouched fourth target")
 	var uncharged := _four_session(&"storm")
+	_four_target(uncharged, 2, Vector2(0.66, 0.35))
+	var uncharged_events := _four_events(uncharged)
 	_word(uncharged, "abcde")
+	for index in 4: uncharged._advance_effects(0.081)
+	var uncharged_hits := _four_impacts(uncharged_events, &"storm_arc")
+	var input_power := 5 * 12 * 1.025 * 1.08
+	_check(absf(float(uncharged_hits[0].damage_q) / 1024 - input_power * 0.6) < 0.002 and absf(float(uncharged_hits[1].damage_q) / 1024 - input_power * 0.39) < 0.002 and absf(float(uncharged_hits[2].damage_q) / 1024 - input_power * 0.18) < 0.002, "storm lowers its first two hits while preserving the former 0.18B tail")
 	var charged_power := _four_session(&"storm")
 	charged_power.enemies[0].shock = 31
+	var charged_events := _four_events(charged_power)
 	_word(charged_power, "abcde")
-	_check(absf(float(charged_power.runtime.actual_damage_q) / uncharged.runtime.actual_damage_q - 1.25) < 0.002, "pre-existing shock adds one quarter of the hit and carries the charge onward")
+	_check(absf(float(_four_impacts(charged_events, &"storm_arc")[0].damage_q) / uncharged_hits[0].damage_q - 1.25) < 0.002, "pre-existing shock adds one quarter of the hit and carries the charge onward")
+	var accumulated := _four_session(&"storm")
+	var accumulated_target := accumulated.enemies[1]
+	accumulated_target.position = accumulated.enemies[0].position + Vector2(200.0, 0.0) / BattleSession.ARENA_SIZE
+	accumulated_target.previous_position = accumulated_target.position
+	for expected in [36, 62, 88]:
+		_word(accumulated, "abcde")
+		accumulated._advance_effects(0.081)
+		_check(accumulated_target.shock == expected, "repeated second-hop contacts build shock to %d" % expected)
+	accumulated.runtime.advance(2.0)
+	_check(accumulated_target.shock == 88, "two world seconds after the last shock source retain all points")
+	accumulated.runtime.advance(0.5)
+	_check(accumulated_target.shock == 84, "after shock grace each half world second loses four points")
+	accumulated.runtime.add_shock(accumulated_target, 1)
+	accumulated.runtime.advance(2.0)
+	_check(accumulated_target.shock == 85, "a new shock source refreshes the two-second grace")
+	var survivors := _four_session(&"storm")
+	for enemy in survivors.enemies: enemy.hp_q = 100 * 1024
+	survivors.enemies[1].position = survivors.enemies[0].position + Vector2(200.0, 0.0) / BattleSession.ARENA_SIZE
+	survivors.enemies[1].previous_position = survivors.enemies[1].position
+	for index in 2:
+		_word(survivors, "abcde")
+		survivors._advance_effects(0.081)
+	_check(survivors.enemies[1].alive() and survivors.enemies[1].shock == 62, "a 100HP reference survives two second-hop hits and becomes an arena-wide node")
+	var silver := _four_session(&"storm", {&"R033": 1})
+	_four_target(silver, 2, Vector2(0.66, 0.35))
+	var silver_events := _four_events(silver)
+	_word(silver, "abcde")
+	for index in 4: silver._advance_effects(0.081)
+	var silver_hits := _four_impacts(silver_events, &"storm_arc")
+	_check(absf(float(silver_hits[2].damage_q) / 1024 - input_power * 0.315) < 0.002, "superconducting ink preserves its former absolute 0.315B tail")
 	for points in [30, 31, 60, 61]:
 		var reach := _four_session(&"storm")
 		reach.enemies[0].position = Vector2(0.25, 0.35)
-		var distance := 400.0 if points <= 31 else 600.0
+		var distance := 750.0 if points <= 31 else 1200.0
 		reach.enemies[1].position = reach.enemies[0].position + Vector2(distance, 0) / BattleSession.ARENA_SIZE
 		reach.enemies[1].shock = points
 		for enemy in reach.enemies: enemy.previous_position = enemy.position
@@ -501,6 +605,7 @@ func _four_storm() -> void:
 
 func _four_defenses() -> void:
 	for book in BuildCompiler.BOOKS:
+		if "--book=storm" in OS.get_cmdline_user_args() and book != &"storm": continue
 		var session := _four_session(book)
 		var events := _four_events(session)
 		var origin := session.player_position

@@ -32,6 +32,7 @@ var _dodge_echoes: Array[Dictionary] = []
 var _echo_clock: float = 0.0
 var _charge: float = 0.0
 var _charge_attempt := ""
+var _perfect_dodge_until := 0.0
 var camera_offset := Vector2.ZERO
 var _camera_motion := DampedMotion.new()
 var fluid: FluidAtmosphere
@@ -56,10 +57,11 @@ func set_options(detail: int, less_motion: bool) -> void:
 	fluid.scene_quality = detail
 	reduced_motion = less_motion
 	for pulse in _pulses:
-		if pulse.kind != &"item_burst":
+		if pulse.kind not in [&"item_burst", &"clear_pulse"]:
 			continue
 		var sprite: Sprite2D = pulse.node
-		(sprite.material as ShaderMaterial).set_shader_parameter("reduced_motion", less_motion or detail == 0)
+		(sprite.material as ShaderMaterial).set_shader_parameter("reduced_motion", less_motion or (detail == 0 and pulse.kind == &"item_burst"))
+		(sprite.material as ShaderMaterial).set_shader_parameter("detail", detail)
 		if less_motion or detail == 0:
 			for child in sprite.get_children():
 				if child is GPUParticles2D or child is PointLight2D:
@@ -154,7 +156,7 @@ func _process(delta: float) -> void:
 	for enemy in session.enemies:
 		if not _actors.has(enemy.id):
 			_create_actor(enemy)
-		_actors[enemy.id].sync_enemy(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, session.world_time, delta, reduced_motion)
+		_actors[enemy.id].sync_enemy(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, session.world_time, delta, reduced_motion, quality)
 		_actors[enemy.id].modulate.a = (1.0 - _actors[enemy.id].dead_time) * (1.0 if enemy.combat_locked else 0.06 + 0.94 * pow(BattleSession.arena_clarity(enemy.position, enemy.radius), 2.0))
 	for projectile in session.projectiles:
 		if not _projectile_nodes.has(projectile):
@@ -223,6 +225,10 @@ func _present(event: Dictionary) -> void:
 	var kind: StringName = event.kind
 	var at: Vector2 = event.get("at", Vector2(0.5, 0.5))
 	match kind:
+		&"clear_pulse":
+			if event.source != &"ultimate": _spawn_clear_pulse(at, event.radius, event.source)
+		&"perfect_dodge":
+			_perfect_dodge_until = session.elapsed + event.until
 		&"pickup_spawn":
 			_spawn_particles(at, Color("a7e4c5") if event.pickup == &"rune" else Color("e8b988"), 0.3, false)
 		&"storm_path":
@@ -249,9 +255,9 @@ func _present(event: Dictionary) -> void:
 			if _actors.has(event.enemy):
 				_actors[event.enemy].receive_impact(direction, 5.0 if empowered else 3.0, reduced_motion)
 			if str(event.source).begins_with("flame"):
-				_spawn_flame_burst(contact, (180.0 if empowered else 150.0) if event.source in [&"flame_burst", &"flame_ultimate"] else 85.0)
+				_spawn_flame_burst(contact, (180.0 if empowered else 150.0) if event.source in [&"flame_burst", &"flame_ultimate"] else 85.0, event.source not in [&"flame_ultimate", &"flame_wave", &"flame_domain"])
 			elif str(event.source).begins_with("frost"):
-				_spawn_frost_impact(contact, direction, empowered)
+				_spawn_frost_impact(contact, direction, empowered, event.source != &"frost_ultimate")
 			elif event.source == &"storm_burst":
 				_spawn_energy(contact, 25.0, Color("ffe7ac"), false, &"contact", .2)
 			elif str(event.source).begins_with("storm") or str(event.source).begins_with("spirit"):
@@ -259,7 +265,7 @@ func _present(event: Dictionary) -> void:
 			else:
 				_spawn_energy(contact, 56.0, color, false, &"contact", 0.4)
 			_spawn_particles(contact, color, 0.7, true, event.source, Vector2.ZERO if str(event.source).ends_with("_ultimate") else direction)
-			if event.source in [&"frost_ultimate", &"counter"]:
+			if event.source == &"counter":
 				_add_wave(contact, 0.46, 0.0035)
 		&"death":
 			_spawn_particles(at, Color("e8d6ae"), 0.9, true)
@@ -281,7 +287,6 @@ func _present(event: Dictionary) -> void:
 		&"ultimate":
 			var center: Vector2 = event.center
 			_spawn_particles(center, school_color, 1.2, true, StringName(str(session.book_id) + "_ultimate"))
-			_add_wave(center, 1.1, 0.008)
 		&"spirit_summon":
 			_spawn_particles(at, Color("d9c8ff"), 0.5, false)
 		&"dodge":
@@ -389,6 +394,16 @@ func _draw_enemy(point: Vector2, enemy: BattleEnemy) -> void:
 func _draw_player(point: Vector2) -> void:
 	var tint := school_color.lerp(Color("e9ca8e"), 0.22)
 	var motion := 0.0 if reduced_motion else session.world_time
+	var perfect_remaining := _perfect_dodge_until - session.elapsed
+	if perfect_remaining > 0.0 and session.dodge_window > 0.0:
+		var strength := minf(1.0, perfect_remaining / 0.12)
+		var gold := Color("f2dfac", strength * 0.85)
+		draw_texture_rect(_spark_texture, Rect2(point - Vector2.ONE * 72.0, Vector2.ONE * 144.0), false, Color("c4ddda", strength * 0.14))
+		for side in 2:
+			var angle := side * PI + 0.24
+			draw_arc(point, 43.0, angle, angle + PI - 0.48, 32, gold, 1.7, true)
+			var tip := point + Vector2.from_angle(side * PI) * 43.0
+			draw_colored_polygon(PackedVector2Array([tip + Vector2(0, -5), tip + Vector2(3, 0), tip + Vector2(0, 5), tip - Vector2(3, 0)]), gold)
 	if session.compiled_build.has(&"assist") and session.runtime.assist_ready():
 		var pulse := 1.0 if reduced_motion else .64 + .36 * pow(.5 + .5 * sin(motion * 3.8), 2.0)
 		var at := point + Vector2(57, -20)
@@ -480,6 +495,33 @@ func _spawn_item_burst(at: Vector2, style: int, radius: float) -> void:
 		motion.scale_max = (12.0 if sparks else 32.0) / _spark_texture.width
 		sprite.add_child(particles)
 		particles.emitting = true
+
+
+func _spawn_clear_pulse(at: Vector2, radius: float, source: StringName) -> void:
+	var tint := Color("c6ddd7")
+	if source == &"R029": tint = Color("efdbb3")
+	elif source == &"R020": tint = Color("e6c493")
+	elif source == &"dodge_clear": tint = school_color.lerp(Color("e2ede5"), 0.4)
+	elif source == &"overload": tint = Color("f6d998")
+	var sprite := Sprite2D.new()
+	sprite.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	sprite.texture = _spark_texture
+	sprite.position = at * size
+	sprite.scale = Vector2.ONE * radius * 2.4 / _spark_texture.width
+	var surface := preload("res://ui/materials/item_burst.tres").duplicate() as ShaderMaterial
+	surface.set_shader_parameter("style", 5 if source == &"R020" else 4)
+	surface.set_shader_parameter("radius", radius)
+	surface.set_shader_parameter("tint", tint)
+	surface.set_shader_parameter("reduced_motion", reduced_motion)
+	surface.set_shader_parameter("detail", quality)
+	surface.set_shader_parameter("seed", randf() * 100.0)
+	sprite.material = surface
+	add_child(sprite)
+	_pulses.append({"kind": &"clear_pulse", "node": sprite, "at": at, "age": 0.0, "duration": 0.64})
+	# The existing refraction plane carries the energy; the material only exposes
+	# a few lit folds. Both use the same front curve and finish at the real radius.
+	_add_wave(at, .64, .0022, radius / BattleSession.ARENA_SIZE.y / .82)
+	_add_contact_light(sprite, tint, minf(radius, 220.0), .2, .12)
 
 
 func _spawn_energy(at: Vector2, radius: float, tint: Color, hot: bool, kind: StringName, duration: float) -> void:
@@ -621,7 +663,7 @@ func _spawn_particles(at: Vector2, tint: Color, intensity: float, burst: bool, s
 	retirement.tween_callback(particles.queue_free)
 
 
-func _spawn_flame_burst(at: Vector2, radius: float) -> void:
+func _spawn_flame_burst(at: Vector2, radius: float, refract: bool) -> void:
 	var sprite := Sprite2D.new()
 	sprite.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	sprite.texture = _spark_texture
@@ -634,10 +676,10 @@ func _spawn_flame_burst(at: Vector2, radius: float) -> void:
 	add_child(sprite)
 	_add_contact_light(sprite, Color("ffb65f"), radius * 2.0, .2, .8)
 	_pulses.append({"kind": &"fire", "node": sprite, "at": at, "age": 0.0, "duration": .42})
-	_add_wave(at, .35, 0.002, radius / BattleSession.ARENA_SIZE.y)
+	if refract: _add_wave(at, .35, 0.002, radius / BattleSession.ARENA_SIZE.y)
 
 
-func _spawn_frost_impact(at: Vector2, direction: Vector2, empowered: bool) -> void:
+func _spawn_frost_impact(at: Vector2, direction: Vector2, empowered: bool, refract: bool) -> void:
 	var sprite := Sprite2D.new()
 	sprite.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	sprite.texture = _spark_texture
@@ -656,7 +698,7 @@ func _spawn_frost_impact(at: Vector2, direction: Vector2, empowered: bool) -> vo
 	sprite.add_child(light)
 	var tween := BattleVisualClock.tween_for(self)
 	tween.tween_property(light, "energy", 0.0, 0.45)
-	_add_wave(at, 0.3, 0.0018, 0.055)
+	if refract: _add_wave(at, 0.3, 0.0018, 0.055)
 
 
 func _add_wave(at: Vector2, duration: float, power: float, radius: float = 0.12) -> void:

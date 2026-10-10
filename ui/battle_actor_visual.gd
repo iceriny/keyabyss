@@ -3,6 +3,7 @@ extends Node2D
 ## Retains the book-and-ink silhouettes; surface, lighting and dissolution are native.
 
 const PLAYER = preload("res://assets/art/actors/scribe.svg")
+const LEECH_VISUAL_EXTENT := Vector2(36.0, 47.0)
 const ENEMIES = {
 	&"nib": preload("res://assets/art/actors/nib.svg"),
 	&"quill": preload("res://assets/art/actors/quill.svg"),
@@ -35,6 +36,13 @@ var _tint: Color
 var _glow: Texture2D
 var _hit_motion := DampedMotion.new()
 var _hit_axis := Vector2.RIGHT
+var _freeze_weight := 0.0
+
+
+static func word_clearance(enemy: BattleEnemy) -> float:
+	if enemy.kind == &"leech":
+		return LEECH_VISUAL_EXTENT.y * 1.08 * BattleEnemy.SIZE_SCALE * (0.28 / 0.44 if enemy.small else 1.0)
+	return enemy.radius
 
 
 static func create(kind: StringName, tint: Color, glow: Texture2D) -> BattleActorVisual:
@@ -58,7 +66,6 @@ func _ready() -> void:
 
 func _apply_configuration() -> void:
 	scale = Vector2.ONE * (1.0 if _kind == &"player" else BattleEnemy.SIZE_SCALE)
-	surface.set_shader_parameter("ice_grain", preload("res://assets/art/effects/frost_microfacets.png"))
 	body.light_mask = 2
 	shadow.texture = _glow
 	aura.texture = _glow
@@ -76,8 +83,12 @@ func receive_impact(direction: Vector2, strength: float, reduced: bool) -> void:
 	_hit_motion.kick(_hit_axis * strength, strength)
 
 
-func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, reduced: bool) -> void:
+func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, reduced: bool, detail: int) -> void:
 	position = at
+	var frozen := enemy.alive() and enemy.frozen_time > 0.0
+	_freeze_weight = move_toward(_freeze_weight, 1.0 if frozen else 0.0, delta * (7.0 if frozen else 4.0))
+	surface.set_shader_parameter("detail", detail)
+	surface.set_shader_parameter("frozen", _freeze_weight)
 	if reduced:
 		_hit_motion.reset()
 	else:
@@ -87,9 +98,9 @@ func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, redu
 		surface.set_shader_parameter("dissolve", dead_time)
 		modulate.a = 1.0 - dead_time
 		return
-	var bob := 0.0 if reduced else sin(time * 1.7 + float(str(enemy.id).get_slice("_", 1)) * 2.1) * 2.0
+	var bob := 0.0 if reduced or frozen else sin(time * 1.7 + float(str(enemy.id).get_slice("_", 1)) * 2.1) * 2.0
 	body.position = _hit_motion.position + Vector2(0.0, bob)
-	if enemy.kind == &"nib" and not reduced:
+	if enemy.behavior == &"melee" and not reduced and not frozen:
 		if enemy.aiming:
 			var tension := 1.0 - clampf(enemy.attack_clock / enemy.warning_time, 0.0, 1.0)
 			body.position -= enemy.melee_direction * tension * tension * 7.0
@@ -103,7 +114,6 @@ func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, redu
 	var compression := 0.0 if reduced else minf(0.15, enemy.squash * 0.35 + _hit_motion.position.length() / 5.0 * 0.09)
 	body.scale = (Vector2.ONE * (1.0 + compression * 0.45) - axis * axis * (compression * 1.45)) * (0.64 if enemy.boss else 0.28 if enemy.small else 0.44)
 	surface.set_shader_parameter("flash", minf(0.68, enemy.hit_flash / 0.12 * 0.68))
-	surface.set_shader_parameter("frozen", minf(1.0, enemy.frozen_time * 2.0))
 	surface.set_shader_parameter("burning", minf(1.0, enemy.burn_time))
 	surface.set_shader_parameter("visual_time", 0.0 if reduced else time)
 

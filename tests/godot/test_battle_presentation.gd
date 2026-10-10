@@ -61,6 +61,11 @@ func _run() -> void:
 		if argument == "--movie":
 			recording = true
 	process_frame.connect(_sample_audio)
+	if "--combat-feedback" in OS.get_cmdline_user_args():
+		await _check_combat_feedback()
+		print("Combat feedback presentation: " + evidence)
+		quit()
+		return
 	for book: BookPresentation in ArchiveHome.BOOKS:
 		if not selected.is_empty() and str(book.id) != selected:
 			continue
@@ -306,6 +311,178 @@ func _four_book_window(session: BattleSession, page: BattlePage) -> void:
 	await _advance(.7)
 	await _capture(str(session.book_id) + "-domain-sustain")
 	if reduced: assert(page.visuals.camera_offset == Vector2.ZERO)
+
+
+func _check_combat_feedback() -> void:
+	# Controlled state fixtures isolate the committed visual paths; rule tests own
+	# acquisition and collision timing. No synthetic presentation events are used.
+	var words: Array[VocabularyEntry] = []
+	for word in ["amber", "bloom", "crystal", "dream", "ember", "frost", "glow", "hush", "ink", "luminous", "observatory"]:
+		words.append(VocabularyEntry.new(word, "用于观察词咒与状态"))
+	var session := BattleSession.new()
+	session.start_baseline(&"frost", words, "normal", "combat-feedback", false)
+	var leech := session._spawn_enemy(load("res://game/content/enemies/leech.tres"), Vector2(.40, .54))
+	var split := session._spawn_enemy(load("res://game/content/enemies/split.tres"), Vector2(.60, .54))
+	var boss := session._spawn_enemy(load("res://game/content/enemies/ink_colossus.tres"), Vector2(.80, .74))
+	boss.position = Vector2(.80, .74)
+	for index in session.enemies.size():
+		var enemy := session.enemies[index]
+		if index < 3: enemy.position = Vector2(.2 + index * .15, .32)
+		enemy.previous_position = enemy.position
+		enemy.combat_locked = true
+		enemy.word_age = 1.0
+		enemy.speed = 0.0
+		enemy.stationary = true
+		enemy.attack_clock = 1000.0
+	var options := AppSettings.new(evidence.path_join("settings.cfg"))
+	options.sound = false
+	options.quality = quality
+	options.reduce_motion = reduced
+	var page := BattlePage.create(session, options, ArchiveHome.BOOKS[0])
+	page.theme = ArchiveTheme.create(ArchiveHome.BOOKS[0].color)
+	root.add_child(page)
+	session.set_physics_process(false)
+	await _advance(.2)
+	# Reproduce the left HUD pocket, with neighbours that used to make its
+	# avoidance solver repeatedly change sides even while every body was still.
+	for index in 3:
+		var enemy := session.enemies[index]
+		enemy.position = Vector2(.035 + index * .045, .20 + index * .01)
+		enemy.previous_position = enemy.position
+	await _advance(.8)
+	var settled: Array[Vector2] = []
+	for enemy in session.enemies:
+		var label := page.enemy_words[enemy.id]
+		settled.append(label.position)
+		assert(Rect2(Vector2.ZERO, page.size).encloses(label.get_rect()), "Complete word remains inside the page")
+		for hud_path in ["BattleHeading", "PlayerHealth", "HealthValue", "HealthTrack", "PlayerShield", "ShieldTrack", "Dodge", "BattleProgress", "BookCadence", "BattleChapter", "BattleWave", "BattleTimer", "Pause"]:
+			var control := page.get_node("HUD/" + hud_path) as Control
+			assert(not label.get_global_rect().intersects(control.get_global_rect()), "HUD pocket word overlaps " + hud_path)
+	for frame in 30:
+		await process_frame
+		for index in session.enemies.size():
+			assert(page.enemy_words[session.enemies[index].id].position.distance_to(settled[index]) < .1, "Stationary words cannot oscillate between avoidance positions")
+	await _capture("hud-left-pocket")
+	for index in 3:
+		session.enemies[index].position = Vector2(.2 + index * .15, .32)
+		session.enemies[index].previous_position = session.enemies[index].position
+	await _advance(.5)
+	# Material sample ages are explicit. Physics-frame waits can catch up after
+	# a screenshot readback and otherwise skip short thaw / dissipation phases.
+	page.visuals.set_process(false)
+	for sample: Dictionary in [{"source": &"R029", "radius": 150.0}, {"source": &"R020", "radius": 220.0}, {"source": &"dodge_clear", "radius": 135.0}]:
+		assert(session.threats.is_empty())
+		session.runtime.clear_radius(Vector2(.74, .5), sample.radius, sample.source)
+		page.visuals._process(.06)
+		await _capture("clear-" + str(sample.source) + "-onset")
+		page.visuals._process(.18)
+		assert(page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"clear_pulse"), "Empty clear still creates a visible radius pulse")
+		await _capture("clear-" + str(sample.source))
+		page.visuals._process(.27)
+		await _capture("clear-" + str(sample.source) + "-tail")
+		page.visuals._process(.2)
+		assert(not page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"clear_pulse"), "Clear material has a finite optical lifetime")
+		await _capture("clear-" + str(sample.source) + "-ended")
+	for enemy: BattleEnemy in [leech, split]:
+		enemy.aiming = true
+		enemy.melee_origin = enemy.position
+		enemy.melee_direction = ((session.player_position - enemy.position) * BattleSession.ARENA_SIZE).normalized()
+		enemy.attack_clock = enemy.warning_time * .35
+	page.visuals._process(.05)
+	await _advance(.05)
+	assert(page.warnings._melee_cues[leech.id].visible and page.warnings._melee_cues[split.id].visible, "Every melee behavior exposes the same real attack sector")
+	await _capture("melee-warning")
+	for enemy: BattleEnemy in [leech, split]:
+		enemy.aiming = false
+		enemy.melee_strike = BattleEnemy.MELEE_STRIKE_TIME * .5
+	page.visuals._process(.05)
+	await _advance(.05)
+	await _capture("melee-strike")
+	for enemy: BattleEnemy in [leech, split]: enemy.melee_strike = 0.0
+	# Retire the warning overlay without advancing the manually sampled ice.
+	await process_frame
+	# All three actual body sizes share the same deposited material, including
+	# the thin snake tail and the Boss's broad silhouette. No zoom is applied.
+	for enemy: BattleEnemy in [session.enemies[0], leech, boss]:
+		enemy.cold = 91
+		session.runtime._try_freeze(enemy)
+	page.visuals._process(.08)
+	await _capture("freeze-onset")
+	page.visuals._process(.3)
+	for enemy: BattleEnemy in [session.enemies[0], leech, boss]:
+		assert(page.visuals._actors[enemy.id]._freeze_weight > .99)
+	await _capture("freeze-held")
+	# The real clear event and held ice survive a settings change and a paused
+	# render loop; resuming the same optical lifetime still retires the pulse.
+	session.runtime.clear_radius(Vector2(.74, .5), 150.0, &"R029")
+	page.visuals._process(.1)
+	var held_pulse: Dictionary = page.visuals._pulses[-1]
+	var held_age: float = held_pulse.age
+	paused = true
+	page.visuals.set_process(true)
+	for frame in 3: await process_frame
+	assert(is_equal_approx(held_pulse.age, held_age), "Paused material clock cannot consume a pulse lifetime")
+	page.visuals.set_process(false)
+	paused = false
+	options.quality = 0 if quality > 0 else 2
+	options.reduce_motion = not reduced
+	page.apply_options()
+	page.visuals._process(0.0)
+	var pulse_material := (held_pulse.node as Sprite2D).material as ShaderMaterial
+	assert(pulse_material.get_shader_parameter("detail") == options.quality)
+	assert(pulse_material.get_shader_parameter("reduced_motion") == options.reduce_motion)
+	for enemy: BattleEnemy in [session.enemies[0], leech, boss]:
+		assert(page.visuals._actors[enemy.id].surface.get_shader_parameter("detail") == options.quality)
+		assert(page.visuals._actors[enemy.id]._freeze_weight > .99, "Settings do not restart ice deposition")
+	await _capture("materials-quality-switch")
+	options.quality = quality
+	options.reduce_motion = reduced
+	page.apply_options()
+	page.visuals._process(.6)
+	assert(not page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"clear_pulse"), "Resumed pulse expires after settings changes")
+	assert(page.visuals._waves.is_empty(), "Refraction shares the finite material lifetime")
+	for enemy: BattleEnemy in [session.enemies[0], leech, boss]: enemy.frozen_time = 0.0
+	page.visuals._process(.12)
+	await _capture("freeze-thaw")
+	page.visuals._process(.2)
+	for enemy: BattleEnemy in [session.enemies[0], leech, boss]:
+		assert(is_zero_approx(page.visuals._actors[enemy.id]._freeze_weight))
+	await _capture("freeze-ended")
+	page.visuals.set_process(true)
+	var threat := BattleThreat.new()
+	threat.source_id = leech.id
+	threat.position = session.player_position + Vector2(40, 0) / BattleSession.ARENA_SIZE
+	threat.previous_position = threat.position
+	threat.velocity = Vector2(-300, 0)
+	threat.damage_q = BattleSession.Q
+	session.threats.append(threat)
+	session._commit_action(&"dodge_down")
+	assert(session.perfect_dodge_remaining > 0.0 and page.visuals._perfect_dodge_until > session.elapsed)
+	await _advance(.2)
+	await _capture("perfect-dodge")
+	for index in 61: session.step(1.0 / 60.0)
+	await _advance(.2)
+	assert(session.perfect_dodge_remaining <= 0.0)
+	await _capture("perfect-dodge-ended")
+	page.visuals.set_process(false)
+	page.visuals._process(1.0)
+	assert(page.visuals._waves.is_empty())
+	session.runtime.clear_radius(session.player_position, 220.0, &"ultimate")
+	assert(not page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"clear_pulse"), "Ultimate clearing has no additional clear pulse")
+	assert(page.visuals._waves.is_empty(), "Ultimate clearing has no additional spatial wave")
+	# Full resonance enters the normal queued action path. The elemental domain
+	# remains present; neither its release nor its clear spawns another wave.
+	session.resonance_q = BattleSession.ULTIMATE_COST_Q
+	session.queue_action(&"ultimate")
+	session.step(1.0 / 60.0)
+	page.visuals._process(.05)
+	assert(not session.ultimates.is_empty() and session.resonance_q < BattleSession.ULTIMATE_COST_Q)
+	assert(not page.visuals._ultimate_nodes.is_empty(), "Ultimate retains its elemental field")
+	assert(page.visuals._waves.is_empty(), "Ultimate release has no additional spatial wave")
+	assert(not page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"clear_pulse"))
+	await _capture("ultimate-without-shockwave")
+	page.queue_free()
+	await process_frame
 
 
 func _check_refresh_cost() -> void:

@@ -14,14 +14,14 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	for enemy in session.enemies:
-		if enemy.kind != &"nib":
+		if enemy.behavior != &"melee":
 			continue
 		if not _melee_cues.has(enemy.id):
 			var created_cue := MELEE_CUE.instantiate() as ColorRect
 			add_child(created_cue)
 			_melee_cues[enemy.id] = created_cue
 		var cue := _melee_cues[enemy.id]
-		cue.visible = enemy.alive() and (enemy.aiming or enemy.melee_strike > 0.0)
+		cue.visible = enemy.alive() and BattleSession.enemy_in_combat(enemy) and (enemy.aiming or enemy.melee_strike > 0.0)
 		if cue.visible:
 			cue.position = enemy.melee_origin * size - Vector2.ONE * 128.0
 			var surface := cue.material as ShaderMaterial
@@ -66,7 +66,7 @@ func _draw() -> void:
 			else:
 				draw_dashed_line(start, finish, Color(color, 0.35 + progress * 0.4), 1.2, 12.0 * scale_factor, true)
 	for enemy in session.enemies:
-		if enemy.kind == &"nib" or not enemy.alive() or not enemy.aiming or not BattleSession.enemy_in_combat(enemy):
+		if enemy.behavior == &"melee" or not enemy.alive() or not enemy.aiming or not BattleSession.enemy_in_combat(enemy):
 			continue
 		var from := enemy.previous_position.lerp(enemy.position, fraction) * size
 		var target := enemy.aimed_position * size

@@ -75,10 +75,11 @@ func _run() -> void:
 	charging._commit_action(&"parry")
 	charging.parry_window = 0.15
 	charging._advance_enemy_motion(0.01)
-	_check(charger.charge_time > 0.9 and charger.stagger_time == 0.0 and charger.velocity.x < 0.0, "ordinary defense does not interrupt the charging attacker at collision")
+	_check(charger.charge_time == 0.0 and charger.stagger_time > 0.0 and charger.velocity.is_zero_approx(), "ordinary defense ends the colliding charge")
+	_check(charging.player_impulse.x < 0.0 and charger.impulse.x > 0.0, "ordinary charge defense sends the player and attacker in opposite directions")
 	charging.parry_window = 0.0
 	charging._advance_enemy_motion(0.01)
-	_check(charging.player_hp_q == charging.player_max_hp_q and charger.charge_time > 0.9, "the defended charge continues without dealing its damage again")
+	_check(charging.player_hp_q == charging.player_max_hp_q and charger.charge_time == 0.0, "the defended charge cannot settle damage again during its recoil")
 	var graze := _session()
 	graze._commit_action(&"parry")
 	var passing := _threat(graze, Vector2(40, 40), Vector2(-400, 0), "graze")
@@ -182,9 +183,66 @@ func _run() -> void:
 	var statistics := prediction.finish_room(&"fixture").statistics
 	_check(statistics.defense_successes == 1 and statistics.perfect_defenses == 1, "room result snapshots actual committed defense outcomes")
 	_check_world_clocks()
+	_check_perfect_dodge()
 	for session in sessions: session.free()
 	print("Defense and movement: %s failure(s)" % failures)
 	quit(1 if failures else 0)
+
+
+func _check_perfect_dodge() -> void:
+	var precise := _session()
+	var events: Array[Dictionary] = []
+	precise.event_committed.connect(func(event: Dictionary) -> void: events.append(event))
+	_threat(precise, Vector2(36, 0), Vector2(-200, 0), "precise-dodge")
+	precise._commit_action(&"dodge_down")
+	_check(precise.resonance_q == 5 * BattleSession.Q and precise.dodge_window == 1.0 and precise.perfect_dodge_remaining == 1.0, "an imminent real collision grants five resonance and slow time without extending dodge protection")
+	_check(is_equal_approx(precise.world_delta(1.25), 0.35), "perfect dodge slow time expires at its one-second protection boundary within a long step")
+	precise.step(0.4)
+	_check(is_equal_approx(precise.dodge_window, 0.6) and is_equal_approx(precise.perfect_dodge_remaining, 0.6) and precise.player_hp_q == precise.player_max_hp_q, "protection and perfect dodge feedback both advance in real seconds")
+	precise.step(0.61)
+	_check(precise.dodge_window == 0.0 and precise.perfect_dodge_remaining == 0.0 and precise.world_time_scale == 1.0, "perfect dodge slow time ends with the original invulnerability")
+	var successes := 0
+	for event in events:
+		if event.kind == &"perfect_dodge": successes += 1
+	_check(successes == 1, "one dodge emits its perfect reward only once")
+	for offset in [Vector2(60, 0), Vector2(36, 40)]:
+		var early := _session()
+		_threat(early, offset, Vector2(-200, 0), "early-or-miss")
+		early._commit_action(&"dodge_down")
+		_check(early.perfect_dodge_remaining == 0.0 and early.resonance_q == 0, "an early dodge or a near miss never receives the precise reward: %s" % offset)
+	var protected := _session()
+	protected.dodge_window = 0.5
+	_threat(protected, Vector2(36, 0), Vector2(-200, 0), "already-protected")
+	protected._commit_action(&"dodge_down")
+	_check(protected.perfect_dodge_remaining == 0.0 and protected.resonance_q == 0, "dodging again while already protected cannot farm the reward")
+	var melee := _session()
+	var attacker := melee.enemies[0]
+	attacker.behavior = &"melee"
+	attacker.aiming = true
+	attacker.melee_hit = true # The previous strike settled; the current windup is a new attack.
+	attacker.attack_clock = 0.08
+	attacker.melee_origin = melee.player_position + Vector2(80, 0) / BattleSession.ARENA_SIZE
+	attacker.melee_direction = Vector2.LEFT
+	melee._commit_action(&"dodge_down")
+	_check(melee.perfect_dodge_remaining == 1.0, "a new imminent melee windup participates even after the previous strike settled")
+	var charge := _session()
+	var ram := charge.enemies[0]
+	ram.position = charge.player_position + Vector2(90, 0) / BattleSession.ARENA_SIZE
+	ram.charge_direction = Vector2.LEFT
+	ram.charge_time = 0.5
+	charge._commit_action(&"dodge_down")
+	_check(charge.perfect_dodge_remaining == 1.0, "an approaching charge participates in precise dodge timing")
+	var area := _session()
+	var hazard := BattleHazard.new()
+	hazard.kind = &"blast"
+	hazard.source_id = area.enemies[0].id
+	hazard.attack_id = "precise-area"
+	hazard.center = area.player_position
+	hazard.radius = 60.0
+	hazard.warning_remaining = 0.08
+	area.hazards.append(hazard)
+	area._commit_action(&"dodge_down")
+	_check(area.perfect_dodge_remaining == 1.0, "an imminent area attack participates in precise dodge timing")
 
 
 func _check_projectile_push() -> void:

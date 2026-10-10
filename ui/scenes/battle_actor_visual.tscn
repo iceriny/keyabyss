@@ -1,12 +1,16 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://ui/battle_actor_visual.gd" id="1"]
 [ext_resource type="Shader" path="res://ui/materials/actor_surface.gdshader" id="2"]
 [ext_resource type="Texture2D" path="res://assets/art/actors/scribe.svg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/art/effects/frost_microfacets.png" id="4_frost"]
+[ext_resource type="Texture2D" path="res://assets/art/effects/ice_microstructure.png" id="5_film"]
 
 [sub_resource type="ShaderMaterial" id="Surface"]
 resource_local_to_scene = true
 shader = ExtResource("2")
+shader_parameter/ice_grain = ExtResource("4_frost")
+shader_parameter/ice_film = ExtResource("5_film")
 
 [sub_resource type="Gradient" id="GlowFade"]
 offsets = PackedFloat32Array(0, 0.18, 0.42, 0.72, 1)

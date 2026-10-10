@@ -8,6 +8,7 @@ uniform int style = 0;
 uniform float seed = 0.0;
 uniform bool reduced_motion = false;
 uniform float radius = 255.0;
+uniform int detail = 2;
 
 void fragment() {
 	vec2 p = (UV * 2.0 - 1.0) * 1.2;
@@ -19,7 +20,26 @@ void fragment() {
 	float core_width = style == 0 ? 31.0 : (style == 3 ? 23.0 : 28.0);
 	float ignition = exp(-dot(world, world) / (core_width * core_width));
 	vec3 light;
-	if (reduced_motion) {
+	if (style >= 4) {
+		// Most of the front is clear refraction in the existing world wave.
+		// Only scattered folds catch light; there is no luminous closed tube.
+		float motion = reduced_motion ? 0.0 : t;
+		float reach = reduced_motion ? 1.0 : mix(.05, .82, smoothstep(.0, .7, t)) / .82;
+		float width = max(3.5, radius * (style == 5 ? .024 : .020));
+		vec2 axis = world / max(length(world), .001);
+		float exposed = smoothstep(.47, .73, element_noise(axis * 3.2 + seed));
+		float grain = element_noise(world / 13.0 - axis * motion * .8 + seed);
+		if (detail > 0) grain = element_fbm(world / 13.0 - axis * motion * .8 + seed);
+		float distance_to_front = length(world) - radius * reach;
+		float fold = exp(-pow((distance_to_front + (grain - .5) * width) / width, 2.0));
+		float film = exp(-pow((distance_to_front + width * .8) / (width * 2.3), 2.0));
+		float flecks = smoothstep(.48, .72, grain) * fold;
+		light = (tint.rgb * film * .038 + white * (fold * .18 + flecks * .15)) * exposed;
+		light += tint.rgb * film * .006;
+		float fade = (1.0 - smoothstep(.62, 1.0, t)) * (reduced_motion ? .82 : 1.0);
+		light *= fade * smoothstep(.0, .035, t + .01);
+		light += white * ignition * exp(-t * 16.0) * (reduced_motion ? .08 : .24);
+	} else if (reduced_motion) {
 		light = tint.rgb * exp(-dot(world, world) / 6400.0) * .6 * (1.0 - t);
 	} else {
 		// A single brief bright beat. Large-scale movement belongs to the shards.

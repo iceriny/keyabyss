@@ -4,6 +4,8 @@ extends RefCounted
 ## Rules operate on paid lots. BattleSession supplies the world and fixed clock.
 
 const Q := SpellResourceLedger.Q
+const STORM_HEAD_SCALE := 0.6
+const BURN_INTERVAL := 0.15
 const ELEMENTS := {&"frost": DamagePacket.Element.ICE, &"flame": DamagePacket.Element.FIRE, &"storm": DamagePacket.Element.LIGHTNING, &"spirit": DamagePacket.Element.PAPER}
 const KINDS := {&"frost": &"frost_spear", &"flame": &"flame_burst", &"storm": &"storm_arc", &"spirit": &"spirit_mark"}
 var ledger: SpellResourceLedger
@@ -68,15 +70,14 @@ func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empow
 		world.dodge_charges = minf(2.0 + build.value(&"dodge_capacity"), world.dodge_charges + 0.1)
 	if fact.word.length() >= 7 and build.asset_stacks(&"R015") > 0:
 		multiplier *= 1.0 + 0.75 * build.asset_stacks(&"R015")
-		clear_radius(target.position, 105.0)
+		clear_radius(target.position, 105.0, &"R015")
 	if build.asset_stacks(&"R022") > 0 and _cast_count % 4 == 0: multiplier *= 2.0
 	if _reflection_boost:
 		multiplier *= 2.0
 		_reflection_boost = false
 	var root := fact.attempt_id
 	var base_power := int(fact.manual_positions.size() * build.value(&"base_power_q", 12 * Q) * multiplier)
-	if build.book() == &"storm": base_power = roundi(base_power * 0.9)
-	var coefficient: float = {&"spirit": 0.1, &"flame": 0.67, &"frost": 1.35 if empowered else 0.9, &"storm": 1.0}[build.book()]
+	var coefficient: float = {&"spirit": 0.1, &"flame": 0.5, &"frost": 1.05 if empowered else 0.7, &"storm": STORM_HEAD_SCALE}[build.book()]
 	var power := ledger.earn(root, build.book(), build.identity(), SpellLot.Kind.POWER, roundi(base_power * coefficient), &"assembly", ELEMENTS[build.book()])
 	var effect := _effect(power, KINDS[build.book()], target.id, world.player_position, build)
 	effect.base_power_q = base_power
@@ -118,7 +119,7 @@ func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary
 	if effect.kind in [&"spirit_blade", &"spirit_cross"] and world.book_id == &"spirit" and world.ultimate_time > 0.0:
 		factor *= 1.5
 	if effect.kind == &"storm_arc" and target.shock > 30:
-		target.shock -= 30
+		target.shock -= 10
 		effect.jumps += 1
 		effect.arc_charge += 0.25
 	if effect.kind == &"storm_arc":
@@ -172,7 +173,7 @@ func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary
 		var radius := 125.0 + 25.0 * effect.build.asset_stacks(&"R023")
 		for enemy in _nearby(target.position, radius, target.id):
 			add_shock(enemy, 30)
-			_deal(enemy, roundi(effect.base_power_q * 0.3), &"storm_burst", target.position, 1)
+			_deal(enemy, roundi(effect.base_power_q * STORM_HEAD_SCALE * 0.3), &"storm_burst", target.position, 1)
 		world.event_committed.emit({"kind": &"field", "source": &"overload", "at": target.position, "radius": radius})
 	if effect.kind == &"storm_arc" or (direct and build.asset_stacks(&"R034") > 0): _conduct(target)
 	if effect.kind == &"storm_arc":
@@ -253,7 +254,7 @@ func take_spirit_attack(target: BattleEnemy, position: Vector2) -> BattleEffect:
 
 
 func clear_ultimate_threats(_effect_value: BattleEffect, origin: Vector2) -> void:
-	clear_radius(origin, 650.0)
+	clear_radius(origin, 650.0, &"ultimate")
 
 
 func consume_assist() -> bool:
@@ -386,9 +387,9 @@ func _apply_cold(target: BattleEnemy, amount: int, snapshot: CompiledBuild) -> v
 func _try_freeze(target: BattleEnemy) -> void:
 	if target.cold <= 90 or target.frozen_time > 0.0 or target.freeze_cooldown > 0.0: return
 	target.cold -= 60
-	target.frozen_time = 0.45 if target.boss else 0.9 + 0.15 * build.asset_stacks(&"R003")
+	target.frozen_time = 1.5 if target.boss else 2.0 + 0.15 * build.asset_stacks(&"R003")
 	freezes += 1
-	world.event_committed.emit({"kind": &"freeze", "at": target.position, "enemy": target.id})
+	world.event_committed.emit({"kind": &"freeze", "at": target.position, "enemy": target.id, "duration": target.frozen_time})
 
 
 func add_burn(target: BattleEnemy, points: float, root: String, depth: int = 0) -> void:
@@ -399,13 +400,13 @@ func add_burn(target: BattleEnemy, points: float, root: String, depth: int = 0) 
 	target.burn = clampi(target.burn + gained, 0, 127)
 	target.burn_root = root
 	target.burn_depth = depth
-	target.burn_time = maxf(0.0, (target.burn - 10) / 50.0)
+	target.burn_time = maxf(0.0, (target.burn - 10) / 5.0 * BURN_INTERVAL)
 
 
 func add_shock(target: BattleEnemy, points: int) -> void:
 	if not target.alive(): return
 	target.shock = clampi(target.shock + points, 0, 127)
-	target.shock_grace = 1.5
+	target.shock_grace = 2.0
 
 
 func _advance_states(delta: float) -> void:
@@ -449,14 +450,14 @@ func _advance_states(delta: float) -> void:
 		_try_freeze(enemy)
 		if enemy.burn > 10:
 			enemy.burn_clock += delta
-			while enemy.burn_clock >= 0.1 and enemy.burn > 10 and enemy.alive():
-				enemy.burn_clock -= 0.1
+			while enemy.burn_clock >= BURN_INTERVAL and enemy.burn > 10 and enemy.alive():
+				enemy.burn_clock -= BURN_INTERVAL
 				enemy.burn = maxi(0, enemy.burn - 5)
 				var damage := roundi(6 * Q * damage_multiplier() * (1.0 + 0.3 * build.asset_stacks(&"R050")) * (1.35 if build.asset_stacks(&"R056") > 0 else 1.0))
 				_deal(enemy, damage, &"flame_burn", enemy.position, enemy.burn_depth + 1, enemy.burn_root)
 		else:
 			enemy.burn_clock = 0.0
-		enemy.burn_time = maxf(0.0, (enemy.burn - 10) / 50.0)
+		enemy.burn_time = maxf(0.0, (enemy.burn - 10) / 5.0 * BURN_INTERVAL)
 
 
 func obscures(enemy: BattleEnemy) -> bool:
@@ -480,7 +481,7 @@ func arc_target(effect: BattleEffect, origin: Vector2) -> BattleEnemy:
 		var offset := (next.position - origin) * BattleSession.ARENA_SIZE
 		var distance := offset.length_squared()
 		if not distance <= 3000.0 * 3000.0: continue
-		var reach := (530.0 if next.shock > 30 else 265.0) + extension
+		var reach := (992.0 if next.shock > 30 else 512.0) + extension
 		if next.shock <= 60 and offset.length() > reach: continue
 		if best == null or distance < best_distance or (distance == best_distance and str(next.id) < str(best.id)):
 			best = next
@@ -492,8 +493,9 @@ func _continue_arc(effect: BattleEffect, target: BattleEnemy) -> void:
 	if effect.jumps <= 0: return
 	var next := arc_target(effect, target.position)
 	if next == null: return
-	var floor_ratio := 0.35 if effect.build.asset_stacks(&"R033") > 0 else 0.2
-	var ratio := maxf(floor_ratio, 1.0 - (1.0 - floor_ratio) * (effect.arc_index + 1) / maxi(1, effect.arc_base_hits - 1))
+	# Retain the former absolute tail while lowering the head of the chain.
+	var floor_ratio := 0.315 if effect.build.asset_stacks(&"R033") > 0 else 0.18
+	var ratio := maxf(floor_ratio, STORM_HEAD_SCALE - (STORM_HEAD_SCALE - floor_ratio) * (effect.arc_index + 1) / maxi(1, effect.arc_base_hits - 1))
 	var retained := roundi(effect.base_power_q * ratio)
 	var lot := ledger.earn(effect.lot.root_id, StringName(_tx("chain")), effect.build.identity(), SpellLot.Kind.POWER, retained, &"chain", DamagePacket.Element.LIGHTNING)
 	var arc := _effect(lot, &"storm_arc", next.id, target.position, effect.build)
@@ -668,10 +670,10 @@ func _next() -> int:
 
 func on_dodge_landed(at: Vector2) -> void:
 	if build.asset_stacks(&"R010") > 0:
-		clear_radius(at, 135.0)
+		clear_radius(at, 135.0, &"dodge_clear")
 		for enemy in _nearby(at, 180.0): _impulse(enemy, at, 210.0)
 	if build.asset_stacks(&"R037") > 0:
-		clear_radius(at, 75.0)
+		if build.asset_stacks(&"R010") == 0: clear_radius(at, 75.0, &"dodge_clear")
 		for enemy in _nearby(at, 115.0): _impulse(enemy, at, 180.0)
 
 
@@ -687,7 +689,7 @@ func add_shield(amount: int) -> void:
 	run.shield_q = mini(60 * Q, run.shield_q + amount)
 
 
-func clear_radius(at: Vector2, radius: float) -> void:
+func clear_radius(at: Vector2, radius: float, source: StringName = &"clear") -> void:
 	var write_index := 0
 	for read_index in world.threats.size():
 		var threat := world.threats[read_index]
@@ -695,6 +697,7 @@ func clear_radius(at: Vector2, radius: float) -> void:
 		world.threats[write_index] = threat
 		write_index += 1
 	world.threats.resize(write_index)
+	world.event_committed.emit({"kind": &"clear_pulse", "at": at, "radius": radius, "source": source})
 
 
 func _deal(target: BattleEnemy, amount: int, source: StringName, at: Vector2, depth: int = 0, root: String = "") -> void:
@@ -830,7 +833,7 @@ func _conduct(target: BattleEnemy) -> void:
 	var radius := 190.0 if build.asset_stacks(&"R046") > 0 else 125.0
 	var damage := int((34 + 8 * (world.chapter - 1)) * Q * damage_multiplier() * (1.0 + 0.35 * build.asset_stacks(&"R033")))
 	if build.asset_stacks(&"R046") > 0: _pull(target.position, radius + 50.0, 380.0)
-	if build.asset_stacks(&"R034") > 0: clear_radius(target.position, 135.0)
+	if build.asset_stacks(&"R034") > 0: clear_radius(target.position, 135.0, &"overload")
 	_deal(target, damage, &"overload", target.position, 1)
 	_burst(target.position, radius, int(damage * 0.7), &"overload", target.id, 1)
 
@@ -916,10 +919,10 @@ func _after_cast(fact: WordCompletion) -> void:
 	if build.asset_stacks(&"R013") > 0 and _cast_count % 6 == 0: heal(4 * Q * build.asset_stacks(&"R013"))
 	if build.asset_stacks(&"R039") > 0 and _cast_count % 5 == 0: add_shield(12 * Q * build.asset_stacks(&"R039"))
 	if build.asset_stacks(&"R020") > 0 and _cast_count % 5 == 0:
-		clear_radius(world.player_position, 220.0)
+		clear_radius(world.player_position, 220.0, &"R020")
 		_burst(world.player_position, 220.0, 35 * Q, &"R020")
-	elif build.asset_stacks(&"R029") > 0 and fact.mistakes == 0 and _perfect_words % 3 == 0:
-		clear_radius(world.player_position, 150.0)
+	if build.asset_stacks(&"R029") > 0 and fact.mistakes == 0 and _perfect_words % 3 == 0:
+		clear_radius(world.player_position, 150.0, &"R029")
 		_burst(world.player_position, 150.0, 24 * Q, &"R029")
 
 

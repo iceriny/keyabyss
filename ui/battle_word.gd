@@ -116,11 +116,8 @@ func _update_selection() -> void:
 
 
 func place(anchor: Vector2, avoidance: Vector2, delta: float) -> void:
-	# Smooth the final position too: word width and renewed head anchors can change.
-	if not _layout_initialized:
-		layout_offset = avoidance
-	elif delta > 0.0:
-		layout_offset = layout_offset.move_toward(avoidance, 520.0 * delta)
+	# The solver owns the destination; only the displayed position is eased.
+	layout_offset = avoidance
 	var destination := anchor + layout_offset
 	position = destination if not _layout_initialized else position.move_toward(destination, 900.0 * delta)
 	_layout_initialized = true
