@@ -26,6 +26,6 @@
 
 既有 React、Three.js、Web 工具依赖、Qwerty Learner 与 CMUdict 等词库声明保存在 [legacy/web/THIRD_PARTY_NOTICES.md](legacy/web/THIRD_PARTY_NOTICES.md)，完整许可在 `legacy/web/licenses/`，词库出处和哈希在 `legacy/web/data/sources.json`。
 
-M1 已将 12 本词库 JSON 原样生成到 `assets/vocabulary/`；[来源记录](assets/vocabulary/sources.json)和[生成哈希索引](assets/vocabulary/index.json)保留原始出处，许可文本仍完整保存在上述 `legacy/web/licenses/`。生成工具只复制快照，Godot 在加载与用户导入边界规范化词形，不改写源 JSON。
+M1 已将12本词库JSON原样生成到 `assets/vocabulary/`，当前以该目录为活动快照；[来源记录](assets/vocabulary/sources.json)和[生成哈希索引](assets/vocabulary/index.json)保留原始出处，许可文本仍完整保存在上述 `legacy/web/licenses/`。工具默认验证并重建哈希，只在明确指定来源时复制；Godot 在加载与用户导入边界规范化词形，不改写源JSON。
 
 旧声明中的浏览器音频、字体和渲染描述不作为当前 Godot 工程的事实。导出脚本随包复制本说明、项目 LICENSE、实际词库许可与来源、Godot 许可和版权清单；公开分发前仍需解决上文注明的音频授权资料，并提供对应源码。

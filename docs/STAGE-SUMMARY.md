@@ -1,6 +1,10 @@
 # 阶段总结
 
-更新日期：2026-10-10。分支：`codex/combat-system-deepening`。
+更新日期：2026-10-10。分支：`main`。
+
+2026-10-10 GitHub 与跨设备交付：Godot 工程经 [PR #1](https://github.com/iceriny/keyabyss/pull/1) 合入默认 `main`；私有 [keyabyss-assets](https://github.com/iceriny/keyabyss-assets) 的资产与 LFS 均实际上传，代码锁定 `92b5212` 及清单哈希。1,100 个目标路径映射到893个唯一文件，共2,425.08MiB，包含144音频原件、576完整片段、196选用音频、23字体、图片及未选用／旧Web快照。README 的首次 `setup` 与日常 `pull/push` 自动完成两仓交接，保持本地修改保护；公开历史不改写，原未发布提交已备份，上传规则基线为 `c39c032`。过程与两项交接问题修正见[实施记录](migration/ASSET-UPLOAD-IMPLEMENTATION.md)。
+
+恢复验收：从GitHub克隆代码与独立空LFS缓存，下载876个真实LFS对象；authoring全部1,100路径核对、144原件／576片段及56池／196选用WAV验证通过。新目录locked .NET构建0警告／错误、主脚本检查通过，真实Vulkan窗口音频2,227项检查0失败，工作区无新增导入设置差异。首次headless导入出现Godot原生0xc0000005访问异常；原样复跑退出0，无脚本错误，保留原始日志及Windows事件，没有改变视觉设置或加入自动重试。工具6项同步／回滚回归、大路径分批回归及2项真实双仓交接回归通过；快捷入口也完成真实GitHub推送。证据在 `.temp/github-assets/` 与 `.temp/*assets*-validation.txt`、`.temp/dev-workflow-validation.txt`，Git bundle与实际LFS同盘恢复副本保留。未做第二台硬件性能、完整玩法或新发行包验收。
 
 2026-10-10 Agent音频库及游戏接线：从144个原始WAV按既有有效边界及人工修订提取576个独立片段，共899.78MiB，包含未使用片段。`development/audio_library/index.csv`及JSON只提供文件、原声音介绍、时长、变体组；制作工具直接提取PCM采样，不依赖旧Web包装。全库内容／映射核对及576文件ffprobe检查通过，均为96kHz／24-bit立体声。游戏已从49个组原样复制196个WAV（248.11MiB），由56个原生四变体随机池播放，不连续重复；短促施法、普通／完美御术、敌方射击／激光、召唤／命中分别选音。补准备、设置、暂停恢复、详情、错字、无效词令、换目标／取消、动作拒绝、奖励／重抽／补给／路线与成长跨级反馈；控制尾音、并发与重复菜单音，视觉资源与参数未改。旧选用WAV和两个旧生成器移入 `.delete/audio-upgrade/`。完整库、原件和选用资源由私有 LFS 资产仓库保存；代码通过版本锁关联，片段工作副本被Git忽略。使用入口见[音频库](../development/audio_library/README.md)和[音频接线](audio/README.md)。
 

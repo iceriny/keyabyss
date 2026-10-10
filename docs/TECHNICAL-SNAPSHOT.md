@@ -101,7 +101,8 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `tools/godot/godot.ps1` | 引擎版本核对、导入、运行、编辑器、生成预览、Debug／Release 导出 |
 | `tools/godot/toolchain.json` | 精确引擎与 MCP 提交锁、活动资源目录 |
 | `tools/godot/mcp-smoke.mjs` | 可复用的本机 MCP 协议和窗口集成检查 |
-| `tools/godot/import-vocabulary.mjs` | 从冻结旧 JSON 生成活动词库快照和哈希，不手工双维护 |
+| `tools/godot/import-vocabulary.mjs` | 默认验证原生快照并重建哈希；仅明确 `--source` 时导入其他准备好的来源 |
+| `tools/dev.mjs`、`tools/assets/`、`asset-lock.json` | 首次 setup、日常 pull/push 一次交接代码与私有LFS；固定提交、范围恢复、核对与本地修改保护 |
 | `tests/godot/` | 词库、输入／设置、单房规则及原生应用窗口的针对性回归入口 |
 | `.agents/skills/` | 原生开发、视觉、工具三类项目指引 |
 | `legacy/web/` | 完整旧实现、工具、素材及既有改动；被 Godot 扫描排除 |

@@ -110,7 +110,7 @@ S1 实际代表池为 `R001、R002、R003、R005、R006、R012、R014、R015、R
 | 中文字体 | `assets/fonts/`；旧 TTF 保留在 legacy | 活动字体只维护一份，正式发行补齐来源与许可 |
 | 四书与符印 | `assets/art/books/`、`assets/art/runes/` | 延续原插画与元素识别，不因取消天赋删除共用素材 |
 | 遗物矢量图案 | 当前奖励／图鉴共用图形和图标资产 | 只要求保留遗物具备辨识图案；不为已取消目录补齐美术 |
-| 词库 | `legacy/web/data/` → `tools/godot/import-vocabulary.mjs` → `assets/vocabulary/` | 保留 12 本快照及来源哈希，运行时只读活动数据，不手调生成 JSON |
+| 词库 | `assets/vocabulary/` 为活动快照；`tools/godot/import-vocabulary.mjs` 默认验证，明确 `--source` 才导入其他目录 | 保留12本快照及来源哈希，原生运行不依赖冻结Web目录 |
 | UI／战斗音频 | Agent库 → `audio/cues.json`／`tools/audio/build-game-audio.mjs` → `assets/audio/clips/`及`cues/` | 原样复制选中WAV，四变体由Godot选择，按真实结果反馈与限流 |
 | 原音频索引 | [音频目录](../audio/README.md) | 原件和切片可检索，不把全部素材打进发行包 |
 
