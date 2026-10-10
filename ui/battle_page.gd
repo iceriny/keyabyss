@@ -142,6 +142,11 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	_ensure_targets()
 	session.state_changed.connect(_request_refresh)
 	session.typing.changed.connect(_request_refresh)
+	session.typing.character_judged.connect(func(_attempt: String, _word: String, correct: bool) -> void:
+		if not correct:
+			audio.play_input("mistake", size)
+	)
+	session.typing.feedback_requested.connect(func(cue: StringName) -> void: audio.play_input(str(cue), size))
 	session.event_committed.connect(_present)
 
 
@@ -162,7 +167,10 @@ func _ensure_targets() -> void:
 		word_label.name = "Word_" + str(enemy.id)
 		word_label.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				var changed: bool = session.typing.target_id != enemy.id or session.typing.progress > 0
 				session.typing.select_target(enemy.id)
+				if changed and session.typing.target_id == enemy.id:
+					audio.play_input("target", size)
 		)
 		$TargetWords.add_child(word_label)
 		enemy_words[enemy.id] = word_label

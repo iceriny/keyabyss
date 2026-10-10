@@ -76,6 +76,8 @@ projectPath = F:/Workshop/game/keyabyss/.temp/godot-mcp/project
 
 ## 在另一机器恢复
 
+先按根 README 克隆代码，安装 Git LFS 与 Node.js 22+，执行 `node tools/assets/assets.mjs sync --profile authoring` 和对应 `verify`。资产默认克隆到项目旁的 `keyabyss-assets`，无需复制本机缓存、音频处理程序或 Godot 导入结果。
+
 1. 安装同版 Godot .NET 和精确 `.NET SDK 9.0.201`，复制 `tools/godot/local.paths.example.json` 为 `local.paths.json`，填写 console.exe 的绝对路径，或设置 `GODOT_PATH`。核对 `doctor`。首次构建按对应配置依赖锁恢复 NuGet 包，不改用浮动 SDK 或重生成锁文件。
 2. 需要 MCP 时，安装 Node 22 或更高版本，按固定提交构建：
 

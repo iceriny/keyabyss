@@ -20,7 +20,7 @@
 
 启动符文环与中心符号来自用户提供的 `docs/art/Arcana384/svg-clean/`，由 `tools/art/build_loading_runes.py` 组合为 `assets/art/ui/loading_runes.svg` 与 `loading_core.svg`；保留原始符形，仅作排布与单色呈现，不将整套字体或文档装入游戏。
 
-`assets/audio/ui/` 的 27 个 WAV 由 `tools/godot/import-ui-audio.mjs` 从原 Web FLAC 片段解码生成，覆盖 12 类 UI cue；原声音来自 BOOM Library Magic UI Designed，原元数据标记为 © 2026 BOOM Library / All Rights Reserved。生成器移除不合 UTF-8 的 WAV 元数据，不改变该来源与权利归属。当前进行本地开发复用；正式分发前需要补齐项目对应的音频授权资料。原音频索引、片段映射及源 WAV 保留在 `legacy/web/`，不适用旧声明中“纯合成音频”的描述。氛围底音则从旧 `ThreeAudioSystem.ambient()` 的公式转为原生 PCM 循环。
+`assets/audio/clips/` 的196个WAV由 `tools/audio/build-game-audio.mjs` 从Agent音频库原样复制，覆盖56类UI与战斗反馈；原声音来自BOOM Library Magic UI Designed，原元数据标记为 © 2026 BOOM Library / All Rights Reserved。库制作工具按有效采样帧边界提取PCM，不改变该来源与权利归属。原件保留在 `legacy/web/art/`，制作边界与片段映射在 `development/audio_library/`。当前进行本地开发复用，正式分发前需要补齐项目对应的音频授权资料。氛围底音从旧 `ThreeAudioSystem.ambient()` 的公式转为原生PCM循环。
 
 ## 旧 Web 实现与词库
 

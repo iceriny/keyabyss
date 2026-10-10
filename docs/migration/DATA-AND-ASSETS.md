@@ -111,8 +111,7 @@ S1 实际代表池为 `R001、R002、R003、R005、R006、R012、R014、R015、R
 | 四书与符印 | `assets/art/books/`、`assets/art/runes/` | 延续原插画与元素识别，不因取消天赋删除共用素材 |
 | 遗物矢量图案 | 当前奖励／图鉴共用图形和图标资产 | 只要求保留遗物具备辨识图案；不为已取消目录补齐美术 |
 | 词库 | `legacy/web/data/` → `tools/godot/import-vocabulary.mjs` → `assets/vocabulary/` | 保留 12 本快照及来源哈希，运行时只读活动数据，不手调生成 JSON |
-| UI 音频 | 原 FLAC 封装与 `import-ui-audio.mjs` → `assets/audio/ui/` | 按真实 cue 复用，保留来源及并发语义 |
-| 战斗音频 | `import-battle-audio.mjs` → `assets/audio/battle/` | 随保留战斗触发接线，按完整遭遇混音 |
+| UI／战斗音频 | Agent库 → `audio/cues.json`／`tools/audio/build-game-audio.mjs` → `assets/audio/clips/`及`cues/` | 原样复制选中WAV，四变体由Godot选择，按真实结果反馈与限流 |
 | 原音频索引 | [音频目录](../audio/README.md) | 原件和切片可检索，不把全部素材打进发行包 |
 
 普通资源复用与私有资产协作分开，后者见[Git 与资产方案](../GIT-AND-ASSETS.md)。

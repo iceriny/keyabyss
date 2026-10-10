@@ -4,6 +4,8 @@ extends Node
 
 signal command_requested(command: String)
 signal command_progress(value: String)
+signal command_character
+signal command_rejected
 signal back_requested
 signal action_requested(action: StringName)
 signal focus_lost
@@ -102,9 +104,15 @@ func _input(event: InputEvent) -> void:
 		if key.keycode == KEY_CTRL and not key.alt_pressed and not key.meta_pressed:
 			action_requested.emit(&"assist")
 		elif key.is_action_pressed("cycle_target"):
+			var previous := typing.target_id
 			typing.cycle_target(key.shift_pressed)
+			if typing.target_id != previous:
+				typing.feedback_requested.emit(&"target")
 		elif key.is_action_pressed("abandon_word"):
+			var had_target := typing.target_id != &""
 			typing.cancel()
+			if had_target:
+				typing.feedback_requested.emit(&"cancel")
 		elif key.is_action_pressed("parry"):
 			action_requested.emit(&"parry")
 		elif key.keycode in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_ALT]:
@@ -143,9 +151,11 @@ func _input(event: InputEvent) -> void:
 		for command in commands:
 			if command.begins_with(next):
 				buffer = next
+				command_character.emit()
 				command_progress.emit(buffer)
 				if command == buffer:
 					buffer = ""
 					command_progress.emit(buffer)
 					command_requested.emit(command)
 				return
+		command_rejected.emit()

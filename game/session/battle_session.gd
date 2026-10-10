@@ -475,8 +475,11 @@ func step(delta: float) -> void:
 				continue
 			_install_build(command.build)
 		elif command.action == &"assist":
-			if compiled_build.has(&"assist") and command.attempt_id == typing.current_attempt_id() and command.target_id == typing.target_id and command.input_progress == typing.progress:
-				typing.complete_assisted()
+			if command.attempt_id == typing.current_attempt_id() and command.target_id == typing.target_id and command.input_progress == typing.progress:
+				if compiled_build.has(&"assist"):
+					typing.complete_assisted()
+				else:
+					event_committed.emit({"kind": &"action_rejected", "action": &"assist", "at": player_position})
 		else:
 			_actions.append(command.action)
 	_commands.clear()
@@ -1474,13 +1477,20 @@ func _commit_action(action: StringName) -> void:
 			parry_cooldown = 0.49 if compiled_build.asset_stacks(&"R058") > 0 else 0.7
 			_parry_succeeded = false
 			event_committed.emit({"kind": &"parry_start", "at": _player_position()})
+		else:
+			event_committed.emit({"kind": &"action_rejected", "action": action, "at": player_position})
 		return
 	if action == &"ultimate":
 		if (god_mode or (ultimate_time <= 0.0 and resonance_q >= ULTIMATE_COST_Q)) and _nearest_living(player_position) != null:
 			resonance_q = ULTIMATE_COST_Q if god_mode else resonance_q - ULTIMATE_COST_Q
 			_commit_ultimate()
+		else:
+			event_committed.emit({"kind": &"action_rejected", "action": action, "at": player_position})
 		return
-	if not str(action).begins_with("dodge") or (not god_mode and dodge_charges < 1.0) or _dodge_time < 0.17:
+	if not str(action).begins_with("dodge"):
+		return
+	if (not god_mode and dodge_charges < 1.0) or _dodge_time < 0.17:
+		event_committed.emit({"kind": &"action_rejected", "action": action, "at": player_position})
 		return
 	var direction := Vector2.ZERO
 	match action:
@@ -1491,6 +1501,7 @@ func _commit_action(action: StringName) -> void:
 		&"dodge_auto": direction = _safe_direction()
 	var destination := clamp_player(player_position + direction * 240.0 / ARENA_SIZE)
 	if ((destination - player_position) * ARENA_SIZE).length() < 8.0:
+		event_committed.emit({"kind": &"action_rejected", "action": action, "at": player_position})
 		return
 	_dodge_from = player_position
 	_dodge_to = destination

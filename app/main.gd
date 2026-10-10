@@ -86,14 +86,14 @@ func _ready() -> void:
 	archive.preparation_changed.connect(_save_preparation)
 	_apply_visual_settings()
 	router.command_requested.connect(_command)
+	router.command_character.connect(func() -> void: sound.play_cue("ui.type"))
+	router.command_rejected.connect(func() -> void: sound.play_cue("ui.invalid"))
 	router.command_progress.connect(func(value: String) -> void:
 		get_tree().call_group("open_motion_controls", "set_command_prefix", value)
 		get_tree().call_group("word_command_tags", "set_command_prefix", value)
 		for i in archive.cards.size():
 			archive.cards[i].set_meta("command_match", not value.is_empty() and str(ArchiveHome.BOOKS[i].id).begins_with(value))
 		archive.command_label.text = "›  %s▏" % value if not value.is_empty() else "›  输入词令"
-		if not value.is_empty():
-			sound.play_cue("ui.type")
 		if is_instance_valid(page):
 			if route in ["practice", "battle"]:
 				page.command_hint.text = "Space 御术 · 方向 / Alt 闪避 · 单独松开 Shift 终式"
@@ -197,7 +197,7 @@ func _archive_navigate(destination: String) -> void:
 			route = "prepare" if destination == "prepared" else "home"
 			if destination == "archive": _restart_requested = false
 			if destination == "prepared" and run != null and run.has_pending_run() and not _restart_requested:
-				_pending_run_page()
+				_pending_run_page(false)
 				return
 			_configure_archive_commands()
 
@@ -237,10 +237,10 @@ func _return_archive() -> void:
 	var prepared := archive_return == "prepare"
 	_home()
 	if prepared:
-		archive.set_prepared(true)
+		archive.set_prepared(true, false)
 
 
-func _open(next_route: String, title: String, subtitle: String) -> void:
+func _open(next_route: String, title: String, subtitle: String, audible: bool = true) -> void:
 	_persist_audio_settings()
 	if route in ["home", "prepare"]:
 		archive_return = route
@@ -261,15 +261,17 @@ func _open(next_route: String, title: String, subtitle: String) -> void:
 	page.close_button.pressed.connect(_back)
 	if next_route in ["words", "import", "guide"]:
 		page.set_width(1160)
-	sound.play_cue("ui.open")
+	if audible:
+		sound.play_cue("ui.open")
 	router.configure(InputRouter.Context.MENU)
 
 
-func _button(parent: Node, caption: String, command: String, callback: Callable) -> OpenButton:
+func _button(parent: Node, caption: String, command: String, callback: Callable, cue: String = "") -> OpenButton:
 	var button := PageShell.button(parent, "%s    %s" % [caption, command], callback)
 	button.name = command.capitalize()
 	button.set_motion_reduced(settings.reduce_motion)
-	button.pressed.connect(func() -> void: sound.play_cue("ui.select"))
+	if not cue.is_empty():
+		button.pressed.connect(func() -> void: sound.play_cue(cue))
 	button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
 	_bind_control_command(button, command)
 	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
@@ -280,8 +282,12 @@ func _bind_control_command(control: Control, word: String) -> void:
 	control.set_meta("word_command", word)
 	if control is OptionButton and not control.has_meta("audio_bound"):
 		control.set_meta("audio_bound", true)
+		control.set_meta("audio_selected", control.selected)
 		PopupCrystal.decorate(control, settings.reduce_motion)
-		control.item_selected.connect(func(_index: int) -> void: sound.play_cue("ui.tab"))
+		control.item_selected.connect(func(index: int) -> void:
+			if index != int(control.get_meta("audio_selected")):
+				control.set_meta("audio_selected", index)
+				sound.play_cue("ui.tab"))
 	if control is CheckButton or control is OptionButton or control is LineEdit:
 		CrystalInlay.decorate(control, settings.reduce_motion, is_instance_valid(page) and page.is_ancestor_of(control))
 	commands[word] = _activate_control.bind(control)
@@ -291,7 +297,7 @@ func _activate_control(control: Control) -> void:
 	if is_instance_valid(page) and page.has_node("RewardDetail"):
 		return
 	if route == "settings" and is_instance_valid(control) and control.has_meta("settings_tab"):
-		_select_settings_tab(str(control.get_meta("settings_tab")))
+		_select_settings_tab(str(control.get_meta("settings_tab")), false)
 	if not is_instance_valid(control) or not control.is_visible_in_tree():
 		return
 	if control is BaseButton and control.disabled:
@@ -358,7 +364,7 @@ func _command(command: String) -> void:
 		commands[command].call()
 
 
-func _home() -> void:
+func _home(audible: bool = true) -> void:
 	var returning := route != "home"
 	_persist_audio_settings()
 	get_tree().paused = false
@@ -378,16 +384,16 @@ func _home() -> void:
 	route = "home"
 	archive.show()
 	archive.set_interactive(true)
-	archive.set_prepared(false)
+	archive.set_prepared(false, false)
 	archive.refresh_vocabulary_choices()
-	if returning:
+	if returning and audible:
 		sound.play_cue("ui.close")
 	_configure_archive_commands()
 
 
 func _back() -> void:
 	if is_instance_valid(page) and page.has_node("RewardDetail"):
-		page.get_node("RewardDetail").queue_free()
+		_close_reward_detail()
 		return
 	match route:
 		"reward", "reward_error", "settlement": pass
@@ -497,7 +503,10 @@ func _vocabulary_page() -> void:
 			word_command = "lexicon"
 		elif str(book.id).begins_with("custom-"):
 			word_command = "custom%d" % (index + 1)
-		var choice := _button(list, str(book.title), word_command, func() -> void: _show_vocabulary(str(book.id)))
+		var choice := _button(list, str(book.title), word_command, func() -> void:
+			if selected_id != str(book.id):
+				_show_vocabulary(str(book.id))
+				sound.play_cue("ui.select"))
 		choice.name = "V%02d" % (index + 1)
 		choice.custom_minimum_size.y = 44
 		choice.add_theme_font_size_override("font_size", 18)
@@ -508,7 +517,7 @@ func _vocabulary_page() -> void:
 	_button(page.footer, "返回", "back", _return_archive)
 	_button(page.footer, "导入词表", "import", _import_page)
 	_button(page.footer, "使用词库", "use", _use_vocabulary)
-	_button(page.footer, "导出", "export", _export_vocabulary)
+	_button(page.footer, "导出", "export", _export_vocabulary, "ui.select")
 
 
 func _show_vocabulary(id: String) -> void:
@@ -530,7 +539,7 @@ func _show_vocabulary(id: String) -> void:
 	var source := vocabulary.sync_source(id)
 	if not source.is_empty():
 		var source_id := str(source.id)
-		var sync_button := _button(vocab_detail, "同步中…" if _syncing_source == source_id else "同步源词表", "sync", func() -> void: _sync_vocabulary(source_id))
+		var sync_button := _button(vocab_detail, "同步中…" if _syncing_source == source_id else "同步源词表", "sync", func() -> void: _sync_vocabulary(source_id), "ui.select")
 		sync_button.name = "Sync"
 		sync_button.disabled = not _syncing_source.is_empty()
 		PageShell.label(vocab_detail, "仅点击同步时联网；失败时继续使用已有词库。", 13, Color("82918c"))
@@ -719,8 +728,8 @@ func _import_page() -> void:
 	import_text.text_changed.connect(_invalidate_import)
 	import_name.text_changed.connect(func(_text: String) -> void: _invalidate_import())
 	_button(page.footer, "返回", "back", _vocabulary_page)
-	_button(page.footer, "选择文件", "file", _choose_file)
-	_button(page.footer, "预览", "preview", _preview_import)
+	_button(page.footer, "选择文件", "file", _choose_file, "ui.select")
+	_button(page.footer, "预览", "preview", _preview_import, "ui.select")
 	import_save = _button(page.footer, "保存", "save", _save_import)
 	import_save.disabled = true
 
@@ -784,6 +793,7 @@ func _save_import() -> void:
 	var id := vocabulary.save_import(preview)
 	if id.is_empty():
 		page.status.text = vocabulary.last_error
+		sound.play_cue("ui.invalid")
 		return
 	_vocabulary_page()
 	_show_vocabulary(id)
@@ -861,18 +871,22 @@ func _settings_page(return_to: String) -> void:
 	_check("ambience", "氛围音", settings.ambience)
 	_settings_body = _settings_groups["gameplay"]
 	_check("show_meaning", "头顶中文释义", settings.show_meaning)
-	_select_settings_tab(settings_tab)
+	_select_settings_tab(settings_tab, false)
 	_button(page.footer, "返回", "back", _settings_back)
 	_button(page.footer, "恢复默认", "defaults", _defaults)
 	page.status.text = "设置自动保存于本机"
 	for control: Control in settings_controls.values():
 		if control is CheckButton:
-			control.toggled.connect(func(_value: bool) -> void: _save_settings())
+			control.toggled.connect(func(value: bool) -> void:
+				var key: String = settings_controls.find_key(control)
+				if settings.get(key) != value:
+					sound.play_cue("ui.tab" if _save_settings() else "ui.invalid"))
 		elif control is OptionButton:
 			control.item_selected.connect(func(_index: int) -> void: _save_settings())
 
 
-func _select_settings_tab(id: String) -> void:
+func _select_settings_tab(id: String, audible: bool = true) -> void:
+	var changed := settings_tab != id
 	settings_tab = id
 	for key: String in _settings_groups:
 		_settings_groups[key].visible = key == id
@@ -882,6 +896,8 @@ func _select_settings_tab(id: String) -> void:
 	var focused := get_viewport().gui_get_focus_owner()
 	if focused != null and not focused.is_visible_in_tree():
 		focused.release_focus()
+	if changed and audible:
+		sound.play_cue("ui.tab")
 
 
 func _volume_setting(key: String, caption: String, value: float) -> void:
@@ -915,7 +931,10 @@ func _volume_setting(key: String, caption: String, value: float) -> void:
 		_audio_settings_dirty = true
 		_settings_save_timer.start()
 	)
-	slider.drag_ended.connect(func(_changed: bool) -> void: _persist_audio_settings())
+	slider.drag_ended.connect(func(changed: bool) -> void:
+		_persist_audio_settings()
+		if changed and key == "effects_volume":
+			sound.play_cue("ui.confirm"))
 	settings_controls[key] = slider
 
 
@@ -965,10 +984,15 @@ func _defaults() -> void:
 		control.set_block_signals(false)
 		if control is CheckButton:
 			control.text = "开启" if control.button_pressed else "关闭"
+		elif control is OptionButton:
+			control.set_meta("audio_selected", control.selected)
 	for key: String in _volume_labels:
 		_volume_labels[key].text = "%d%%" % roundi((settings_controls[key] as HSlider).value * 100)
 	if _save_settings():
 		page.status.text = "已恢复默认设置。"
+		sound.play_cue("ui.confirm")
+	else:
+		sound.play_cue("ui.invalid")
 
 
 func _save_settings() -> bool:
@@ -1030,6 +1054,10 @@ func _start_practice() -> void:
 		page.queue_free()
 	commands.clear()
 	practice = PracticePage.create_practice(entries, settings, vocabulary.prepared_index(settings.vocabulary_id))
+	practice.typing.character_judged.connect(func(_attempt: String, _word: String, correct: bool) -> void:
+		sound.play_cue("ui.type" if correct else "ui.invalid"))
+	practice.typing.feedback_requested.connect(func(cue: StringName) -> void:
+		sound.play_cue("ui.tab" if cue == &"target" else "ui.close" if cue == &"cancel" else "ui.invalid"))
 	practice.theme = _archive_theme
 	practice.name = "Practice"
 	root.add_child(practice)
@@ -1111,8 +1139,8 @@ func _launch_prepared() -> void:
 	_start_battle()
 
 
-func _pending_run_page() -> void:
-	_open("resume_run", "未完的远征", "")
+func _pending_run_page(audible: bool = true) -> void:
+	_open("resume_run", "未完的远征", "", audible)
 	page.compact_height = 650
 	page.set_width(920)
 	var hero := HBoxContainer.new()
@@ -1229,18 +1257,23 @@ func _battle_finished(victory: bool) -> void:
 	if not is_instance_valid(battle):
 		return
 	var session := battle.session
+	var gained_level := false
 	if run != null:
+		var previous_level := TalentProgress.level_for(profile.manual_characters)
 		if not run.finish_room(session):
 			_open("settlement", "正在归档", run.last_error)
 			_button(page.footer, "重试保存", "retry", _battle_finished.bind(victory))
 			return
 		profile = run.profile
+		gained_level = TalentProgress.level_for(profile.manual_characters) > previous_level
+		if gained_level:
+			sound.play_cue("ui.level")
 		if run.phase != "RESULT":
-			_show_run_stage()
+			_show_run_stage(not gained_level)
 			return
 	if not session.abandoned_run:
 		battle.audio.play_result(victory, battle.size)
-	_open("result", "墨迹 · 此页已明" if victory else ("归卷 · 重返书库" if session.abandoned_run else "墨尽 · 未完待续"), "")
+	_open("result", "墨迹 · 此页已明" if victory else ("归卷 · 重返书库" if session.abandoned_run else "墨尽 · 未完待续"), "", not gained_level)
 	page.compact_height = 740.0
 	page.set_width(960)
 	page.heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -1258,7 +1291,7 @@ func _battle_finished(victory: bool) -> void:
 	report.configure(session, _run_book(), session.abandoned_run, run, vocabulary_title)
 	for detail in [{"title": "战斗详情", "command": "stats"}, {"title": "此行构筑", "command": "build"}, {"title": "错词回顾", "command": "words"}]:
 		var detail_index := report.detail_buttons.size()
-		report.detail_buttons.append(_button(report.get_node("DetailTabs"), detail.title, detail.command, report.show_detail.bind(detail_index)))
+		report.detail_buttons.append(_button(report.get_node("DetailTabs"), detail.title, detail.command, report.show_detail.bind(detail_index), "ui.select"))
 	var atmosphere := preload("res://ui/scenes/outcome_atmosphere.tscn").instantiate() as OutcomeAtmosphere
 	atmosphere.victory = victory
 	atmosphere.reduced_motion = settings.reduce_motion or session.abandoned_run
@@ -1267,7 +1300,7 @@ func _battle_finished(victory: bool) -> void:
 	page.footer.alignment = BoxContainer.ALIGNMENT_CENTER
 	_button(page.footer, "返回书库", "home", _home)
 	_button(report.get_node("DetailSlot/Secondary"), "远征记录", "history", _run_records)
-	_button(report.get_node("DetailSlot/Secondary"), "导出战报", "export", _export_battle_report.bind(report.report))
+	_button(report.get_node("DetailSlot/Secondary"), "导出战报", "export", _export_battle_report.bind(report.report), "ui.select")
 	if run != null and bool(run.facts.get("victory_pending", false)):
 		_button(page.footer, "保留遗物 · 挑战" + run.next_challenge_label(), "continue", _continue_challenge)
 		_button(page.footer, "结束远征", "finish", _end_challenge)
@@ -1318,14 +1351,17 @@ func _run_book() -> BookPresentation:
 func _continue_challenge() -> void:
 	if not run.continue_challenge():
 		page.status.text = run.last_error
+		sound.play_cue("ui.invalid")
 		return
 	profile = run.profile
+	sound.play_cue("ui.confirm")
 	_start_battle()
 
 
 func _end_challenge() -> void:
 	if not run.end_challenge():
 		page.status.text = run.last_error
+		sound.play_cue("ui.invalid")
 		return
 	profile = run.profile
 	_home()
@@ -1388,21 +1424,25 @@ func _progression_changed() -> void:
 func _observe_battle_progression() -> void:
 	if run == null or not is_instance_valid(battle):
 		return
+	var previous_level := TalentProgress.level_for(profile.manual_characters)
 	if not run.observe_battle(battle.session):
 		_open("reward_error", "奖励暂未保存", run.last_error)
 		_button(page.footer, "重试保存", "retry", _progression_changed)
 		return
 	profile = run.profile
+	var gained_level := TalentProgress.level_for(profile.manual_characters) > previous_level
+	if gained_level:
+		sound.play_cue("ui.level")
 	if run.phase == "BATTLE_REWARD":
-		_show_run_stage()
+		_show_run_stage(not gained_level)
 
 
-func _show_run_stage() -> void:
+func _show_run_stage(audible: bool = true) -> void:
 	if run.phase == "READY_FOR_ROOM":
 		_start_battle()
 		return
 	if run.phase in ["REWARD", "BATTLE_REWARD"]:
-		_open("reward", "选择遗物", "选择一件带走 · 还可领取 %d 件" % run.rewards.available())
+		_open("reward", "选择遗物", "选择一件带走 · 还可领取 %d 件" % run.rewards.available(), audible)
 		page.set_width(1320.0)
 		page.close_button.disabled = true
 		var choices := HBoxContainer.new()
@@ -1442,22 +1482,30 @@ func _show_run_stage() -> void:
 				var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
 				if run.supply_reward(str(run.offer.id), session):
 					profile = run.profile
-					_resume_reward_or_stage()
-				else: page.status.text = run.last_error)
+					sound.play_cue("ui.supply")
+					_resume_reward_or_stage(false)
+				else:
+					page.status.text = run.last_error
+					sound.play_cue("ui.invalid"))
 		var reroll := _button(page.footer, "重抽 · 剩余 %d 次" % int(run.facts.get("rerolls", 0)), "reroll", func() -> void:
 			if run.reroll_reward(str(run.offer.id)):
 				profile = run.profile
-				_show_run_stage()
-			else: page.status.text = run.last_error)
+				sound.play_cue("ui.reroll")
+				_show_run_stage(false)
+			else:
+				page.status.text = run.last_error
+				sound.play_cue("ui.invalid"))
 		reroll.disabled = int(run.facts.get("rerolls", 0)) <= 0 or run.offer.candidates.is_empty()
 		_button(page.footer, "放弃本次奖励", "skip", func() -> void:
 			if run.skip_reward(str(run.offer.id)):
 				profile = run.profile
-				_resume_reward_or_stage()
+				sound.play_cue("ui.close")
+				_resume_reward_or_stage(false)
 			else:
-				page.status.text = run.last_error)
+				page.status.text = run.last_error
+				sound.play_cue("ui.invalid"))
 	else:
-		_open("route", "行间", "下一页，选择如何继续。")
+		_open("route", "行间", "下一页，选择如何继续。", audible)
 		page.set_width(1080)
 		page.compact_height = 840
 		var path := HBoxContainer.new()
@@ -1524,8 +1572,17 @@ func _show_reward_detail(definition: CombatContentDefinition) -> void:
 	detail.set_width(740)
 	detail.command_hint.text = "Esc 返回"
 	PageShell.label(detail.body, ContentDescription.text(definition, run.compiler.catalog), 21)
-	detail.close_button.pressed.connect(detail.queue_free)
-	PageShell.button(detail.footer, "关闭详情", detail.queue_free)
+	detail.close_button.pressed.connect(_close_reward_detail)
+	PageShell.button(detail.footer, "关闭详情", _close_reward_detail)
+	sound.play_cue("ui.open")
+
+
+func _close_reward_detail() -> void:
+	var detail := page.get_node_or_null("RewardDetail")
+	if detail == null or detail.is_queued_for_deletion():
+		return
+	detail.queue_free()
+	sound.play_cue("ui.close")
 
 
 func _reward_companion() -> void:
@@ -1572,9 +1629,11 @@ func _reward_companion() -> void:
 func _choose_route(choice: String) -> void:
 	if not run.take_route(choice):
 		page.status.text = run.last_error
+		sound.play_cue("ui.invalid")
 		return
 	profile = run.profile
-	_show_run_stage()
+	sound.play_cue("ui.route")
+	_show_run_stage(false)
 
 
 func _instance_caption(instance: CombatAssetInstance) -> String:
@@ -1623,6 +1682,8 @@ func _relics_page(owned_only: bool = false) -> void:
 	var select := func(id: StringName) -> void:
 		if current.id == id:
 			return
+		if current.id != &"":
+			sound.play_cue("ui.select")
 		current.id = id
 		var definition := catalog.get_definition(id)
 		glyph.definition = definition
@@ -1684,7 +1745,6 @@ func _catalog_button(parent: Node, caption: String, command: String, callback: C
 	button.pressed.connect(callback)
 	button.name = command.capitalize()
 	button.set_motion_reduced(settings.reduce_motion)
-	button.pressed.connect(func() -> void: sound.play_cue("ui.select"))
 	button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
 	var scroll_parent := parent.get_parent()
 	if scroll_parent is ScrollContainer:
@@ -1700,12 +1760,14 @@ func _choose_reward(id: StringName, offer_id: String, parent: OptionButton) -> v
 	var parent_id := str(parent.get_selected_metadata()) if parent != null else ""
 	if not run.take_reward(id, offer_id, parent_id, session):
 		page.status.text = run.last_error
+		sound.play_cue("ui.invalid")
 		return
 	profile = run.profile
-	_resume_reward_or_stage()
+	sound.play_cue("ui.reward")
+	_resume_reward_or_stage(false)
 
 
-func _resume_reward_or_stage() -> void:
+func _resume_reward_or_stage(audible: bool = true) -> void:
 	if run.phase == "BATTLE":
 		page.queue_free()
 		page = null
@@ -1715,14 +1777,16 @@ func _resume_reward_or_stage() -> void:
 		router.typing = battle.session.typing
 		router.configure(InputRouter.Context.TYPING)
 	else:
-		_show_run_stage()
+		_show_run_stage(audible)
 
 
 func _next_room() -> void:
 	if not run.leave_route():
 		page.status.text = run.last_error
+		sound.play_cue("ui.invalid")
 		return
 	profile = run.profile
+	sound.play_cue("ui.route")
 	_start_battle()
 
 
@@ -1763,7 +1827,7 @@ func _run_records() -> void:
 		var action := _button(list, "%02d · %s" % [records.size() - record_index + 1, book_title], "entry%d" % record_index, _record_detail.bind(record))
 		action.add_theme_font_size_override("font_size", 18)
 		PageShell.label(list, "%s · %d 页" % [_result_name(record), int(record.rooms)], 14, Color("92a69f"))
-	if not records.is_empty(): _record_detail(records[0])
+	if not records.is_empty(): _record_detail(records[0], false)
 	else:
 		var emblem := JourneyEmblem.new()
 		emblem.kind = &"growth"
@@ -1778,7 +1842,12 @@ func _result_name(record: Dictionary) -> String:
 	return {"victory": "通关", "defeat": "战败", "abandon": "主动结束", "interrupted": "中断", "incompatible": "旧远征"}.get(str(record.reason), str(record.reason))
 
 
-func _record_detail(record: Dictionary) -> void:
+func _record_detail(record: Dictionary, audible: bool = true) -> void:
+	if _history_detail.get_meta("record", {}) == record:
+		return
+	_history_detail.set_meta("record", record)
+	if audible:
+		sound.play_cue("ui.select")
 	for child in _history_detail.get_children():
 		_history_detail.remove_child(child)
 		child.queue_free()
@@ -1866,7 +1935,6 @@ func _pause() -> void:
 		var button := content.get_node("Menu/" + node_name) as OpenButton
 		button.set_motion_reduced(settings.reduce_motion)
 		button.pressed.connect(actions[node_name])
-		button.pressed.connect(func() -> void: sound.play_cue("ui.select"))
 		button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
 		_bind_control_command(button, button._command_word)
 	page.footer.alignment = BoxContainer.ALIGNMENT_END
@@ -1875,19 +1943,26 @@ func _pause() -> void:
 
 
 func _end_current_run() -> void:
+	var gained_level := false
 	if paused_route == "battle":
+		var previous_level := TalentProgress.level_for(profile.manual_characters)
 		if not run.end_run(battle.session):
 			page.status.show()
 			page.status.text = run.last_error
+			sound.play_cue("ui.invalid")
 			return
 		profile = run.profile
-	_home()
+		gained_level = TalentProgress.level_for(profile.manual_characters) > previous_level
+		if gained_level:
+			sound.play_cue("ui.level")
+	_home(not gained_level)
 
 
 func _resume() -> void:
 	if profile.run_checkpoint.get("facts", {}).has("god_transfer"):
 		page.status.show()
 		page.status.text = "档案接管尚未完成，请重新输入激活词令重试。"
+		sound.play_cue("ui.invalid")
 		return
 	if paused_route == "battle" and is_instance_valid(battle):
 		page.queue_free()
@@ -1899,8 +1974,10 @@ func _resume() -> void:
 		get_tree().paused = false
 		router.typing = battle.session.typing
 		router.configure(InputRouter.Context.TYPING)
+		sound.play_cue("ui.close")
 		return
 	if not is_instance_valid(practice):
+		sound.play_cue("ui.invalid")
 		return
 	page.queue_free()
 	page = practice
@@ -1913,3 +1990,4 @@ func _resume() -> void:
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus != null:
 		focus.release_focus()
+	sound.play_cue("ui.close")

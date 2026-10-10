@@ -4,7 +4,13 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const source = resolve(root, 'legacy/web/data');
+// Native snapshots are authoritative. Import another prepared directory only
+// when explicitly supplied; frozen Web data is not an implicit dependency.
+const sourceArgument = process.argv.slice(2);
+if (sourceArgument.length && (sourceArgument.length !== 2 || sourceArgument[0] !== '--source')) {
+  throw Error('Usage: node tools/godot/import-vocabulary.mjs [--source directory]');
+}
+const source = resolve(root, sourceArgument[1] ?? 'assets/vocabulary');
 const destination = resolve(root, 'assets/vocabulary');
 const digest = (buffer) => createHash('sha256').update(buffer).digest('hex');
 const sourceText = await readFile(resolve(source, 'sources.json'));
@@ -21,13 +27,13 @@ for (const book of provenance.books) {
   if (parsed.id !== book.id || !Array.isArray(parsed.words) || parsed.words.length !== book.count) {
     throw Error(`Source index mismatch: ${book.id}`);
   }
-  await copyFile(resolve(source, filename), resolve(destination, filename));
+  if (source !== destination) await copyFile(resolve(source, filename), resolve(destination, filename));
   books.push({ id: book.id, title: book.title, count: book.count, asset_sha256: digest(contents) });
 }
-await copyFile(resolve(source, 'sources.json'), resolve(destination, 'sources.json'));
+if (source !== destination) await copyFile(resolve(source, 'sources.json'), resolve(destination, 'sources.json'));
 const index = {
   schema_version: 1,
-  source: 'legacy/web/data/sources.json',
+  source: 'assets/vocabulary/sources.json',
   sources_sha256: digest(sourceText),
   books,
 };

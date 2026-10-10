@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source": "legacy/web/data/sources.json",
+  "source": "assets/vocabulary/sources.json",
   "sources_sha256": "25fbf831913c1e372e632f64246d666671f63d65c032ac10985ca77ba687fd62",
   "books": [
     {

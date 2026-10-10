@@ -189,8 +189,11 @@ func _ready() -> void:
 	var progressive := $LeftWingLayer/LeftWing/Progressive as CheckButton
 	progressive.button_pressed = settings.progressive
 	progressive.toggled.connect(func(value: bool) -> void:
+		if settings.progressive == value:
+			return
 		settings.progressive = value
 		preparation_changed.emit()
+		cue_requested.emit("ui.tab")
 	)
 	for i in MODE_NAMES.size():
 		var button := difficulty_buttons[i]
@@ -307,7 +310,8 @@ func _set_accent(value: Color) -> void:
 	stage.request_render()
 
 
-func set_prepared(value: bool) -> void:
+func set_prepared(value: bool, audible: bool = true) -> void:
+	var changed := prepared != value
 	prepared = value
 	deployment_start = deployment
 	deployment_elapsed = 0.0
@@ -322,9 +326,12 @@ func set_prepared(value: bool) -> void:
 	navigate.emit("prepared" if value else "archive")
 	_apply_interaction()
 	decoration.queue_redraw()
+	if changed and audible:
+		cue_requested.emit("ui.open" if value else "ui.close")
 
 
 func _difficulty(index: int, notify: bool = true) -> void:
+	var changed: bool = settings.difficulty != MODE_IDS[index]
 	settings.difficulty = MODE_IDS[index]
 	for i in difficulty_buttons.size():
 		difficulty_buttons[i].add_theme_color_override("font_color", accent.lerp(Color.WHITE,.4) if i == index else Color("788a8c"))
@@ -332,6 +339,8 @@ func _difficulty(index: int, notify: bool = true) -> void:
 	difficulty_text.text = ["宽裕预警与生命，适合初次落笔。", "从容开场，逐波迎接完整挑战。", "更快攻势，考验处置顺序与御术时机。", "精英围猎，考验持续输入与防御。", "敌人耐久、攻势密集、伤害极高。适合保留遗物升档挑战。"] [index]
 	if notify:
 		preparation_changed.emit()
+		if changed:
+			cue_requested.emit("ui.tab")
 
 
 func _sync_visibility() -> void:
@@ -571,5 +580,4 @@ func _apply_interaction() -> void:
 
 
 func _connect_action_cues(button: OpenButton) -> void:
-	button.pressed.connect(func() -> void: cue_requested.emit("ui.select"))
 	button.mouse_entered.connect(func() -> void: cue_requested.emit("ui.focus"))

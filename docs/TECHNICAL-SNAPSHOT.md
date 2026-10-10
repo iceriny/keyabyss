@@ -92,9 +92,10 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `ui/materials/` | 无缝噪声纸面、稳定法阵、mipmaps 与九点透明边缘景深、环绕微光、地面与光束、独立 HDR SubViewport 径向折射、连续细线柔光；尊重减少动态与父级淡出 |
 | `ui/theme/keyabyss.tres` | 两套字体、文字层级、开放控件基础皮肤，运行时按法书元素色派生 |
 | `assets/fonts/` | 汇文明朝体、京華老宋体 v3.0 的 TTF 与导入配置 |
-| `audio/default_bus_layout.tres`、`archive_audio.gd` | 六条总线、原 UI 片段播放／并发限流、切书即时交叉淡出、原四秒氛围循环 |
-| `assets/audio/ui/`、`tools/godot/import-ui-audio.mjs` | 12 cue / 27 WAV，从原 Web FLAC 封装解码生成，清除无效编码元数据 |
-| `audio/battle_audio.gd`、`assets/audio/battle/`、`tools/godot/import-battle-audio.mjs` | 24 类原生战斗音源、事件触发、14 声部上限与重要反馈优先，威胁独立总线 |
+| `audio/default_bus_layout.tres`、`archive_audio.gd` | 六条总线、18类菜单反馈、16声部限流、切书即时交叉淡出、四秒合成氛围循环 |
+| `audio/cues.json`、`sound_bank.gd`、`assets/audio/clips/`、`assets/audio/cues/` | 56类反馈、49个库组、196个原样WAV；Godot四变体随机池，不连续重复 |
+| `tools/audio/build-game-audio.mjs`、`assets/audio/selection.json` | 从Agent库复制选用文件，生成池与内容哈希；不依赖旧FLAC／JS |
+| `audio/battle_audio.gd` | 38类战斗反馈、真实提交与输入判定、14声部上限与重要反馈优先，威胁独立总线 |
 | `assets/vocabulary/` | 12 本生成 JSON、来源与 SHA256 索引；运行时不访问 legacy |
 | `export_presets.cfg` | Windows x86_64 活动资源导出，显式包含词库 JSON，排除开发场景、测试与工具桥 |
 | `tools/godot/godot.ps1` | 引擎版本核对、导入、运行、编辑器、生成预览、Debug／Release 导出 |

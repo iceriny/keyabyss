@@ -84,7 +84,10 @@ func _next_words() -> void:
 		word_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		word_label.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				var changed := typing.target_id != id or typing.progress > 0
 				typing.select_target(id)
+				if changed:
+					typing.feedback_requested.emit(&"target")
 		)
 		row.add_child(word_label)
 		word_labels[id] = word_label

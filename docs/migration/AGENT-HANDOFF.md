@@ -8,7 +8,7 @@ S1／S2 正式流程与退出系统清理已落地，S3／S4 的实际证据与�
 
 ## 已确定的范围
 
-战斗 CPU 算法优化见[方案](PLAN.md#战斗算法优化)与[实施记录](COMBAT-ALGORITHM-IMPLEMENTATION.md)：2026-10-10 已接入房间 ID 索引、单目标择优、首击选择、稳定清弹及 .NET 自动闪避批量评分；固定步顺序、视觉效果和玩法参数保持原样。参考基线为 `9f3539b`，可用 `tools/godot/compare-combat.ps1` 复跑规则对照；开发需锁定 .NET SDK，运行入口通过 `tools/godot/godot.ps1` 增量构建。实体分离和空间网格不改；目标CPU与密集弹幕剩余开销见 TODO。
+战斗 CPU 算法优化见[方案](PLAN.md#战斗算法优化)与[实施记录](COMBAT-ALGORITHM-IMPLEMENTATION.md)：2026-10-10 已接入房间 ID 索引、单目标择优、首击选择、稳定清弹及 .NET 自动闪避批量评分；固定步顺序、视觉效果和玩法参数保持原样。上传参考基线为 `c39c032`（规则源码与原记录 `9f3539b` 相同），可用 `tools/godot/compare-combat.ps1` 复跑规则对照；开发需锁定 .NET SDK，运行入口通过 `tools/godot/godot.ps1` 增量构建。实体分离和空间网格不改；目标CPU与密集弹幕剩余开销见 TODO。
 
 独立视觉小样入口为 `development/element_lab/run.cmd`，已与正式战斗共用运行组件。实时晶体附着与增厚，冰膜延迟连接成熟枝网；两张生成微观纹理处理膜层起伏／透光／噪波边缘与细针晶面。火焰通过已有平面流体输运燃料／温度。正式运行资源位于 `ui/` 与 `assets/`，不依赖开发小样目录；旧图集已移入 `.delete/element-integration/`。小样的膜层与水汽对比仍可使用，见[小样说明](../../development/element_lab/README.md)。
 

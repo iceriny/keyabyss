@@ -26,7 +26,7 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 ## 原生工具入口
 
-战斗算法可用 `pwsh -File tools/godot/compare-combat.ps1` 从优化前提交 `9f3539b` 生成隔离参考子类，比较四书事件／状态与 1,152 个闪避选点；`-BenchmarkOnly` 只采样微基准，`-DodgeOnly` 跳过逐步战斗。适配器针对该基线的方法与数据声明，未来结构变化需同步审阅，不能作为任意 Git 版本的通用比较器。正常运行前工具自动做锁定依赖的 Debug 编译。生成文件与日志留在 `.temp/`，不进入游戏或导出。
+战斗算法可用 `pwsh -File tools/godot/compare-combat.ps1` 从优化前提交 `c39c032` 生成隔离参考子类，比较四书事件／状态与 1,152 个闪避选点；`-BenchmarkOnly` 只采样微基准，`-DodgeOnly` 跳过逐步战斗。该上传基线与本地原记录 `9f3539b` 的规则源码相同，仅剔除了转入私有资产库的新增字体。适配器针对该基线的方法与数据声明，未来结构变化需同步审阅，不能作为任意 Git 版本的通用比较器。正常运行前工具自动做锁定依赖的 Debug 编译。生成文件与日志留在 `.temp/`，不进入游戏或导出。
 
 局部几何入口为 `test_battle_session.gd -- --geometry`，覆盖连续扫掠、首击顺序、贯穿快照／死亡连锁及接触尾迹；`test_defense_movement.gd` 覆盖御术与时钟。`test_combat_algorithms.gd -- --cold` 单列首次操作、会话准备、封送分配与 GC。数值程序集在各配置均启用优化，需和受影响 GDScript 一起检查；实际命令与结果见[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md)。
 

@@ -8,12 +8,38 @@
 
 ## 开发入口
 
-使用 **Godot 4.7.2 .NET** 打开根目录 [project.godot](project.godot)，等待资源导入后运行。当前业务使用 GDScript，不需要安装 Node 或构建 C# 才能运行根工程。
+开发需 Git LFS、Node.js 22+、PowerShell 7、**Godot 4.7.2 .NET** 与 **.NET SDK 9.0.201**。战斗逻辑以 GDScript 为主，自动闪避评分由 C# 批量计算，启动脚本会按锁文件构建程序集。
+
+代码位于本仓库，字体、音频及素材源件位于私有的 [keyabyss-assets](https://github.com/iceriny/keyabyss-assets)。使用有权访问两个仓库的 GitHub 账号，在新设备执行：
+
+```powershell
+git lfs install
+git clone https://github.com/iceriny/keyabyss.git
+Set-Location keyabyss
+node tools/dev.mjs setup
+node tools/assets/assets.mjs verify --profile authoring
+Copy-Item tools/godot/local.paths.example.json tools/godot/local.paths.json
+# 填写本机 Godot console.exe 路径，再运行下面的入口。
+```
+
+`authoring` 恢复游戏素材、完整音频库和全部原始／未选用素材；只改游戏代码可选 `runtime`，Agent 重新选音可选 `library`。工具固定 [asset-lock.json](asset-lock.json) 中的提交，默认在项目旁创建资产仓库，校验哈希并保护本地修改。同步完成后打开根目录 [project.godot](project.godot)。具体更新与交接流程见[资产开发指南](docs/GIT-AND-ASSETS.md)。
+
+日常换设备只用两条命令，代码与资产一起交接：
+
+```powershell
+# 在开始工作的设备：
+node tools/dev.mjs pull
+# 完成修改后：
+node tools/dev.mjs push "说明本次修改"
+```
+
+`push` 自动收集配置目录中的新增／变动素材，先上传私有资产与 LFS，再更新版本锁、提交并推送当前代码分支。另一台设备 `pull` 会拉取该分支并恢复同一套资产。请在前一台推送完成后再开始另一台的工作。要使用其他范围，首次执行 `node tools/dev.mjs setup runtime` 或 `setup library`；后续拉取沿用本机范围。
 
 本机已配置引擎路径，也可在 PowerShell 中运行：
 
 ```powershell
 pwsh -File tools/godot/godot.ps1 doctor
+pwsh -File tools/godot/godot.ps1 import
 pwsh -File tools/godot/godot.ps1 editor
 pwsh -File tools/godot/godot.ps1 run
 ```

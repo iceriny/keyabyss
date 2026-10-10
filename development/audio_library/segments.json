@@ -1,0 +1,4181 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "file": "legacy/web/art/Magic UI Designed/DOORWood_CHEST OPEN LOOT-Gold Rush_B00M_MUIDS.wav",
+      "sha256": "cc5120f72733d671cdb978542f573752b350320a8aa3a60200db00deec232ea3",
+      "group": "chest-open-loot-gold-rush",
+      "description": "Wooden chest opening with solid mechanical movement and a rewarding magical flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 347518
+        },
+        {
+          "id": "02",
+          "start_frame": 458038,
+          "end_frame": 721665
+        },
+        {
+          "id": "03",
+          "start_frame": 836635,
+          "end_frame": 1090138
+        },
+        {
+          "id": "04",
+          "start_frame": 1168575,
+          "end_frame": 1467618
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DOORWood_CHEST OPEN LOOT-Surprise_B00M_MUIDS.wav",
+      "sha256": "9f5d1c07e6ac1b43c3d5a8cc52f4a430c6fac22788a1b3201a4ef38bae9e99cb",
+      "group": "chest-open-loot-surprise",
+      "description": "Wooden chest opening with aged timber movement and an unexpected tonal sparkle.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 297159
+        },
+        {
+          "id": "02",
+          "start_frame": 421258,
+          "end_frame": 706998
+        },
+        {
+          "id": "03",
+          "start_frame": 829164,
+          "end_frame": 1116502
+        },
+        {
+          "id": "04",
+          "start_frame": 1199770,
+          "end_frame": 1489012
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DOORWood_CHEST OPEN MAGIC-Eternal Casket_B00M_MUIDS.wav",
+      "sha256": "ec2a68c0fc691f0ae5415b4e68814a43b3846f8759c7c6a7f0265977ba6658e1",
+      "group": "chest-open-magic-eternal-casket",
+      "description": "Ancient chest opening with deep wooden movement and powerful arcane overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 373991
+        },
+        {
+          "id": "02",
+          "start_frame": 560425,
+          "end_frame": 871595
+        },
+        {
+          "id": "03",
+          "start_frame": 1021068,
+          "end_frame": 1378399
+        },
+        {
+          "id": "04",
+          "start_frame": 1531170,
+          "end_frame": 1911291
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DOORWood_CHEST OPEN MAGIC-Lootbox_B00M_MUIDS.wav",
+      "sha256": "a7ba470af507187e9aaae687cb1669b5212eefda778b3bd52e7f806b96a76cae",
+      "group": "chest-open-magic-lootbox",
+      "description": "Wooden chest opening with rich mechanical detail and shimmering magical resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 257824
+        },
+        {
+          "id": "02",
+          "start_frame": 462429,
+          "end_frame": 718455
+        },
+        {
+          "id": "03",
+          "start_frame": 918877,
+          "end_frame": 1116369
+        },
+        {
+          "id": "04",
+          "start_frame": 1364004,
+          "end_frame": 1579523
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH LIGHT-Enchanted Whisp_B00M_MUIDS.wav",
+      "sha256": "468a2046d4050dea49195f2e57bd5992f4dc1427799be6a406b85d4320b90810",
+      "group": "whoosh-light-enchanted-whisp",
+      "description": "Light whoosh with enchanted airy textures and a soft shimmering finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 550708
+        },
+        {
+          "id": "02",
+          "start_frame": 767168,
+          "end_frame": 1262214
+        },
+        {
+          "id": "03",
+          "start_frame": 1467178,
+          "end_frame": 1945130
+        },
+        {
+          "id": "04",
+          "start_frame": 2184682,
+          "end_frame": 2747142
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH LIGHT-Flourish_B00M_MUIDS.wav",
+      "sha256": "2797e295d5dfb030fc94eb5907264b106fc15f029a441722bd36025e0a03e091",
+      "group": "whoosh-light-flourish",
+      "description": "Light whoosh expanding through elegant motion and bright magical textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 398597
+        },
+        {
+          "id": "02",
+          "start_frame": 828471,
+          "end_frame": 1202172
+        },
+        {
+          "id": "03",
+          "start_frame": 1585791,
+          "end_frame": 1930969
+        },
+        {
+          "id": "04",
+          "start_frame": 2380364,
+          "end_frame": 2779203
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH LIGHT-Naturalise_B00M_MUIDS.wav",
+      "sha256": "8406733ae3be2508e589345af71da953a7bccc9201b2f0f9522617a608d902f9",
+      "group": "whoosh-light-naturalise",
+      "description": "Light whoosh with gentle airflow and bright evolving textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 324986
+        },
+        {
+          "id": "02",
+          "start_frame": 710394,
+          "end_frame": 1020941
+        },
+        {
+          "id": "03",
+          "start_frame": 1364190,
+          "end_frame": 1699456
+        },
+        {
+          "id": "04",
+          "start_frame": 2054578,
+          "end_frame": 2366000
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH LIGHT-New Chapter_B00M_MUIDS.wav",
+      "sha256": "705a6743274fcecdd056a948b8b44cf7fb7bb068ec295222eba802d49f7f6cb7",
+      "group": "whoosh-light-new-chapter",
+      "description": "Light whoosh with paper-inspired textures and a clean flowing sweep.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 425448
+        },
+        {
+          "id": "02",
+          "start_frame": 557408,
+          "end_frame": 921887
+        },
+        {
+          "id": "03",
+          "start_frame": 1087602,
+          "end_frame": 1465443
+        },
+        {
+          "id": "04",
+          "start_frame": 1634507,
+          "end_frame": 2063587
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH LIGHT-Shimmer_B00M_MUIDS.wav",
+      "sha256": "3048b06409d38c70c5de16d1e9091d096a0cab0736582e74125f5cf5ae65c4fb",
+      "group": "whoosh-light-shimmer",
+      "description": "Light whoosh with sparkling harmonics and delicate sweeping motion.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 402224
+        },
+        {
+          "id": "02",
+          "start_frame": 544085,
+          "end_frame": 909987
+        },
+        {
+          "id": "03",
+          "start_frame": 1057570,
+          "end_frame": 1429174
+        },
+        {
+          "id": "04",
+          "start_frame": 1569462,
+          "end_frame": 1967760
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH LIGHT-Sirens Call_B00M_MUIDS.wav",
+      "sha256": "a4fef4110a5d8efbcdacca47799a16abc53d4e58575b44941e9534cd0cddd57d",
+      "group": "whoosh-light-sirens-call",
+      "description": "Light whoosh with graceful harmonic movement and airy magical detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 373904
+        },
+        {
+          "id": "02",
+          "start_frame": 559561,
+          "end_frame": 922713
+        },
+        {
+          "id": "03",
+          "start_frame": 1120549,
+          "end_frame": 1473719
+        },
+        {
+          "id": "04",
+          "start_frame": 1668804,
+          "end_frame": 2027295
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH NEUTRAL-Closing In_B00M_MUIDS.wav",
+      "sha256": "c21119cf6e0bef454617ddf6c2e5683b950e352e5871cfea0d0bdbf714e83470",
+      "group": "whoosh-neutral-closing-in",
+      "description": "Neutral whoosh narrowing through focused movement and controlled tonal weight.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 352616
+        },
+        {
+          "id": "02",
+          "start_frame": 523894,
+          "end_frame": 845851
+        },
+        {
+          "id": "03",
+          "start_frame": 1014821,
+          "end_frame": 1353268
+        },
+        {
+          "id": "04",
+          "start_frame": 1522081,
+          "end_frame": 1835936
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH NEUTRAL-Next Page_B00M_MUIDS.wav",
+      "sha256": "9971f7d9d5ae29281c1ad0f25f580ba72c1059e2bdbf514f074a4e4d57e1b61f",
+      "group": "whoosh-neutral-next-page",
+      "description": "Neutral whoosh with a smooth sweeping pass and soft paper-like textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 301695
+        },
+        {
+          "id": "02",
+          "start_frame": 454067,
+          "end_frame": 654936
+        },
+        {
+          "id": "03",
+          "start_frame": 775742,
+          "end_frame": 1032315
+        },
+        {
+          "id": "04",
+          "start_frame": 1147145,
+          "end_frame": 1436720
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH NEUTRAL-Passby_B00M_MUIDS.wav",
+      "sha256": "69ae9b452042cac2e88419042f550444205b159d2a175da38ae09d4f1a2c4aa3",
+      "group": "whoosh-neutral-passby",
+      "description": "Neutral whoosh gliding past with balanced airflow and restrained tonal movement.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 271378
+        },
+        {
+          "id": "02",
+          "start_frame": 383653,
+          "end_frame": 647170
+        },
+        {
+          "id": "03",
+          "start_frame": 795621,
+          "end_frame": 1057024
+        },
+        {
+          "id": "04",
+          "start_frame": 1157646,
+          "end_frame": 1457076
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH NEUTRAL-Phantom_B00M_MUIDS.wav",
+      "sha256": "033101df2311913d992ec0fd995e94f2fe8cffa9144e5f00a903e6bb12077a05",
+      "group": "whoosh-neutral-phantom",
+      "description": "Neutral whoosh with ghostly movement and subtle spectral detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 283977
+        },
+        {
+          "id": "02",
+          "start_frame": 426353,
+          "end_frame": 622879
+        },
+        {
+          "id": "03",
+          "start_frame": 765333,
+          "end_frame": 1039488
+        },
+        {
+          "id": "04",
+          "start_frame": 1166640,
+          "end_frame": 1451346
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH NEUTRAL-Spellbook_B00M_MUIDS.wav",
+      "sha256": "9703c6a21cee8c14875a53552ba65da4f135fbc0dfe8810dc1c7b23249dd3226",
+      "group": "whoosh-neutral-spellbook",
+      "description": "Neutral whoosh blending soft page textures with magical airflow.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 258100
+        },
+        {
+          "id": "02",
+          "start_frame": 363007,
+          "end_frame": 633391
+        },
+        {
+          "id": "03",
+          "start_frame": 720586,
+          "end_frame": 967148
+        },
+        {
+          "id": "04",
+          "start_frame": 1052996,
+          "end_frame": 1318547
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/DSGNWhsh_WHOOSH NEUTRAL-Wild Breath_B00M_MUIDS.wav",
+      "sha256": "29abfabf094ed011e4a96bc422cdc74c6b726379413faf6ab5d47b60c7b2d0be",
+      "group": "whoosh-neutral-wild-breath",
+      "description": "Neutral whoosh carrying airy textures and natural flowing motion.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 285346
+        },
+        {
+          "id": "02",
+          "start_frame": 463944,
+          "end_frame": 782137
+        },
+        {
+          "id": "03",
+          "start_frame": 947383,
+          "end_frame": 1232680
+        },
+        {
+          "id": "04",
+          "start_frame": 1407639,
+          "end_frame": 1698591
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGMisc_QUEST CHECKPOINT-Arrival_B00M_MUIDS.wav",
+      "sha256": "31a22411dcb969944e1c8441a180e77efd9079250d97179c81fa2c914100cbb3",
+      "group": "quest-checkpoint-arrival",
+      "description": "Checkpoint accent marked by a gentle pulse and balanced harmonic bloom.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 190947
+        },
+        {
+          "id": "02",
+          "start_frame": 309378,
+          "end_frame": 484138
+        },
+        {
+          "id": "03",
+          "start_frame": 602862,
+          "end_frame": 793437
+        },
+        {
+          "id": "04",
+          "start_frame": 903097,
+          "end_frame": 1092346
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGMisc_QUEST CHECKPOINT-Outpost_B00M_MUIDS.wav",
+      "sha256": "edb6ed90e225a3ace94434b3c6dc8a29128dee26a5bf46f0529d797ed5a019a5",
+      "group": "quest-checkpoint-outpost",
+      "description": "Checkpoint accent with compact magical tones and restrained shimmering detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 200008
+        },
+        {
+          "id": "02",
+          "start_frame": 587959,
+          "end_frame": 755894
+        },
+        {
+          "id": "03",
+          "start_frame": 1098863,
+          "end_frame": 1291999
+        },
+        {
+          "id": "04",
+          "start_frame": 1603658,
+          "end_frame": 1798359
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGMisc_QUEST CHECKPOINT-Uncharted Path_B00M_MUIDS.wav",
+      "sha256": "64b57aa77bb76af97e5d254a98f123031c1785153590b358d38aa7f40ae99139",
+      "group": "quest-checkpoint-uncharted-path",
+      "description": "Checkpoint accent unfolding through mysterious resonance and subtle magical textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 279114
+        },
+        {
+          "id": "02",
+          "start_frame": 454653,
+          "end_frame": 707652
+        },
+        {
+          "id": "03",
+          "start_frame": 856660,
+          "end_frame": 1113226
+        },
+        {
+          "id": "04",
+          "start_frame": 1276706,
+          "end_frame": 1528797
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGMisc_QUEST CHECKPOINT-Waystone_B00M_MUIDS.wav",
+      "sha256": "ea28468de47e5bb18d0279a5b3bd22e4651000f6479c28505632fdb77193a210",
+      "group": "quest-checkpoint-waystone",
+      "description": "Checkpoint accent with grounded magical resonance and a reassuring tonal finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 247667
+        },
+        {
+          "id": "02",
+          "start_frame": 443982,
+          "end_frame": 671676
+        },
+        {
+          "id": "03",
+          "start_frame": 848280,
+          "end_frame": 1065222
+        },
+        {
+          "id": "04",
+          "start_frame": 1249235,
+          "end_frame": 1460821
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_LEVEL UP-Ascend_B00M_MUIDS.wav",
+      "sha256": "a95e5d4066346647ae7083e17b9be5ae98e49eec9ec83746973d4aac4d9224d1",
+      "group": "level-up-ascend",
+      "description": "Level up accent rising through radiant magical energy and shimmering harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 377930
+        },
+        {
+          "id": "02",
+          "start_frame": 547941,
+          "end_frame": 912559
+        },
+        {
+          "id": "03",
+          "start_frame": 1111374,
+          "end_frame": 1460054
+        },
+        {
+          "id": "04",
+          "start_frame": 1683535,
+          "end_frame": 2073924
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_LEVEL UP-Divine Ascent_B00M_MUIDS.wav",
+      "sha256": "af228e4fec37cdd31dc58004dabdb988e6cf918f32e47f1839507bda5e9cb871",
+      "group": "level-up-divine-ascent",
+      "description": "Level up accent surging through majestic harmonics into a brilliant magical climax.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 328964
+        },
+        {
+          "id": "02",
+          "start_frame": 559534,
+          "end_frame": 870609
+        },
+        {
+          "id": "03",
+          "start_frame": 1135994,
+          "end_frame": 1421357
+        },
+        {
+          "id": "04",
+          "start_frame": 1642489,
+          "end_frame": 1927704
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_LEVEL UP-Rise_B00M_MUIDS.wav",
+      "sha256": "a97d848209aa95f3ef79e1dc902a530bdf9c2e86e4f80b77ff312b38d8dd28a4",
+      "group": "level-up-rise",
+      "description": "Level up accent unfolding with uplifting resonance and bright tonal sparkle.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 535214
+        },
+        {
+          "id": "02",
+          "start_frame": 694447,
+          "end_frame": 1184395
+        },
+        {
+          "id": "03",
+          "start_frame": 1345428,
+          "end_frame": 1801455
+        },
+        {
+          "id": "04",
+          "start_frame": 1976258,
+          "end_frame": 2446412
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_LEVEL UP-Shrine_B00M_MUIDS.wav",
+      "sha256": "0e5d2d308a797356757bd5ec5bec76c76241bcd0831af7d66c87554a845b9d68",
+      "group": "level-up-shrine",
+      "description": "Level up accent blending mystical pulses with glowing celestial textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 326433
+        },
+        {
+          "id": "02",
+          "start_frame": 726976,
+          "end_frame": 1041054
+        },
+        {
+          "id": "03",
+          "start_frame": 1479607,
+          "end_frame": 1817736
+        },
+        {
+          "id": "04",
+          "start_frame": 2260278,
+          "end_frame": 2581334
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE DARK-Grapeshot_B00M_MUIDS.wav",
+      "sha256": "94e8eb7e18b97446c48f673fd678f0e5a67d44f83040500bb489da7a163dd6b0",
+      "group": "poof-large-dark-grapeshot",
+      "description": "Large dark burst with dense impacts and brooding spectral textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 281067
+        },
+        {
+          "id": "02",
+          "start_frame": 390042,
+          "end_frame": 638827
+        },
+        {
+          "id": "03",
+          "start_frame": 741806,
+          "end_frame": 977268
+        },
+        {
+          "id": "04",
+          "start_frame": 1107215,
+          "end_frame": 1363273
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE DARK-Voidthorn Curse_B00M_MUIDS.wav",
+      "sha256": "bbfb6f03f43ead3fa7b14da839779992494db9d50bdbc865688ed43af8906b51",
+      "group": "poof-large-dark-voidthorn-curse",
+      "description": "Large shadowy burst with ominous harmonics and a deep magical fade.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 409037
+        },
+        {
+          "id": "02",
+          "start_frame": 617976,
+          "end_frame": 1000271
+        },
+        {
+          "id": "03",
+          "start_frame": 1236996,
+          "end_frame": 1640008
+        },
+        {
+          "id": "04",
+          "start_frame": 1872029,
+          "end_frame": 2271316
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE LIGHT-Secret Loot_B00M_MUIDS.wav",
+      "sha256": "9663c0ff2ad93e87df2ab23f8c72f730983275f7c8c68752d73a9aeeb2a25a5e",
+      "group": "poof-large-light-secret-loot",
+      "description": "Large radiant burst with sparkling harmonics and an uplifting magical flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 367337
+        },
+        {
+          "id": "02",
+          "start_frame": 480220,
+          "end_frame": 795526
+        },
+        {
+          "id": "03",
+          "start_frame": 970071,
+          "end_frame": 1382795
+        },
+        {
+          "id": "04",
+          "start_frame": 1522139,
+          "end_frame": 1886940
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE LIGHT-Slammer_B00M_MUIDS.wav",
+      "sha256": "2da022f282d2673fc40af5847ebfbb814416dc4524d5bfab48bcf20c26128b1f",
+      "group": "poof-large-light-slammer",
+      "description": "Large luminous burst driven by a bold magical impact and bright resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 344439
+        },
+        {
+          "id": "02",
+          "start_frame": 448245,
+          "end_frame": 776743
+        },
+        {
+          "id": "03",
+          "start_frame": 874822,
+          "end_frame": 1196789
+        },
+        {
+          "id": "04",
+          "start_frame": 1295247,
+          "end_frame": 1647955
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE NEUTRAL-Big Bang_B00M_MUIDS.wav",
+      "sha256": "9be03fa31c6bb4d0558fba810d3af030b2076993311dfa134f6e317a42574cf9",
+      "group": "poof-large-neutral-big-bang",
+      "description": "Large magical burst with a powerful transient and expansive harmonic bloom.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 426442
+        },
+        {
+          "id": "02",
+          "start_frame": 552424,
+          "end_frame": 979891
+        },
+        {
+          "id": "03",
+          "start_frame": 1113820,
+          "end_frame": 1531321
+        },
+        {
+          "id": "04",
+          "start_frame": 1666367,
+          "end_frame": 2090385
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE NEUTRAL-Light Shadow_B00M_MUIDS.wav",
+      "sha256": "bb82808c093915fa5208b1dddd83cc4905043d13314332d8353f698a53e8adc7",
+      "group": "poof-large-neutral-light-shadow",
+      "description": "Large magical burst blending bright and dark textures into a balanced spectral bloom.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 311275
+        },
+        {
+          "id": "02",
+          "start_frame": 444816,
+          "end_frame": 724214
+        },
+        {
+          "id": "03",
+          "start_frame": 835025,
+          "end_frame": 1072252
+        },
+        {
+          "id": "04",
+          "start_frame": 1216194,
+          "end_frame": 1521807
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE NEUTRAL-Phantom Whisper_B00M_MUIDS.wav",
+      "sha256": "581a4ab81dbc9e2b4e081f416f451b636216bb4ba556bf5072870c226a59a91f",
+      "group": "poof-large-neutral-phantom-whisper",
+      "description": "Large magical burst with ghostly movement and soft lingering resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 282557
+        },
+        {
+          "id": "02",
+          "start_frame": 443460,
+          "end_frame": 702519
+        },
+        {
+          "id": "03",
+          "start_frame": 852016,
+          "end_frame": 1098935
+        },
+        {
+          "id": "04",
+          "start_frame": 1266667,
+          "end_frame": 1518440
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF LARGE NEUTRAL-Spirit Sprite_B00M_MUIDS.wav",
+      "sha256": "c68d2b315db901b154a6f45d8c9602dc6ea4536cd0d88043d65ee84173f9514e",
+      "group": "poof-large-neutral-spirit-sprite",
+      "description": "Large magical burst with airy spectral textures and drifting ethereal overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 210287
+        },
+        {
+          "id": "02",
+          "start_frame": 321996,
+          "end_frame": 517828
+        },
+        {
+          "id": "03",
+          "start_frame": 612797,
+          "end_frame": 825100
+        },
+        {
+          "id": "04",
+          "start_frame": 911776,
+          "end_frame": 1115072
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL DARK-Negate_B00M_MUIDS.wav",
+      "sha256": "6e37667f73d83827979cb5e7db283dd6cc82f393d3f9cc76e40f3c6b76bdc1bb",
+      "group": "poof-small-dark-negate",
+      "description": "Small dark poof with muted spectral textures and a restrained fading tail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 170351
+        },
+        {
+          "id": "02",
+          "start_frame": 292710,
+          "end_frame": 448971
+        },
+        {
+          "id": "03",
+          "start_frame": 586060,
+          "end_frame": 718898
+        },
+        {
+          "id": "04",
+          "start_frame": 863253,
+          "end_frame": 1041008
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL DARK-Shadows Incantation_B00M_MUIDS.wav",
+      "sha256": "4498eb96159b37ffae1da6f817f26dac65aaaa818bf6ab5570602e0c0a389b8f",
+      "group": "poof-small-dark-shadows-incantation",
+      "description": "Small shadowy burst with swirling dark harmonics and subtle magical resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 340413
+        },
+        {
+          "id": "02",
+          "start_frame": 487729,
+          "end_frame": 769134
+        },
+        {
+          "id": "03",
+          "start_frame": 921748,
+          "end_frame": 1229269
+        },
+        {
+          "id": "04",
+          "start_frame": 1405866,
+          "end_frame": 1734569
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL LIGHT-Enlightenment_B00M_MUIDS.wav",
+      "sha256": "6e96c6d230d1d55c91598661c00c4edb7a898bda76711448f59efdc6bbb5aef0",
+      "group": "poof-small-light-enlightenment",
+      "description": "Small radiant burst unfolding through bright shimmering overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 302968
+        },
+        {
+          "id": "02",
+          "start_frame": 438276,
+          "end_frame": 701825
+        },
+        {
+          "id": "03",
+          "start_frame": 834486,
+          "end_frame": 1087430
+        },
+        {
+          "id": "04",
+          "start_frame": 1250422,
+          "end_frame": 1529592
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL LIGHT-Mystic_B00M_MUIDS.wav",
+      "sha256": "77bd43773f88f2a422097c9ec7da64b19ce8c34430d30f21687ba4009b892786",
+      "group": "poof-small-light-mystic",
+      "description": "Small luminous poof with soft magical textures and a gentle harmonic bloom.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 306986
+        },
+        {
+          "id": "02",
+          "start_frame": 464616,
+          "end_frame": 753821
+        },
+        {
+          "id": "03",
+          "start_frame": 913112,
+          "end_frame": 1195815
+        },
+        {
+          "id": "04",
+          "start_frame": 1363394,
+          "end_frame": 1631503
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL NEUTRAL-Ethereal Cascade_B00M_MUIDS.wav",
+      "sha256": "2ad22dcca0258451901f480708849eb897111e4e1df878b1d443c05c8b57db7a",
+      "group": "poof-small-neutral-ethereal-cascade",
+      "description": "Small magical burst with airy particles cascading into a delicate shimmering finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 212644
+        },
+        {
+          "id": "02",
+          "start_frame": 383797,
+          "end_frame": 549440
+        },
+        {
+          "id": "03",
+          "start_frame": 714957,
+          "end_frame": 900462
+        },
+        {
+          "id": "04",
+          "start_frame": 1083848,
+          "end_frame": 1290527
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL NEUTRAL-Hufflepuff_B00M_MUIDS.wav",
+      "sha256": "d788b72d331091d92d64a00db081fa06f476febd0f8409376f9d479a42e044ae",
+      "group": "poof-small-neutral-hufflepuff",
+      "description": "Small magical poof with playful swirling textures and a gentle tonal finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 242773
+        },
+        {
+          "id": "02",
+          "start_frame": 341302,
+          "end_frame": 567212
+        },
+        {
+          "id": "03",
+          "start_frame": 667561,
+          "end_frame": 898914
+        },
+        {
+          "id": "04",
+          "start_frame": 1001623,
+          "end_frame": 1264845
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL NEUTRAL-Reprieve_B00M_MUIDS.wav",
+      "sha256": "5355390283b697cff81c24a6d529435785bdb0e144e76deeeba59e8af619af0b",
+      "group": "poof-small-neutral-reprieve",
+      "description": "Small magical poof dispersing through soft spectral textures and restrained resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 111490
+        },
+        {
+          "id": "02",
+          "start_frame": 198182,
+          "end_frame": 296106
+        },
+        {
+          "id": "03",
+          "start_frame": 372783,
+          "end_frame": 467991
+        },
+        {
+          "id": "04",
+          "start_frame": 546890,
+          "end_frame": 680337
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGPoof_POOF SMALL NEUTRAL-Wisp_B00M_MUIDS.wav",
+      "sha256": "d64e917e382638b677e4d53cae76613b1c22ea282a333043677220d78b27b613",
+      "group": "poof-small-neutral-wisp",
+      "description": "Small magical poof with a soft airy burst and delicate fading shimmer.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 368019
+        },
+        {
+          "id": "02",
+          "start_frame": 508294,
+          "end_frame": 848570
+        },
+        {
+          "id": "03",
+          "start_frame": 1024482,
+          "end_frame": 1373552
+        },
+        {
+          "id": "04",
+          "start_frame": 1547108,
+          "end_frame": 1898643
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_POTION HEALTH-Boost_B00M_MUIDS.wav",
+      "sha256": "2f8de3ab9d8c1e1df53a03fb3896c04feb58926348e05fb318532feac3f06860",
+      "group": "potion-health-boost",
+      "description": "Magical potion accent rising through energetic bubbles and vibrant harmonic detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 187323
+        },
+        {
+          "id": "02",
+          "start_frame": 301408,
+          "end_frame": 466360
+        },
+        {
+          "id": "03",
+          "start_frame": 589224,
+          "end_frame": 754240
+        },
+        {
+          "id": "04",
+          "start_frame": 871343,
+          "end_frame": 1013032
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_POTION HEALTH-Refresh_B00M_MUIDS.wav",
+      "sha256": "985e596f066dc01c8f03b68516c0d69b66032a00e7dfd6429282f182d29a94db",
+      "group": "potion-health-refresh",
+      "description": "Magical potion accent with refreshing liquid textures and bright restorative resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 127866
+        },
+        {
+          "id": "02",
+          "start_frame": 229373,
+          "end_frame": 370462
+        },
+        {
+          "id": "03",
+          "start_frame": 463915,
+          "end_frame": 594229
+        },
+        {
+          "id": "04",
+          "start_frame": 705237,
+          "end_frame": 859142
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_POTION MANA-Moonveil Essence_B00M_MUIDS.wav",
+      "sha256": "4b61e74406569636324984a256f24bf18e515a469b48809710b3f38cdfab6d42",
+      "group": "potion-mana-moonveil-essence",
+      "description": "Magical potion accent blending ethereal bubbles with glowing spectral harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 376623
+        },
+        {
+          "id": "02",
+          "start_frame": 528671,
+          "end_frame": 959153
+        },
+        {
+          "id": "03",
+          "start_frame": 1092881,
+          "end_frame": 1479041
+        },
+        {
+          "id": "04",
+          "start_frame": 1613008,
+          "end_frame": 2112000
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_POTION MANA-Rejuvenate_B00M_MUIDS.wav",
+      "sha256": "a1531b17ce343accb60b76f8e2c98228fbc6f46211df396f88a6d52ed53029f8",
+      "group": "potion-mana-rejuvenate",
+      "description": "Magical potion accent with flowing liquid tones and smooth mystical resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 180795
+        },
+        {
+          "id": "02",
+          "start_frame": 293441,
+          "end_frame": 461118
+        },
+        {
+          "id": "03",
+          "start_frame": 572489,
+          "end_frame": 750800
+        },
+        {
+          "id": "04",
+          "start_frame": 875298,
+          "end_frame": 1050176
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_PROGRESS-Forward_B00M_MUIDS.wav",
+      "sha256": "1e865984c19a53d1f02c8f340a695483df2fb7e7e11aba22d982cb61f70b4d13",
+      "group": "progress-forward",
+      "description": "Forward moving progress accent rising through smooth tonal layers into a clean finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 1710479
+        },
+        {
+          "id": "02",
+          "start_frame": 1884793,
+          "end_frame": 3571872
+        },
+        {
+          "id": "03",
+          "start_frame": 3707490,
+          "end_frame": 5414081
+        },
+        {
+          "id": "04",
+          "start_frame": 5584753,
+          "end_frame": 7257214
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_PROGRESS-Rune Locker_B00M_MUIDS.wav",
+      "sha256": "b34c140c150cf7903c1d383b26a7831d7eb30ea550cf2151c195b12e192a395d",
+      "group": "progress-rune-locker",
+      "description": "Arcane progress accent with layered magical pulses settling into a confident resolution.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 880770
+        },
+        {
+          "id": "02",
+          "start_frame": 1071036,
+          "end_frame": 1950500
+        },
+        {
+          "id": "03",
+          "start_frame": 2097042,
+          "end_frame": 2992183
+        },
+        {
+          "id": "04",
+          "start_frame": 3104026,
+          "end_frame": 4045962
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_PROGRESS-Side Quest_B00M_MUIDS.wav",
+      "sha256": "0f0eba1e83ac639d4ea7f50df1a88adec28959b01c25434aa46fa59fc00eb001",
+      "group": "progress-side-quest",
+      "description": "Adventurous progress accent unfolding with playful magical flourishes and light sparkling detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 972319
+        },
+        {
+          "id": "02",
+          "start_frame": 1151657,
+          "end_frame": 2319874
+        },
+        {
+          "id": "03",
+          "start_frame": 2505984,
+          "end_frame": 3740358
+        },
+        {
+          "id": "04",
+          "start_frame": 3932457,
+          "end_frame": 5443143
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/MAGSpel_PROGRESS-Starlight Evolution_B00M_MUIDS.wav",
+      "sha256": "4650f045418d7dba4af1b0e5aaf3970cfaea5e3e9cfa486abde1da730064b3bf",
+      "group": "progress-starlight-evolution",
+      "description": "Expansive magical progression with shimmering celestial textures rising into a luminous climax.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 885127
+        },
+        {
+          "id": "02",
+          "start_frame": 1079157,
+          "end_frame": 1984849
+        },
+        {
+          "id": "03",
+          "start_frame": 2174501,
+          "end_frame": 3086904
+        },
+        {
+          "id": "04",
+          "start_frame": 3241837,
+          "end_frame": 4140611
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_BUY-Auction House_B00M_MUIDS.wav",
+      "sha256": "c68e93de9d5a84771c0b70bf43b8c2990908c599cab87d069e942f1e4c387650",
+      "group": "buy-auction-house",
+      "description": "Coin transaction accent with dense metallic movement and crisp overlapping clinks.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 80567
+        },
+        {
+          "id": "02",
+          "start_frame": 152732,
+          "end_frame": 226590
+        },
+        {
+          "id": "03",
+          "start_frame": 308616,
+          "end_frame": 381322
+        },
+        {
+          "id": "04",
+          "start_frame": 448495,
+          "end_frame": 515915
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_BUY-Coin Toss_B00M_MUIDS.wav",
+      "sha256": "dc13d7b2c94c620cb6ffa74e42a84605e9d83553aeb18776d2ac231580c1409e",
+      "group": "buy-coin-toss",
+      "description": "Coin transaction accent with a bright metallic toss and clean ringing finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 206675
+        },
+        {
+          "id": "02",
+          "start_frame": 312573,
+          "end_frame": 544474
+        },
+        {
+          "id": "03",
+          "start_frame": 649734,
+          "end_frame": 863297
+        },
+        {
+          "id": "04",
+          "start_frame": 961713,
+          "end_frame": 1161600
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_BUY-Deal_B00M_MUIDS.wav",
+      "sha256": "480eaabef4a1b0ea7a25da803df64f95f268a987b83868560be0571bc4670214",
+      "group": "buy-deal",
+      "description": "Coin transaction accent with bright metallic clinks and a satisfying tonal finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 106259
+        },
+        {
+          "id": "02",
+          "start_frame": 222717,
+          "end_frame": 329954
+        },
+        {
+          "id": "03",
+          "start_frame": 445469,
+          "end_frame": 550590
+        },
+        {
+          "id": "04",
+          "start_frame": 643115,
+          "end_frame": 746089
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_BUY-Shopping_B00M_MUIDS.wav",
+      "sha256": "c4ba04370af44c19f5f15e882c0211a7738d66a6a2b4c5565d0bd89f6378c153",
+      "group": "buy-shopping",
+      "description": "Coin transaction accent with layered metallic chatter and polished resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 158165
+        },
+        {
+          "id": "02",
+          "start_frame": 291044,
+          "end_frame": 436435
+        },
+        {
+          "id": "03",
+          "start_frame": 574467,
+          "end_frame": 717822
+        },
+        {
+          "id": "04",
+          "start_frame": 859356,
+          "end_frame": 1031543
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_SELL-Bag Of Coin_B00M_MUIDS.wav",
+      "sha256": "8476e88343534efde7cd5c25e2cab2a83bb7757fc8bed97f522db583e3c2be57",
+      "group": "sell-bag-of-coin",
+      "description": "Coin transaction accent with shifting metallic weight and muted clattering.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 152231
+        },
+        {
+          "id": "02",
+          "start_frame": 264889,
+          "end_frame": 380902
+        },
+        {
+          "id": "03",
+          "start_frame": 489754,
+          "end_frame": 644067
+        },
+        {
+          "id": "04",
+          "start_frame": 774099,
+          "end_frame": 912000
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_SELL-Deal_B00M_MUIDS.wav",
+      "sha256": "2ad756a1d93006064421b372feb8bc2cf313ecd960b9b4041c2d4009342fcf14",
+      "group": "sell-deal",
+      "description": "Coin transaction accent with crisp metallic contacts and a balanced tonal flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 83205
+        },
+        {
+          "id": "02",
+          "start_frame": 187491,
+          "end_frame": 265512
+        },
+        {
+          "id": "03",
+          "start_frame": 366253,
+          "end_frame": 442185
+        },
+        {
+          "id": "04",
+          "start_frame": 526002,
+          "end_frame": 638078
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_SELL-Salesman_B00M_MUIDS.wav",
+      "sha256": "4fa06e0c502551dd9c055575189003066451ec020f3fe423a6979b344883e353",
+      "group": "sell-salesman",
+      "description": "Coin transaction accent with layered clinks and warm metallic resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 152281
+        },
+        {
+          "id": "02",
+          "start_frame": 286121,
+          "end_frame": 433479
+        },
+        {
+          "id": "03",
+          "start_frame": 551771,
+          "end_frame": 675609
+        },
+        {
+          "id": "04",
+          "start_frame": 809337,
+          "end_frame": 980408
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/OBJCoin_SELL-Shopping_B00M_MUIDS.wav",
+      "sha256": "65b9ed0a7f15b06591daa4197dd181e79ed023ec91a7a3abb4c65df4328a1fa6",
+      "group": "sell-shopping",
+      "description": "Coin transaction accent with lively metallic movement and gentle ringing detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 139102
+        },
+        {
+          "id": "02",
+          "start_frame": 245636,
+          "end_frame": 364316
+        },
+        {
+          "id": "03",
+          "start_frame": 455243,
+          "end_frame": 599403
+        },
+        {
+          "id": "04",
+          "start_frame": 684091,
+          "end_frame": 828625
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Availible_B00M_MUIDS.wav",
+      "sha256": "858b93792867871d51ee9aff23a5b398efd4c01222c145ec86be7ecb265b19f2",
+      "group": "focus-availible",
+      "description": "Inviting focus accent with a crisp pulse and light harmonic sparkle.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 44145
+        },
+        {
+          "id": "02",
+          "start_frame": 134868,
+          "end_frame": 159485
+        },
+        {
+          "id": "03",
+          "start_frame": 245366,
+          "end_frame": 270447
+        },
+        {
+          "id": "04",
+          "start_frame": 357192,
+          "end_frame": 393600
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Backend_B00M_MUIDS.wav",
+      "sha256": "31146d93e5576c8455a5b9eb3913a196d5d843e4f72c080bbc594cd213e44a69",
+      "group": "focus-backend",
+      "description": "Subdued focus accent with a muted transient fading into a soft atmospheric tail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 44868
+        },
+        {
+          "id": "02",
+          "start_frame": 174276,
+          "end_frame": 206256
+        },
+        {
+          "id": "03",
+          "start_frame": 336704,
+          "end_frame": 364606
+        },
+        {
+          "id": "04",
+          "start_frame": 506957,
+          "end_frame": 537417
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Chooser_B00M_MUIDS.wav",
+      "sha256": "6be47f5f54feba75eb2067f15fabd47902ee8b9990a16893965647050ddfef43",
+      "group": "focus-chooser",
+      "description": "Rounded magical focus accent blooming into delicate sparkling overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 34303
+        },
+        {
+          "id": "02",
+          "start_frame": 130676,
+          "end_frame": 158097
+        },
+        {
+          "id": "03",
+          "start_frame": 265694,
+          "end_frame": 292922
+        },
+        {
+          "id": "04",
+          "start_frame": 404027,
+          "end_frame": 450638
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Clicker_B00M_MUIDS.wav",
+      "sha256": "e568ee752703dd015520ee535c2a7d07f50af877f9e77979ed48d35d9f3558fe",
+      "group": "focus-clicker",
+      "description": "Dry mechanical focus accent with a tight click and subtle magical resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 46594
+        },
+        {
+          "id": "02",
+          "start_frame": 131156,
+          "end_frame": 156912
+        },
+        {
+          "id": "03",
+          "start_frame": 247225,
+          "end_frame": 271479
+        },
+        {
+          "id": "04",
+          "start_frame": 357101,
+          "end_frame": 393600
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Front_B00M_MUIDS.wav",
+      "sha256": "8185a05d467ad3073663ce6b931495475296e431e0a0fd6428bf94e01858c9c7",
+      "group": "focus-front",
+      "description": "Clear focus accent with a crisp attack settling into a restrained tonal shimmer.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 46050
+        },
+        {
+          "id": "02",
+          "start_frame": 132737,
+          "end_frame": 171164
+        },
+        {
+          "id": "03",
+          "start_frame": 272832,
+          "end_frame": 309844
+        },
+        {
+          "id": "04",
+          "start_frame": 426221,
+          "end_frame": 469628
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Hover_B00M_MUIDS.wav",
+      "sha256": "57ee2f397e4dbc47746bad8ca08cd1e010a3e88b346fb79f7033695567f41b55",
+      "group": "focus-hover",
+      "description": "Delicate focus accent with a light tonal flicker rising into a brief airy trail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 61785
+        },
+        {
+          "id": "02",
+          "start_frame": 190093,
+          "end_frame": 238649
+        },
+        {
+          "id": "03",
+          "start_frame": 369517,
+          "end_frame": 425146
+        },
+        {
+          "id": "04",
+          "start_frame": 550875,
+          "end_frame": 598830
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Main Menu_B00M_MUIDS.wav",
+      "sha256": "5b466d04e87772d7f6aa370477b93218ea43d4ff6e6d791821dbb5df34c8de03",
+      "group": "focus-main-menu",
+      "description": "Polished magical focus accent with a compact pulse blooming into a soft shimmering finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 33169
+        },
+        {
+          "id": "02",
+          "start_frame": 122813,
+          "end_frame": 148212
+        },
+        {
+          "id": "03",
+          "start_frame": 253855,
+          "end_frame": 278818
+        },
+        {
+          "id": "04",
+          "start_frame": 390966,
+          "end_frame": 426917
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_FOCUS-Noted_B00M_MUIDS.wav",
+      "sha256": "241873dddd772df7be339e4413d0bedabbdf4fd5e3a2682207a4adc66e2fd547",
+      "group": "focus-noted",
+      "description": "Bright focus accent with a clean ringing tone and smooth natural decay.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 92094
+        },
+        {
+          "id": "02",
+          "start_frame": 200164,
+          "end_frame": 293468
+        },
+        {
+          "id": "03",
+          "start_frame": 397971,
+          "end_frame": 490680
+        },
+        {
+          "id": "04",
+          "start_frame": 584833,
+          "end_frame": 701928
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Arcane_B00M_MUIDS.wav",
+      "sha256": "a99e7632ee12ff6b8ee8c5dc826acc952153b990d87c1f2852eb09b7a16a499a",
+      "group": "select-arcane",
+      "description": "Mysterious selection accent with dark spectral textures and flickering upper harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 164870
+        },
+        {
+          "id": "02",
+          "start_frame": 268252,
+          "end_frame": 416872
+        },
+        {
+          "id": "03",
+          "start_frame": 527419,
+          "end_frame": 677650
+        },
+        {
+          "id": "04",
+          "start_frame": 772720,
+          "end_frame": 927204
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Choice_B00M_MUIDS.wav",
+      "sha256": "b2d29265de5c390b48d35a68194ce5402d76cb64c574e464bec3aca06d1541ba",
+      "group": "select-choice",
+      "description": "Balanced selection accent with a crystalline ping and restrained harmonic decay.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 53967
+        },
+        {
+          "id": "02",
+          "start_frame": 160867,
+          "end_frame": 208620
+        },
+        {
+          "id": "03",
+          "start_frame": 339729,
+          "end_frame": 390298
+        },
+        {
+          "id": "04",
+          "start_frame": 501840,
+          "end_frame": 581099
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Chosen_B00M_MUIDS.wav",
+      "sha256": "513eac49256a937a9b02caf05792d687d58ea2017a620be134fc4b9e3fa72464",
+      "group": "select-chosen",
+      "description": "Resolved selection accent with a clean tonal bloom and gentle lingering shimmer.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 148319
+        },
+        {
+          "id": "02",
+          "start_frame": 231912,
+          "end_frame": 376836
+        },
+        {
+          "id": "03",
+          "start_frame": 468378,
+          "end_frame": 613310
+        },
+        {
+          "id": "04",
+          "start_frame": 703832,
+          "end_frame": 877361
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Enter_B00M_MUIDS.wav",
+      "sha256": "0327321cf9ba56c18abacee1f3d7314eabb01617d1f65a2cfae2eca19d35b42a",
+      "group": "select-enter",
+      "description": "Confident selection accent with a firm magical strike expanding into bright harmonics.",
+      "boundary_source": "manual",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 117127
+        },
+        {
+          "id": "02",
+          "start_frame": 203998,
+          "end_frame": 318639
+        },
+        {
+          "id": "03",
+          "start_frame": 391346,
+          "end_frame": 512962
+        },
+        {
+          "id": "04",
+          "start_frame": 542259,
+          "end_frame": 660586
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Hallowed_B00M_MUIDS.wav",
+      "sha256": "2f0887ff4fc62bb1e7552bb677e9b27cea8499e2fbf5c4a188a892654c9b78b0",
+      "group": "select-hallowed",
+      "description": "Solemn selection accent with rich resonance and lingering ethereal overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 285919
+        },
+        {
+          "id": "02",
+          "start_frame": 429263,
+          "end_frame": 673653
+        },
+        {
+          "id": "03",
+          "start_frame": 871566,
+          "end_frame": 1121882
+        },
+        {
+          "id": "04",
+          "start_frame": 1300278,
+          "end_frame": 1569975
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Open Up_B00M_MUIDS.wav",
+      "sha256": "90a810460d185a3c7cb79132661bc41a40cd8ea2983c85e3b724173c1147152a",
+      "group": "select-open-up",
+      "description": "Expanding selection accent unfolding through airy textures and delicate magical detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 104062
+        },
+        {
+          "id": "02",
+          "start_frame": 211999,
+          "end_frame": 312400
+        },
+        {
+          "id": "03",
+          "start_frame": 406013,
+          "end_frame": 528859
+        },
+        {
+          "id": "04",
+          "start_frame": 626650,
+          "end_frame": 787200
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Tricked_B00M_MUIDS.wav",
+      "sha256": "aa28d04daa55f4c9a662942ccd86e0f6dd89dc1f26f7b1fdf3139396ad219ed6",
+      "group": "select-tricked",
+      "description": "Twisted magical selection accent with an uneasy transient and brief tonal flutter.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 56295
+        },
+        {
+          "id": "02",
+          "start_frame": 172693,
+          "end_frame": 220501
+        },
+        {
+          "id": "03",
+          "start_frame": 349470,
+          "end_frame": 397392
+        },
+        {
+          "id": "04",
+          "start_frame": 542922,
+          "end_frame": 590844
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIClick_SELECT-Welcome_B00M_MUIDS.wav",
+      "sha256": "d30bf7c1f450999575abd5a6286f3a1370392667b702db9e43c5932c910de65c",
+      "group": "select-welcome",
+      "description": "Warm selection accent with a rounded pulse and inviting tonal flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 148776
+        },
+        {
+          "id": "02",
+          "start_frame": 265156,
+          "end_frame": 419936
+        },
+        {
+          "id": "03",
+          "start_frame": 554469,
+          "end_frame": 685792
+        },
+        {
+          "id": "04",
+          "start_frame": 814291,
+          "end_frame": 964825
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Anvil_B00M_MUIDS.wav",
+      "sha256": "15ad2b66389d530f0f4612dbf9cbbac659cd00cbee5a23d99556bb998ffddbaf",
+      "group": "confirm-anvil",
+      "description": "Dense metallic confirmation accent with a weighty strike and rich ringing overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 221602
+        },
+        {
+          "id": "02",
+          "start_frame": 362616,
+          "end_frame": 564134
+        },
+        {
+          "id": "03",
+          "start_frame": 689226,
+          "end_frame": 917601
+        },
+        {
+          "id": "04",
+          "start_frame": 1036880,
+          "end_frame": 1253215
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Cleared_B00M_MUIDS.wav",
+      "sha256": "94f4db5051717e5e024d970617b3e3f9b5fed81ecbacd3930f155f539842fbbb",
+      "group": "confirm-cleared",
+      "description": "Clean confirmation accent opening into a light harmonic shimmer.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 80152
+        },
+        {
+          "id": "02",
+          "start_frame": 211816,
+          "end_frame": 289988
+        },
+        {
+          "id": "03",
+          "start_frame": 427152,
+          "end_frame": 495999
+        },
+        {
+          "id": "04",
+          "start_frame": 636627,
+          "end_frame": 739200
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Dusted_B00M_MUIDS.wav",
+      "sha256": "4b75d96bc38b69e0c2ac895f4a0784f2ffc196c943e5103bd141dae6166545de",
+      "group": "confirm-dusted",
+      "description": "Dry confirmation accent dispersing into soft dusty particles and muted tonal detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 69703
+        },
+        {
+          "id": "02",
+          "start_frame": 296460,
+          "end_frame": 357157
+        },
+        {
+          "id": "03",
+          "start_frame": 568932,
+          "end_frame": 633439
+        },
+        {
+          "id": "04",
+          "start_frame": 854394,
+          "end_frame": 914652
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Ember Tap_B00M_MUIDS.wav",
+      "sha256": "7b546687d92da6c4c7843b6aa73ac407515333f4d240cbf825ef15f0e07543e9",
+      "group": "confirm-ember-tap",
+      "description": "Warm confirmation accent combining a compact tap with subtle glowing textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 219009
+        },
+        {
+          "id": "02",
+          "start_frame": 318060,
+          "end_frame": 522918
+        },
+        {
+          "id": "03",
+          "start_frame": 627297,
+          "end_frame": 824660
+        },
+        {
+          "id": "04",
+          "start_frame": 943124,
+          "end_frame": 1185741
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Locked_B00M_MUIDS.wav",
+      "sha256": "4ad98d56cd16d6177d073a76f234709b756275bb37b5cde1a6395bc20b892e9f",
+      "group": "confirm-locked",
+      "description": "Firm confirmation accent with a mechanical latch and restrained metallic resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 242341
+        },
+        {
+          "id": "02",
+          "start_frame": 335534,
+          "end_frame": 572358
+        },
+        {
+          "id": "03",
+          "start_frame": 676746,
+          "end_frame": 909258
+        },
+        {
+          "id": "04",
+          "start_frame": 1005211,
+          "end_frame": 1275090
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Ready_B00M_MUIDS.wav",
+      "sha256": "be66615d411a77172accc91f6a6b451505d50d996e4eb2d9f2c1eecf0ae5fcd6",
+      "group": "confirm-ready",
+      "description": "Clear confirmation accent with a concise strike and bright tonal finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 153129
+        },
+        {
+          "id": "02",
+          "start_frame": 245502,
+          "end_frame": 384846
+        },
+        {
+          "id": "03",
+          "start_frame": 474631,
+          "end_frame": 614989
+        },
+        {
+          "id": "04",
+          "start_frame": 683188,
+          "end_frame": 857056
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Soft Shine_B00M_MUIDS.wav",
+      "sha256": "d042c84032f048d0b2107ab7782b601bd9c2d767197db1b4d587f9e00be43a62",
+      "group": "confirm-soft-shine",
+      "description": "Gentle confirmation accent with a luminous strike and delicate shimmering finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 143725
+        },
+        {
+          "id": "02",
+          "start_frame": 287165,
+          "end_frame": 410663
+        },
+        {
+          "id": "03",
+          "start_frame": 559840,
+          "end_frame": 681649
+        },
+        {
+          "id": "04",
+          "start_frame": 830140,
+          "end_frame": 977700
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_CONFIRM-Whisp_B00M_MUIDS.wav",
+      "sha256": "91e8cccf8fab828ead9e50506bb2231e779ce40f829cf13667290e9567a5a487",
+      "group": "confirm-whisp",
+      "description": "Airy confirmation accent drifting through soft spectral textures before fading naturally.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 278356
+        },
+        {
+          "id": "02",
+          "start_frame": 392950,
+          "end_frame": 658718
+        },
+        {
+          "id": "03",
+          "start_frame": 776542,
+          "end_frame": 1044193
+        },
+        {
+          "id": "04",
+          "start_frame": 1165155,
+          "end_frame": 1478400
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_INVALID-Blocked_B00M_MUIDS.wav",
+      "sha256": "c27a1f548eacb755514cf3a5b5cedd265b42e2fd1d14be11c33154818b4227fc",
+      "group": "invalid-blocked",
+      "description": "Heavy invalid accent closing with a dense mechanical impact and short finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 186666
+        },
+        {
+          "id": "02",
+          "start_frame": 306940,
+          "end_frame": 484048
+        },
+        {
+          "id": "03",
+          "start_frame": 598557,
+          "end_frame": 760969
+        },
+        {
+          "id": "04",
+          "start_frame": 885947,
+          "end_frame": 1084800
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_INVALID-Denial_B00M_MUIDS.wav",
+      "sha256": "01676d45205041aaae7077aa97fcc7ec4cb0221f05ffac4e1fcb9a209c2405e1",
+      "group": "invalid-denial",
+      "description": "Dark invalid accent descending into a subdued tonal ending.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 66788
+        },
+        {
+          "id": "02",
+          "start_frame": 182239,
+          "end_frame": 226929
+        },
+        {
+          "id": "03",
+          "start_frame": 359339,
+          "end_frame": 403068
+        },
+        {
+          "id": "04",
+          "start_frame": 525169,
+          "end_frame": 561397
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_INVALID-No Way_B00M_MUIDS.wav",
+      "sha256": "f09929d77d623672c9c73e5c11d8968d9ea5853fd5585fa28b54d489aeeb5be0",
+      "group": "invalid-no-way",
+      "description": "Abrupt invalid accent cutting sharply into a short muted decay.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 144933
+        },
+        {
+          "id": "02",
+          "start_frame": 244798,
+          "end_frame": 379997
+        },
+        {
+          "id": "03",
+          "start_frame": 483803,
+          "end_frame": 612911
+        },
+        {
+          "id": "04",
+          "start_frame": 713076,
+          "end_frame": 863873
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_INVALID-Rejected_B00M_MUIDS.wav",
+      "sha256": "34fa0dadcb034338fa76428f9d273e7b431ca5732289a592bdf0c98fd825564c",
+      "group": "invalid-rejected",
+      "description": "Firm invalid accent with a blunt attack and restrained low-frequency finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 105886
+        },
+        {
+          "id": "02",
+          "start_frame": 198551,
+          "end_frame": 285167
+        },
+        {
+          "id": "03",
+          "start_frame": 377078,
+          "end_frame": 469924
+        },
+        {
+          "id": "04",
+          "start_frame": 563698,
+          "end_frame": 669335
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP CLOSE-Discover_B00M_MUIDS.wav",
+      "sha256": "0f2615ed2c8228ed2048973090cf003bf40d5a8264c6bc8fdc3ca538fbe6714f",
+      "group": "map-close-discover",
+      "description": "Map closing accent with folded parchment textures and a smooth tonal finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 160508
+        },
+        {
+          "id": "02",
+          "start_frame": 281930,
+          "end_frame": 426168
+        },
+        {
+          "id": "03",
+          "start_frame": 553405,
+          "end_frame": 697089
+        },
+        {
+          "id": "04",
+          "start_frame": 842557,
+          "end_frame": 971305
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP CLOSE-Kalimdor_B00M_MUIDS.wav",
+      "sha256": "0e8e59801a13b6b5db14c120f21e7290a62e7a18d80bbeae328041abc5756a88",
+      "group": "map-close-kalimdor",
+      "description": "Map closing accent with textured folds and restrained magical harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 110508
+        },
+        {
+          "id": "02",
+          "start_frame": 210037,
+          "end_frame": 308162
+        },
+        {
+          "id": "03",
+          "start_frame": 378414,
+          "end_frame": 485638
+        },
+        {
+          "id": "04",
+          "start_frame": 564177,
+          "end_frame": 657595
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP CLOSE-Lost Track_B00M_MUIDS.wav",
+      "sha256": "4861fbe654434ab69bd74187577c7c4fd08d953ed10d0ae8f78e6c0407ce5013",
+      "group": "map-close-lost-track",
+      "description": "Map closing accent with soft paper movement settling into gentle resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 240034
+        },
+        {
+          "id": "02",
+          "start_frame": 341120,
+          "end_frame": 563829
+        },
+        {
+          "id": "03",
+          "start_frame": 680861,
+          "end_frame": 902901
+        },
+        {
+          "id": "04",
+          "start_frame": 1013629,
+          "end_frame": 1273520
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP CLOSE-Shadowpeak Chronicles_B00M_MUIDS.wav",
+      "sha256": "8db04d148045c2e7cd14fe9a2698014f0cd81b28c4c927b9bd7911f33c22e298",
+      "group": "map-close-shadowpeak-chronicles",
+      "description": "Map closing accent with broad parchment movement fading into a soft magical tail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 101222
+        },
+        {
+          "id": "02",
+          "start_frame": 216304,
+          "end_frame": 291240
+        },
+        {
+          "id": "03",
+          "start_frame": 394257,
+          "end_frame": 478297
+        },
+        {
+          "id": "04",
+          "start_frame": 594628,
+          "end_frame": 700800
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP OPEN-Albion_B00M_MUIDS.wav",
+      "sha256": "21b09b13cc395d46ef4f7b8eb8bb86193e3d58b17772e7411082abe1b1417ee2",
+      "group": "map-open-albion",
+      "description": "Map opening accent blending textured paper folds with bright shimmering tones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 136792
+        },
+        {
+          "id": "02",
+          "start_frame": 303234,
+          "end_frame": 429159
+        },
+        {
+          "id": "03",
+          "start_frame": 596969,
+          "end_frame": 720585
+        },
+        {
+          "id": "04",
+          "start_frame": 894948,
+          "end_frame": 1017864
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP OPEN-Discover_B00M_MUIDS.wav",
+      "sha256": "a268d3abf4696db4accdd34f0e5ea84674fbd71ba676fb2a35370848889abe73",
+      "group": "map-open-discover",
+      "description": "Map opening accent with unfolding magical textures and spacious harmonic detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 142663
+        },
+        {
+          "id": "02",
+          "start_frame": 285503,
+          "end_frame": 423506
+        },
+        {
+          "id": "03",
+          "start_frame": 564017,
+          "end_frame": 694956
+        },
+        {
+          "id": "04",
+          "start_frame": 839117,
+          "end_frame": 998748
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP OPEN-Lost Track_B00M_MUIDS.wav",
+      "sha256": "7a7d5512cee89620850878e9bbf962f50ab71243c3b59822789192e27f57e40e",
+      "group": "map-open-lost-track",
+      "description": "Map opening accent with soft parchment movement and subtle magical resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 290555
+        },
+        {
+          "id": "02",
+          "start_frame": 397971,
+          "end_frame": 656134
+        },
+        {
+          "id": "03",
+          "start_frame": 765857,
+          "end_frame": 1032742
+        },
+        {
+          "id": "04",
+          "start_frame": 1126998,
+          "end_frame": 1425165
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MAP OPEN-Shadowpeak Chronicles_B00M_MUIDS.wav",
+      "sha256": "26caddeed31049ab417dea842fc04b55b6ccfdcd997664e03980abd54f1bf158",
+      "group": "map-open-shadowpeak-chronicles",
+      "description": "Map opening accent with broad magical swells and rich parchment textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 178486
+        },
+        {
+          "id": "02",
+          "start_frame": 298085,
+          "end_frame": 444638
+        },
+        {
+          "id": "03",
+          "start_frame": 558015,
+          "end_frame": 717528
+        },
+        {
+          "id": "04",
+          "start_frame": 835806,
+          "end_frame": 992492
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE LARGE-Departure_B00M_MUIDS.wav",
+      "sha256": "7e150cce4b0f21dc1b801bf683263e7e9353508d576ecbafd96647963b28fcf8",
+      "group": "menu-close-large-departure",
+      "description": "Large menu closing with receding magical textures and a smooth tonal fade.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 117260
+        },
+        {
+          "id": "02",
+          "start_frame": 338236,
+          "end_frame": 445338
+        },
+        {
+          "id": "03",
+          "start_frame": 674101,
+          "end_frame": 779546
+        },
+        {
+          "id": "04",
+          "start_frame": 1031185,
+          "end_frame": 1131151
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE LARGE-Forbidden Room_B00M_MUIDS.wav",
+      "sha256": "1bd57f9ccb1d39ff307f2cedec9def06fff775f0a9cfb391cf49cd4b9c291713",
+      "group": "menu-close-large-forbidden-room",
+      "description": "Large menu closing with deep spectral tones settling into a restrained finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 244805
+        },
+        {
+          "id": "02",
+          "start_frame": 398554,
+          "end_frame": 637124
+        },
+        {
+          "id": "03",
+          "start_frame": 812173,
+          "end_frame": 1088568
+        },
+        {
+          "id": "04",
+          "start_frame": 1217342,
+          "end_frame": 1504582
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE LARGE-Overlord_B00M_MUIDS.wav",
+      "sha256": "2f293e16ca87da73cbe1a8c88e0c4b797e31854743445c7c5959aef3e1537e2f",
+      "group": "menu-close-large-overlord",
+      "description": "Large menu closing with commanding low resonance fading into silence.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 195827
+        },
+        {
+          "id": "02",
+          "start_frame": 294846,
+          "end_frame": 492000
+        },
+        {
+          "id": "03",
+          "start_frame": 580844,
+          "end_frame": 774399
+        },
+        {
+          "id": "04",
+          "start_frame": 872807,
+          "end_frame": 1090980
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE LARGE-Watch Tower_B00M_MUIDS.wav",
+      "sha256": "6e9ca8221942fb3a50b9d5daf0c93dfe93770cf3d20bc590bcf3f73698ecd8d6",
+      "group": "menu-close-large-watch-tower",
+      "description": "Large menu closing with spacious resonance folding into a gentle finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 183702
+        },
+        {
+          "id": "02",
+          "start_frame": 304394,
+          "end_frame": 464512
+        },
+        {
+          "id": "03",
+          "start_frame": 581765,
+          "end_frame": 756455
+        },
+        {
+          "id": "04",
+          "start_frame": 860804,
+          "end_frame": 1065600
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE SMALL-Ancient Scroll_B00M_MUIDS.wav",
+      "sha256": "3b1940b0622337f2071457aeb741fca93c1cead93a5d9d34fd673783d33a8292",
+      "group": "menu-close-small-ancient-scroll",
+      "description": "Small menu closing combining parchment folds with a soft dusty flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 93200
+        },
+        {
+          "id": "02",
+          "start_frame": 208983,
+          "end_frame": 284574
+        },
+        {
+          "id": "03",
+          "start_frame": 394068,
+          "end_frame": 466289
+        },
+        {
+          "id": "04",
+          "start_frame": 572960,
+          "end_frame": 672000
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE SMALL-Hollow_B00M_MUIDS.wav",
+      "sha256": "743fdcd01949e449593f4cb953191051c60deae99bbc47bf9839cd7dfcda0772",
+      "group": "menu-close-small-hollow",
+      "description": "Small menu closing with a hollow tonal character and restrained resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 53969
+        },
+        {
+          "id": "02",
+          "start_frame": 133527,
+          "end_frame": 175537
+        },
+        {
+          "id": "03",
+          "start_frame": 253284,
+          "end_frame": 295913
+        },
+        {
+          "id": "04",
+          "start_frame": 385554,
+          "end_frame": 429579
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE SMALL-Mystique_B00M_MUIDS.wav",
+      "sha256": "289396a3a03972f2176ad536c6cef3f44614f5614e4250c629b97ff21731e379",
+      "group": "menu-close-small-mystique",
+      "description": "Small menu closing with fading spectral textures and gentle harmonic decay.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 86873
+        },
+        {
+          "id": "02",
+          "start_frame": 234671,
+          "end_frame": 311797
+        },
+        {
+          "id": "03",
+          "start_frame": 460219,
+          "end_frame": 536593
+        },
+        {
+          "id": "04",
+          "start_frame": 686562,
+          "end_frame": 764807
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU CLOSE SMALL-Skilltree_B00M_MUIDS.wav",
+      "sha256": "c3d461ed27879068ed35ea961903e29b078b0d3d621d0b9a6e80579553df73ba",
+      "group": "menu-close-small-skilltree",
+      "description": "Small menu closing with compact magical tones settling into a clean finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 159649
+        },
+        {
+          "id": "02",
+          "start_frame": 335883,
+          "end_frame": 465487
+        },
+        {
+          "id": "03",
+          "start_frame": 668789,
+          "end_frame": 820965
+        },
+        {
+          "id": "04",
+          "start_frame": 1002359,
+          "end_frame": 1123005
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN LARGE-Arrival_B00M_MUIDS.wav",
+      "sha256": "37706c91640b5f15993848ef9b56f85d1cf3a1bc5b3156d3c3a490fa033621da",
+      "group": "menu-open-large-arrival",
+      "description": "Large menu opening with a broad magical swell unfolding into rich harmonic layers.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 109405
+        },
+        {
+          "id": "02",
+          "start_frame": 360776,
+          "end_frame": 463278
+        },
+        {
+          "id": "03",
+          "start_frame": 702345,
+          "end_frame": 806416
+        },
+        {
+          "id": "04",
+          "start_frame": 1049520,
+          "end_frame": 1157782
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN LARGE-Forbidden Room_B00M_MUIDS.wav",
+      "sha256": "6ba8497311c8d617384e31245c4d340cad7336d2ee20a22d1da8d271c05d4886",
+      "group": "menu-open-large-forbidden-room",
+      "description": "Large menu opening with ominous magical swells and deep spectral resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 300000
+        },
+        {
+          "id": "02",
+          "start_frame": 449057,
+          "end_frame": 716304
+        },
+        {
+          "id": "03",
+          "start_frame": 865903,
+          "end_frame": 1088689
+        },
+        {
+          "id": "04",
+          "start_frame": 1227171,
+          "end_frame": 1457945
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN LARGE-Overlord_B00M_MUIDS.wav",
+      "sha256": "6b7cf9e1a59ffb4e165967d354c53a9e94126dab9d8931a263b2567d96770bf0",
+      "group": "menu-open-large-overlord",
+      "description": "Large menu opening driven by powerful magical pulses and commanding harmonic weight.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 185274
+        },
+        {
+          "id": "02",
+          "start_frame": 292335,
+          "end_frame": 472951
+        },
+        {
+          "id": "03",
+          "start_frame": 580661,
+          "end_frame": 748029
+        },
+        {
+          "id": "04",
+          "start_frame": 855494,
+          "end_frame": 1055585
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN LARGE-Watch Tower_B00M_MUIDS.wav",
+      "sha256": "fd4deaec12c963acb35798a9a304152ab2fb70107eb0263c8f7c43931c956561",
+      "group": "menu-open-large-watch-tower",
+      "description": "Large menu opening with towering resonance and expanding mystical textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 150967
+        },
+        {
+          "id": "02",
+          "start_frame": 268247,
+          "end_frame": 404057
+        },
+        {
+          "id": "03",
+          "start_frame": 584127,
+          "end_frame": 760786
+        },
+        {
+          "id": "04",
+          "start_frame": 879879,
+          "end_frame": 1046400
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN SMALL-Ancient Scroll_B00M_MUIDS.wav",
+      "sha256": "e7683755909b36fc2228fc83353cd806c48527c4af3bb2918a059500211feff0",
+      "group": "menu-open-small-ancient-scroll",
+      "description": "Small menu opening blending parchment textures with delicate magical flourishes.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 101744
+        },
+        {
+          "id": "02",
+          "start_frame": 222858,
+          "end_frame": 319361
+        },
+        {
+          "id": "03",
+          "start_frame": 451047,
+          "end_frame": 536803
+        },
+        {
+          "id": "04",
+          "start_frame": 655245,
+          "end_frame": 787200
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN SMALL-Mystique_B00M_MUIDS.wav",
+      "sha256": "2b623662f5ab63f871e445ed92b8bbee2c79acdb3d50900b0f084fcbcf5df82c",
+      "group": "menu-open-small-mystique",
+      "description": "Small menu opening with soft spectral movement and subtle arcane resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 83281
+        },
+        {
+          "id": "02",
+          "start_frame": 244235,
+          "end_frame": 308009
+        },
+        {
+          "id": "03",
+          "start_frame": 452872,
+          "end_frame": 519092
+        },
+        {
+          "id": "04",
+          "start_frame": 668122,
+          "end_frame": 730591
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN SMALL-Skilltree_B00M_MUIDS.wav",
+      "sha256": "7c434825ec8562df823ae70b8f59a46434a331d74ec08cc7b4e00da150870526",
+      "group": "menu-open-small-skilltree",
+      "description": "Small menu opening accented by branching magical tones and delicate sparkling textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 161240
+        },
+        {
+          "id": "02",
+          "start_frame": 289657,
+          "end_frame": 422881
+        },
+        {
+          "id": "03",
+          "start_frame": 572769,
+          "end_frame": 696241
+        },
+        {
+          "id": "04",
+          "start_frame": 858492,
+          "end_frame": 993881
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_MENU OPEN SMALL-Target_B00M_MUIDS.wav",
+      "sha256": "6d11092ce31235bd22649fc6a3c36f23617eec015eb65b0bbd2a1f809b1a3ffc",
+      "group": "menu-open-small-target",
+      "description": "Focused menu opening with a precise strike and short directional sweep.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 51713
+        },
+        {
+          "id": "02",
+          "start_frame": 115560,
+          "end_frame": 155236
+        },
+        {
+          "id": "03",
+          "start_frame": 230063,
+          "end_frame": 270934
+        },
+        {
+          "id": "04",
+          "start_frame": 342891,
+          "end_frame": 389932
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_NOTIFICATION-Mystic Orb_B00M_MUIDS.wav",
+      "sha256": "0a033fb83465dee017d2682900096afc279f9f36c8aa97ccfdb913ad4c51f2b4",
+      "group": "notification-mystic-orb",
+      "description": "Mystical notification accent blooming into swirling spectral harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 255525
+        },
+        {
+          "id": "02",
+          "start_frame": 423047,
+          "end_frame": 663207
+        },
+        {
+          "id": "03",
+          "start_frame": 800656,
+          "end_frame": 1041273
+        },
+        {
+          "id": "04",
+          "start_frame": 1174311,
+          "end_frame": 1430642
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_NOTIFICATION-Pigeon Post_B00M_MUIDS.wav",
+      "sha256": "41eecab177600fcf8d0d082801ac5ee83d157b86db51a0ac85219ed185196046",
+      "group": "notification-pigeon-post",
+      "description": "Playful notification accent with fluttering textures and a light ringing finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 173207
+        },
+        {
+          "id": "02",
+          "start_frame": 536001,
+          "end_frame": 756968
+        },
+        {
+          "id": "03",
+          "start_frame": 1096770,
+          "end_frame": 1311395
+        },
+        {
+          "id": "04",
+          "start_frame": 1628187,
+          "end_frame": 1820408
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_NOTIFICATION-Rune Ping_B00M_MUIDS.wav",
+      "sha256": "a864139838f587840794473096c087b6f750f9d750ba8c1a1c716fab5bbf3ee7",
+      "group": "notification-rune-ping",
+      "description": "Arcane notification accent with a bright rune-like ping and delicate magical shimmer.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 290733
+        },
+        {
+          "id": "02",
+          "start_frame": 429123,
+          "end_frame": 679833
+        },
+        {
+          "id": "03",
+          "start_frame": 849733,
+          "end_frame": 1104380
+        },
+        {
+          "id": "04",
+          "start_frame": 1247321,
+          "end_frame": 1507437
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_NOTIFICATION-Watch Out_B00M_MUIDS.wav",
+      "sha256": "8eba3ea4de45c634108766cb4274f25cef14ffd734317c3c4a30553d9fe9ad82",
+      "group": "notification-watch-out",
+      "description": "Urgent notification accent with a sharp pulse and focused tonal presence.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 239882
+        },
+        {
+          "id": "02",
+          "start_frame": 357946,
+          "end_frame": 601564
+        },
+        {
+          "id": "03",
+          "start_frame": 709384,
+          "end_frame": 947950
+        },
+        {
+          "id": "04",
+          "start_frame": 1064419,
+          "end_frame": 1300672
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST ACCEPT-Beginning_B00M_MUIDS.wav",
+      "sha256": "b506f955a23fed472ddaaa55c3759d366ed70d29d02aeb3e6e4b1fcc9e0026c0",
+      "group": "quest-accept-beginning",
+      "description": "Quest acceptance accent opening through warm tonal layers and subtle shimmer.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 334184
+        },
+        {
+          "id": "02",
+          "start_frame": 430710,
+          "end_frame": 726932
+        },
+        {
+          "id": "03",
+          "start_frame": 827919,
+          "end_frame": 1125539
+        },
+        {
+          "id": "04",
+          "start_frame": 1256079,
+          "end_frame": 1622135
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST ACCEPT-Journey_B00M_MUIDS.wav",
+      "sha256": "725bb1c262973eed454c4a59e326a95e3e18b66c6ee1513dcde4aa1355e3a014",
+      "group": "quest-accept-journey",
+      "description": "Quest acceptance accent with an adventurous swell and gentle magical flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 350300
+        },
+        {
+          "id": "02",
+          "start_frame": 735600,
+          "end_frame": 1061721
+        },
+        {
+          "id": "03",
+          "start_frame": 1372538,
+          "end_frame": 1674791
+        },
+        {
+          "id": "04",
+          "start_frame": 2085765,
+          "end_frame": 2385357
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST ACCEPT-Start_B00M_MUIDS.wav",
+      "sha256": "9c38dbb5f455fc97a4ad9bc0a569a8ec7c23e845eb470e3412319a14ba1aed4c",
+      "group": "quest-accept-start",
+      "description": "Quest acceptance accent with an inviting magical pulse and confident resolution.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 474447
+        },
+        {
+          "id": "02",
+          "start_frame": 638649,
+          "end_frame": 1106196
+        },
+        {
+          "id": "03",
+          "start_frame": 1266484,
+          "end_frame": 1716932
+        },
+        {
+          "id": "04",
+          "start_frame": 1859487,
+          "end_frame": 2349320
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST ACCEPT-Uncharted Path_B00M_MUIDS.wav",
+      "sha256": "7a823bfd2684fe7bb922ed1d001a7ba47b17791ece91d98eb0a0c74a1d90e497",
+      "group": "quest-accept-uncharted-path",
+      "description": "Quest acceptance accent expanding through mysterious harmonics and airy textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 323210
+        },
+        {
+          "id": "02",
+          "start_frame": 454364,
+          "end_frame": 742834
+        },
+        {
+          "id": "03",
+          "start_frame": 900632,
+          "end_frame": 1202924
+        },
+        {
+          "id": "04",
+          "start_frame": 1366686,
+          "end_frame": 1674082
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST COMPLETE-Complete_B00M_MUIDS.wav",
+      "sha256": "c6309bbedb65403b15e868f33333f6ebac383d0f6959a663b2e4b605ae57d982",
+      "group": "quest-complete-complete",
+      "description": "Quest completion accent with a satisfying harmonic flourish and polished finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 296073
+        },
+        {
+          "id": "02",
+          "start_frame": 375497,
+          "end_frame": 669592
+        },
+        {
+          "id": "03",
+          "start_frame": 771680,
+          "end_frame": 1066522
+        },
+        {
+          "id": "04",
+          "start_frame": 1167829,
+          "end_frame": 1501120
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST COMPLETE-Finish_B00M_MUIDS.wav",
+      "sha256": "8436a07c183670b0ded5f8d3a9a385a36568d635ab7d7fd0c2a943e8a1e32054",
+      "group": "quest-complete-finish",
+      "description": "Quest completion accent resolving through bright magical overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 496213
+        },
+        {
+          "id": "02",
+          "start_frame": 626575,
+          "end_frame": 1113816
+        },
+        {
+          "id": "03",
+          "start_frame": 1240616,
+          "end_frame": 1754143
+        },
+        {
+          "id": "04",
+          "start_frame": 1875858,
+          "end_frame": 2377393
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST COMPLETE-Horizon_B00M_MUIDS.wav",
+      "sha256": "a2a79f939a15b2cb05facc50b5593cd834b1b3945906208f644371d06eaf224c",
+      "group": "quest-complete-horizon",
+      "description": "Quest completion accent expanding into broad luminous harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 633559
+        },
+        {
+          "id": "02",
+          "start_frame": 819878,
+          "end_frame": 1439938
+        },
+        {
+          "id": "03",
+          "start_frame": 1727268,
+          "end_frame": 2307710
+        },
+        {
+          "id": "04",
+          "start_frame": 2566078,
+          "end_frame": 3147176
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST COMPLETE-Uncharted Path_B00M_MUIDS.wav",
+      "sha256": "6a87c48175658ca5f1b102a0c454ed8c9a7c658d958ab7a8c4d87d06b094cb99",
+      "group": "quest-complete-uncharted-path",
+      "description": "Quest completion accent with uplifting magical resonance and a graceful conclusion.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 280579
+        },
+        {
+          "id": "02",
+          "start_frame": 415821,
+          "end_frame": 676923
+        },
+        {
+          "id": "03",
+          "start_frame": 826507,
+          "end_frame": 1079295
+        },
+        {
+          "id": "04",
+          "start_frame": 1213459,
+          "end_frame": 1466160
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST FAIL-Game Over_B00M_MUIDS.wav",
+      "sha256": "d77dc2fbe916b55d5d24c4976824ab1e48a4b3777c7973a88b2300df814509ce",
+      "group": "quest-fail-game-over",
+      "description": "Quest failure accent with a dark descending tone and restrained ending.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 862724
+        },
+        {
+          "id": "02",
+          "start_frame": 1036002,
+          "end_frame": 1841925
+        },
+        {
+          "id": "03",
+          "start_frame": 2080743,
+          "end_frame": 2924874
+        },
+        {
+          "id": "04",
+          "start_frame": 3162441,
+          "end_frame": 3974149
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST FAIL-Nemesis_B00M_MUIDS.wav",
+      "sha256": "8a02c3daaa3ad7b519c4feb48ad42847e07479cee9095e29eaaa645af6b790c5",
+      "group": "quest-fail-nemesis",
+      "description": "Quest failure accent combining tense harmonics with a weighty magical finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 910356
+        },
+        {
+          "id": "02",
+          "start_frame": 1139781,
+          "end_frame": 2030074
+        },
+        {
+          "id": "03",
+          "start_frame": 2230894,
+          "end_frame": 3125895
+        },
+        {
+          "id": "04",
+          "start_frame": 3321746,
+          "end_frame": 4275812
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST FAIL-Reprise_B00M_MUIDS.wav",
+      "sha256": "005cca224dc41f9ed3c6f65bf3f919a5c021a9dc4912426942ea7b9a12ab84a1",
+      "group": "quest-fail-reprise",
+      "description": "Quest failure accent fading through sombre resonance and muted tonal layers.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 470437
+        },
+        {
+          "id": "02",
+          "start_frame": 757156,
+          "end_frame": 1229129
+        },
+        {
+          "id": "03",
+          "start_frame": 1482972,
+          "end_frame": 1943485
+        },
+        {
+          "id": "04",
+          "start_frame": 2136668,
+          "end_frame": 2621143
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_QUEST FAIL-Uncharted Path_B00M_MUIDS.wav",
+      "sha256": "c06ef25a183903317fc248e81ffc2cd60ac577be9c3493655eaeae9b41c97704",
+      "group": "quest-fail-uncharted-path",
+      "description": "Quest failure accent collapsing into dark magical textures and a subdued finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 473867
+        },
+        {
+          "id": "02",
+          "start_frame": 671691,
+          "end_frame": 1096706
+        },
+        {
+          "id": "03",
+          "start_frame": 1311040,
+          "end_frame": 1775351
+        },
+        {
+          "id": "04",
+          "start_frame": 1971977,
+          "end_frame": 2349410
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD MAGIC-Blue Drop_B00M_MUIDS.wav",
+      "sha256": "dbd55d0d8b02acb40b36134d2095ee5aae9cb2f4cf1a02d068af344cc13c3fd1",
+      "group": "reward-magic-blue-drop",
+      "description": "Magical reward accent with cool shimmering tones and airy resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 595638
+        },
+        {
+          "id": "02",
+          "start_frame": 718091,
+          "end_frame": 1306898
+        },
+        {
+          "id": "03",
+          "start_frame": 1423977,
+          "end_frame": 2013982
+        },
+        {
+          "id": "04",
+          "start_frame": 2132945,
+          "end_frame": 2705118
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD MAGIC-Druids Runes_B00M_MUIDS.wav",
+      "sha256": "f6793f01d40d4ee5de42f2acefdf0cd4c57da2399b470e8afd86cc635f05758b",
+      "group": "reward-magic-druids-runes",
+      "description": "Magical reward accent blending mystical pulses with glowing harmonic textures.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 373144
+        },
+        {
+          "id": "02",
+          "start_frame": 515744,
+          "end_frame": 859261
+        },
+        {
+          "id": "03",
+          "start_frame": 993262,
+          "end_frame": 1316612
+        },
+        {
+          "id": "04",
+          "start_frame": 1452169,
+          "end_frame": 1833600
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD MAGIC-Gem Stone_B00M_MUIDS.wav",
+      "sha256": "5213ec34247413feb4e4674ea771012483a419602d9703da67568a974c188ac4",
+      "group": "reward-magic-gem-stone",
+      "description": "Magical reward accent with crystalline resonance and radiant harmonic detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 386863
+        },
+        {
+          "id": "02",
+          "start_frame": 529872,
+          "end_frame": 857830
+        },
+        {
+          "id": "03",
+          "start_frame": 987681,
+          "end_frame": 1321722
+        },
+        {
+          "id": "04",
+          "start_frame": 1444927,
+          "end_frame": 1834848
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD MAGIC-Wizardry_B00M_MUIDS.wav",
+      "sha256": "7eb5e8bc72f2e27dae5860700c3f0bb781cfc142b157d03d6f03d47efe338ee5",
+      "group": "reward-magic-wizardry",
+      "description": "Magical reward accent unfolding through layered arcane textures and soft chimes.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 488766
+        },
+        {
+          "id": "02",
+          "start_frame": 628254,
+          "end_frame": 1053141
+        },
+        {
+          "id": "03",
+          "start_frame": 1201655,
+          "end_frame": 1639304
+        },
+        {
+          "id": "04",
+          "start_frame": 1789286,
+          "end_frame": 2197416
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD NORMAL-Gilded Gift_B00M_MUIDS.wav",
+      "sha256": "23aad60bea552eec5112b11f188d8b409eefa815a4efb50900e6fb7b2fd01e25",
+      "group": "reward-normal-gilded-gift",
+      "description": "Standard reward accent with warm shimmering tones and delicate metallic sparkle.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 368711
+        },
+        {
+          "id": "02",
+          "start_frame": 484760,
+          "end_frame": 821603
+        },
+        {
+          "id": "03",
+          "start_frame": 956303,
+          "end_frame": 1298633
+        },
+        {
+          "id": "04",
+          "start_frame": 1419558,
+          "end_frame": 1753298
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD NORMAL-Green Drop_B00M_MUIDS.wav",
+      "sha256": "896b9ff3de8daafbb33179130e3e7c0fac19d41ab2e1e4104a52754fb87950f6",
+      "group": "reward-normal-green-drop",
+      "description": "Standard reward accent with a light crystalline bloom and polished finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 590324
+        },
+        {
+          "id": "02",
+          "start_frame": 758029,
+          "end_frame": 1358191
+        },
+        {
+          "id": "03",
+          "start_frame": 1504831,
+          "end_frame": 2080146
+        },
+        {
+          "id": "04",
+          "start_frame": 2255361,
+          "end_frame": 2830533
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD NORMAL-Unpack_B00M_MUIDS.wav",
+      "sha256": "aeac0873798640311cd2e3d2c2bae17ed880dcb8b8582c9af88a1c1a67f97af3",
+      "group": "reward-normal-unpack",
+      "description": "Standard reward accent with a bright flourish and satisfying tonal sparkle.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 344324
+        },
+        {
+          "id": "02",
+          "start_frame": 472831,
+          "end_frame": 767158
+        },
+        {
+          "id": "03",
+          "start_frame": 889561,
+          "end_frame": 1192415
+        },
+        {
+          "id": "04",
+          "start_frame": 1292076,
+          "end_frame": 1594765
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD NORMAL-Upward_B00M_MUIDS.wav",
+      "sha256": "c2246eecf4c2ed994adf3f04b307976ec6937f86ec2a29f7d283590b8eca93a5",
+      "group": "reward-normal-upward",
+      "description": "Standard reward accent rising through clean magical harmonics.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 363612
+        },
+        {
+          "id": "02",
+          "start_frame": 492072,
+          "end_frame": 876603
+        },
+        {
+          "id": "03",
+          "start_frame": 1000931,
+          "end_frame": 1423851
+        },
+        {
+          "id": "04",
+          "start_frame": 1544796,
+          "end_frame": 1970092
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD RARE-Loot Master_B00M_MUIDS.wav",
+      "sha256": "c51a92f02c67ee95d5d37e9ef5d42df9d813fc4e678fabec9c53482da511d4d4",
+      "group": "reward-rare-loot-master",
+      "description": "Rare reward accent with vibrant magical layers and an energetic flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 408565
+        },
+        {
+          "id": "02",
+          "start_frame": 548027,
+          "end_frame": 937121
+        },
+        {
+          "id": "03",
+          "start_frame": 1084296,
+          "end_frame": 1497001
+        },
+        {
+          "id": "04",
+          "start_frame": 1619283,
+          "end_frame": 2050904
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD RARE-Overpowered_B00M_MUIDS.wav",
+      "sha256": "b17608ea5bf05edc2c859a09b2ae320db0a89254e8923eaa3b54b02222182bdd",
+      "group": "reward-rare-overpowered",
+      "description": "Rare reward accent with bold harmonic layers and a triumphant tonal finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 465662
+        },
+        {
+          "id": "02",
+          "start_frame": 584179,
+          "end_frame": 968658
+        },
+        {
+          "id": "03",
+          "start_frame": 1074866,
+          "end_frame": 1483449
+        },
+        {
+          "id": "04",
+          "start_frame": 1587943,
+          "end_frame": 2022635
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD RARE-Purple Drop_B00M_MUIDS.wav",
+      "sha256": "d2ba9a25b2adc94cf8491db9c05e9e8564be78fb96587545a38122efd5f73a16",
+      "group": "reward-rare-purple-drop",
+      "description": "Rare reward accent blooming through rich crystalline overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 540875
+        },
+        {
+          "id": "02",
+          "start_frame": 642057,
+          "end_frame": 1166545
+        },
+        {
+          "id": "03",
+          "start_frame": 1270845,
+          "end_frame": 1771794
+        },
+        {
+          "id": "04",
+          "start_frame": 1904143,
+          "end_frame": 2392948
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD RARE-Runic Ward_B00M_MUIDS.wav",
+      "sha256": "c7e3999401b9d0b4e31357c9764f0eb28be53c69f26b3a1e834688429d2fb62c",
+      "group": "reward-rare-runic-ward",
+      "description": "Rare reward accent with powerful runic resonance and bright magical flourish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 282064
+        },
+        {
+          "id": "02",
+          "start_frame": 410973,
+          "end_frame": 662127
+        },
+        {
+          "id": "03",
+          "start_frame": 802130,
+          "end_frame": 1063306
+        },
+        {
+          "id": "04",
+          "start_frame": 1182899,
+          "end_frame": 1459926
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD UNIQUE-Divine Item_B00M_MUIDS.wav",
+      "sha256": "2893d347acf2112b76b0396dec76f0d00d617b539eaa999b1c84a5b655fe7096",
+      "group": "reward-unique-divine-item",
+      "description": "Unique reward accent unfolding through celestial harmonics and luminous resonance.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 393112
+        },
+        {
+          "id": "02",
+          "start_frame": 580742,
+          "end_frame": 960000
+        },
+        {
+          "id": "03",
+          "start_frame": 1148359,
+          "end_frame": 1534690
+        },
+        {
+          "id": "04",
+          "start_frame": 1698855,
+          "end_frame": 2071781
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD UNIQUE-Godmode_B00M_MUIDS.wav",
+      "sha256": "45639aa8b6ca5b487162a0ef17cc2e6c34e8908ba4a6e77bf0bfc584d4af26e6",
+      "group": "reward-unique-godmode",
+      "description": "Unique reward accent with commanding harmonic weight and radiant spectral detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 484500
+        },
+        {
+          "id": "02",
+          "start_frame": 636875,
+          "end_frame": 1100182
+        },
+        {
+          "id": "03",
+          "start_frame": 1266933,
+          "end_frame": 1716854
+        },
+        {
+          "id": "04",
+          "start_frame": 1878163,
+          "end_frame": 2311410
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD UNIQUE-Legendary_B00M_MUIDS.wav",
+      "sha256": "f273db1a917414f5de0f41f551f35d3e0440338f6f7c3a4d0c9b6a2008e6cf1e",
+      "group": "reward-unique-legendary",
+      "description": "Unique reward accent with majestic resonance and an expansive magical bloom.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 393453
+        },
+        {
+          "id": "02",
+          "start_frame": 533487,
+          "end_frame": 855996
+        },
+        {
+          "id": "03",
+          "start_frame": 1008505,
+          "end_frame": 1343135
+        },
+        {
+          "id": "04",
+          "start_frame": 1471414,
+          "end_frame": 1796904
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_REWARD UNIQUE-Orange Drop_B00M_MUIDS.wav",
+      "sha256": "2bc4e2f178971cdb74b62c47360e6a70f9d18f467dc8a08645ac027bc4b68862",
+      "group": "reward-unique-orange-drop",
+      "description": "Unique reward accent with glowing tonal layers and brilliant sparkling overtones.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 697322
+        },
+        {
+          "id": "02",
+          "start_frame": 853886,
+          "end_frame": 1494264
+        },
+        {
+          "id": "03",
+          "start_frame": 1660858,
+          "end_frame": 2277133
+        },
+        {
+          "id": "04",
+          "start_frame": 2469185,
+          "end_frame": 3085011
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_TAB SWITCH-Gallows_B00M_MUIDS.wav",
+      "sha256": "86e557776434dddd6d305e50611ac8598d1ec8b7ae484df1d29f68333525ede8",
+      "group": "tab-switch-gallows",
+      "description": "Dark tab switch with dry wooden textures and restrained creaking detail.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 122423
+        },
+        {
+          "id": "02",
+          "start_frame": 242488,
+          "end_frame": 346588
+        },
+        {
+          "id": "03",
+          "start_frame": 461607,
+          "end_frame": 565682
+        },
+        {
+          "id": "04",
+          "start_frame": 682416,
+          "end_frame": 806400
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_TAB SWITCH-Next_B00M_MUIDSa.wav",
+      "sha256": "2787359a5636307feb1734a70d3cdbf5787d0699451c1080961c0552601b73ed",
+      "group": "tab-switch-next-a",
+      "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 62105
+        },
+        {
+          "id": "02",
+          "start_frame": 219745,
+          "end_frame": 273196
+        },
+        {
+          "id": "03",
+          "start_frame": 454053,
+          "end_frame": 506867
+        },
+        {
+          "id": "04",
+          "start_frame": 659865,
+          "end_frame": 713813
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_TAB SWITCH-Next_B00M_MUIDSb.wav",
+      "sha256": "3d20bea3d3ad15c497fc47a3245d81c8f9f46b0e35de6e31a71e5f5e4bf63a83",
+      "group": "tab-switch-next-b",
+      "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 153389
+        },
+        {
+          "id": "02",
+          "start_frame": 238763,
+          "end_frame": 388075
+        },
+        {
+          "id": "03",
+          "start_frame": 479983,
+          "end_frame": 622817
+        },
+        {
+          "id": "04",
+          "start_frame": 718819,
+          "end_frame": 905804
+        }
+      ]
+    },
+    {
+      "file": "legacy/web/art/Magic UI Designed/UIMisc_TAB SWITCH-Pager_B00M_MUIDS.wav",
+      "sha256": "497acef62cdc10b61eef46ca33bc0905e1ea70191741eed0721a684b7331e679",
+      "group": "tab-switch-pager",
+      "description": "Crisp tab switch blending paper-like textures with a short mechanical tick.",
+      "boundary_source": "detected",
+      "segments": [
+        {
+          "id": "01",
+          "start_frame": 0,
+          "end_frame": 49845
+        },
+        {
+          "id": "02",
+          "start_frame": 174167,
+          "end_frame": 213227
+        },
+        {
+          "id": "03",
+          "start_frame": 321804,
+          "end_frame": 359603
+        },
+        {
+          "id": "04",
+          "start_frame": 464403,
+          "end_frame": 512293
+        }
+      ]
+    }
+  ]
+}

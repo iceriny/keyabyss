@@ -6,6 +6,7 @@ signal completed(target_id: StringName, manual_count: int, assisted: bool, attem
 signal abandoned(attempt_id: String)
 signal word_completed(fact: WordCompletion)
 signal character_judged(attempt_id: String, target_word: String, correct: bool)
+signal feedback_requested(cue: StringName)
 
 static var _serial: int = 0
 var target_id: StringName = &""
@@ -160,9 +161,11 @@ func feed(character: String) -> void:
 
 func complete_assisted() -> void:
 	if target_id == &"" or progress <= 0 or progress >= word.replace(" ", "").length():
+		feedback_requested.emit(&"unavailable")
 		return
 	if not assisted_authorizer.is_valid() or not assisted_authorizer.call():
 		last_feedback = "补全尚未准备好 · 可以继续输入"
+		feedback_requested.emit(&"unavailable")
 		changed.emit()
 		return
 	_finish(true)

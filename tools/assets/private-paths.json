@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "rules": [
+    { "directory": "development/audio_library/clips", "extensions": [".wav"], "prefix": "library/audio", "profiles": ["library", "authoring"] },
+    { "directory": "assets/audio/clips", "extensions": [".wav"], "prefix": "runtime/audio", "profiles": ["runtime", "library", "authoring"] },
+    { "directory": "assets/fonts", "extensions": [".ttf", ".otf", ".woff", ".woff2"], "prefix": "runtime/fonts", "profiles": ["runtime", "library", "authoring"] },
+    { "directory": "legacy/web/art/Magic UI Designed", "prefix": "source/audio", "profiles": ["authoring"] },
+    { "directory": "legacy/web/public/font", "prefix": "source/web-fonts", "profiles": ["authoring"] },
+    { "directory": "docs/art/Arcana256/fonts", "prefix": "source/Arcana256/fonts", "profiles": ["authoring"] },
+    { "directory": "docs/art/Arcana384/fonts", "prefix": "source/Arcana384/fonts", "profiles": ["authoring"] },
+    { "directory": "assets/art/books", "extensions": [".png"], "prefix": "runtime/art/books", "profiles": ["runtime", "library", "authoring"] },
+    { "directory": "legacy/web/art", "extensions": [".png"], "prefix": "source/art", "profiles": ["authoring"] },
+    { "directory": "legacy/web/public/assets", "extensions": [".png", ".svg", ".js"], "prefix": "source/web-art", "profiles": ["authoring"] },
+    { "directory": "legacy/web/public/word", "extensions": [".json", ".js"], "prefix": "source/web-word", "profiles": ["authoring"] },
+    { "directory": "legacy/web/public/audio", "extensions": [".js"], "prefix": "archive/web-audio", "profiles": ["authoring"] }
+  ],
+  "files": [
+    { "destination": "development/audio_library/.build.json", "path": "recipes/audio-build.json", "profiles": ["library", "authoring"] }
+  ]
+}

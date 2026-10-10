@@ -8,19 +8,24 @@ const AMBIENCE_RATE := 48000
 const AMBIENCE_SAMPLES := AMBIENCE_RATE * 4
 const AMBIENCE_GAIN := 0.025
 const CUES := {
-	"ui.tab": {"gain": 0.3, "cooldown": 0.1, "limit": 2, "priority": 2, "files": ["tab-1", "tab-2", "tab-3"]},
-	"ui.enter": {"gain": 0.5, "cooldown": 1.5, "limit": 1, "priority": 6, "offset": 0.17, "files": ["enter-1"]},
-	"ui.book": {"gain": 0.6, "cooldown": 0.16, "limit": 2, "priority": 5, "files": ["book-1", "book-2"]},
-	"ui.type": {"gain": 0.24, "cooldown": 0.018, "limit": 8, "priority": 2, "duration": 0.11, "files": ["type-1", "type-2", "type-3"]},
-	"ui.focus": {"gain": 0.24, "cooldown": 0.08, "limit": 2, "priority": 1, "files": ["focus-1", "focus-2", "focus-3"]},
-	"ui.select": {"gain": 0.48, "cooldown": 0.08, "limit": 3, "priority": 4, "files": ["select-1", "select-2", "select-3"]},
-	"ui.open": {"gain": 0.48, "cooldown": 0.15, "limit": 3, "priority": 4, "files": ["open-1", "open-2", "open-3"]},
-	"ui.close": {"gain": 0.42, "cooldown": 0.15, "limit": 3, "priority": 4, "files": ["close-1", "close-2", "close-3"]},
-	"ui.confirm": {"gain": 0.55, "cooldown": 0.15, "limit": 3, "priority": 4, "files": ["confirm-1", "confirm-2", "confirm-3"]},
-	"ui.invalid": {"gain": 0.36, "cooldown": 0.18, "limit": 3, "priority": 3, "files": ["invalid-1", "invalid-2", "invalid-3"]},
-	"ui.ritualRise": {"gain": 0.52, "cooldown": 1.0, "limit": 1, "priority": 6, "duration": 0.864, "files": ["ritualRise-1"]},
-	"ui.ritualImpact": {"gain": 0.95, "cooldown": 1.0, "limit": 1, "priority": 7, "offset": 0.465, "duration": 2.35, "files": ["ritualImpact-1"]},
-	"ui.ritualChime": {"gain": 0.46, "cooldown": 0.5, "limit": 2, "priority": 5, "files": ["ritualChime-1"]},
+	"ui.tab": {"gain": 0.3, "cooldown": 0.1, "limit": 2, "priority": 2, "duration": 0.28},
+	"ui.enter": {"gain": 0.5, "cooldown": 1.5, "limit": 1, "priority": 6, "duration": 1.1},
+	"ui.book": {"gain": 0.48, "cooldown": 0.16, "limit": 2, "priority": 5, "duration": 0.85},
+	"ui.type": {"gain": 0.14, "cooldown": 0.018, "limit": 4, "priority": 2, "duration": 0.09},
+	"ui.focus": {"gain": 0.16, "cooldown": 0.08, "limit": 2, "priority": 1, "duration": 0.22},
+	"ui.select": {"gain": 0.4, "cooldown": 0.08, "limit": 3, "priority": 4, "duration": 0.48},
+	"ui.open": {"gain": 0.38, "cooldown": 0.15, "limit": 3, "priority": 4, "duration": 0.7},
+	"ui.close": {"gain": 0.34, "cooldown": 0.15, "limit": 3, "priority": 4, "duration": 0.6},
+	"ui.confirm": {"gain": 0.45, "cooldown": 0.15, "limit": 3, "priority": 4, "duration": 1.0},
+	"ui.invalid": {"gain": 0.28, "cooldown": 0.18, "limit": 2, "priority": 3, "duration": 0.35},
+	"ui.ritualRise": {"gain": 0.45, "cooldown": 1.0, "limit": 1, "priority": 6, "duration": 0.864},
+	"ui.ritualImpact": {"gain": 0.7, "cooldown": 1.0, "limit": 1, "priority": 7, "duration": 2.35},
+	"ui.ritualChime": {"gain": 0.4, "cooldown": 0.5, "limit": 2, "priority": 5, "duration": 0.8},
+	"ui.reward": {"gain": 0.45, "cooldown": 0.15, "limit": 2, "priority": 5, "duration": 1.6},
+	"ui.reroll": {"gain": 0.38, "cooldown": 0.15, "limit": 2, "priority": 4, "duration": 0.7},
+	"ui.supply": {"gain": 0.4, "cooldown": 0.15, "limit": 2, "priority": 5, "duration": 1.2},
+	"ui.route": {"gain": 0.4, "cooldown": 0.15, "limit": 2, "priority": 5, "duration": 1.2},
+	"ui.level": {"gain": 0.45, "cooldown": 1.0, "limit": 1, "priority": 6, "duration": 2.0},
 }
 
 @export var enabled: bool = true:
@@ -34,34 +39,23 @@ const CUES := {
 		effects_volume = clampf(value, 0.0, 1.0)
 		_update_voice_volumes()
 
-var _streams: Dictionary = {}
+var _streams: Dictionary[String, AudioStreamRandomizer] = {}
 var _voices: Array[AudioStreamPlayer] = []
 var _voice_cues: Dictionary = {}
 var _voice_gains: Dictionary = {}
 var _voice_serials: Dictionary = {}
 var _voice_tweens: Dictionary = {}
 var _last_played: Dictionary = {}
-var _previous_variant: Dictionary = {}
 var _ambience_player: AudioStreamPlayer
 
 
 func _ready() -> void:
 	for cue: String in CUES:
-		var streams: Array[AudioStream] = []
-		for file: String in CUES[cue]["files"]:
-			var stream := load("res://assets/audio/ui/%s.wav" % file) as AudioStream
-			if stream != null:
-				streams.append(stream)
-			else:
-				push_error("ArchiveAudio missing audio: %s" % file)
-		_streams[cue] = streams
+		_streams[cue] = SoundBank.load_cue(cue)
 
 
 func play_cue(cue: String) -> void:
 	if not enabled or effects_volume <= 0.0 or not CUES.has(cue):
-		return
-	var streams: Array[AudioStream] = _streams.get(cue, [])
-	if streams.is_empty():
 		return
 	var definition: Dictionary = CUES[cue]
 	var now := Time.get_ticks_msec() * 0.001
@@ -80,15 +74,8 @@ func play_cue(cue: String) -> void:
 		_release_previous_books(voice)
 	if cue != "ui.book":
 		_last_played[cue] = now
-	var index := 0
-	if streams.size() > 1:
-		var previous := int(_previous_variant.get(cue, -1))
-		index = randi_range(0, streams.size() - 1)
-		if index == previous:
-			index = (index + 1) % streams.size()
-	_previous_variant[cue] = index
 	_prepare_voice(voice)
-	voice.stream = streams[index]
+	voice.stream = _streams[cue]
 	voice.bus = &"UI"
 	_voice_cues[voice] = cue
 	_voice_gains[voice] = float(definition["gain"])
@@ -96,8 +83,8 @@ func play_cue(cue: String) -> void:
 	var offset := float(definition.get("offset", 0.0))
 	voice.play(offset)
 	if definition.has("duration"):
-		var duration := minf(float(definition["duration"]), voice.stream.get_length() - offset)
-		_finish_after(voice, int(_voice_serials[voice]), duration)
+		# The randomizer has no fixed length; natural completion retires shorter clips.
+		_finish_after(voice, int(_voice_serials[voice]), float(definition["duration"]))
 
 
 func stop_all() -> void:

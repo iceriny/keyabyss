@@ -1,0 +1,3458 @@
+[
+  {
+    "file": "development/audio_library/clips/chest-open-loot-gold-rush-01.wav",
+    "description": "Wooden chest opening with solid mechanical movement and a rewarding magical flourish.",
+    "duration_seconds": 3.619979,
+    "variant_group": "chest-open-loot-gold-rush"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-gold-rush-02.wav",
+    "description": "Wooden chest opening with solid mechanical movement and a rewarding magical flourish.",
+    "duration_seconds": 2.746115,
+    "variant_group": "chest-open-loot-gold-rush"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-gold-rush-03.wav",
+    "description": "Wooden chest opening with solid mechanical movement and a rewarding magical flourish.",
+    "duration_seconds": 2.640656,
+    "variant_group": "chest-open-loot-gold-rush"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-gold-rush-04.wav",
+    "description": "Wooden chest opening with solid mechanical movement and a rewarding magical flourish.",
+    "duration_seconds": 3.115031,
+    "variant_group": "chest-open-loot-gold-rush"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-surprise-01.wav",
+    "description": "Wooden chest opening with aged timber movement and an unexpected tonal sparkle.",
+    "duration_seconds": 3.095406,
+    "variant_group": "chest-open-loot-surprise"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-surprise-02.wav",
+    "description": "Wooden chest opening with aged timber movement and an unexpected tonal sparkle.",
+    "duration_seconds": 2.976458,
+    "variant_group": "chest-open-loot-surprise"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-surprise-03.wav",
+    "description": "Wooden chest opening with aged timber movement and an unexpected tonal sparkle.",
+    "duration_seconds": 2.993104,
+    "variant_group": "chest-open-loot-surprise"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-loot-surprise-04.wav",
+    "description": "Wooden chest opening with aged timber movement and an unexpected tonal sparkle.",
+    "duration_seconds": 3.012938,
+    "variant_group": "chest-open-loot-surprise"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-eternal-casket-01.wav",
+    "description": "Ancient chest opening with deep wooden movement and powerful arcane overtones.",
+    "duration_seconds": 3.89574,
+    "variant_group": "chest-open-magic-eternal-casket"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-eternal-casket-02.wav",
+    "description": "Ancient chest opening with deep wooden movement and powerful arcane overtones.",
+    "duration_seconds": 3.241354,
+    "variant_group": "chest-open-magic-eternal-casket"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-eternal-casket-03.wav",
+    "description": "Ancient chest opening with deep wooden movement and powerful arcane overtones.",
+    "duration_seconds": 3.722198,
+    "variant_group": "chest-open-magic-eternal-casket"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-eternal-casket-04.wav",
+    "description": "Ancient chest opening with deep wooden movement and powerful arcane overtones.",
+    "duration_seconds": 3.959594,
+    "variant_group": "chest-open-magic-eternal-casket"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-lootbox-01.wav",
+    "description": "Wooden chest opening with rich mechanical detail and shimmering magical resonance.",
+    "duration_seconds": 2.685667,
+    "variant_group": "chest-open-magic-lootbox"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-lootbox-02.wav",
+    "description": "Wooden chest opening with rich mechanical detail and shimmering magical resonance.",
+    "duration_seconds": 2.666937,
+    "variant_group": "chest-open-magic-lootbox"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-lootbox-03.wav",
+    "description": "Wooden chest opening with rich mechanical detail and shimmering magical resonance.",
+    "duration_seconds": 2.057208,
+    "variant_group": "chest-open-magic-lootbox"
+  },
+  {
+    "file": "development/audio_library/clips/chest-open-magic-lootbox-04.wav",
+    "description": "Wooden chest opening with rich mechanical detail and shimmering magical resonance.",
+    "duration_seconds": 2.24499,
+    "variant_group": "chest-open-magic-lootbox"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-enchanted-whisp-01.wav",
+    "description": "Light whoosh with enchanted airy textures and a soft shimmering finish.",
+    "duration_seconds": 5.736542,
+    "variant_group": "whoosh-light-enchanted-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-enchanted-whisp-02.wav",
+    "description": "Light whoosh with enchanted airy textures and a soft shimmering finish.",
+    "duration_seconds": 5.156729,
+    "variant_group": "whoosh-light-enchanted-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-enchanted-whisp-03.wav",
+    "description": "Light whoosh with enchanted airy textures and a soft shimmering finish.",
+    "duration_seconds": 4.978667,
+    "variant_group": "whoosh-light-enchanted-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-enchanted-whisp-04.wav",
+    "description": "Light whoosh with enchanted airy textures and a soft shimmering finish.",
+    "duration_seconds": 5.858958,
+    "variant_group": "whoosh-light-enchanted-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-flourish-01.wav",
+    "description": "Light whoosh expanding through elegant motion and bright magical textures.",
+    "duration_seconds": 4.152052,
+    "variant_group": "whoosh-light-flourish"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-flourish-02.wav",
+    "description": "Light whoosh expanding through elegant motion and bright magical textures.",
+    "duration_seconds": 3.892719,
+    "variant_group": "whoosh-light-flourish"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-flourish-03.wav",
+    "description": "Light whoosh expanding through elegant motion and bright magical textures.",
+    "duration_seconds": 3.595604,
+    "variant_group": "whoosh-light-flourish"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-flourish-04.wav",
+    "description": "Light whoosh expanding through elegant motion and bright magical textures.",
+    "duration_seconds": 4.154573,
+    "variant_group": "whoosh-light-flourish"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-naturalise-01.wav",
+    "description": "Light whoosh with gentle airflow and bright evolving textures.",
+    "duration_seconds": 3.385271,
+    "variant_group": "whoosh-light-naturalise"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-naturalise-02.wav",
+    "description": "Light whoosh with gentle airflow and bright evolving textures.",
+    "duration_seconds": 3.234865,
+    "variant_group": "whoosh-light-naturalise"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-naturalise-03.wav",
+    "description": "Light whoosh with gentle airflow and bright evolving textures.",
+    "duration_seconds": 3.492354,
+    "variant_group": "whoosh-light-naturalise"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-naturalise-04.wav",
+    "description": "Light whoosh with gentle airflow and bright evolving textures.",
+    "duration_seconds": 3.243979,
+    "variant_group": "whoosh-light-naturalise"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-new-chapter-01.wav",
+    "description": "Light whoosh with paper-inspired textures and a clean flowing sweep.",
+    "duration_seconds": 4.43175,
+    "variant_group": "whoosh-light-new-chapter"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-new-chapter-02.wav",
+    "description": "Light whoosh with paper-inspired textures and a clean flowing sweep.",
+    "duration_seconds": 3.796656,
+    "variant_group": "whoosh-light-new-chapter"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-new-chapter-03.wav",
+    "description": "Light whoosh with paper-inspired textures and a clean flowing sweep.",
+    "duration_seconds": 3.935844,
+    "variant_group": "whoosh-light-new-chapter"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-new-chapter-04.wav",
+    "description": "Light whoosh with paper-inspired textures and a clean flowing sweep.",
+    "duration_seconds": 4.469583,
+    "variant_group": "whoosh-light-new-chapter"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-shimmer-01.wav",
+    "description": "Light whoosh with sparkling harmonics and delicate sweeping motion.",
+    "duration_seconds": 4.189833,
+    "variant_group": "whoosh-light-shimmer"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-shimmer-02.wav",
+    "description": "Light whoosh with sparkling harmonics and delicate sweeping motion.",
+    "duration_seconds": 3.811479,
+    "variant_group": "whoosh-light-shimmer"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-shimmer-03.wav",
+    "description": "Light whoosh with sparkling harmonics and delicate sweeping motion.",
+    "duration_seconds": 3.870875,
+    "variant_group": "whoosh-light-shimmer"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-shimmer-04.wav",
+    "description": "Light whoosh with sparkling harmonics and delicate sweeping motion.",
+    "duration_seconds": 4.148937,
+    "variant_group": "whoosh-light-shimmer"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-sirens-call-01.wav",
+    "description": "Light whoosh with graceful harmonic movement and airy magical detail.",
+    "duration_seconds": 3.894833,
+    "variant_group": "whoosh-light-sirens-call"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-sirens-call-02.wav",
+    "description": "Light whoosh with graceful harmonic movement and airy magical detail.",
+    "duration_seconds": 3.782833,
+    "variant_group": "whoosh-light-sirens-call"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-sirens-call-03.wav",
+    "description": "Light whoosh with graceful harmonic movement and airy magical detail.",
+    "duration_seconds": 3.678854,
+    "variant_group": "whoosh-light-sirens-call"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-light-sirens-call-04.wav",
+    "description": "Light whoosh with graceful harmonic movement and airy magical detail.",
+    "duration_seconds": 3.734281,
+    "variant_group": "whoosh-light-sirens-call"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-closing-in-01.wav",
+    "description": "Neutral whoosh narrowing through focused movement and controlled tonal weight.",
+    "duration_seconds": 3.673083,
+    "variant_group": "whoosh-neutral-closing-in"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-closing-in-02.wav",
+    "description": "Neutral whoosh narrowing through focused movement and controlled tonal weight.",
+    "duration_seconds": 3.353719,
+    "variant_group": "whoosh-neutral-closing-in"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-closing-in-03.wav",
+    "description": "Neutral whoosh narrowing through focused movement and controlled tonal weight.",
+    "duration_seconds": 3.52549,
+    "variant_group": "whoosh-neutral-closing-in"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-closing-in-04.wav",
+    "description": "Neutral whoosh narrowing through focused movement and controlled tonal weight.",
+    "duration_seconds": 3.269323,
+    "variant_group": "whoosh-neutral-closing-in"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-next-page-01.wav",
+    "description": "Neutral whoosh with a smooth sweeping pass and soft paper-like textures.",
+    "duration_seconds": 3.142656,
+    "variant_group": "whoosh-neutral-next-page"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-next-page-02.wav",
+    "description": "Neutral whoosh with a smooth sweeping pass and soft paper-like textures.",
+    "duration_seconds": 2.092385,
+    "variant_group": "whoosh-neutral-next-page"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-next-page-03.wav",
+    "description": "Neutral whoosh with a smooth sweeping pass and soft paper-like textures.",
+    "duration_seconds": 2.672635,
+    "variant_group": "whoosh-neutral-next-page"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-next-page-04.wav",
+    "description": "Neutral whoosh with a smooth sweeping pass and soft paper-like textures.",
+    "duration_seconds": 3.016406,
+    "variant_group": "whoosh-neutral-next-page"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-passby-01.wav",
+    "description": "Neutral whoosh gliding past with balanced airflow and restrained tonal movement.",
+    "duration_seconds": 2.826854,
+    "variant_group": "whoosh-neutral-passby"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-passby-02.wav",
+    "description": "Neutral whoosh gliding past with balanced airflow and restrained tonal movement.",
+    "duration_seconds": 2.744969,
+    "variant_group": "whoosh-neutral-passby"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-passby-03.wav",
+    "description": "Neutral whoosh gliding past with balanced airflow and restrained tonal movement.",
+    "duration_seconds": 2.722948,
+    "variant_group": "whoosh-neutral-passby"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-passby-04.wav",
+    "description": "Neutral whoosh gliding past with balanced airflow and restrained tonal movement.",
+    "duration_seconds": 3.119063,
+    "variant_group": "whoosh-neutral-passby"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-phantom-01.wav",
+    "description": "Neutral whoosh with ghostly movement and subtle spectral detail.",
+    "duration_seconds": 2.958094,
+    "variant_group": "whoosh-neutral-phantom"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-phantom-02.wav",
+    "description": "Neutral whoosh with ghostly movement and subtle spectral detail.",
+    "duration_seconds": 2.047146,
+    "variant_group": "whoosh-neutral-phantom"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-phantom-03.wav",
+    "description": "Neutral whoosh with ghostly movement and subtle spectral detail.",
+    "duration_seconds": 2.855781,
+    "variant_group": "whoosh-neutral-phantom"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-phantom-04.wav",
+    "description": "Neutral whoosh with ghostly movement and subtle spectral detail.",
+    "duration_seconds": 2.965688,
+    "variant_group": "whoosh-neutral-phantom"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-spellbook-01.wav",
+    "description": "Neutral whoosh blending soft page textures with magical airflow.",
+    "duration_seconds": 2.688542,
+    "variant_group": "whoosh-neutral-spellbook"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-spellbook-02.wav",
+    "description": "Neutral whoosh blending soft page textures with magical airflow.",
+    "duration_seconds": 2.8165,
+    "variant_group": "whoosh-neutral-spellbook"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-spellbook-03.wav",
+    "description": "Neutral whoosh blending soft page textures with magical airflow.",
+    "duration_seconds": 2.568354,
+    "variant_group": "whoosh-neutral-spellbook"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-spellbook-04.wav",
+    "description": "Neutral whoosh blending soft page textures with magical airflow.",
+    "duration_seconds": 2.766156,
+    "variant_group": "whoosh-neutral-spellbook"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-wild-breath-01.wav",
+    "description": "Neutral whoosh carrying airy textures and natural flowing motion.",
+    "duration_seconds": 2.972354,
+    "variant_group": "whoosh-neutral-wild-breath"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-wild-breath-02.wav",
+    "description": "Neutral whoosh carrying airy textures and natural flowing motion.",
+    "duration_seconds": 3.31451,
+    "variant_group": "whoosh-neutral-wild-breath"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-wild-breath-03.wav",
+    "description": "Neutral whoosh carrying airy textures and natural flowing motion.",
+    "duration_seconds": 2.971844,
+    "variant_group": "whoosh-neutral-wild-breath"
+  },
+  {
+    "file": "development/audio_library/clips/whoosh-neutral-wild-breath-04.wav",
+    "description": "Neutral whoosh carrying airy textures and natural flowing motion.",
+    "duration_seconds": 3.03075,
+    "variant_group": "whoosh-neutral-wild-breath"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-arrival-01.wav",
+    "description": "Checkpoint accent marked by a gentle pulse and balanced harmonic bloom.",
+    "duration_seconds": 1.989031,
+    "variant_group": "quest-checkpoint-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-arrival-02.wav",
+    "description": "Checkpoint accent marked by a gentle pulse and balanced harmonic bloom.",
+    "duration_seconds": 1.820417,
+    "variant_group": "quest-checkpoint-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-arrival-03.wav",
+    "description": "Checkpoint accent marked by a gentle pulse and balanced harmonic bloom.",
+    "duration_seconds": 1.985156,
+    "variant_group": "quest-checkpoint-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-arrival-04.wav",
+    "description": "Checkpoint accent marked by a gentle pulse and balanced harmonic bloom.",
+    "duration_seconds": 1.971344,
+    "variant_group": "quest-checkpoint-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-outpost-01.wav",
+    "description": "Checkpoint accent with compact magical tones and restrained shimmering detail.",
+    "duration_seconds": 2.083417,
+    "variant_group": "quest-checkpoint-outpost"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-outpost-02.wav",
+    "description": "Checkpoint accent with compact magical tones and restrained shimmering detail.",
+    "duration_seconds": 1.749323,
+    "variant_group": "quest-checkpoint-outpost"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-outpost-03.wav",
+    "description": "Checkpoint accent with compact magical tones and restrained shimmering detail.",
+    "duration_seconds": 2.011833,
+    "variant_group": "quest-checkpoint-outpost"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-outpost-04.wav",
+    "description": "Checkpoint accent with compact magical tones and restrained shimmering detail.",
+    "duration_seconds": 2.028135,
+    "variant_group": "quest-checkpoint-outpost"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-uncharted-path-01.wav",
+    "description": "Checkpoint accent unfolding through mysterious resonance and subtle magical textures.",
+    "duration_seconds": 2.907437,
+    "variant_group": "quest-checkpoint-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-uncharted-path-02.wav",
+    "description": "Checkpoint accent unfolding through mysterious resonance and subtle magical textures.",
+    "duration_seconds": 2.635406,
+    "variant_group": "quest-checkpoint-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-uncharted-path-03.wav",
+    "description": "Checkpoint accent unfolding through mysterious resonance and subtle magical textures.",
+    "duration_seconds": 2.672563,
+    "variant_group": "quest-checkpoint-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-uncharted-path-04.wav",
+    "description": "Checkpoint accent unfolding through mysterious resonance and subtle magical textures.",
+    "duration_seconds": 2.625948,
+    "variant_group": "quest-checkpoint-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-waystone-01.wav",
+    "description": "Checkpoint accent with grounded magical resonance and a reassuring tonal finish.",
+    "duration_seconds": 2.579865,
+    "variant_group": "quest-checkpoint-waystone"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-waystone-02.wav",
+    "description": "Checkpoint accent with grounded magical resonance and a reassuring tonal finish.",
+    "duration_seconds": 2.371812,
+    "variant_group": "quest-checkpoint-waystone"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-waystone-03.wav",
+    "description": "Checkpoint accent with grounded magical resonance and a reassuring tonal finish.",
+    "duration_seconds": 2.259812,
+    "variant_group": "quest-checkpoint-waystone"
+  },
+  {
+    "file": "development/audio_library/clips/quest-checkpoint-waystone-04.wav",
+    "description": "Checkpoint accent with grounded magical resonance and a reassuring tonal finish.",
+    "duration_seconds": 2.204021,
+    "variant_group": "quest-checkpoint-waystone"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-ascend-01.wav",
+    "description": "Level up accent rising through radiant magical energy and shimmering harmonics.",
+    "duration_seconds": 3.936771,
+    "variant_group": "level-up-ascend"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-ascend-02.wav",
+    "description": "Level up accent rising through radiant magical energy and shimmering harmonics.",
+    "duration_seconds": 3.798104,
+    "variant_group": "level-up-ascend"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-ascend-03.wav",
+    "description": "Level up accent rising through radiant magical energy and shimmering harmonics.",
+    "duration_seconds": 3.632083,
+    "variant_group": "level-up-ascend"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-ascend-04.wav",
+    "description": "Level up accent rising through radiant magical energy and shimmering harmonics.",
+    "duration_seconds": 4.066552,
+    "variant_group": "level-up-ascend"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-divine-ascent-01.wav",
+    "description": "Level up accent surging through majestic harmonics into a brilliant magical climax.",
+    "duration_seconds": 3.426708,
+    "variant_group": "level-up-divine-ascent"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-divine-ascent-02.wav",
+    "description": "Level up accent surging through majestic harmonics into a brilliant magical climax.",
+    "duration_seconds": 3.240365,
+    "variant_group": "level-up-divine-ascent"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-divine-ascent-03.wav",
+    "description": "Level up accent surging through majestic harmonics into a brilliant magical climax.",
+    "duration_seconds": 2.972531,
+    "variant_group": "level-up-divine-ascent"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-divine-ascent-04.wav",
+    "description": "Level up accent surging through majestic harmonics into a brilliant magical climax.",
+    "duration_seconds": 2.97099,
+    "variant_group": "level-up-divine-ascent"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-rise-01.wav",
+    "description": "Level up accent unfolding with uplifting resonance and bright tonal sparkle.",
+    "duration_seconds": 5.575146,
+    "variant_group": "level-up-rise"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-rise-02.wav",
+    "description": "Level up accent unfolding with uplifting resonance and bright tonal sparkle.",
+    "duration_seconds": 5.103625,
+    "variant_group": "level-up-rise"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-rise-03.wav",
+    "description": "Level up accent unfolding with uplifting resonance and bright tonal sparkle.",
+    "duration_seconds": 4.750281,
+    "variant_group": "level-up-rise"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-rise-04.wav",
+    "description": "Level up accent unfolding with uplifting resonance and bright tonal sparkle.",
+    "duration_seconds": 4.897437,
+    "variant_group": "level-up-rise"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-shrine-01.wav",
+    "description": "Level up accent blending mystical pulses with glowing celestial textures.",
+    "duration_seconds": 3.400344,
+    "variant_group": "level-up-shrine"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-shrine-02.wav",
+    "description": "Level up accent blending mystical pulses with glowing celestial textures.",
+    "duration_seconds": 3.271646,
+    "variant_group": "level-up-shrine"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-shrine-03.wav",
+    "description": "Level up accent blending mystical pulses with glowing celestial textures.",
+    "duration_seconds": 3.522177,
+    "variant_group": "level-up-shrine"
+  },
+  {
+    "file": "development/audio_library/clips/level-up-shrine-04.wav",
+    "description": "Level up accent blending mystical pulses with glowing celestial textures.",
+    "duration_seconds": 3.344333,
+    "variant_group": "level-up-shrine"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-grapeshot-01.wav",
+    "description": "Large dark burst with dense impacts and brooding spectral textures.",
+    "duration_seconds": 2.927781,
+    "variant_group": "poof-large-dark-grapeshot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-grapeshot-02.wav",
+    "description": "Large dark burst with dense impacts and brooding spectral textures.",
+    "duration_seconds": 2.59151,
+    "variant_group": "poof-large-dark-grapeshot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-grapeshot-03.wav",
+    "description": "Large dark burst with dense impacts and brooding spectral textures.",
+    "duration_seconds": 2.452729,
+    "variant_group": "poof-large-dark-grapeshot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-grapeshot-04.wav",
+    "description": "Large dark burst with dense impacts and brooding spectral textures.",
+    "duration_seconds": 2.667271,
+    "variant_group": "poof-large-dark-grapeshot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-voidthorn-curse-01.wav",
+    "description": "Large shadowy burst with ominous harmonics and a deep magical fade.",
+    "duration_seconds": 4.260802,
+    "variant_group": "poof-large-dark-voidthorn-curse"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-voidthorn-curse-02.wav",
+    "description": "Large shadowy burst with ominous harmonics and a deep magical fade.",
+    "duration_seconds": 3.98224,
+    "variant_group": "poof-large-dark-voidthorn-curse"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-voidthorn-curse-03.wav",
+    "description": "Large shadowy burst with ominous harmonics and a deep magical fade.",
+    "duration_seconds": 4.198042,
+    "variant_group": "poof-large-dark-voidthorn-curse"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-dark-voidthorn-curse-04.wav",
+    "description": "Large shadowy burst with ominous harmonics and a deep magical fade.",
+    "duration_seconds": 4.15924,
+    "variant_group": "poof-large-dark-voidthorn-curse"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-secret-loot-01.wav",
+    "description": "Large radiant burst with sparkling harmonics and an uplifting magical flourish.",
+    "duration_seconds": 3.826427,
+    "variant_group": "poof-large-light-secret-loot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-secret-loot-02.wav",
+    "description": "Large radiant burst with sparkling harmonics and an uplifting magical flourish.",
+    "duration_seconds": 3.284438,
+    "variant_group": "poof-large-light-secret-loot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-secret-loot-03.wav",
+    "description": "Large radiant burst with sparkling harmonics and an uplifting magical flourish.",
+    "duration_seconds": 4.299208,
+    "variant_group": "poof-large-light-secret-loot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-secret-loot-04.wav",
+    "description": "Large radiant burst with sparkling harmonics and an uplifting magical flourish.",
+    "duration_seconds": 3.80001,
+    "variant_group": "poof-large-light-secret-loot"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-slammer-01.wav",
+    "description": "Large luminous burst driven by a bold magical impact and bright resonance.",
+    "duration_seconds": 3.587906,
+    "variant_group": "poof-large-light-slammer"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-slammer-02.wav",
+    "description": "Large luminous burst driven by a bold magical impact and bright resonance.",
+    "duration_seconds": 3.421854,
+    "variant_group": "poof-large-light-slammer"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-slammer-03.wav",
+    "description": "Large luminous burst driven by a bold magical impact and bright resonance.",
+    "duration_seconds": 3.353823,
+    "variant_group": "poof-large-light-slammer"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-light-slammer-04.wav",
+    "description": "Large luminous burst driven by a bold magical impact and bright resonance.",
+    "duration_seconds": 3.674042,
+    "variant_group": "poof-large-light-slammer"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-big-bang-01.wav",
+    "description": "Large magical burst with a powerful transient and expansive harmonic bloom.",
+    "duration_seconds": 4.442104,
+    "variant_group": "poof-large-neutral-big-bang"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-big-bang-02.wav",
+    "description": "Large magical burst with a powerful transient and expansive harmonic bloom.",
+    "duration_seconds": 4.452781,
+    "variant_group": "poof-large-neutral-big-bang"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-big-bang-03.wav",
+    "description": "Large magical burst with a powerful transient and expansive harmonic bloom.",
+    "duration_seconds": 4.348969,
+    "variant_group": "poof-large-neutral-big-bang"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-big-bang-04.wav",
+    "description": "Large magical burst with a powerful transient and expansive harmonic bloom.",
+    "duration_seconds": 4.416854,
+    "variant_group": "poof-large-neutral-big-bang"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-light-shadow-01.wav",
+    "description": "Large magical burst blending bright and dark textures into a balanced spectral bloom.",
+    "duration_seconds": 3.242448,
+    "variant_group": "poof-large-neutral-light-shadow"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-light-shadow-02.wav",
+    "description": "Large magical burst blending bright and dark textures into a balanced spectral bloom.",
+    "duration_seconds": 2.910396,
+    "variant_group": "poof-large-neutral-light-shadow"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-light-shadow-03.wav",
+    "description": "Large magical burst blending bright and dark textures into a balanced spectral bloom.",
+    "duration_seconds": 2.471115,
+    "variant_group": "poof-large-neutral-light-shadow"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-light-shadow-04.wav",
+    "description": "Large magical burst blending bright and dark textures into a balanced spectral bloom.",
+    "duration_seconds": 3.183469,
+    "variant_group": "poof-large-neutral-light-shadow"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-phantom-whisper-01.wav",
+    "description": "Large magical burst with ghostly movement and soft lingering resonance.",
+    "duration_seconds": 2.943302,
+    "variant_group": "poof-large-neutral-phantom-whisper"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-phantom-whisper-02.wav",
+    "description": "Large magical burst with ghostly movement and soft lingering resonance.",
+    "duration_seconds": 2.698531,
+    "variant_group": "poof-large-neutral-phantom-whisper"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-phantom-whisper-03.wav",
+    "description": "Large magical burst with ghostly movement and soft lingering resonance.",
+    "duration_seconds": 2.572073,
+    "variant_group": "poof-large-neutral-phantom-whisper"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-phantom-whisper-04.wav",
+    "description": "Large magical burst with ghostly movement and soft lingering resonance.",
+    "duration_seconds": 2.622635,
+    "variant_group": "poof-large-neutral-phantom-whisper"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-spirit-sprite-01.wav",
+    "description": "Large magical burst with airy spectral textures and drifting ethereal overtones.",
+    "duration_seconds": 2.19049,
+    "variant_group": "poof-large-neutral-spirit-sprite"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-spirit-sprite-02.wav",
+    "description": "Large magical burst with airy spectral textures and drifting ethereal overtones.",
+    "duration_seconds": 2.039917,
+    "variant_group": "poof-large-neutral-spirit-sprite"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-spirit-sprite-03.wav",
+    "description": "Large magical burst with airy spectral textures and drifting ethereal overtones.",
+    "duration_seconds": 2.21149,
+    "variant_group": "poof-large-neutral-spirit-sprite"
+  },
+  {
+    "file": "development/audio_library/clips/poof-large-neutral-spirit-sprite-04.wav",
+    "description": "Large magical burst with airy spectral textures and drifting ethereal overtones.",
+    "duration_seconds": 2.117667,
+    "variant_group": "poof-large-neutral-spirit-sprite"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-negate-01.wav",
+    "description": "Small dark poof with muted spectral textures and a restrained fading tail.",
+    "duration_seconds": 1.77449,
+    "variant_group": "poof-small-dark-negate"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-negate-02.wav",
+    "description": "Small dark poof with muted spectral textures and a restrained fading tail.",
+    "duration_seconds": 1.627719,
+    "variant_group": "poof-small-dark-negate"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-negate-03.wav",
+    "description": "Small dark poof with muted spectral textures and a restrained fading tail.",
+    "duration_seconds": 1.383729,
+    "variant_group": "poof-small-dark-negate"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-negate-04.wav",
+    "description": "Small dark poof with muted spectral textures and a restrained fading tail.",
+    "duration_seconds": 1.851615,
+    "variant_group": "poof-small-dark-negate"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-shadows-incantation-01.wav",
+    "description": "Small shadowy burst with swirling dark harmonics and subtle magical resonance.",
+    "duration_seconds": 3.545969,
+    "variant_group": "poof-small-dark-shadows-incantation"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-shadows-incantation-02.wav",
+    "description": "Small shadowy burst with swirling dark harmonics and subtle magical resonance.",
+    "duration_seconds": 2.931302,
+    "variant_group": "poof-small-dark-shadows-incantation"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-shadows-incantation-03.wav",
+    "description": "Small shadowy burst with swirling dark harmonics and subtle magical resonance.",
+    "duration_seconds": 3.203344,
+    "variant_group": "poof-small-dark-shadows-incantation"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-dark-shadows-incantation-04.wav",
+    "description": "Small shadowy burst with swirling dark harmonics and subtle magical resonance.",
+    "duration_seconds": 3.42399,
+    "variant_group": "poof-small-dark-shadows-incantation"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-enlightenment-01.wav",
+    "description": "Small radiant burst unfolding through bright shimmering overtones.",
+    "duration_seconds": 3.155917,
+    "variant_group": "poof-small-light-enlightenment"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-enlightenment-02.wav",
+    "description": "Small radiant burst unfolding through bright shimmering overtones.",
+    "duration_seconds": 2.745302,
+    "variant_group": "poof-small-light-enlightenment"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-enlightenment-03.wav",
+    "description": "Small radiant burst unfolding through bright shimmering overtones.",
+    "duration_seconds": 2.634833,
+    "variant_group": "poof-small-light-enlightenment"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-enlightenment-04.wav",
+    "description": "Small radiant burst unfolding through bright shimmering overtones.",
+    "duration_seconds": 2.908021,
+    "variant_group": "poof-small-light-enlightenment"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-mystic-01.wav",
+    "description": "Small luminous poof with soft magical textures and a gentle harmonic bloom.",
+    "duration_seconds": 3.197771,
+    "variant_group": "poof-small-light-mystic"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-mystic-02.wav",
+    "description": "Small luminous poof with soft magical textures and a gentle harmonic bloom.",
+    "duration_seconds": 3.012552,
+    "variant_group": "poof-small-light-mystic"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-mystic-03.wav",
+    "description": "Small luminous poof with soft magical textures and a gentle harmonic bloom.",
+    "duration_seconds": 2.944823,
+    "variant_group": "poof-small-light-mystic"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-light-mystic-04.wav",
+    "description": "Small luminous poof with soft magical textures and a gentle harmonic bloom.",
+    "duration_seconds": 2.792802,
+    "variant_group": "poof-small-light-mystic"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-ethereal-cascade-01.wav",
+    "description": "Small magical burst with airy particles cascading into a delicate shimmering finish.",
+    "duration_seconds": 2.215042,
+    "variant_group": "poof-small-neutral-ethereal-cascade"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-ethereal-cascade-02.wav",
+    "description": "Small magical burst with airy particles cascading into a delicate shimmering finish.",
+    "duration_seconds": 1.725448,
+    "variant_group": "poof-small-neutral-ethereal-cascade"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-ethereal-cascade-03.wav",
+    "description": "Small magical burst with airy particles cascading into a delicate shimmering finish.",
+    "duration_seconds": 1.932344,
+    "variant_group": "poof-small-neutral-ethereal-cascade"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-ethereal-cascade-04.wav",
+    "description": "Small magical burst with airy particles cascading into a delicate shimmering finish.",
+    "duration_seconds": 2.152906,
+    "variant_group": "poof-small-neutral-ethereal-cascade"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-hufflepuff-01.wav",
+    "description": "Small magical poof with playful swirling textures and a gentle tonal finish.",
+    "duration_seconds": 2.528885,
+    "variant_group": "poof-small-neutral-hufflepuff"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-hufflepuff-02.wav",
+    "description": "Small magical poof with playful swirling textures and a gentle tonal finish.",
+    "duration_seconds": 2.353229,
+    "variant_group": "poof-small-neutral-hufflepuff"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-hufflepuff-03.wav",
+    "description": "Small magical poof with playful swirling textures and a gentle tonal finish.",
+    "duration_seconds": 2.409927,
+    "variant_group": "poof-small-neutral-hufflepuff"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-hufflepuff-04.wav",
+    "description": "Small magical poof with playful swirling textures and a gentle tonal finish.",
+    "duration_seconds": 2.741896,
+    "variant_group": "poof-small-neutral-hufflepuff"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-reprieve-01.wav",
+    "description": "Small magical poof dispersing through soft spectral textures and restrained resonance.",
+    "duration_seconds": 1.161354,
+    "variant_group": "poof-small-neutral-reprieve"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-reprieve-02.wav",
+    "description": "Small magical poof dispersing through soft spectral textures and restrained resonance.",
+    "duration_seconds": 1.020042,
+    "variant_group": "poof-small-neutral-reprieve"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-reprieve-03.wav",
+    "description": "Small magical poof dispersing through soft spectral textures and restrained resonance.",
+    "duration_seconds": 0.99175,
+    "variant_group": "poof-small-neutral-reprieve"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-reprieve-04.wav",
+    "description": "Small magical poof dispersing through soft spectral textures and restrained resonance.",
+    "duration_seconds": 1.390073,
+    "variant_group": "poof-small-neutral-reprieve"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-wisp-01.wav",
+    "description": "Small magical poof with a soft airy burst and delicate fading shimmer.",
+    "duration_seconds": 3.833531,
+    "variant_group": "poof-small-neutral-wisp"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-wisp-02.wav",
+    "description": "Small magical poof with a soft airy burst and delicate fading shimmer.",
+    "duration_seconds": 3.544542,
+    "variant_group": "poof-small-neutral-wisp"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-wisp-03.wav",
+    "description": "Small magical poof with a soft airy burst and delicate fading shimmer.",
+    "duration_seconds": 3.636146,
+    "variant_group": "poof-small-neutral-wisp"
+  },
+  {
+    "file": "development/audio_library/clips/poof-small-neutral-wisp-04.wav",
+    "description": "Small magical poof with a soft airy burst and delicate fading shimmer.",
+    "duration_seconds": 3.661823,
+    "variant_group": "poof-small-neutral-wisp"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-boost-01.wav",
+    "description": "Magical potion accent rising through energetic bubbles and vibrant harmonic detail.",
+    "duration_seconds": 1.951281,
+    "variant_group": "potion-health-boost"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-boost-02.wav",
+    "description": "Magical potion accent rising through energetic bubbles and vibrant harmonic detail.",
+    "duration_seconds": 1.71825,
+    "variant_group": "potion-health-boost"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-boost-03.wav",
+    "description": "Magical potion accent rising through energetic bubbles and vibrant harmonic detail.",
+    "duration_seconds": 1.718917,
+    "variant_group": "potion-health-boost"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-boost-04.wav",
+    "description": "Magical potion accent rising through energetic bubbles and vibrant harmonic detail.",
+    "duration_seconds": 1.475927,
+    "variant_group": "potion-health-boost"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-refresh-01.wav",
+    "description": "Magical potion accent with refreshing liquid textures and bright restorative resonance.",
+    "duration_seconds": 1.331937,
+    "variant_group": "potion-health-refresh"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-refresh-02.wav",
+    "description": "Magical potion accent with refreshing liquid textures and bright restorative resonance.",
+    "duration_seconds": 1.469677,
+    "variant_group": "potion-health-refresh"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-refresh-03.wav",
+    "description": "Magical potion accent with refreshing liquid textures and bright restorative resonance.",
+    "duration_seconds": 1.357438,
+    "variant_group": "potion-health-refresh"
+  },
+  {
+    "file": "development/audio_library/clips/potion-health-refresh-04.wav",
+    "description": "Magical potion accent with refreshing liquid textures and bright restorative resonance.",
+    "duration_seconds": 1.603177,
+    "variant_group": "potion-health-refresh"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-moonveil-essence-01.wav",
+    "description": "Magical potion accent blending ethereal bubbles with glowing spectral harmonics.",
+    "duration_seconds": 3.923156,
+    "variant_group": "potion-mana-moonveil-essence"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-moonveil-essence-02.wav",
+    "description": "Magical potion accent blending ethereal bubbles with glowing spectral harmonics.",
+    "duration_seconds": 4.484187,
+    "variant_group": "potion-mana-moonveil-essence"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-moonveil-essence-03.wav",
+    "description": "Magical potion accent blending ethereal bubbles with glowing spectral harmonics.",
+    "duration_seconds": 4.0225,
+    "variant_group": "potion-mana-moonveil-essence"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-moonveil-essence-04.wav",
+    "description": "Magical potion accent blending ethereal bubbles with glowing spectral harmonics.",
+    "duration_seconds": 5.197833,
+    "variant_group": "potion-mana-moonveil-essence"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-rejuvenate-01.wav",
+    "description": "Magical potion accent with flowing liquid tones and smooth mystical resonance.",
+    "duration_seconds": 1.883281,
+    "variant_group": "potion-mana-rejuvenate"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-rejuvenate-02.wav",
+    "description": "Magical potion accent with flowing liquid tones and smooth mystical resonance.",
+    "duration_seconds": 1.746635,
+    "variant_group": "potion-mana-rejuvenate"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-rejuvenate-03.wav",
+    "description": "Magical potion accent with flowing liquid tones and smooth mystical resonance.",
+    "duration_seconds": 1.857406,
+    "variant_group": "potion-mana-rejuvenate"
+  },
+  {
+    "file": "development/audio_library/clips/potion-mana-rejuvenate-04.wav",
+    "description": "Magical potion accent with flowing liquid tones and smooth mystical resonance.",
+    "duration_seconds": 1.821646,
+    "variant_group": "potion-mana-rejuvenate"
+  },
+  {
+    "file": "development/audio_library/clips/progress-forward-01.wav",
+    "description": "Forward moving progress accent rising through smooth tonal layers into a clean finish.",
+    "duration_seconds": 17.81749,
+    "variant_group": "progress-forward"
+  },
+  {
+    "file": "development/audio_library/clips/progress-forward-02.wav",
+    "description": "Forward moving progress accent rising through smooth tonal layers into a clean finish.",
+    "duration_seconds": 17.57374,
+    "variant_group": "progress-forward"
+  },
+  {
+    "file": "development/audio_library/clips/progress-forward-03.wav",
+    "description": "Forward moving progress accent rising through smooth tonal layers into a clean finish.",
+    "duration_seconds": 17.77699,
+    "variant_group": "progress-forward"
+  },
+  {
+    "file": "development/audio_library/clips/progress-forward-04.wav",
+    "description": "Forward moving progress accent rising through smooth tonal layers into a clean finish.",
+    "duration_seconds": 17.421469,
+    "variant_group": "progress-forward"
+  },
+  {
+    "file": "development/audio_library/clips/progress-rune-locker-01.wav",
+    "description": "Arcane progress accent with layered magical pulses settling into a confident resolution.",
+    "duration_seconds": 9.174687,
+    "variant_group": "progress-rune-locker"
+  },
+  {
+    "file": "development/audio_library/clips/progress-rune-locker-02.wav",
+    "description": "Arcane progress accent with layered magical pulses settling into a confident resolution.",
+    "duration_seconds": 9.161083,
+    "variant_group": "progress-rune-locker"
+  },
+  {
+    "file": "development/audio_library/clips/progress-rune-locker-03.wav",
+    "description": "Arcane progress accent with layered magical pulses settling into a confident resolution.",
+    "duration_seconds": 9.324385,
+    "variant_group": "progress-rune-locker"
+  },
+  {
+    "file": "development/audio_library/clips/progress-rune-locker-04.wav",
+    "description": "Arcane progress accent with layered magical pulses settling into a confident resolution.",
+    "duration_seconds": 9.811833,
+    "variant_group": "progress-rune-locker"
+  },
+  {
+    "file": "development/audio_library/clips/progress-side-quest-01.wav",
+    "description": "Adventurous progress accent unfolding with playful magical flourishes and light sparkling detail.",
+    "duration_seconds": 10.128323,
+    "variant_group": "progress-side-quest"
+  },
+  {
+    "file": "development/audio_library/clips/progress-side-quest-02.wav",
+    "description": "Adventurous progress accent unfolding with playful magical flourishes and light sparkling detail.",
+    "duration_seconds": 12.168927,
+    "variant_group": "progress-side-quest"
+  },
+  {
+    "file": "development/audio_library/clips/progress-side-quest-03.wav",
+    "description": "Adventurous progress accent unfolding with playful magical flourishes and light sparkling detail.",
+    "duration_seconds": 12.858063,
+    "variant_group": "progress-side-quest"
+  },
+  {
+    "file": "development/audio_library/clips/progress-side-quest-04.wav",
+    "description": "Adventurous progress accent unfolding with playful magical flourishes and light sparkling detail.",
+    "duration_seconds": 15.736313,
+    "variant_group": "progress-side-quest"
+  },
+  {
+    "file": "development/audio_library/clips/progress-starlight-evolution-01.wav",
+    "description": "Expansive magical progression with shimmering celestial textures rising into a luminous climax.",
+    "duration_seconds": 9.220073,
+    "variant_group": "progress-starlight-evolution"
+  },
+  {
+    "file": "development/audio_library/clips/progress-starlight-evolution-02.wav",
+    "description": "Expansive magical progression with shimmering celestial textures rising into a luminous climax.",
+    "duration_seconds": 9.434292,
+    "variant_group": "progress-starlight-evolution"
+  },
+  {
+    "file": "development/audio_library/clips/progress-starlight-evolution-03.wav",
+    "description": "Expansive magical progression with shimmering celestial textures rising into a luminous climax.",
+    "duration_seconds": 9.504198,
+    "variant_group": "progress-starlight-evolution"
+  },
+  {
+    "file": "development/audio_library/clips/progress-starlight-evolution-04.wav",
+    "description": "Expansive magical progression with shimmering celestial textures rising into a luminous climax.",
+    "duration_seconds": 9.362229,
+    "variant_group": "progress-starlight-evolution"
+  },
+  {
+    "file": "development/audio_library/clips/buy-auction-house-01.wav",
+    "description": "Coin transaction accent with dense metallic movement and crisp overlapping clinks.",
+    "duration_seconds": 0.83924,
+    "variant_group": "buy-auction-house"
+  },
+  {
+    "file": "development/audio_library/clips/buy-auction-house-02.wav",
+    "description": "Coin transaction accent with dense metallic movement and crisp overlapping clinks.",
+    "duration_seconds": 0.769354,
+    "variant_group": "buy-auction-house"
+  },
+  {
+    "file": "development/audio_library/clips/buy-auction-house-03.wav",
+    "description": "Coin transaction accent with dense metallic movement and crisp overlapping clinks.",
+    "duration_seconds": 0.757354,
+    "variant_group": "buy-auction-house"
+  },
+  {
+    "file": "development/audio_library/clips/buy-auction-house-04.wav",
+    "description": "Coin transaction accent with dense metallic movement and crisp overlapping clinks.",
+    "duration_seconds": 0.702292,
+    "variant_group": "buy-auction-house"
+  },
+  {
+    "file": "development/audio_library/clips/buy-coin-toss-01.wav",
+    "description": "Coin transaction accent with a bright metallic toss and clean ringing finish.",
+    "duration_seconds": 2.152865,
+    "variant_group": "buy-coin-toss"
+  },
+  {
+    "file": "development/audio_library/clips/buy-coin-toss-02.wav",
+    "description": "Coin transaction accent with a bright metallic toss and clean ringing finish.",
+    "duration_seconds": 2.415635,
+    "variant_group": "buy-coin-toss"
+  },
+  {
+    "file": "development/audio_library/clips/buy-coin-toss-03.wav",
+    "description": "Coin transaction accent with a bright metallic toss and clean ringing finish.",
+    "duration_seconds": 2.224615,
+    "variant_group": "buy-coin-toss"
+  },
+  {
+    "file": "development/audio_library/clips/buy-coin-toss-04.wav",
+    "description": "Coin transaction accent with a bright metallic toss and clean ringing finish.",
+    "duration_seconds": 2.082156,
+    "variant_group": "buy-coin-toss"
+  },
+  {
+    "file": "development/audio_library/clips/buy-deal-01.wav",
+    "description": "Coin transaction accent with bright metallic clinks and a satisfying tonal finish.",
+    "duration_seconds": 1.106865,
+    "variant_group": "buy-deal"
+  },
+  {
+    "file": "development/audio_library/clips/buy-deal-02.wav",
+    "description": "Coin transaction accent with bright metallic clinks and a satisfying tonal finish.",
+    "duration_seconds": 1.117052,
+    "variant_group": "buy-deal"
+  },
+  {
+    "file": "development/audio_library/clips/buy-deal-03.wav",
+    "description": "Coin transaction accent with bright metallic clinks and a satisfying tonal finish.",
+    "duration_seconds": 1.09501,
+    "variant_group": "buy-deal"
+  },
+  {
+    "file": "development/audio_library/clips/buy-deal-04.wav",
+    "description": "Coin transaction accent with bright metallic clinks and a satisfying tonal finish.",
+    "duration_seconds": 1.072646,
+    "variant_group": "buy-deal"
+  },
+  {
+    "file": "development/audio_library/clips/buy-shopping-01.wav",
+    "description": "Coin transaction accent with layered metallic chatter and polished resonance.",
+    "duration_seconds": 1.647552,
+    "variant_group": "buy-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/buy-shopping-02.wav",
+    "description": "Coin transaction accent with layered metallic chatter and polished resonance.",
+    "duration_seconds": 1.51449,
+    "variant_group": "buy-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/buy-shopping-03.wav",
+    "description": "Coin transaction accent with layered metallic chatter and polished resonance.",
+    "duration_seconds": 1.493281,
+    "variant_group": "buy-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/buy-shopping-04.wav",
+    "description": "Coin transaction accent with layered metallic chatter and polished resonance.",
+    "duration_seconds": 1.793615,
+    "variant_group": "buy-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/sell-bag-of-coin-01.wav",
+    "description": "Coin transaction accent with shifting metallic weight and muted clattering.",
+    "duration_seconds": 1.58574,
+    "variant_group": "sell-bag-of-coin"
+  },
+  {
+    "file": "development/audio_library/clips/sell-bag-of-coin-02.wav",
+    "description": "Coin transaction accent with shifting metallic weight and muted clattering.",
+    "duration_seconds": 1.208469,
+    "variant_group": "sell-bag-of-coin"
+  },
+  {
+    "file": "development/audio_library/clips/sell-bag-of-coin-03.wav",
+    "description": "Coin transaction accent with shifting metallic weight and muted clattering.",
+    "duration_seconds": 1.607427,
+    "variant_group": "sell-bag-of-coin"
+  },
+  {
+    "file": "development/audio_library/clips/sell-bag-of-coin-04.wav",
+    "description": "Coin transaction accent with shifting metallic weight and muted clattering.",
+    "duration_seconds": 1.436469,
+    "variant_group": "sell-bag-of-coin"
+  },
+  {
+    "file": "development/audio_library/clips/sell-deal-01.wav",
+    "description": "Coin transaction accent with crisp metallic contacts and a balanced tonal flourish.",
+    "duration_seconds": 0.866719,
+    "variant_group": "sell-deal"
+  },
+  {
+    "file": "development/audio_library/clips/sell-deal-02.wav",
+    "description": "Coin transaction accent with crisp metallic contacts and a balanced tonal flourish.",
+    "duration_seconds": 0.812719,
+    "variant_group": "sell-deal"
+  },
+  {
+    "file": "development/audio_library/clips/sell-deal-03.wav",
+    "description": "Coin transaction accent with crisp metallic contacts and a balanced tonal flourish.",
+    "duration_seconds": 0.790958,
+    "variant_group": "sell-deal"
+  },
+  {
+    "file": "development/audio_library/clips/sell-deal-04.wav",
+    "description": "Coin transaction accent with crisp metallic contacts and a balanced tonal flourish.",
+    "duration_seconds": 1.167458,
+    "variant_group": "sell-deal"
+  },
+  {
+    "file": "development/audio_library/clips/sell-salesman-01.wav",
+    "description": "Coin transaction accent with layered clinks and warm metallic resonance.",
+    "duration_seconds": 1.58626,
+    "variant_group": "sell-salesman"
+  },
+  {
+    "file": "development/audio_library/clips/sell-salesman-02.wav",
+    "description": "Coin transaction accent with layered clinks and warm metallic resonance.",
+    "duration_seconds": 1.534979,
+    "variant_group": "sell-salesman"
+  },
+  {
+    "file": "development/audio_library/clips/sell-salesman-03.wav",
+    "description": "Coin transaction accent with layered clinks and warm metallic resonance.",
+    "duration_seconds": 1.289979,
+    "variant_group": "sell-salesman"
+  },
+  {
+    "file": "development/audio_library/clips/sell-salesman-04.wav",
+    "description": "Coin transaction accent with layered clinks and warm metallic resonance.",
+    "duration_seconds": 1.78199,
+    "variant_group": "sell-salesman"
+  },
+  {
+    "file": "development/audio_library/clips/sell-shopping-01.wav",
+    "description": "Coin transaction accent with lively metallic movement and gentle ringing detail.",
+    "duration_seconds": 1.448979,
+    "variant_group": "sell-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/sell-shopping-02.wav",
+    "description": "Coin transaction accent with lively metallic movement and gentle ringing detail.",
+    "duration_seconds": 1.23625,
+    "variant_group": "sell-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/sell-shopping-03.wav",
+    "description": "Coin transaction accent with lively metallic movement and gentle ringing detail.",
+    "duration_seconds": 1.501667,
+    "variant_group": "sell-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/sell-shopping-04.wav",
+    "description": "Coin transaction accent with lively metallic movement and gentle ringing detail.",
+    "duration_seconds": 1.505562,
+    "variant_group": "sell-shopping"
+  },
+  {
+    "file": "development/audio_library/clips/focus-availible-01.wav",
+    "description": "Inviting focus accent with a crisp pulse and light harmonic sparkle.",
+    "duration_seconds": 0.459844,
+    "variant_group": "focus-availible"
+  },
+  {
+    "file": "development/audio_library/clips/focus-availible-02.wav",
+    "description": "Inviting focus accent with a crisp pulse and light harmonic sparkle.",
+    "duration_seconds": 0.256427,
+    "variant_group": "focus-availible"
+  },
+  {
+    "file": "development/audio_library/clips/focus-availible-03.wav",
+    "description": "Inviting focus accent with a crisp pulse and light harmonic sparkle.",
+    "duration_seconds": 0.26126,
+    "variant_group": "focus-availible"
+  },
+  {
+    "file": "development/audio_library/clips/focus-availible-04.wav",
+    "description": "Inviting focus accent with a crisp pulse and light harmonic sparkle.",
+    "duration_seconds": 0.37925,
+    "variant_group": "focus-availible"
+  },
+  {
+    "file": "development/audio_library/clips/focus-backend-01.wav",
+    "description": "Subdued focus accent with a muted transient fading into a soft atmospheric tail.",
+    "duration_seconds": 0.467375,
+    "variant_group": "focus-backend"
+  },
+  {
+    "file": "development/audio_library/clips/focus-backend-02.wav",
+    "description": "Subdued focus accent with a muted transient fading into a soft atmospheric tail.",
+    "duration_seconds": 0.333125,
+    "variant_group": "focus-backend"
+  },
+  {
+    "file": "development/audio_library/clips/focus-backend-03.wav",
+    "description": "Subdued focus accent with a muted transient fading into a soft atmospheric tail.",
+    "duration_seconds": 0.290646,
+    "variant_group": "focus-backend"
+  },
+  {
+    "file": "development/audio_library/clips/focus-backend-04.wav",
+    "description": "Subdued focus accent with a muted transient fading into a soft atmospheric tail.",
+    "duration_seconds": 0.317292,
+    "variant_group": "focus-backend"
+  },
+  {
+    "file": "development/audio_library/clips/focus-chooser-01.wav",
+    "description": "Rounded magical focus accent blooming into delicate sparkling overtones.",
+    "duration_seconds": 0.357323,
+    "variant_group": "focus-chooser"
+  },
+  {
+    "file": "development/audio_library/clips/focus-chooser-02.wav",
+    "description": "Rounded magical focus accent blooming into delicate sparkling overtones.",
+    "duration_seconds": 0.285635,
+    "variant_group": "focus-chooser"
+  },
+  {
+    "file": "development/audio_library/clips/focus-chooser-03.wav",
+    "description": "Rounded magical focus accent blooming into delicate sparkling overtones.",
+    "duration_seconds": 0.283625,
+    "variant_group": "focus-chooser"
+  },
+  {
+    "file": "development/audio_library/clips/focus-chooser-04.wav",
+    "description": "Rounded magical focus accent blooming into delicate sparkling overtones.",
+    "duration_seconds": 0.485531,
+    "variant_group": "focus-chooser"
+  },
+  {
+    "file": "development/audio_library/clips/focus-clicker-01.wav",
+    "description": "Dry mechanical focus accent with a tight click and subtle magical resonance.",
+    "duration_seconds": 0.485354,
+    "variant_group": "focus-clicker"
+  },
+  {
+    "file": "development/audio_library/clips/focus-clicker-02.wav",
+    "description": "Dry mechanical focus accent with a tight click and subtle magical resonance.",
+    "duration_seconds": 0.268292,
+    "variant_group": "focus-clicker"
+  },
+  {
+    "file": "development/audio_library/clips/focus-clicker-03.wav",
+    "description": "Dry mechanical focus accent with a tight click and subtle magical resonance.",
+    "duration_seconds": 0.252646,
+    "variant_group": "focus-clicker"
+  },
+  {
+    "file": "development/audio_library/clips/focus-clicker-04.wav",
+    "description": "Dry mechanical focus accent with a tight click and subtle magical resonance.",
+    "duration_seconds": 0.380198,
+    "variant_group": "focus-clicker"
+  },
+  {
+    "file": "development/audio_library/clips/focus-front-01.wav",
+    "description": "Clear focus accent with a crisp attack settling into a restrained tonal shimmer.",
+    "duration_seconds": 0.479687,
+    "variant_group": "focus-front"
+  },
+  {
+    "file": "development/audio_library/clips/focus-front-02.wav",
+    "description": "Clear focus accent with a crisp attack settling into a restrained tonal shimmer.",
+    "duration_seconds": 0.400281,
+    "variant_group": "focus-front"
+  },
+  {
+    "file": "development/audio_library/clips/focus-front-03.wav",
+    "description": "Clear focus accent with a crisp attack settling into a restrained tonal shimmer.",
+    "duration_seconds": 0.385542,
+    "variant_group": "focus-front"
+  },
+  {
+    "file": "development/audio_library/clips/focus-front-04.wav",
+    "description": "Clear focus accent with a crisp attack settling into a restrained tonal shimmer.",
+    "duration_seconds": 0.452156,
+    "variant_group": "focus-front"
+  },
+  {
+    "file": "development/audio_library/clips/focus-hover-01.wav",
+    "description": "Delicate focus accent with a light tonal flicker rising into a brief airy trail.",
+    "duration_seconds": 0.643594,
+    "variant_group": "focus-hover"
+  },
+  {
+    "file": "development/audio_library/clips/focus-hover-02.wav",
+    "description": "Delicate focus accent with a light tonal flicker rising into a brief airy trail.",
+    "duration_seconds": 0.505792,
+    "variant_group": "focus-hover"
+  },
+  {
+    "file": "development/audio_library/clips/focus-hover-03.wav",
+    "description": "Delicate focus accent with a light tonal flicker rising into a brief airy trail.",
+    "duration_seconds": 0.579469,
+    "variant_group": "focus-hover"
+  },
+  {
+    "file": "development/audio_library/clips/focus-hover-04.wav",
+    "description": "Delicate focus accent with a light tonal flicker rising into a brief airy trail.",
+    "duration_seconds": 0.499531,
+    "variant_group": "focus-hover"
+  },
+  {
+    "file": "development/audio_library/clips/focus-main-menu-01.wav",
+    "description": "Polished magical focus accent with a compact pulse blooming into a soft shimmering finish.",
+    "duration_seconds": 0.34551,
+    "variant_group": "focus-main-menu"
+  },
+  {
+    "file": "development/audio_library/clips/focus-main-menu-02.wav",
+    "description": "Polished magical focus accent with a compact pulse blooming into a soft shimmering finish.",
+    "duration_seconds": 0.264573,
+    "variant_group": "focus-main-menu"
+  },
+  {
+    "file": "development/audio_library/clips/focus-main-menu-03.wav",
+    "description": "Polished magical focus accent with a compact pulse blooming into a soft shimmering finish.",
+    "duration_seconds": 0.260031,
+    "variant_group": "focus-main-menu"
+  },
+  {
+    "file": "development/audio_library/clips/focus-main-menu-04.wav",
+    "description": "Polished magical focus accent with a compact pulse blooming into a soft shimmering finish.",
+    "duration_seconds": 0.37449,
+    "variant_group": "focus-main-menu"
+  },
+  {
+    "file": "development/audio_library/clips/focus-noted-01.wav",
+    "description": "Bright focus accent with a clean ringing tone and smooth natural decay.",
+    "duration_seconds": 0.959313,
+    "variant_group": "focus-noted"
+  },
+  {
+    "file": "development/audio_library/clips/focus-noted-02.wav",
+    "description": "Bright focus accent with a clean ringing tone and smooth natural decay.",
+    "duration_seconds": 0.971917,
+    "variant_group": "focus-noted"
+  },
+  {
+    "file": "development/audio_library/clips/focus-noted-03.wav",
+    "description": "Bright focus accent with a clean ringing tone and smooth natural decay.",
+    "duration_seconds": 0.965719,
+    "variant_group": "focus-noted"
+  },
+  {
+    "file": "development/audio_library/clips/focus-noted-04.wav",
+    "description": "Bright focus accent with a clean ringing tone and smooth natural decay.",
+    "duration_seconds": 1.21974,
+    "variant_group": "focus-noted"
+  },
+  {
+    "file": "development/audio_library/clips/select-arcane-01.wav",
+    "description": "Mysterious selection accent with dark spectral textures and flickering upper harmonics.",
+    "duration_seconds": 1.717396,
+    "variant_group": "select-arcane"
+  },
+  {
+    "file": "development/audio_library/clips/select-arcane-02.wav",
+    "description": "Mysterious selection accent with dark spectral textures and flickering upper harmonics.",
+    "duration_seconds": 1.548125,
+    "variant_group": "select-arcane"
+  },
+  {
+    "file": "development/audio_library/clips/select-arcane-03.wav",
+    "description": "Mysterious selection accent with dark spectral textures and flickering upper harmonics.",
+    "duration_seconds": 1.564906,
+    "variant_group": "select-arcane"
+  },
+  {
+    "file": "development/audio_library/clips/select-arcane-04.wav",
+    "description": "Mysterious selection accent with dark spectral textures and flickering upper harmonics.",
+    "duration_seconds": 1.609208,
+    "variant_group": "select-arcane"
+  },
+  {
+    "file": "development/audio_library/clips/select-choice-01.wav",
+    "description": "Balanced selection accent with a crystalline ping and restrained harmonic decay.",
+    "duration_seconds": 0.562156,
+    "variant_group": "select-choice"
+  },
+  {
+    "file": "development/audio_library/clips/select-choice-02.wav",
+    "description": "Balanced selection accent with a crystalline ping and restrained harmonic decay.",
+    "duration_seconds": 0.497427,
+    "variant_group": "select-choice"
+  },
+  {
+    "file": "development/audio_library/clips/select-choice-03.wav",
+    "description": "Balanced selection accent with a crystalline ping and restrained harmonic decay.",
+    "duration_seconds": 0.52676,
+    "variant_group": "select-choice"
+  },
+  {
+    "file": "development/audio_library/clips/select-choice-04.wav",
+    "description": "Balanced selection accent with a crystalline ping and restrained harmonic decay.",
+    "duration_seconds": 0.825615,
+    "variant_group": "select-choice"
+  },
+  {
+    "file": "development/audio_library/clips/select-chosen-01.wav",
+    "description": "Resolved selection accent with a clean tonal bloom and gentle lingering shimmer.",
+    "duration_seconds": 1.54499,
+    "variant_group": "select-chosen"
+  },
+  {
+    "file": "development/audio_library/clips/select-chosen-02.wav",
+    "description": "Resolved selection accent with a clean tonal bloom and gentle lingering shimmer.",
+    "duration_seconds": 1.509625,
+    "variant_group": "select-chosen"
+  },
+  {
+    "file": "development/audio_library/clips/select-chosen-03.wav",
+    "description": "Resolved selection accent with a clean tonal bloom and gentle lingering shimmer.",
+    "duration_seconds": 1.509708,
+    "variant_group": "select-chosen"
+  },
+  {
+    "file": "development/audio_library/clips/select-chosen-04.wav",
+    "description": "Resolved selection accent with a clean tonal bloom and gentle lingering shimmer.",
+    "duration_seconds": 1.807594,
+    "variant_group": "select-chosen"
+  },
+  {
+    "file": "development/audio_library/clips/select-enter-01.wav",
+    "description": "Confident selection accent with a firm magical strike expanding into bright harmonics.",
+    "duration_seconds": 1.220073,
+    "variant_group": "select-enter"
+  },
+  {
+    "file": "development/audio_library/clips/select-enter-02.wav",
+    "description": "Confident selection accent with a firm magical strike expanding into bright harmonics.",
+    "duration_seconds": 1.194177,
+    "variant_group": "select-enter"
+  },
+  {
+    "file": "development/audio_library/clips/select-enter-03.wav",
+    "description": "Confident selection accent with a firm magical strike expanding into bright harmonics.",
+    "duration_seconds": 1.266833,
+    "variant_group": "select-enter"
+  },
+  {
+    "file": "development/audio_library/clips/select-enter-04.wav",
+    "description": "Confident selection accent with a firm magical strike expanding into bright harmonics.",
+    "duration_seconds": 1.232573,
+    "variant_group": "select-enter"
+  },
+  {
+    "file": "development/audio_library/clips/select-hallowed-01.wav",
+    "description": "Solemn selection accent with rich resonance and lingering ethereal overtones.",
+    "duration_seconds": 2.978323,
+    "variant_group": "select-hallowed"
+  },
+  {
+    "file": "development/audio_library/clips/select-hallowed-02.wav",
+    "description": "Solemn selection accent with rich resonance and lingering ethereal overtones.",
+    "duration_seconds": 2.545729,
+    "variant_group": "select-hallowed"
+  },
+  {
+    "file": "development/audio_library/clips/select-hallowed-03.wav",
+    "description": "Solemn selection accent with rich resonance and lingering ethereal overtones.",
+    "duration_seconds": 2.607458,
+    "variant_group": "select-hallowed"
+  },
+  {
+    "file": "development/audio_library/clips/select-hallowed-04.wav",
+    "description": "Solemn selection accent with rich resonance and lingering ethereal overtones.",
+    "duration_seconds": 2.809344,
+    "variant_group": "select-hallowed"
+  },
+  {
+    "file": "development/audio_library/clips/select-open-up-01.wav",
+    "description": "Expanding selection accent unfolding through airy textures and delicate magical detail.",
+    "duration_seconds": 1.083979,
+    "variant_group": "select-open-up"
+  },
+  {
+    "file": "development/audio_library/clips/select-open-up-02.wav",
+    "description": "Expanding selection accent unfolding through airy textures and delicate magical detail.",
+    "duration_seconds": 1.045844,
+    "variant_group": "select-open-up"
+  },
+  {
+    "file": "development/audio_library/clips/select-open-up-03.wav",
+    "description": "Expanding selection accent unfolding through airy textures and delicate magical detail.",
+    "duration_seconds": 1.279646,
+    "variant_group": "select-open-up"
+  },
+  {
+    "file": "development/audio_library/clips/select-open-up-04.wav",
+    "description": "Expanding selection accent unfolding through airy textures and delicate magical detail.",
+    "duration_seconds": 1.672396,
+    "variant_group": "select-open-up"
+  },
+  {
+    "file": "development/audio_library/clips/select-tricked-01.wav",
+    "description": "Twisted magical selection accent with an uneasy transient and brief tonal flutter.",
+    "duration_seconds": 0.586406,
+    "variant_group": "select-tricked"
+  },
+  {
+    "file": "development/audio_library/clips/select-tricked-02.wav",
+    "description": "Twisted magical selection accent with an uneasy transient and brief tonal flutter.",
+    "duration_seconds": 0.498,
+    "variant_group": "select-tricked"
+  },
+  {
+    "file": "development/audio_library/clips/select-tricked-03.wav",
+    "description": "Twisted magical selection accent with an uneasy transient and brief tonal flutter.",
+    "duration_seconds": 0.499188,
+    "variant_group": "select-tricked"
+  },
+  {
+    "file": "development/audio_library/clips/select-tricked-04.wav",
+    "description": "Twisted magical selection accent with an uneasy transient and brief tonal flutter.",
+    "duration_seconds": 0.499188,
+    "variant_group": "select-tricked"
+  },
+  {
+    "file": "development/audio_library/clips/select-welcome-01.wav",
+    "description": "Warm selection accent with a rounded pulse and inviting tonal flourish.",
+    "duration_seconds": 1.54975,
+    "variant_group": "select-welcome"
+  },
+  {
+    "file": "development/audio_library/clips/select-welcome-02.wav",
+    "description": "Warm selection accent with a rounded pulse and inviting tonal flourish.",
+    "duration_seconds": 1.612292,
+    "variant_group": "select-welcome"
+  },
+  {
+    "file": "development/audio_library/clips/select-welcome-03.wav",
+    "description": "Warm selection accent with a rounded pulse and inviting tonal flourish.",
+    "duration_seconds": 1.367948,
+    "variant_group": "select-welcome"
+  },
+  {
+    "file": "development/audio_library/clips/select-welcome-04.wav",
+    "description": "Warm selection accent with a rounded pulse and inviting tonal flourish.",
+    "duration_seconds": 1.568062,
+    "variant_group": "select-welcome"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-anvil-01.wav",
+    "description": "Dense metallic confirmation accent with a weighty strike and rich ringing overtones.",
+    "duration_seconds": 2.308354,
+    "variant_group": "confirm-anvil"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-anvil-02.wav",
+    "description": "Dense metallic confirmation accent with a weighty strike and rich ringing overtones.",
+    "duration_seconds": 2.099146,
+    "variant_group": "confirm-anvil"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-anvil-03.wav",
+    "description": "Dense metallic confirmation accent with a weighty strike and rich ringing overtones.",
+    "duration_seconds": 2.378906,
+    "variant_group": "confirm-anvil"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-anvil-04.wav",
+    "description": "Dense metallic confirmation accent with a weighty strike and rich ringing overtones.",
+    "duration_seconds": 2.25349,
+    "variant_group": "confirm-anvil"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-cleared-01.wav",
+    "description": "Clean confirmation accent opening into a light harmonic shimmer.",
+    "duration_seconds": 0.834917,
+    "variant_group": "confirm-cleared"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-cleared-02.wav",
+    "description": "Clean confirmation accent opening into a light harmonic shimmer.",
+    "duration_seconds": 0.814292,
+    "variant_group": "confirm-cleared"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-cleared-03.wav",
+    "description": "Clean confirmation accent opening into a light harmonic shimmer.",
+    "duration_seconds": 0.717156,
+    "variant_group": "confirm-cleared"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-cleared-04.wav",
+    "description": "Clean confirmation accent opening into a light harmonic shimmer.",
+    "duration_seconds": 1.068469,
+    "variant_group": "confirm-cleared"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-dusted-01.wav",
+    "description": "Dry confirmation accent dispersing into soft dusty particles and muted tonal detail.",
+    "duration_seconds": 0.726073,
+    "variant_group": "confirm-dusted"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-dusted-02.wav",
+    "description": "Dry confirmation accent dispersing into soft dusty particles and muted tonal detail.",
+    "duration_seconds": 0.63226,
+    "variant_group": "confirm-dusted"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-dusted-03.wav",
+    "description": "Dry confirmation accent dispersing into soft dusty particles and muted tonal detail.",
+    "duration_seconds": 0.671948,
+    "variant_group": "confirm-dusted"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-dusted-04.wav",
+    "description": "Dry confirmation accent dispersing into soft dusty particles and muted tonal detail.",
+    "duration_seconds": 0.627687,
+    "variant_group": "confirm-dusted"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ember-tap-01.wav",
+    "description": "Warm confirmation accent combining a compact tap with subtle glowing textures.",
+    "duration_seconds": 2.281344,
+    "variant_group": "confirm-ember-tap"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ember-tap-02.wav",
+    "description": "Warm confirmation accent combining a compact tap with subtle glowing textures.",
+    "duration_seconds": 2.133938,
+    "variant_group": "confirm-ember-tap"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ember-tap-03.wav",
+    "description": "Warm confirmation accent combining a compact tap with subtle glowing textures.",
+    "duration_seconds": 2.055865,
+    "variant_group": "confirm-ember-tap"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ember-tap-04.wav",
+    "description": "Warm confirmation accent combining a compact tap with subtle glowing textures.",
+    "duration_seconds": 2.52726,
+    "variant_group": "confirm-ember-tap"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-locked-01.wav",
+    "description": "Firm confirmation accent with a mechanical latch and restrained metallic resonance.",
+    "duration_seconds": 2.524385,
+    "variant_group": "confirm-locked"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-locked-02.wav",
+    "description": "Firm confirmation accent with a mechanical latch and restrained metallic resonance.",
+    "duration_seconds": 2.466917,
+    "variant_group": "confirm-locked"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-locked-03.wav",
+    "description": "Firm confirmation accent with a mechanical latch and restrained metallic resonance.",
+    "duration_seconds": 2.422,
+    "variant_group": "confirm-locked"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-locked-04.wav",
+    "description": "Firm confirmation accent with a mechanical latch and restrained metallic resonance.",
+    "duration_seconds": 2.81124,
+    "variant_group": "confirm-locked"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ready-01.wav",
+    "description": "Clear confirmation accent with a concise strike and bright tonal finish.",
+    "duration_seconds": 1.595094,
+    "variant_group": "confirm-ready"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ready-02.wav",
+    "description": "Clear confirmation accent with a concise strike and bright tonal finish.",
+    "duration_seconds": 1.4515,
+    "variant_group": "confirm-ready"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ready-03.wav",
+    "description": "Clear confirmation accent with a concise strike and bright tonal finish.",
+    "duration_seconds": 1.462063,
+    "variant_group": "confirm-ready"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-ready-04.wav",
+    "description": "Clear confirmation accent with a concise strike and bright tonal finish.",
+    "duration_seconds": 1.811125,
+    "variant_group": "confirm-ready"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-soft-shine-01.wav",
+    "description": "Gentle confirmation accent with a luminous strike and delicate shimmering finish.",
+    "duration_seconds": 1.497135,
+    "variant_group": "confirm-soft-shine"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-soft-shine-02.wav",
+    "description": "Gentle confirmation accent with a luminous strike and delicate shimmering finish.",
+    "duration_seconds": 1.286437,
+    "variant_group": "confirm-soft-shine"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-soft-shine-03.wav",
+    "description": "Gentle confirmation accent with a luminous strike and delicate shimmering finish.",
+    "duration_seconds": 1.268844,
+    "variant_group": "confirm-soft-shine"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-soft-shine-04.wav",
+    "description": "Gentle confirmation accent with a luminous strike and delicate shimmering finish.",
+    "duration_seconds": 1.537083,
+    "variant_group": "confirm-soft-shine"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-whisp-01.wav",
+    "description": "Airy confirmation accent drifting through soft spectral textures before fading naturally.",
+    "duration_seconds": 2.899542,
+    "variant_group": "confirm-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-whisp-02.wav",
+    "description": "Airy confirmation accent drifting through soft spectral textures before fading naturally.",
+    "duration_seconds": 2.768417,
+    "variant_group": "confirm-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-whisp-03.wav",
+    "description": "Airy confirmation accent drifting through soft spectral textures before fading naturally.",
+    "duration_seconds": 2.788031,
+    "variant_group": "confirm-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/confirm-whisp-04.wav",
+    "description": "Airy confirmation accent drifting through soft spectral textures before fading naturally.",
+    "duration_seconds": 3.262969,
+    "variant_group": "confirm-whisp"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-blocked-01.wav",
+    "description": "Heavy invalid accent closing with a dense mechanical impact and short finish.",
+    "duration_seconds": 1.944438,
+    "variant_group": "invalid-blocked"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-blocked-02.wav",
+    "description": "Heavy invalid accent closing with a dense mechanical impact and short finish.",
+    "duration_seconds": 1.844875,
+    "variant_group": "invalid-blocked"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-blocked-03.wav",
+    "description": "Heavy invalid accent closing with a dense mechanical impact and short finish.",
+    "duration_seconds": 1.691792,
+    "variant_group": "invalid-blocked"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-blocked-04.wav",
+    "description": "Heavy invalid accent closing with a dense mechanical impact and short finish.",
+    "duration_seconds": 2.071385,
+    "variant_group": "invalid-blocked"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-denial-01.wav",
+    "description": "Dark invalid accent descending into a subdued tonal ending.",
+    "duration_seconds": 0.695708,
+    "variant_group": "invalid-denial"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-denial-02.wav",
+    "description": "Dark invalid accent descending into a subdued tonal ending.",
+    "duration_seconds": 0.465521,
+    "variant_group": "invalid-denial"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-denial-03.wav",
+    "description": "Dark invalid accent descending into a subdued tonal ending.",
+    "duration_seconds": 0.45551,
+    "variant_group": "invalid-denial"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-denial-04.wav",
+    "description": "Dark invalid accent descending into a subdued tonal ending.",
+    "duration_seconds": 0.377375,
+    "variant_group": "invalid-denial"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-no-way-01.wav",
+    "description": "Abrupt invalid accent cutting sharply into a short muted decay.",
+    "duration_seconds": 1.509719,
+    "variant_group": "invalid-no-way"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-no-way-02.wav",
+    "description": "Abrupt invalid accent cutting sharply into a short muted decay.",
+    "duration_seconds": 1.408323,
+    "variant_group": "invalid-no-way"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-no-way-03.wav",
+    "description": "Abrupt invalid accent cutting sharply into a short muted decay.",
+    "duration_seconds": 1.344875,
+    "variant_group": "invalid-no-way"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-no-way-04.wav",
+    "description": "Abrupt invalid accent cutting sharply into a short muted decay.",
+    "duration_seconds": 1.570802,
+    "variant_group": "invalid-no-way"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-rejected-01.wav",
+    "description": "Firm invalid accent with a blunt attack and restrained low-frequency finish.",
+    "duration_seconds": 1.102979,
+    "variant_group": "invalid-rejected"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-rejected-02.wav",
+    "description": "Firm invalid accent with a blunt attack and restrained low-frequency finish.",
+    "duration_seconds": 0.90225,
+    "variant_group": "invalid-rejected"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-rejected-03.wav",
+    "description": "Firm invalid accent with a blunt attack and restrained low-frequency finish.",
+    "duration_seconds": 0.967146,
+    "variant_group": "invalid-rejected"
+  },
+  {
+    "file": "development/audio_library/clips/invalid-rejected-04.wav",
+    "description": "Firm invalid accent with a blunt attack and restrained low-frequency finish.",
+    "duration_seconds": 1.100385,
+    "variant_group": "invalid-rejected"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-discover-01.wav",
+    "description": "Map closing accent with folded parchment textures and a smooth tonal finish.",
+    "duration_seconds": 1.671958,
+    "variant_group": "map-close-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-discover-02.wav",
+    "description": "Map closing accent with folded parchment textures and a smooth tonal finish.",
+    "duration_seconds": 1.502479,
+    "variant_group": "map-close-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-discover-03.wav",
+    "description": "Map closing accent with folded parchment textures and a smooth tonal finish.",
+    "duration_seconds": 1.496708,
+    "variant_group": "map-close-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-discover-04.wav",
+    "description": "Map closing accent with folded parchment textures and a smooth tonal finish.",
+    "duration_seconds": 1.341125,
+    "variant_group": "map-close-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-kalimdor-01.wav",
+    "description": "Map closing accent with textured folds and restrained magical harmonics.",
+    "duration_seconds": 1.151125,
+    "variant_group": "map-close-kalimdor"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-kalimdor-02.wav",
+    "description": "Map closing accent with textured folds and restrained magical harmonics.",
+    "duration_seconds": 1.022135,
+    "variant_group": "map-close-kalimdor"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-kalimdor-03.wav",
+    "description": "Map closing accent with textured folds and restrained magical harmonics.",
+    "duration_seconds": 1.116917,
+    "variant_group": "map-close-kalimdor"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-kalimdor-04.wav",
+    "description": "Map closing accent with textured folds and restrained magical harmonics.",
+    "duration_seconds": 0.973104,
+    "variant_group": "map-close-kalimdor"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-lost-track-01.wav",
+    "description": "Map closing accent with soft paper movement settling into gentle resonance.",
+    "duration_seconds": 2.500354,
+    "variant_group": "map-close-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-lost-track-02.wav",
+    "description": "Map closing accent with soft paper movement settling into gentle resonance.",
+    "duration_seconds": 2.319885,
+    "variant_group": "map-close-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-lost-track-03.wav",
+    "description": "Map closing accent with soft paper movement settling into gentle resonance.",
+    "duration_seconds": 2.312917,
+    "variant_group": "map-close-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-lost-track-04.wav",
+    "description": "Map closing accent with soft paper movement settling into gentle resonance.",
+    "duration_seconds": 2.707198,
+    "variant_group": "map-close-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-shadowpeak-chronicles-01.wav",
+    "description": "Map closing accent with broad parchment movement fading into a soft magical tail.",
+    "duration_seconds": 1.054396,
+    "variant_group": "map-close-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-shadowpeak-chronicles-02.wav",
+    "description": "Map closing accent with broad parchment movement fading into a soft magical tail.",
+    "duration_seconds": 0.780583,
+    "variant_group": "map-close-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-shadowpeak-chronicles-03.wav",
+    "description": "Map closing accent with broad parchment movement fading into a soft magical tail.",
+    "duration_seconds": 0.875417,
+    "variant_group": "map-close-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-close-shadowpeak-chronicles-04.wav",
+    "description": "Map closing accent with broad parchment movement fading into a soft magical tail.",
+    "duration_seconds": 1.105958,
+    "variant_group": "map-close-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-albion-01.wav",
+    "description": "Map opening accent blending textured paper folds with bright shimmering tones.",
+    "duration_seconds": 1.424917,
+    "variant_group": "map-open-albion"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-albion-02.wav",
+    "description": "Map opening accent blending textured paper folds with bright shimmering tones.",
+    "duration_seconds": 1.311719,
+    "variant_group": "map-open-albion"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-albion-03.wav",
+    "description": "Map opening accent blending textured paper folds with bright shimmering tones.",
+    "duration_seconds": 1.287667,
+    "variant_group": "map-open-albion"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-albion-04.wav",
+    "description": "Map opening accent blending textured paper folds with bright shimmering tones.",
+    "duration_seconds": 1.280375,
+    "variant_group": "map-open-albion"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-discover-01.wav",
+    "description": "Map opening accent with unfolding magical textures and spacious harmonic detail.",
+    "duration_seconds": 1.486073,
+    "variant_group": "map-open-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-discover-02.wav",
+    "description": "Map opening accent with unfolding magical textures and spacious harmonic detail.",
+    "duration_seconds": 1.437531,
+    "variant_group": "map-open-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-discover-03.wav",
+    "description": "Map opening accent with unfolding magical textures and spacious harmonic detail.",
+    "duration_seconds": 1.363948,
+    "variant_group": "map-open-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-discover-04.wav",
+    "description": "Map opening accent with unfolding magical textures and spacious harmonic detail.",
+    "duration_seconds": 1.662823,
+    "variant_group": "map-open-discover"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-lost-track-01.wav",
+    "description": "Map opening accent with soft parchment movement and subtle magical resonance.",
+    "duration_seconds": 3.026615,
+    "variant_group": "map-open-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-lost-track-02.wav",
+    "description": "Map opening accent with soft parchment movement and subtle magical resonance.",
+    "duration_seconds": 2.689198,
+    "variant_group": "map-open-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-lost-track-03.wav",
+    "description": "Map opening accent with soft parchment movement and subtle magical resonance.",
+    "duration_seconds": 2.780052,
+    "variant_group": "map-open-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-lost-track-04.wav",
+    "description": "Map opening accent with soft parchment movement and subtle magical resonance.",
+    "duration_seconds": 3.105906,
+    "variant_group": "map-open-lost-track"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-shadowpeak-chronicles-01.wav",
+    "description": "Map opening accent with broad magical swells and rich parchment textures.",
+    "duration_seconds": 1.859229,
+    "variant_group": "map-open-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-shadowpeak-chronicles-02.wav",
+    "description": "Map opening accent with broad magical swells and rich parchment textures.",
+    "duration_seconds": 1.526594,
+    "variant_group": "map-open-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-shadowpeak-chronicles-03.wav",
+    "description": "Map opening accent with broad magical swells and rich parchment textures.",
+    "duration_seconds": 1.661594,
+    "variant_group": "map-open-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/map-open-shadowpeak-chronicles-04.wav",
+    "description": "Map opening accent with broad magical swells and rich parchment textures.",
+    "duration_seconds": 1.632146,
+    "variant_group": "map-open-shadowpeak-chronicles"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-departure-01.wav",
+    "description": "Large menu closing with receding magical textures and a smooth tonal fade.",
+    "duration_seconds": 1.221458,
+    "variant_group": "menu-close-large-departure"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-departure-02.wav",
+    "description": "Large menu closing with receding magical textures and a smooth tonal fade.",
+    "duration_seconds": 1.115646,
+    "variant_group": "menu-close-large-departure"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-departure-03.wav",
+    "description": "Large menu closing with receding magical textures and a smooth tonal fade.",
+    "duration_seconds": 1.098385,
+    "variant_group": "menu-close-large-departure"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-departure-04.wav",
+    "description": "Large menu closing with receding magical textures and a smooth tonal fade.",
+    "duration_seconds": 1.041313,
+    "variant_group": "menu-close-large-departure"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-forbidden-room-01.wav",
+    "description": "Large menu closing with deep spectral tones settling into a restrained finish.",
+    "duration_seconds": 2.550052,
+    "variant_group": "menu-close-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-forbidden-room-02.wav",
+    "description": "Large menu closing with deep spectral tones settling into a restrained finish.",
+    "duration_seconds": 2.485104,
+    "variant_group": "menu-close-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-forbidden-room-03.wav",
+    "description": "Large menu closing with deep spectral tones settling into a restrained finish.",
+    "duration_seconds": 2.879115,
+    "variant_group": "menu-close-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-forbidden-room-04.wav",
+    "description": "Large menu closing with deep spectral tones settling into a restrained finish.",
+    "duration_seconds": 2.992083,
+    "variant_group": "menu-close-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-overlord-01.wav",
+    "description": "Large menu closing with commanding low resonance fading into silence.",
+    "duration_seconds": 2.039865,
+    "variant_group": "menu-close-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-overlord-02.wav",
+    "description": "Large menu closing with commanding low resonance fading into silence.",
+    "duration_seconds": 2.053688,
+    "variant_group": "menu-close-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-overlord-03.wav",
+    "description": "Large menu closing with commanding low resonance fading into silence.",
+    "duration_seconds": 2.016198,
+    "variant_group": "menu-close-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-overlord-04.wav",
+    "description": "Large menu closing with commanding low resonance fading into silence.",
+    "duration_seconds": 2.272635,
+    "variant_group": "menu-close-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-watch-tower-01.wav",
+    "description": "Large menu closing with spacious resonance folding into a gentle finish.",
+    "duration_seconds": 1.913563,
+    "variant_group": "menu-close-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-watch-tower-02.wav",
+    "description": "Large menu closing with spacious resonance folding into a gentle finish.",
+    "duration_seconds": 1.667896,
+    "variant_group": "menu-close-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-watch-tower-03.wav",
+    "description": "Large menu closing with spacious resonance folding into a gentle finish.",
+    "duration_seconds": 1.819687,
+    "variant_group": "menu-close-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-large-watch-tower-04.wav",
+    "description": "Large menu closing with spacious resonance folding into a gentle finish.",
+    "duration_seconds": 2.133292,
+    "variant_group": "menu-close-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-ancient-scroll-01.wav",
+    "description": "Small menu closing combining parchment folds with a soft dusty flourish.",
+    "duration_seconds": 0.970833,
+    "variant_group": "menu-close-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-ancient-scroll-02.wav",
+    "description": "Small menu closing combining parchment folds with a soft dusty flourish.",
+    "duration_seconds": 0.787406,
+    "variant_group": "menu-close-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-ancient-scroll-03.wav",
+    "description": "Small menu closing combining parchment folds with a soft dusty flourish.",
+    "duration_seconds": 0.752302,
+    "variant_group": "menu-close-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-ancient-scroll-04.wav",
+    "description": "Small menu closing combining parchment folds with a soft dusty flourish.",
+    "duration_seconds": 1.031667,
+    "variant_group": "menu-close-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-hollow-01.wav",
+    "description": "Small menu closing with a hollow tonal character and restrained resonance.",
+    "duration_seconds": 0.562177,
+    "variant_group": "menu-close-small-hollow"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-hollow-02.wav",
+    "description": "Small menu closing with a hollow tonal character and restrained resonance.",
+    "duration_seconds": 0.437604,
+    "variant_group": "menu-close-small-hollow"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-hollow-03.wav",
+    "description": "Small menu closing with a hollow tonal character and restrained resonance.",
+    "duration_seconds": 0.444052,
+    "variant_group": "menu-close-small-hollow"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-hollow-04.wav",
+    "description": "Small menu closing with a hollow tonal character and restrained resonance.",
+    "duration_seconds": 0.458594,
+    "variant_group": "menu-close-small-hollow"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-mystique-01.wav",
+    "description": "Small menu closing with fading spectral textures and gentle harmonic decay.",
+    "duration_seconds": 0.904927,
+    "variant_group": "menu-close-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-mystique-02.wav",
+    "description": "Small menu closing with fading spectral textures and gentle harmonic decay.",
+    "duration_seconds": 0.803396,
+    "variant_group": "menu-close-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-mystique-03.wav",
+    "description": "Small menu closing with fading spectral textures and gentle harmonic decay.",
+    "duration_seconds": 0.795562,
+    "variant_group": "menu-close-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-mystique-04.wav",
+    "description": "Small menu closing with fading spectral textures and gentle harmonic decay.",
+    "duration_seconds": 0.815052,
+    "variant_group": "menu-close-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-skilltree-01.wav",
+    "description": "Small menu closing with compact magical tones settling into a clean finish.",
+    "duration_seconds": 1.66301,
+    "variant_group": "menu-close-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-skilltree-02.wav",
+    "description": "Small menu closing with compact magical tones settling into a clean finish.",
+    "duration_seconds": 1.350042,
+    "variant_group": "menu-close-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-skilltree-03.wav",
+    "description": "Small menu closing with compact magical tones settling into a clean finish.",
+    "duration_seconds": 1.585167,
+    "variant_group": "menu-close-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-close-small-skilltree-04.wav",
+    "description": "Small menu closing with compact magical tones settling into a clean finish.",
+    "duration_seconds": 1.256729,
+    "variant_group": "menu-close-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-arrival-01.wav",
+    "description": "Large menu opening with a broad magical swell unfolding into rich harmonic layers.",
+    "duration_seconds": 1.139635,
+    "variant_group": "menu-open-large-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-arrival-02.wav",
+    "description": "Large menu opening with a broad magical swell unfolding into rich harmonic layers.",
+    "duration_seconds": 1.067729,
+    "variant_group": "menu-open-large-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-arrival-03.wav",
+    "description": "Large menu opening with a broad magical swell unfolding into rich harmonic layers.",
+    "duration_seconds": 1.084073,
+    "variant_group": "menu-open-large-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-arrival-04.wav",
+    "description": "Large menu opening with a broad magical swell unfolding into rich harmonic layers.",
+    "duration_seconds": 1.127729,
+    "variant_group": "menu-open-large-arrival"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-forbidden-room-01.wav",
+    "description": "Large menu opening with ominous magical swells and deep spectral resonance.",
+    "duration_seconds": 3.125,
+    "variant_group": "menu-open-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-forbidden-room-02.wav",
+    "description": "Large menu opening with ominous magical swells and deep spectral resonance.",
+    "duration_seconds": 2.783823,
+    "variant_group": "menu-open-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-forbidden-room-03.wav",
+    "description": "Large menu opening with ominous magical swells and deep spectral resonance.",
+    "duration_seconds": 2.320688,
+    "variant_group": "menu-open-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-forbidden-room-04.wav",
+    "description": "Large menu opening with ominous magical swells and deep spectral resonance.",
+    "duration_seconds": 2.403896,
+    "variant_group": "menu-open-large-forbidden-room"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-overlord-01.wav",
+    "description": "Large menu opening driven by powerful magical pulses and commanding harmonic weight.",
+    "duration_seconds": 1.929938,
+    "variant_group": "menu-open-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-overlord-02.wav",
+    "description": "Large menu opening driven by powerful magical pulses and commanding harmonic weight.",
+    "duration_seconds": 1.881417,
+    "variant_group": "menu-open-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-overlord-03.wav",
+    "description": "Large menu opening driven by powerful magical pulses and commanding harmonic weight.",
+    "duration_seconds": 1.743417,
+    "variant_group": "menu-open-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-overlord-04.wav",
+    "description": "Large menu opening driven by powerful magical pulses and commanding harmonic weight.",
+    "duration_seconds": 2.084281,
+    "variant_group": "menu-open-large-overlord"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-watch-tower-01.wav",
+    "description": "Large menu opening with towering resonance and expanding mystical textures.",
+    "duration_seconds": 1.572573,
+    "variant_group": "menu-open-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-watch-tower-02.wav",
+    "description": "Large menu opening with towering resonance and expanding mystical textures.",
+    "duration_seconds": 1.414688,
+    "variant_group": "menu-open-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-watch-tower-03.wav",
+    "description": "Large menu opening with towering resonance and expanding mystical textures.",
+    "duration_seconds": 1.840198,
+    "variant_group": "menu-open-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-large-watch-tower-04.wav",
+    "description": "Large menu opening with towering resonance and expanding mystical textures.",
+    "duration_seconds": 1.734594,
+    "variant_group": "menu-open-large-watch-tower"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-ancient-scroll-01.wav",
+    "description": "Small menu opening blending parchment textures with delicate magical flourishes.",
+    "duration_seconds": 1.059833,
+    "variant_group": "menu-open-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-ancient-scroll-02.wav",
+    "description": "Small menu opening blending parchment textures with delicate magical flourishes.",
+    "duration_seconds": 1.00524,
+    "variant_group": "menu-open-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-ancient-scroll-03.wav",
+    "description": "Small menu opening blending parchment textures with delicate magical flourishes.",
+    "duration_seconds": 0.893292,
+    "variant_group": "menu-open-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-ancient-scroll-04.wav",
+    "description": "Small menu opening blending parchment textures with delicate magical flourishes.",
+    "duration_seconds": 1.374531,
+    "variant_group": "menu-open-small-ancient-scroll"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-mystique-01.wav",
+    "description": "Small menu opening with soft spectral movement and subtle arcane resonance.",
+    "duration_seconds": 0.86751,
+    "variant_group": "menu-open-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-mystique-02.wav",
+    "description": "Small menu opening with soft spectral movement and subtle arcane resonance.",
+    "duration_seconds": 0.664312,
+    "variant_group": "menu-open-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-mystique-03.wav",
+    "description": "Small menu opening with soft spectral movement and subtle arcane resonance.",
+    "duration_seconds": 0.689792,
+    "variant_group": "menu-open-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-mystique-04.wav",
+    "description": "Small menu opening with soft spectral movement and subtle arcane resonance.",
+    "duration_seconds": 0.650719,
+    "variant_group": "menu-open-small-mystique"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-skilltree-01.wav",
+    "description": "Small menu opening accented by branching magical tones and delicate sparkling textures.",
+    "duration_seconds": 1.679583,
+    "variant_group": "menu-open-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-skilltree-02.wav",
+    "description": "Small menu opening accented by branching magical tones and delicate sparkling textures.",
+    "duration_seconds": 1.38775,
+    "variant_group": "menu-open-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-skilltree-03.wav",
+    "description": "Small menu opening accented by branching magical tones and delicate sparkling textures.",
+    "duration_seconds": 1.286167,
+    "variant_group": "menu-open-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-skilltree-04.wav",
+    "description": "Small menu opening accented by branching magical tones and delicate sparkling textures.",
+    "duration_seconds": 1.410302,
+    "variant_group": "menu-open-small-skilltree"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-target-01.wav",
+    "description": "Focused menu opening with a precise strike and short directional sweep.",
+    "duration_seconds": 0.538677,
+    "variant_group": "menu-open-small-target"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-target-02.wav",
+    "description": "Focused menu opening with a precise strike and short directional sweep.",
+    "duration_seconds": 0.413292,
+    "variant_group": "menu-open-small-target"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-target-03.wav",
+    "description": "Focused menu opening with a precise strike and short directional sweep.",
+    "duration_seconds": 0.42574,
+    "variant_group": "menu-open-small-target"
+  },
+  {
+    "file": "development/audio_library/clips/menu-open-small-target-04.wav",
+    "description": "Focused menu opening with a precise strike and short directional sweep.",
+    "duration_seconds": 0.49001,
+    "variant_group": "menu-open-small-target"
+  },
+  {
+    "file": "development/audio_library/clips/notification-mystic-orb-01.wav",
+    "description": "Mystical notification accent blooming into swirling spectral harmonics.",
+    "duration_seconds": 2.661719,
+    "variant_group": "notification-mystic-orb"
+  },
+  {
+    "file": "development/audio_library/clips/notification-mystic-orb-02.wav",
+    "description": "Mystical notification accent blooming into swirling spectral harmonics.",
+    "duration_seconds": 2.501667,
+    "variant_group": "notification-mystic-orb"
+  },
+  {
+    "file": "development/audio_library/clips/notification-mystic-orb-03.wav",
+    "description": "Mystical notification accent blooming into swirling spectral harmonics.",
+    "duration_seconds": 2.506427,
+    "variant_group": "notification-mystic-orb"
+  },
+  {
+    "file": "development/audio_library/clips/notification-mystic-orb-04.wav",
+    "description": "Mystical notification accent blooming into swirling spectral harmonics.",
+    "duration_seconds": 2.670115,
+    "variant_group": "notification-mystic-orb"
+  },
+  {
+    "file": "development/audio_library/clips/notification-pigeon-post-01.wav",
+    "description": "Playful notification accent with fluttering textures and a light ringing finish.",
+    "duration_seconds": 1.80424,
+    "variant_group": "notification-pigeon-post"
+  },
+  {
+    "file": "development/audio_library/clips/notification-pigeon-post-02.wav",
+    "description": "Playful notification accent with fluttering textures and a light ringing finish.",
+    "duration_seconds": 2.30174,
+    "variant_group": "notification-pigeon-post"
+  },
+  {
+    "file": "development/audio_library/clips/notification-pigeon-post-03.wav",
+    "description": "Playful notification accent with fluttering textures and a light ringing finish.",
+    "duration_seconds": 2.235677,
+    "variant_group": "notification-pigeon-post"
+  },
+  {
+    "file": "development/audio_library/clips/notification-pigeon-post-04.wav",
+    "description": "Playful notification accent with fluttering textures and a light ringing finish.",
+    "duration_seconds": 2.002302,
+    "variant_group": "notification-pigeon-post"
+  },
+  {
+    "file": "development/audio_library/clips/notification-rune-ping-01.wav",
+    "description": "Arcane notification accent with a bright rune-like ping and delicate magical shimmer.",
+    "duration_seconds": 3.028469,
+    "variant_group": "notification-rune-ping"
+  },
+  {
+    "file": "development/audio_library/clips/notification-rune-ping-02.wav",
+    "description": "Arcane notification accent with a bright rune-like ping and delicate magical shimmer.",
+    "duration_seconds": 2.611562,
+    "variant_group": "notification-rune-ping"
+  },
+  {
+    "file": "development/audio_library/clips/notification-rune-ping-03.wav",
+    "description": "Arcane notification accent with a bright rune-like ping and delicate magical shimmer.",
+    "duration_seconds": 2.652573,
+    "variant_group": "notification-rune-ping"
+  },
+  {
+    "file": "development/audio_library/clips/notification-rune-ping-04.wav",
+    "description": "Arcane notification accent with a bright rune-like ping and delicate magical shimmer.",
+    "duration_seconds": 2.709542,
+    "variant_group": "notification-rune-ping"
+  },
+  {
+    "file": "development/audio_library/clips/notification-watch-out-01.wav",
+    "description": "Urgent notification accent with a sharp pulse and focused tonal presence.",
+    "duration_seconds": 2.498771,
+    "variant_group": "notification-watch-out"
+  },
+  {
+    "file": "development/audio_library/clips/notification-watch-out-02.wav",
+    "description": "Urgent notification accent with a sharp pulse and focused tonal presence.",
+    "duration_seconds": 2.537688,
+    "variant_group": "notification-watch-out"
+  },
+  {
+    "file": "development/audio_library/clips/notification-watch-out-03.wav",
+    "description": "Urgent notification accent with a sharp pulse and focused tonal presence.",
+    "duration_seconds": 2.485063,
+    "variant_group": "notification-watch-out"
+  },
+  {
+    "file": "development/audio_library/clips/notification-watch-out-04.wav",
+    "description": "Urgent notification accent with a sharp pulse and focused tonal presence.",
+    "duration_seconds": 2.460969,
+    "variant_group": "notification-watch-out"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-beginning-01.wav",
+    "description": "Quest acceptance accent opening through warm tonal layers and subtle shimmer.",
+    "duration_seconds": 3.481083,
+    "variant_group": "quest-accept-beginning"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-beginning-02.wav",
+    "description": "Quest acceptance accent opening through warm tonal layers and subtle shimmer.",
+    "duration_seconds": 3.085646,
+    "variant_group": "quest-accept-beginning"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-beginning-03.wav",
+    "description": "Quest acceptance accent opening through warm tonal layers and subtle shimmer.",
+    "duration_seconds": 3.100208,
+    "variant_group": "quest-accept-beginning"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-beginning-04.wav",
+    "description": "Quest acceptance accent opening through warm tonal layers and subtle shimmer.",
+    "duration_seconds": 3.813083,
+    "variant_group": "quest-accept-beginning"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-journey-01.wav",
+    "description": "Quest acceptance accent with an adventurous swell and gentle magical flourish.",
+    "duration_seconds": 3.648958,
+    "variant_group": "quest-accept-journey"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-journey-02.wav",
+    "description": "Quest acceptance accent with an adventurous swell and gentle magical flourish.",
+    "duration_seconds": 3.397094,
+    "variant_group": "quest-accept-journey"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-journey-03.wav",
+    "description": "Quest acceptance accent with an adventurous swell and gentle magical flourish.",
+    "duration_seconds": 3.148469,
+    "variant_group": "quest-accept-journey"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-journey-04.wav",
+    "description": "Quest acceptance accent with an adventurous swell and gentle magical flourish.",
+    "duration_seconds": 3.12075,
+    "variant_group": "quest-accept-journey"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-start-01.wav",
+    "description": "Quest acceptance accent with an inviting magical pulse and confident resolution.",
+    "duration_seconds": 4.942156,
+    "variant_group": "quest-accept-start"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-start-02.wav",
+    "description": "Quest acceptance accent with an inviting magical pulse and confident resolution.",
+    "duration_seconds": 4.870281,
+    "variant_group": "quest-accept-start"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-start-03.wav",
+    "description": "Quest acceptance accent with an inviting magical pulse and confident resolution.",
+    "duration_seconds": 4.692167,
+    "variant_group": "quest-accept-start"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-start-04.wav",
+    "description": "Quest acceptance accent with an inviting magical pulse and confident resolution.",
+    "duration_seconds": 5.102427,
+    "variant_group": "quest-accept-start"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-uncharted-path-01.wav",
+    "description": "Quest acceptance accent expanding through mysterious harmonics and airy textures.",
+    "duration_seconds": 3.366771,
+    "variant_group": "quest-accept-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-uncharted-path-02.wav",
+    "description": "Quest acceptance accent expanding through mysterious harmonics and airy textures.",
+    "duration_seconds": 3.004896,
+    "variant_group": "quest-accept-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-uncharted-path-03.wav",
+    "description": "Quest acceptance accent expanding through mysterious harmonics and airy textures.",
+    "duration_seconds": 3.148875,
+    "variant_group": "quest-accept-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-accept-uncharted-path-04.wav",
+    "description": "Quest acceptance accent expanding through mysterious harmonics and airy textures.",
+    "duration_seconds": 3.202042,
+    "variant_group": "quest-accept-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-complete-01.wav",
+    "description": "Quest completion accent with a satisfying harmonic flourish and polished finish.",
+    "duration_seconds": 3.084094,
+    "variant_group": "quest-complete-complete"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-complete-02.wav",
+    "description": "Quest completion accent with a satisfying harmonic flourish and polished finish.",
+    "duration_seconds": 3.06349,
+    "variant_group": "quest-complete-complete"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-complete-03.wav",
+    "description": "Quest completion accent with a satisfying harmonic flourish and polished finish.",
+    "duration_seconds": 3.071271,
+    "variant_group": "quest-complete-complete"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-complete-04.wav",
+    "description": "Quest completion accent with a satisfying harmonic flourish and polished finish.",
+    "duration_seconds": 3.471781,
+    "variant_group": "quest-complete-complete"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-finish-01.wav",
+    "description": "Quest completion accent resolving through bright magical overtones.",
+    "duration_seconds": 5.168885,
+    "variant_group": "quest-complete-finish"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-finish-02.wav",
+    "description": "Quest completion accent resolving through bright magical overtones.",
+    "duration_seconds": 5.075427,
+    "variant_group": "quest-complete-finish"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-finish-03.wav",
+    "description": "Quest completion accent resolving through bright magical overtones.",
+    "duration_seconds": 5.34924,
+    "variant_group": "quest-complete-finish"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-finish-04.wav",
+    "description": "Quest completion accent resolving through bright magical overtones.",
+    "duration_seconds": 5.224323,
+    "variant_group": "quest-complete-finish"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-horizon-01.wav",
+    "description": "Quest completion accent expanding into broad luminous harmonics.",
+    "duration_seconds": 6.599573,
+    "variant_group": "quest-complete-horizon"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-horizon-02.wav",
+    "description": "Quest completion accent expanding into broad luminous harmonics.",
+    "duration_seconds": 6.458958,
+    "variant_group": "quest-complete-horizon"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-horizon-03.wav",
+    "description": "Quest completion accent expanding into broad luminous harmonics.",
+    "duration_seconds": 6.046271,
+    "variant_group": "quest-complete-horizon"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-horizon-04.wav",
+    "description": "Quest completion accent expanding into broad luminous harmonics.",
+    "duration_seconds": 6.053104,
+    "variant_group": "quest-complete-horizon"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-uncharted-path-01.wav",
+    "description": "Quest completion accent with uplifting magical resonance and a graceful conclusion.",
+    "duration_seconds": 2.922698,
+    "variant_group": "quest-complete-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-uncharted-path-02.wav",
+    "description": "Quest completion accent with uplifting magical resonance and a graceful conclusion.",
+    "duration_seconds": 2.719813,
+    "variant_group": "quest-complete-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-uncharted-path-03.wav",
+    "description": "Quest completion accent with uplifting magical resonance and a graceful conclusion.",
+    "duration_seconds": 2.633208,
+    "variant_group": "quest-complete-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-complete-uncharted-path-04.wav",
+    "description": "Quest completion accent with uplifting magical resonance and a graceful conclusion.",
+    "duration_seconds": 2.632302,
+    "variant_group": "quest-complete-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-game-over-01.wav",
+    "description": "Quest failure accent with a dark descending tone and restrained ending.",
+    "duration_seconds": 8.986708,
+    "variant_group": "quest-fail-game-over"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-game-over-02.wav",
+    "description": "Quest failure accent with a dark descending tone and restrained ending.",
+    "duration_seconds": 8.395031,
+    "variant_group": "quest-fail-game-over"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-game-over-03.wav",
+    "description": "Quest failure accent with a dark descending tone and restrained ending.",
+    "duration_seconds": 8.793031,
+    "variant_group": "quest-fail-game-over"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-game-over-04.wav",
+    "description": "Quest failure accent with a dark descending tone and restrained ending.",
+    "duration_seconds": 8.455292,
+    "variant_group": "quest-fail-game-over"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-nemesis-01.wav",
+    "description": "Quest failure accent combining tense harmonics with a weighty magical finish.",
+    "duration_seconds": 9.482875,
+    "variant_group": "quest-fail-nemesis"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-nemesis-02.wav",
+    "description": "Quest failure accent combining tense harmonics with a weighty magical finish.",
+    "duration_seconds": 9.273885,
+    "variant_group": "quest-fail-nemesis"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-nemesis-03.wav",
+    "description": "Quest failure accent combining tense harmonics with a weighty magical finish.",
+    "duration_seconds": 9.322927,
+    "variant_group": "quest-fail-nemesis"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-nemesis-04.wav",
+    "description": "Quest failure accent combining tense harmonics with a weighty magical finish.",
+    "duration_seconds": 9.938187,
+    "variant_group": "quest-fail-nemesis"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-reprise-01.wav",
+    "description": "Quest failure accent fading through sombre resonance and muted tonal layers.",
+    "duration_seconds": 4.900385,
+    "variant_group": "quest-fail-reprise"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-reprise-02.wav",
+    "description": "Quest failure accent fading through sombre resonance and muted tonal layers.",
+    "duration_seconds": 4.916385,
+    "variant_group": "quest-fail-reprise"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-reprise-03.wav",
+    "description": "Quest failure accent fading through sombre resonance and muted tonal layers.",
+    "duration_seconds": 4.79701,
+    "variant_group": "quest-fail-reprise"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-reprise-04.wav",
+    "description": "Quest failure accent fading through sombre resonance and muted tonal layers.",
+    "duration_seconds": 5.046615,
+    "variant_group": "quest-fail-reprise"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-uncharted-path-01.wav",
+    "description": "Quest failure accent collapsing into dark magical textures and a subdued finish.",
+    "duration_seconds": 4.936115,
+    "variant_group": "quest-fail-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-uncharted-path-02.wav",
+    "description": "Quest failure accent collapsing into dark magical textures and a subdued finish.",
+    "duration_seconds": 4.42724,
+    "variant_group": "quest-fail-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-uncharted-path-03.wav",
+    "description": "Quest failure accent collapsing into dark magical textures and a subdued finish.",
+    "duration_seconds": 4.836573,
+    "variant_group": "quest-fail-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/quest-fail-uncharted-path-04.wav",
+    "description": "Quest failure accent collapsing into dark magical textures and a subdued finish.",
+    "duration_seconds": 3.931594,
+    "variant_group": "quest-fail-uncharted-path"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-blue-drop-01.wav",
+    "description": "Magical reward accent with cool shimmering tones and airy resonance.",
+    "duration_seconds": 6.204562,
+    "variant_group": "reward-magic-blue-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-blue-drop-02.wav",
+    "description": "Magical reward accent with cool shimmering tones and airy resonance.",
+    "duration_seconds": 6.133406,
+    "variant_group": "reward-magic-blue-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-blue-drop-03.wav",
+    "description": "Magical reward accent with cool shimmering tones and airy resonance.",
+    "duration_seconds": 6.145885,
+    "variant_group": "reward-magic-blue-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-blue-drop-04.wav",
+    "description": "Magical reward accent with cool shimmering tones and airy resonance.",
+    "duration_seconds": 5.960135,
+    "variant_group": "reward-magic-blue-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-druids-runes-01.wav",
+    "description": "Magical reward accent blending mystical pulses with glowing harmonic textures.",
+    "duration_seconds": 3.886917,
+    "variant_group": "reward-magic-druids-runes"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-druids-runes-02.wav",
+    "description": "Magical reward accent blending mystical pulses with glowing harmonic textures.",
+    "duration_seconds": 3.578302,
+    "variant_group": "reward-magic-druids-runes"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-druids-runes-03.wav",
+    "description": "Magical reward accent blending mystical pulses with glowing harmonic textures.",
+    "duration_seconds": 3.368229,
+    "variant_group": "reward-magic-druids-runes"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-druids-runes-04.wav",
+    "description": "Magical reward accent blending mystical pulses with glowing harmonic textures.",
+    "duration_seconds": 3.97324,
+    "variant_group": "reward-magic-druids-runes"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-gem-stone-01.wav",
+    "description": "Magical reward accent with crystalline resonance and radiant harmonic detail.",
+    "duration_seconds": 4.029823,
+    "variant_group": "reward-magic-gem-stone"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-gem-stone-02.wav",
+    "description": "Magical reward accent with crystalline resonance and radiant harmonic detail.",
+    "duration_seconds": 3.416229,
+    "variant_group": "reward-magic-gem-stone"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-gem-stone-03.wav",
+    "description": "Magical reward accent with crystalline resonance and radiant harmonic detail.",
+    "duration_seconds": 3.479594,
+    "variant_group": "reward-magic-gem-stone"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-gem-stone-04.wav",
+    "description": "Magical reward accent with crystalline resonance and radiant harmonic detail.",
+    "duration_seconds": 4.061677,
+    "variant_group": "reward-magic-gem-stone"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-wizardry-01.wav",
+    "description": "Magical reward accent unfolding through layered arcane textures and soft chimes.",
+    "duration_seconds": 5.091312,
+    "variant_group": "reward-magic-wizardry"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-wizardry-02.wav",
+    "description": "Magical reward accent unfolding through layered arcane textures and soft chimes.",
+    "duration_seconds": 4.425906,
+    "variant_group": "reward-magic-wizardry"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-wizardry-03.wav",
+    "description": "Magical reward accent unfolding through layered arcane textures and soft chimes.",
+    "duration_seconds": 4.558844,
+    "variant_group": "reward-magic-wizardry"
+  },
+  {
+    "file": "development/audio_library/clips/reward-magic-wizardry-04.wav",
+    "description": "Magical reward accent unfolding through layered arcane textures and soft chimes.",
+    "duration_seconds": 4.251354,
+    "variant_group": "reward-magic-wizardry"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-gilded-gift-01.wav",
+    "description": "Standard reward accent with warm shimmering tones and delicate metallic sparkle.",
+    "duration_seconds": 3.84074,
+    "variant_group": "reward-normal-gilded-gift"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-gilded-gift-02.wav",
+    "description": "Standard reward accent with warm shimmering tones and delicate metallic sparkle.",
+    "duration_seconds": 3.508781,
+    "variant_group": "reward-normal-gilded-gift"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-gilded-gift-03.wav",
+    "description": "Standard reward accent with warm shimmering tones and delicate metallic sparkle.",
+    "duration_seconds": 3.565937,
+    "variant_group": "reward-normal-gilded-gift"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-gilded-gift-04.wav",
+    "description": "Standard reward accent with warm shimmering tones and delicate metallic sparkle.",
+    "duration_seconds": 3.476458,
+    "variant_group": "reward-normal-gilded-gift"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-green-drop-01.wav",
+    "description": "Standard reward accent with a light crystalline bloom and polished finish.",
+    "duration_seconds": 6.149208,
+    "variant_group": "reward-normal-green-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-green-drop-02.wav",
+    "description": "Standard reward accent with a light crystalline bloom and polished finish.",
+    "duration_seconds": 6.251688,
+    "variant_group": "reward-normal-green-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-green-drop-03.wav",
+    "description": "Standard reward accent with a light crystalline bloom and polished finish.",
+    "duration_seconds": 5.992865,
+    "variant_group": "reward-normal-green-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-green-drop-04.wav",
+    "description": "Standard reward accent with a light crystalline bloom and polished finish.",
+    "duration_seconds": 5.991375,
+    "variant_group": "reward-normal-green-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-unpack-01.wav",
+    "description": "Standard reward accent with a bright flourish and satisfying tonal sparkle.",
+    "duration_seconds": 3.586708,
+    "variant_group": "reward-normal-unpack"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-unpack-02.wav",
+    "description": "Standard reward accent with a bright flourish and satisfying tonal sparkle.",
+    "duration_seconds": 3.065906,
+    "variant_group": "reward-normal-unpack"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-unpack-03.wav",
+    "description": "Standard reward accent with a bright flourish and satisfying tonal sparkle.",
+    "duration_seconds": 3.154729,
+    "variant_group": "reward-normal-unpack"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-unpack-04.wav",
+    "description": "Standard reward accent with a bright flourish and satisfying tonal sparkle.",
+    "duration_seconds": 3.15301,
+    "variant_group": "reward-normal-unpack"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-upward-01.wav",
+    "description": "Standard reward accent rising through clean magical harmonics.",
+    "duration_seconds": 3.787625,
+    "variant_group": "reward-normal-upward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-upward-02.wav",
+    "description": "Standard reward accent rising through clean magical harmonics.",
+    "duration_seconds": 4.005531,
+    "variant_group": "reward-normal-upward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-upward-03.wav",
+    "description": "Standard reward accent rising through clean magical harmonics.",
+    "duration_seconds": 4.405417,
+    "variant_group": "reward-normal-upward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-normal-upward-04.wav",
+    "description": "Standard reward accent rising through clean magical harmonics.",
+    "duration_seconds": 4.430167,
+    "variant_group": "reward-normal-upward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-loot-master-01.wav",
+    "description": "Rare reward accent with vibrant magical layers and an energetic flourish.",
+    "duration_seconds": 4.255885,
+    "variant_group": "reward-rare-loot-master"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-loot-master-02.wav",
+    "description": "Rare reward accent with vibrant magical layers and an energetic flourish.",
+    "duration_seconds": 4.053063,
+    "variant_group": "reward-rare-loot-master"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-loot-master-03.wav",
+    "description": "Rare reward accent with vibrant magical layers and an energetic flourish.",
+    "duration_seconds": 4.29901,
+    "variant_group": "reward-rare-loot-master"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-loot-master-04.wav",
+    "description": "Rare reward accent with vibrant magical layers and an energetic flourish.",
+    "duration_seconds": 4.496052,
+    "variant_group": "reward-rare-loot-master"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-overpowered-01.wav",
+    "description": "Rare reward accent with bold harmonic layers and a triumphant tonal finish.",
+    "duration_seconds": 4.850646,
+    "variant_group": "reward-rare-overpowered"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-overpowered-02.wav",
+    "description": "Rare reward accent with bold harmonic layers and a triumphant tonal finish.",
+    "duration_seconds": 4.00499,
+    "variant_group": "reward-rare-overpowered"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-overpowered-03.wav",
+    "description": "Rare reward accent with bold harmonic layers and a triumphant tonal finish.",
+    "duration_seconds": 4.256073,
+    "variant_group": "reward-rare-overpowered"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-overpowered-04.wav",
+    "description": "Rare reward accent with bold harmonic layers and a triumphant tonal finish.",
+    "duration_seconds": 4.528042,
+    "variant_group": "reward-rare-overpowered"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-purple-drop-01.wav",
+    "description": "Rare reward accent blooming through rich crystalline overtones.",
+    "duration_seconds": 5.634115,
+    "variant_group": "reward-rare-purple-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-purple-drop-02.wav",
+    "description": "Rare reward accent blooming through rich crystalline overtones.",
+    "duration_seconds": 5.463417,
+    "variant_group": "reward-rare-purple-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-purple-drop-03.wav",
+    "description": "Rare reward accent blooming through rich crystalline overtones.",
+    "duration_seconds": 5.218219,
+    "variant_group": "reward-rare-purple-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-purple-drop-04.wav",
+    "description": "Rare reward accent blooming through rich crystalline overtones.",
+    "duration_seconds": 5.091719,
+    "variant_group": "reward-rare-purple-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-runic-ward-01.wav",
+    "description": "Rare reward accent with powerful runic resonance and bright magical flourish.",
+    "duration_seconds": 2.938167,
+    "variant_group": "reward-rare-runic-ward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-runic-ward-02.wav",
+    "description": "Rare reward accent with powerful runic resonance and bright magical flourish.",
+    "duration_seconds": 2.616188,
+    "variant_group": "reward-rare-runic-ward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-runic-ward-03.wav",
+    "description": "Rare reward accent with powerful runic resonance and bright magical flourish.",
+    "duration_seconds": 2.720583,
+    "variant_group": "reward-rare-runic-ward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-rare-runic-ward-04.wav",
+    "description": "Rare reward accent with powerful runic resonance and bright magical flourish.",
+    "duration_seconds": 2.885698,
+    "variant_group": "reward-rare-runic-ward"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-divine-item-01.wav",
+    "description": "Unique reward accent unfolding through celestial harmonics and luminous resonance.",
+    "duration_seconds": 4.094917,
+    "variant_group": "reward-unique-divine-item"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-divine-item-02.wav",
+    "description": "Unique reward accent unfolding through celestial harmonics and luminous resonance.",
+    "duration_seconds": 3.950604,
+    "variant_group": "reward-unique-divine-item"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-divine-item-03.wav",
+    "description": "Unique reward accent unfolding through celestial harmonics and luminous resonance.",
+    "duration_seconds": 4.024281,
+    "variant_group": "reward-unique-divine-item"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-divine-item-04.wav",
+    "description": "Unique reward accent unfolding through celestial harmonics and luminous resonance.",
+    "duration_seconds": 3.884646,
+    "variant_group": "reward-unique-divine-item"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-godmode-01.wav",
+    "description": "Unique reward accent with commanding harmonic weight and radiant spectral detail.",
+    "duration_seconds": 5.046875,
+    "variant_group": "reward-unique-godmode"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-godmode-02.wav",
+    "description": "Unique reward accent with commanding harmonic weight and radiant spectral detail.",
+    "duration_seconds": 4.826115,
+    "variant_group": "reward-unique-godmode"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-godmode-03.wav",
+    "description": "Unique reward accent with commanding harmonic weight and radiant spectral detail.",
+    "duration_seconds": 4.686677,
+    "variant_group": "reward-unique-godmode"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-godmode-04.wav",
+    "description": "Unique reward accent with commanding harmonic weight and radiant spectral detail.",
+    "duration_seconds": 4.51299,
+    "variant_group": "reward-unique-godmode"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-legendary-01.wav",
+    "description": "Unique reward accent with majestic resonance and an expansive magical bloom.",
+    "duration_seconds": 4.098469,
+    "variant_group": "reward-unique-legendary"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-legendary-02.wav",
+    "description": "Unique reward accent with majestic resonance and an expansive magical bloom.",
+    "duration_seconds": 3.359469,
+    "variant_group": "reward-unique-legendary"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-legendary-03.wav",
+    "description": "Unique reward accent with majestic resonance and an expansive magical bloom.",
+    "duration_seconds": 3.485729,
+    "variant_group": "reward-unique-legendary"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-legendary-04.wav",
+    "description": "Unique reward accent with majestic resonance and an expansive magical bloom.",
+    "duration_seconds": 3.390521,
+    "variant_group": "reward-unique-legendary"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-orange-drop-01.wav",
+    "description": "Unique reward accent with glowing tonal layers and brilliant sparkling overtones.",
+    "duration_seconds": 7.263771,
+    "variant_group": "reward-unique-orange-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-orange-drop-02.wav",
+    "description": "Unique reward accent with glowing tonal layers and brilliant sparkling overtones.",
+    "duration_seconds": 6.670604,
+    "variant_group": "reward-unique-orange-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-orange-drop-03.wav",
+    "description": "Unique reward accent with glowing tonal layers and brilliant sparkling overtones.",
+    "duration_seconds": 6.419531,
+    "variant_group": "reward-unique-orange-drop"
+  },
+  {
+    "file": "development/audio_library/clips/reward-unique-orange-drop-04.wav",
+    "description": "Unique reward accent with glowing tonal layers and brilliant sparkling overtones.",
+    "duration_seconds": 6.414854,
+    "variant_group": "reward-unique-orange-drop"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-gallows-01.wav",
+    "description": "Dark tab switch with dry wooden textures and restrained creaking detail.",
+    "duration_seconds": 1.27524,
+    "variant_group": "tab-switch-gallows"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-gallows-02.wav",
+    "description": "Dark tab switch with dry wooden textures and restrained creaking detail.",
+    "duration_seconds": 1.084375,
+    "variant_group": "tab-switch-gallows"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-gallows-03.wav",
+    "description": "Dark tab switch with dry wooden textures and restrained creaking detail.",
+    "duration_seconds": 1.084115,
+    "variant_group": "tab-switch-gallows"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-gallows-04.wav",
+    "description": "Dark tab switch with dry wooden textures and restrained creaking detail.",
+    "duration_seconds": 1.2915,
+    "variant_group": "tab-switch-gallows"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-a-01.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 0.646927,
+    "variant_group": "tab-switch-next-a"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-a-02.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 0.556781,
+    "variant_group": "tab-switch-next-a"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-a-03.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 0.550146,
+    "variant_group": "tab-switch-next-a"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-a-04.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 0.561958,
+    "variant_group": "tab-switch-next-a"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-b-01.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 1.597802,
+    "variant_group": "tab-switch-next-b"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-b-02.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 1.555333,
+    "variant_group": "tab-switch-next-b"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-b-03.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 1.487854,
+    "variant_group": "tab-switch-next-b"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-next-b-04.wav",
+    "description": "Light tab switch with a soft tonal flicker gliding into a brief finish.",
+    "duration_seconds": 1.94776,
+    "variant_group": "tab-switch-next-b"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-pager-01.wav",
+    "description": "Crisp tab switch blending paper-like textures with a short mechanical tick.",
+    "duration_seconds": 0.519219,
+    "variant_group": "tab-switch-pager"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-pager-02.wav",
+    "description": "Crisp tab switch blending paper-like textures with a short mechanical tick.",
+    "duration_seconds": 0.406875,
+    "variant_group": "tab-switch-pager"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-pager-03.wav",
+    "description": "Crisp tab switch blending paper-like textures with a short mechanical tick.",
+    "duration_seconds": 0.39374,
+    "variant_group": "tab-switch-pager"
+  },
+  {
+    "file": "development/audio_library/clips/tab-switch-pager-04.wav",
+    "description": "Crisp tab switch blending paper-like textures with a short mechanical tick.",
+    "duration_seconds": 0.498854,
+    "variant_group": "tab-switch-pager"
+  }
+]

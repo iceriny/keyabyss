@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$Reference = '9f3539b',
+    [string]$Reference = 'c39c032',
     [switch]$GenerateOnly,
     [switch]$Benchmark,
     [switch]$BenchmarkOnly,
