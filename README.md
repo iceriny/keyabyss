@@ -8,6 +8,8 @@
 
 ## 开发入口
 
+[下载 Windows x64 测试包](https://github.com/iceriny/keyabyss/releases/tag/v0.7.0-test.20261010)。完整解压后双击 `keyabyss.exe`，无需安装 Godot 或 .NET 开发工具；包内附诊断启动脚本与使用说明。
+
 默认主分支 [`main`](https://github.com/iceriny/keyabyss/tree/main) 为 Godot 工程；原 Web 工程保存在 [`preview`（预览版）](https://github.com/iceriny/keyabyss/tree/preview)，可按该分支 README 启动或构建离线包。两个工程请克隆到不同目录。`legacy/web/` 保留迁移参考及制作工具，不作为预览版的启动入口。
 
 开发需 Git LFS、Node.js 22+、PowerShell 7、**Godot 4.7.2 .NET** 与 **.NET SDK 9.0.201**。战斗逻辑以 GDScript 为主，自动闪避评分由 C# 批量计算，启动脚本会按锁文件构建程序集。

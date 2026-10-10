@@ -2,6 +2,8 @@
 
 更新日期：2026-10-10。分支：`main`。
 
+2026-10-10 GitHub 测试包发布：[v0.7.0-test.20261010](https://github.com/iceriny/keyabyss/releases/tag/v0.7.0-test.20261010) 已公开为 prerelease，基于 `main` 提交 `c94ea42` 与资产锁 `92b5212`。Windows x64 Debug ZIP为138,015,132字节，包含203个文件、自带.NET8.0.14、诊断脚本和许可；SHA-256为 `e6300e3063fd0f4f88ea42ae48f0439eb693cff91ad48b97f9c324f6c6f37273`，GitHub资产返回的digest与本地一致。导出／Shader Baker完成，包内Boss检查0失败，ZIP解压后全部文件哈希一致；受限.NET搜索环境的独立Forward+启动1800帧退出0，四个计算管线与78个材质准备完成，模块路径确认从解压包加载hostfxr／hostpolicy／coreclr。退出仍有85个ObjectDB实例未释放警告，首次首页准备约168ms长帧；未做真人整局或其他硬件验收。导出结束曾因本次启动的VBCSCompiler持有输出管道而滞留，核对进程身份并结束该编译服务后正常完成，没有改动玩法、视觉或工具源码。原始日志、运行模块和发布校验在 `.temp/github-release-20261010/`，解压验证目录移至 `.delete/github-release-20261010/`。
+
 2026-10-10 分支交接：公开仓库保留 `main`（最新 Godot 主工程与默认分支）和 [`preview`](https://github.com/iceriny/keyabyss/tree/preview)（原 Web 预览版）。`preview` 从原主分支 `b713c6e` 建立，交付提交 `d4435fd`；`src/` 与 `data/` 保持原样，补充版本锁、旧 Web 音频恢复入口及 README，启动／构建直接验证原有117个片段，不依赖原件时间戳或 FFmpeg。已确认原开发分支全部包含在 `main`，随后移除其本地与远端分支。预览副本从GitHub实际恢复117文件，首次依赖安装、启动前检查、TypeScript与架构检查及离线构建通过；159个发行文件共83.26MiB，7z／ZIP完整性检查通过，开发服务器页面、启动脚本、音频与字体均HTTP 200。未进行真人整局或浏览器视觉复验；本次没有修改玩法与视觉源码。
 
 2026-10-10 GitHub 与跨设备交付：Godot 工程经 [PR #1](https://github.com/iceriny/keyabyss/pull/1) 合入默认 `main`；私有 [keyabyss-assets](https://github.com/iceriny/keyabyss-assets) 的资产与 LFS 均实际上传，代码锁定 `92b5212` 及清单哈希。1,100 个目标路径映射到893个唯一文件，共2,425.08MiB，包含144音频原件、576完整片段、196选用音频、23字体、图片及未选用／旧Web快照。README 的首次 `setup` 与日常 `pull/push` 自动完成两仓交接，保持本地修改保护；公开历史不改写，原未发布提交已备份，上传规则基线为 `c39c032`。过程与两项交接问题修正见[实施记录](migration/ASSET-UPLOAD-IMPLEMENTATION.md)。
