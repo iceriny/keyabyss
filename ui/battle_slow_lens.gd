@@ -8,7 +8,7 @@ var bend := 0.0
 var capture: BackBufferCopy
 
 
-func update_effect(session: BattleSession, delta: float, reduced: bool) -> void:
+func update_effect(session: BattleSession, delta: float, reduced: bool, quality: int) -> void:
 	var desired := 1.0 - session.world_time_scale if session.result == 0 else 0.0
 	amount = lerpf(amount, desired, 1.0 - exp(-delta * (20.0 if desired > amount else 12.0)))
 	if desired > .01: arrival = minf(1.0, arrival + delta / .24)
@@ -22,6 +22,7 @@ func update_effect(session: BattleSession, delta: float, reduced: bool) -> void:
 	surface.set_shader_parameter("amount", amount)
 	surface.set_shader_parameter("arrival", 1.0 if reduced else arrival)
 	surface.set_shader_parameter("bend", bend)
+	surface.set_shader_parameter("dispersion_pixels", 0.0 if reduced else [6.0, 10.0, 16.0][quality])
 
 
 func project(point: Vector2) -> Vector2:

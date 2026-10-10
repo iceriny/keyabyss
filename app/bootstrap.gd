@@ -6,6 +6,7 @@ var preparation: Node
 var application: Node
 var _loading := true
 var settings := AppSettings.new()
+var _vocabulary_worker := Thread.new()
 
 
 func _enter_tree() -> void:
@@ -41,10 +42,9 @@ func _run() -> void:
 	application.settings = settings
 	application.settings_prepared = true
 	# Read or rebuild persistent vocabulary indices while the welcome stays live.
-	var vocabulary_worker := Thread.new()
-	vocabulary_worker.start(application.vocabulary.prepare_catalog)
-	while vocabulary_worker.is_alive(): await _present()
-	vocabulary_worker.wait_to_finish()
+	_vocabulary_worker.start(application.vocabulary.prepare_catalog)
+	while _vocabulary_worker.is_alive(): await _present()
+	_vocabulary_worker.wait_to_finish()
 	application.process_mode = Node.PROCESS_MODE_DISABLED
 	# ArchiveGate remains the authored welcome ritual after resource preparation.
 	add_child(application)
@@ -60,6 +60,11 @@ func _run() -> void:
 
 
 func _load_scene(path: String) -> PackedScene:
+	# Loading the preparation's inherited script/resource graph on a worker
+	# leaves zero-reference placeholders behind in the locked Mono engine.
+	# Resolve that graph on the main thread after the loading frame is shown.
+	if path == "res://ui/scenes/render_preparation.tscn":
+		return load(path) as PackedScene
 	var error := ResourceLoader.load_threaded_request(path, "PackedScene")
 	if error != OK:
 		ritual.feedback.show_error("资源载入失败：%s" % error_string(error))
@@ -85,3 +90,12 @@ func _present() -> void:
 
 func _resize_output() -> void:
 	settings.update_output(get_window())
+
+
+func _exit_tree() -> void:
+	# A close during index preparation must finish the reader before disposing
+	# its application, which has not entered the tree yet.
+	if _vocabulary_worker.is_started():
+		_vocabulary_worker.wait_to_finish()
+	if is_instance_valid(application) and application.get_parent() == null:
+		application.free()

@@ -289,7 +289,7 @@ func _refresh() -> void:
 func _process(delta: float) -> void:
 	if _refresh_pending: _refresh()
 	var started := DebugLog.begin()
-	slow_lens.update_effect(session, delta, settings.reduce_motion)
+	slow_lens.update_effect(session, delta, settings.reduce_motion, settings.quality)
 	_cast_progress_display = _cast_progress_target if settings.reduce_motion else lerpf(_cast_progress_display, _cast_progress_target, 1.0 - exp(-delta * 18.0))
 	(cast_progress.material as ShaderMaterial).set_shader_parameter("progress", _cast_progress_display)
 	_camera_offset = visuals.camera_offset

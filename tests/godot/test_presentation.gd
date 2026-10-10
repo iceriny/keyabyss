@@ -106,6 +106,9 @@ func _create_app() -> void:
 	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
 	app.settings.sound = false
+	# This fixture exercises the welcome and archive; configuration has its own
+	# first-entry interaction coverage in test_ui_refinement --setup-feedback.
+	app.settings.first_setup_complete = true
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
 	root.add_child(app)
 	await process_frame

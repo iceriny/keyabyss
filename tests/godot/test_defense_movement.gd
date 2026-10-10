@@ -118,22 +118,20 @@ func _run() -> void:
 			_check(source.hp_q == after_counter, "the same melee strike cannot settle counter damage twice")
 		else:
 			_check(source.hp_q == hp and source.stagger_time == 0.0 and not source.delayed_attacks.is_empty(), "ordinary melee defense does not grant counter damage or perfect interruption")
+	for kind: StringName in [&"blast", &"laser"]:
+		for grade: StringName in [&"success", &"perfect"]:
+			var area_hit := _session()
+			var active := _hazard(area_hit, kind, 0.0)
+			var feedback: Array[Dictionary] = []
+			area_hit.event_committed.connect(func(event: Dictionary) -> void: feedback.append(event))
+			area_hit.parry_window = 0.15 if grade == &"success" else 0.25
+			area_hit._advance_hazards(0.01)
+			_check(area_hit.player_hp_q == area_hit.player_max_hp_q - active.damage_q and not area_hit._parry_succeeded and area_hit.resonance_q == 0, "%s AOE passes through %s defense without a reward" % [kind, grade])
+			_check(not feedback.any(func(event: Dictionary) -> bool: return event.kind == &"counter_pulse"), "AOE never produces a counter pulse")
+			area_hit.hurt_window = 0.0
+			area_hit._advance_hazards(0.1)
+			_check(area_hit.player_hp_q == area_hit.player_max_hp_q - active.damage_q, "one AOE settles damage once")
 	var area := _session()
-	var hazard := BattleHazard.new()
-	hazard.kind = &"blast"
-	hazard.source_id = area.enemies[0].id
-	hazard.attack_id = "area-defense"
-	hazard.center = area.player_position
-	hazard.radius = 100.0
-	hazard.warning_remaining = 0.0
-	hazard.active_remaining = 0.5
-	hazard.damage_q = 10 * BattleSession.Q
-	area.hazards.append(hazard)
-	area.parry_window = 0.15
-	area._advance_hazards(0.01)
-	area.parry_window = 0.0
-	area._advance_hazards(0.1)
-	_check(area.player_hp_q == area.player_max_hp_q and area.threats.is_empty(), "area defense consumes its contact for the whole attack and never reflects")
 	area._take_player_damage(5 * BattleSession.Q, "one-hit")
 	area.hurt_window = 0.0
 	area._take_player_damage(5 * BattleSession.Q, "one-hit")
@@ -232,17 +230,49 @@ func _check_perfect_dodge() -> void:
 	ram.charge_time = 0.5
 	charge._commit_action(&"dodge_down")
 	_check(charge.perfect_dodge_remaining == 1.0, "an approaching charge participates in precise dodge timing")
-	var area := _session()
+	for kind: StringName in [&"blast", &"laser", &"horizontal"]:
+		var area := _session()
+		_hazard(area, kind, 0.08)
+		area._commit_action(&"dodge_right")
+		_check(area.perfect_dodge_remaining == 1.0 and area.resonance_q == 5 * BattleSession.Q, "%s AOE grants one precise dodge reward" % kind)
+		area._advance_hazards(0.08)
+		area._advance_hazards(0.01)
+		_check(area.player_hp_q == area.player_max_hp_q, "AOE remains dodgeable during invulnerability")
+		var early := _session()
+		_hazard(early, kind, 0.2)
+		early._commit_action(&"dodge_right")
+		_check(early.perfect_dodge_remaining == 0.0, "early AOE dodge receives no precise reward")
+		var missed := _session()
+		var distant := _hazard(missed, kind, 0.08)
+		distant.center.x += 0.3
+		distant.origin += Vector2(.3, .3)
+		distant.end += Vector2(.3, .3)
+		missed._commit_action(&"dodge_right")
+		_check(missed.perfect_dodge_remaining == 0.0, "an imminent AOE outside the collision footprint receives no reward")
+	var recoil := _session()
+	var crossing := _hazard(recoil, &"laser", 0.08)
+	crossing.origin.x += 0.03
+	crossing.end.x += 0.03
+	recoil.player_impulse = Vector2(900, 0)
+	recoil._commit_action(&"dodge_down")
+	_check(recoil.perfect_dodge_remaining == 1.0, "imminent recoil into an AOE participates in precise dodge timing")
+
+
+func _hazard(session: BattleSession, kind: StringName, warning: float) -> BattleHazard:
 	var hazard := BattleHazard.new()
-	hazard.kind = &"blast"
-	hazard.source_id = area.enemies[0].id
-	hazard.attack_id = "precise-area"
-	hazard.center = area.player_position
+	hazard.kind = &"laser" if kind == &"horizontal" else kind
+	hazard.source_id = session.enemies[0].id
+	hazard.attack_id = "area-%s" % sessions.size()
+	hazard.center = session.player_position
+	hazard.origin = Vector2(0, hazard.center.y) if kind == &"horizontal" else Vector2(hazard.center.x, 0)
+	hazard.end = Vector2(1, hazard.center.y) if kind == &"horizontal" else Vector2(hazard.center.x, 1)
 	hazard.radius = 60.0
-	hazard.warning_remaining = 0.08
-	area.hazards.append(hazard)
-	area._commit_action(&"dodge_down")
-	_check(area.perfect_dodge_remaining == 1.0, "an imminent area attack participates in precise dodge timing")
+	hazard.width = 19.5
+	hazard.warning_remaining = warning
+	hazard.active_remaining = 0.5
+	hazard.damage_q = 10 * BattleSession.Q
+	session.hazards.append(hazard)
+	return hazard
 
 
 func _check_projectile_push() -> void:

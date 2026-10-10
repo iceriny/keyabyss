@@ -121,6 +121,14 @@ pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_ui_refinement.gd
 # 使用TOOLCHAIN锁定的Godot可执行文件；下列为引擎参数。
 # 规则、人工投入、状态阈值、有限传播、闪避与终极：
 --headless --path . --script res://tests/godot/test_s2_rules.gd -- --four-books
+# 只复核雷鸣曲线、感电积累／衰减、分档接入及原生闪避／终极：
+--headless --path . --script res://tests/godot/test_s2_rules.gd -- --four-books --book=storm
+# 灰烬／寒墨当前参数、灼烧尾段与完词／落点清弹事件：
+--headless --path . --script res://tests/godot/test_s2_rules.gd -- --combat-feedback
+# 冲锋普通防御互弹、完美闪避共鸣与无敌／慢时间，以及原有防御和世界时钟：
+--headless --path . --script res://tests/godot/test_defense_movement.gd
+# 实际窗口的HUD死角、连续30帧词咒稳定、固定表现时刻的清弹四阶段和三类敌人冻结起止、设置切换／暂停续播、完美闪避及真实大招无额外冲击波；可追加 --low --reduce-motion：
+--path . --script res://tests/godot/test_battle_presentation.gd -- --combat-feedback
 # 112组可重复的固定目标场景；不是正式Boss／真人体验：
 --headless --path . --script res://tests/godot/test_s2_encounters.gd -- --four-books-balance
 # 实际Forward+窗口，另可追加 --low --reduce-motion：
@@ -155,6 +163,22 @@ MCP 上游键注入缺少 `InputEventKey.unicode`；它适合鼠标、Tab、Esc 
 
 `test_battle_presentation.gd -- --words-only` 单独检查头顶释义的两行测量与省略、空释义高度、选中层级、设置即时开关、底部提示独立、锁定后边缘可见及完整词咒避让 HUD，并保存开／关与边缘帧。使用实际 Forward+ 窗口；`test_ui_refinement.gd` 另经正式词令 `translation` 检查开关与保存回读。旧版 `WordLabelLayout`、`OverlayRenderer` 和实际锁定／击退画面是表现对照入口。
 
+## 首访配置与AOE反馈
+
+时间停滞色散使用现有 `test_battle_presentation.gd -- --time-dispersion` 窗口分支：真实迫近弹道经闪避动作触发慢时，随后固定已提交战斗时钟，避免截图回读消耗状态；保存正常、起手、持续、低画质、减少动态及结束六帧。检查暂停保持过渡、减少动态停用通道偏移、到期关闭合成与屏幕拷贝。需实际审阅外围色边、中心及边缘词咒的清晰度，不代表真人闪避时机、完整遭遇或性能验收。
+
+本轮设置与AOE反馈使用 `test_defense_movement.gd`、`test_input_settings.gd` 的最小规则集。前者覆盖圆圈、横竖激光、过早／不相交及反冲轨迹的完美闪避，并确认普通／完美御术均不防御AOE；后者覆盖FPS与首访完成标记的默认值和保存回读。
+
+实际窗口运行 `test_ui_refinement.gd -- --setup-feedback`：原生入场、首访配置、鼠标调整音量与中文释义、三档画质和流体关闭／最高／低档配置、24秒压力循环回收、保存和再次入场、FPS开关、关于页返回，以及暂停中独立运行的试映。画质／流体选项通过真实控件信号提交，不能称为完整鼠标下拉操作验收。高低画面与关于截图需人工审阅。追加 `--cleanup-route=calibration` 或 `--cleanup-route=battle` 分别经过实际退出入口检查仍活跃的页面；战斗分支还核对暂停→设置→校准→返回时首页继续隐藏。
+
+同一窗口入口还检查设置应用清除固定软件帧率上限并启用垂直同步，切换画质后策略保留；记录当前显示器刷新率及首页的一秒实际帧数。背景全屏柔焦、压暗与前景清晰度使用高低画面实拍审阅。60Hz显示器上的封顶检查不能代替120／144Hz或跨显示器切换的实际性能验收；截图阻塞及遭遇时序不同，不能直接把两帧FPS作为画质档位收益对照。
+
+居中布局只需追加 `--setup-layout`：截取1920×1080与1440×900，通过正式显示设置及帧缓冲／预览视口尺寸确认实际输出，再检查中央设置组与FPS分离、真实鼠标释义／音量／保存，以及退出释放。该分支提前结束，不重跑24秒循环和无关页面；截图期间的FPS读数不用于性能比较。
+
+垂直同步使用 `test_ui_refinement.gd -- --vsync-only` 的最小窗口分支，检查默认开启、真实鼠标关闭、保存回读、关闭后的刷新率上限、暂停中词令开启及恢复默认；多显示器时实际移动窗口并检查上限更新。不修改操作系统刷新率，当前60Hz设备的运行不能证明120／144Hz实际呈现或输入延迟。
+
+`test_battle_presentation.gd -- --word-contrast` 使用暗／中／浅背景与共享BackBufferCopy，检查词咒空白区域不形成暗块并保存字形阴影帧。不是游戏CPU读回，也不代表所有战场背景或整帧性能。启动退出警告另以正式 `app/bootstrap.tscn`、锁定引擎的 `--verbose --quit-after` 观察完整载入与早退，不通过关闭警告验证。
+
 ## 导出包周期卡顿记录
 
 `test_vocabulary.gd`覆盖持久索引读取、未变词库不重建、导入／同步后更新、同尺寸外部编辑失效、84,620词扩展库的字符串记录，以及抽样的逐票覆盖。首字母耗尽、释放、动态词长和短语字符数直接断言；真实战斗会话检查飞行主术保留／换词、死亡输入延续／放弃、道具到期和等待敌人补词，习字场景检查少量首字母与下一批候选。100／10,000词各5000次抽取／释放只测在线成本，排除预处理，不代表整帧性能。新增抽样规则不自动继承之前固定同词夹具的平衡结论。
@@ -165,11 +189,13 @@ Debug 包默认运行 `app/debug_log.gd`，每 5 秒输出心跳，超过 50 ms 
 
 普通启动写 `user://diagnostics/session-日期-PID.jsonl`。测试包的“启动并记录.cmd”把会话日志和引擎日志写入同目录 `logs/`，用户可直接回传整个文件夹；引擎日志包含脚本错误／警告。会话日志由单独后台线程序列化、写入并刷新，不在主线程逐秒写磁盘。仅保留八帧上下文，事件队列上限 128，长帧报告限每秒四条；长期低帧率仍在心跳中计数，队列丢弃会明确记录。进程异常退出最多损失尚未写出的末批事件。
 
-记录覆盖入场、菜单与战场，心跳保留帧率上限、垂直同步、载入状态，并每五秒异步提交一个渲染线程探针，记录排队／调度延迟；探针不等待 GPU。阶段耗时是嵌套的包含耗时，不能直接求和；`fluid.prepare_submit` 只测主线程准备与提交，不代表 GPU 求解时间。视口与引擎监视器可能滞后一帧，墙钟间隔包含调度、渲染等待和帧率限制；需结合前后帧及同条件对照定位，不能仅凭一项监视器认定根因。原生场景载入之前的引擎阶段只有启动脚本的 `--verbose --log-file` 记录。两份启动脚本保持相同引擎参数，对照仅关闭新增会话记录。
+记录覆盖入场、菜单与战场，心跳保留帧率上限、垂直同步、载入状态，并每五秒异步提交一个渲染线程探针，记录排队／调度延迟；探针不等待 GPU，也不能排除提交之前发生的阻塞。阶段耗时是嵌套的包含耗时，不能直接求和；`fluid.prepare_submit` 只测主线程准备与提交，不代表 GPU 求解时间。视口计数可能滞后；锁定引擎的`TIME_PROCESS`按约一秒周期更新最大处理时间，不能当作当前帧纯脚本CPU时间。墙钟间隔包含调度、渲染等待和帧率限制，GPU时间戳跨度也不能直接证明shader计算很慢；需结合前后帧及同条件对照定位。原生场景载入之前的引擎阶段只有启动脚本的 `--verbose --log-file` 记录。两份启动脚本保持相同引擎参数，对照仅关闭新增会话记录。
+
+无诊断对照仍有周期卡顿且游戏阶段耗时不足以解释时，使用包内“开始系统记录.cmd”／“保存系统记录.cmd”采集一次约30秒WPR轨迹；两个脚本右键以管理员身份运行，游戏正常启动。`GeneralProfile`和`GPU`记录线程切换／调用栈及GPU活动，保存后的`logs/system-stall-*.etl`与本次游戏日志一起回传。开始必须成功，保存会停止记录；具体步骤见[系统记录说明](../tools/godot/playtest/系统记录说明.txt)。2026-10-10目标机复现及尚未排除的边界见[调查记录](migration/PERIODIC-STALL-INVESTIGATION.md)。
 
 需要完整逐帧报告时，独立 EXE 使用 `keyabyss.exe -- --frame-profile`，默认持续记录直到正常退出游戏。通过游戏退出或 Alt+F4 关闭时一次写出报告；强制终止进程无法保存内存中的记录。自动化可显式加 `--frame-profile-seconds=60`（5–120 秒，0 表示直到退出）。普通启动不加载这个完整帧分析器，默认 Debug 会话日志仍独立运行。保持复现问题时的原有设置，记录期间先在首页停留，再打开设置或进入战斗。JSON 位于 `%APPDATA%\Keyabyss\performance\`，日志写出时刻不纳入帧统计。
 
-记录含逐帧墙钟间隔、所在页面、物理耗时、主视口和离屏视口 CPU／GPU 耗时，以及开始／结束时的资源计数。汇总排除最初两秒，原始帧保留。`process_ms` 是引擎整帧时间，不能当成纯脚本 CPU 时间；渲染计数可能滞后一帧，GPU 计数不包含显示呈现等待。采样自身有开销，比较时保持相同记录条件，不能只凭总帧率归因。
+记录含逐帧墙钟间隔、所在页面、物理耗时、主视口和离屏视口 CPU／GPU 耗时，以及开始／结束时的资源计数。汇总排除最初两秒，原始帧保留。`process_ms`来自引擎按约一秒周期更新的最大处理时间，不能当成当前帧CPU耗时；渲染计数可能滞后，GPU计数不直接测显示呈现等待。采样自身有开销，比较时保持相同记录条件，不能只凭总帧率归因。
 
 本机可用 `pwsh -File tools/godot/godot.ps1 run --script tests/godot/profile_frames.gd -- --frame-profile --profile-driver --profile-label=sample` 运行首页→设置→战斗的固定窗口流程，输出 `.temp/frame-review/sample/frames.json`，并断言隐藏首页停绘和返回恢复。使用独立设置与词库，不改变玩家配置；这只能验证本机，不能替代发生卡顿的目标机采样。
 

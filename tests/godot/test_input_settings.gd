@@ -157,16 +157,20 @@ func _test_settings() -> void:
 		return
 	var path := folder.path_join("settings.cfg")
 	var settings := AppSettings.new(path)
+	_check(not settings.show_fps and not settings.first_setup_complete and settings.show_meaning, "fresh defaults open calibration, retain Chinese and hide FPS")
 	settings.ui_scale = 1.1
 	settings.resolution = Vector2i(2560, 1440)
 	settings.volume = 0.3
 	settings.fluid_quality = 3
+	settings.show_fps = true
+	settings.first_setup_complete = true
 	settings.vocabulary_id = "cpp"
 	_check(settings.save_settings(), "first settings save")
 	settings.ui_scale = 1.2
 	_check(settings.save_settings() and FileAccess.file_exists(path + ".bak"), "second save creates backup")
 	var restored := AppSettings.new(path)
 	restored.load_settings()
+	_check(restored.show_fps and restored.first_setup_complete, "FPS and first-visit completion survive restart")
 	_check(restored.fluid_quality == 3, "independent fluid quality survives a settings round trip")
 	_check(restored.resolution == Vector2i(2560, 1440), "game resolution survives a settings round trip")
 	_check(is_equal_approx(restored.ui_scale, 1.2) and is_equal_approx(restored.volume, 0.3) and restored.vocabulary_id == "cpp", "settings round trip")

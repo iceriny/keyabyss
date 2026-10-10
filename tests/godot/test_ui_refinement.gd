@@ -19,10 +19,21 @@ func _run() -> void:
 	app.settings.sound = false
 	app.settings.ambience = false
 	app.settings.reduce_motion = true
+	app.profile_base_path = evidence.path_join("profiles")
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
-	app.presentation_enabled = false
+	app.presentation_enabled = "--setup-feedback" in OS.get_cmdline_user_args()
 	root.add_child(app)
 	await _settle()
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--cleanup-route="):
+			await _review_cleanup(argument.trim_prefix("--cleanup-route="))
+			return
+	if "--setup-feedback" in OS.get_cmdline_user_args():
+		await _review_setup_feedback()
+		return
+	if "--vsync-only" in OS.get_cmdline_user_args():
+		await _review_vsync()
+		return
 	if "--m2-pages-only" in OS.get_cmdline_user_args():
 		await _review_m2_pages()
 		return
@@ -169,6 +180,199 @@ func _review_m2_pages() -> void:
 	app.queue_free()
 	await process_frame
 	quit(0 if failures == 0 else 1)
+
+
+func _review_vsync() -> void:
+	app._settings_page("home")
+	app._select_settings_tab("display", false)
+	await _settle()
+	var toggle := app.settings_controls["vsync"] as CheckButton
+	_check(app.settings.vsync and toggle.button_pressed, "new and existing settings default to synchronized display")
+	await _click(toggle)
+	_check(not app.settings.vsync and DisplayServer.window_get_vsync_mode(root.get_window_id()) == DisplayServer.VSYNC_DISABLED, "real pointer disables vertical synchronization")
+	_check(Engine.max_fps == roundi(DisplayServer.screen_get_refresh_rate(root.current_screen)), "unsynchronized rendering is capped at the current monitor refresh")
+	var restored := AppSettings.new(app.settings.path)
+	restored.load_settings()
+	_check(not restored.vsync, "synchronization choice survives saved settings reload")
+	await _capture("settings-vsync-off")
+	var original_screen := root.current_screen
+	if DisplayServer.get_screen_count() > 1:
+		root.current_screen = (original_screen + 1) % DisplayServer.get_screen_count()
+		await create_timer(0.3).timeout
+		_check(app.root._frame_limit_screen == root.current_screen and Engine.max_fps == roundi(DisplayServer.screen_get_refresh_rate(root.current_screen)), "moving between monitors refreshes the unsynchronized ceiling")
+		print("Monitor switch: screen=%d | refresh=%.2f Hz | cap=%d" % [root.current_screen, DisplayServer.screen_get_refresh_rate(root.current_screen), Engine.max_fps])
+		root.current_screen = original_screen
+		await create_timer(0.3).timeout
+	paused = true
+	await _type("vsync")
+	_check(app.settings.vsync and toggle.button_pressed and Engine.max_fps == 0 and DisplayServer.window_get_vsync_mode(root.get_window_id()) == DisplayServer.VSYNC_ENABLED, "settings command reenables synchronization while the game is paused")
+	paused = false
+	await _click(toggle)
+	app._defaults()
+	_check(app.settings.vsync and toggle.button_pressed and Engine.max_fps == 0, "restore defaults reenables vertical synchronization")
+	print("VSync review: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
+	app._quit_game()
+	if failures > 0: quit(1)
+
+
+func _review_setup_feedback() -> void:
+	Engine.max_fps = 60
+	app.settings.apply(root)
+	_check(Engine.max_fps == 0 and DisplayServer.window_get_vsync_mode(root.get_window_id()) == DisplayServer.VSYNC_ENABLED, "display settings remove a fixed cap and synchronize to the current monitor")
+	print("Display pacing: refresh=%.2f Hz | software_cap=%d | vsync=%d | screens=%d" % [DisplayServer.screen_get_refresh_rate(root.current_screen), Engine.max_fps, DisplayServer.window_get_vsync_mode(root.get_window_id()), DisplayServer.get_screen_count()])
+	await _key(KEY_A, 97)
+	await create_timer(0.25).timeout
+	_check(app.route == "calibration" and app.settings.intro_complete and not app.settings.first_setup_complete, "first native entry opens calibration after the welcome")
+	app.settings.reduce_motion = false
+	app._apply_calibration_settings()
+	await create_timer(2.0).timeout
+	var setup := app.page as FirstVisitSetup
+	for frame in 180:
+		if setup.fps.sample_ready: break
+		await process_frame
+	_check(app.route == "calibration" and setup != null and not app.archive.visible, "first-visit calibration owns the page and stops the hidden archive")
+	_check(setup.preview.stage.viewport.size == root.content_scale_size, "pressure preview uses full output pixels")
+	_check(setup.preview.session.world_time > 0.0 and not setup.preview.session.enemies.is_empty(), "pressure preview runs real combat")
+	_check(app.settings.show_meaning, "Chinese meanings start enabled")
+	_check(setup.fps.sample_ready and setup.fps.frames_per_second > 0.0, "calibration reports measured FPS after initial preparation")
+	print("Calibration sample: %.1f FPS | enemies=%d | threats=%d | effects=%d | output=%s" % [setup.fps.frames_per_second, setup.preview.session.enemies.size(), setup.preview.session.threats.size(), setup.preview.session.effects.size(), str(setup.preview.stage.viewport.size)])
+	await _capture("setup-high")
+	if "--setup-layout" in OS.get_cmdline_user_args():
+		_check(setup.panel.get_rect().get_center().distance_to(setup.size * 0.5) < 1.0, "calibration controls form a centered group")
+		app.settings.resolution = Vector2i(1440, 900)
+		app.settings.apply(root)
+		app._apply_visual_settings()
+		await create_timer(0.5).timeout
+		_check(Vector2i(root.get_texture().get_size()) == Vector2i(1440, 900) and setup.preview.stage.viewport.size == Vector2i(1440, 900), "16:10 capture and pressure viewport use the actual selected output")
+		var caption := setup.get_node("ContentLayer/PreviewCaption") as Control
+		_check(Rect2(Vector2.ZERO, setup.size).encloses(setup.panel.get_rect()) and not setup.panel.get_rect().intersects(caption.get_rect()), "centered calibration and FPS remain separate at 16:10 output")
+		await _capture("setup-centered-16x10")
+		await _click(setup.controls["show_meaning"])
+		_check(not app.settings.show_meaning, "centered meaning control responds to its real pointer location")
+		await _click(setup.controls["volume"])
+		_check(app.settings.volume > 0.35 and app.settings.volume < 0.65, "centered volume slider responds after resizing")
+		var centered_pressure: WeakRef = weakref(setup.preview)
+		await _click(setup.confirm_button)
+		await create_timer(0.35).timeout
+		_check(app.route == "home" and app.settings.first_setup_complete and centered_pressure.get_ref() == null, "centered save action closes calibration and frees its pressure scene")
+		print("Setup layout: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
+		app._quit_game()
+		if failures > 0: quit(1)
+		return
+	var first_pressure: WeakRef = weakref(setup.preview)
+	await create_timer(FirstVisitSetup.LOOP_SECONDS + 0.2).timeout
+	_check(first_pressure.get_ref() == null and setup.preview != null and setup.preview.session.enemies.size() == 18, "pressure loop frees its previous encounter and keeps a bounded enemy count")
+	await _click(setup.controls["show_meaning"])
+	_check(not app.settings.show_meaning, "real pointer toggles meanings in calibration")
+	await _click(setup.controls["volume"])
+	_check(app.settings.volume > 0.35 and app.settings.volume < 0.65, "real pointer adjusts live master volume")
+	var quality_control := setup.controls["quality"] as OptionButton
+	quality_control.selected = 0
+	quality_control.item_selected.emit(0)
+	var fluid_control := setup.controls["fluid_quality"] as OptionButton
+	fluid_control.selected = 0
+	fluid_control.item_selected.emit(0)
+	await process_frame
+	_check(setup.preview.visuals.fluid.quality == FluidField2D.Quality.OFF, "fluid can be disabled in the actual preview")
+	fluid_control.selected = 4
+	fluid_control.item_selected.emit(4)
+	await create_timer(0.3).timeout
+	_check(setup.preview.visuals.fluid.quality == FluidField2D.Quality.ULTRA, "highest fluid precision configures the actual preview")
+	fluid_control.selected = 1
+	fluid_control.item_selected.emit(1)
+	await create_timer(1.2).timeout
+	for frame in 180:
+		if setup.fps.sample_ready: break
+		await process_frame
+	_check(app.settings.quality == 0 and app.settings.fluid_quality == 1, "quality and fluid choices update the real preview")
+	_check(Engine.max_fps == 0 and DisplayServer.window_get_vsync_mode(root.get_window_id()) == DisplayServer.VSYNC_ENABLED, "changing quality preserves monitor-paced rendering")
+	await _capture("setup-low")
+	var pressure_ref: WeakRef = weakref(setup.preview)
+	await _click(setup.confirm_button)
+	await create_timer(0.35).timeout
+	_check(app.route == "home" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "confirm saves calibration, returns home and frees the pressure scene")
+	var frame_started := Time.get_ticks_usec()
+	var frame_count := 0
+	while Time.get_ticks_usec() - frame_started < 1000000:
+		await process_frame
+		frame_count += 1
+	print("Archive display sample: %.1f FPS | refresh=%.2f Hz" % [frame_count * 1000000.0 / (Time.get_ticks_usec() - frame_started), DisplayServer.screen_get_refresh_rate(root.current_screen)])
+	var restored := AppSettings.new(app.settings.path)
+	restored.load_settings()
+	_check(restored.first_setup_complete and not restored.show_meaning and restored.quality == 0 and restored.fluid_quality == 1 and is_equal_approx(restored.volume, app.settings.volume), "calibration choices persist for next launch")
+	app.queue_free()
+	await process_frame
+	await process_frame
+	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
+	app.settings = restored
+	app.settings_prepared = true
+	app.profile_base_path = evidence.path_join("profiles")
+	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
+	root.add_child(app)
+	await _settle()
+	await _key(KEY_A, 97)
+	await create_timer(0.4).timeout
+	await _key(KEY_ENTER)
+	await create_timer(0.8).timeout
+	_check(app.route == "home" and not is_instance_valid(app.welcome_gate) and app.settings.first_setup_complete, "next launch enters the archive without repeating calibration")
+	app._settings_page("home")
+	await _settle()
+	await _click(app.settings_controls["show_fps"])
+	await create_timer(0.6).timeout
+	_check(app.settings.show_fps and app.fps_display.visible, "FPS setting shows its live overlay")
+	await _capture("settings-fps")
+	await _click(app.page.footer.get_node("About"))
+	await create_timer(0.5).timeout
+	_check(app.route == "about", "settings opens the About page")
+	await _capture("about")
+	await _key(KEY_ESCAPE)
+	_check(app.route == "settings" and app.settings_return == "home", "About returns to settings")
+	paused = true
+	await _type("calibrate")
+	await create_timer(0.4).timeout
+	_check(app.route == "calibration" and app.page.close_button.visible, "calibration can be revisited from settings")
+	var paused_setup := app.page as FirstVisitSetup
+	var preview_time := paused_setup.preview.session.world_time
+	await create_timer(0.4, true).timeout
+	_check(paused and paused_setup.preview.session.world_time > preview_time, "pressure preview advances while the underlying game stays paused")
+	await _key(KEY_ESCAPE)
+	await create_timer(0.2).timeout
+	_check(app.route == "settings", "revisited calibration returns to settings")
+	var previous_fps_time := app.fps_display._started_usec
+	paused = true
+	await create_timer(0.6, true).timeout
+	_check(app.fps_display.visible and app.fps_display._started_usec > previous_fps_time, "FPS continues measuring during pause")
+	paused = false
+	app._back()
+	print("Setup feedback: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
+	app._quit_game()
+	if failures > 0: quit(1)
+
+
+func _review_cleanup(exit_route: String) -> void:
+	app.settings.reduce_motion = false
+	app._apply_visual_settings()
+	if exit_route == "calibration":
+		app._first_setup_page()
+	elif exit_route == "battle":
+		app.settings.reduce_motion = true
+		app._start_battle()
+		await create_timer(0.8).timeout
+		app.settings.reduce_motion = false
+		app.battle.apply_options()
+		app._pause()
+		app._settings_page("pause")
+		app._first_setup_page("settings")
+		await create_timer(0.4, true).timeout
+		app._complete_first_setup()
+		_check(paused and not app.archive.visible and app.route == "settings", "returning from paused calibration keeps the archive hidden and battle paused")
+		app._settings_back()
+		app._resume()
+	await create_timer(2.0).timeout
+	_check(app.route == exit_route, "cleanup fixture reaches " + exit_route)
+	print("Exit lifecycle: %s | %d failed | %s" % [app.route, failures, evidence])
+	app._quit_game()
+	if failures > 0: quit(1)
 
 
 func _test_scroll() -> void:

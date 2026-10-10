@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="1"]
 [ext_resource type="Script" path="res://ui/battle_word.gd" id="2"]
@@ -6,6 +6,10 @@
 
 [sub_resource type="ShaderMaterial" id="Reading"]
 shader = ExtResource("3")
+
+[sub_resource type="ShaderMaterial" id="GlyphShade"]
+shader = ExtResource("3")
+shader_parameter/glyph_pass = true
 
 [node name="BattleWord" type="Control"]
 physics_interpolation_mode = 2
@@ -29,12 +33,13 @@ mouse_filter = 2
 material = SubResource("Reading")
 
 [node name="Word" type="RichTextLabel" parent="."]
+material = SubResource("GlyphShade")
 layout_mode = 0
 offset_right = 170.0
 offset_bottom = 34.0
 mouse_filter = 2
-theme_override_colors/font_outline_color = Color(0.012, 0.025, 0.03, 0.55)
-theme_override_constants/outline_size = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/normal_font = ExtResource("1")
 theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
@@ -42,11 +47,13 @@ scroll_active = false
 autowrap_mode = 0
 
 [node name="Meaning" type="Label" parent="."]
+material = SubResource("GlyphShade")
 layout_mode = 0
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("1")
 theme_override_font_sizes/font_size = 14
 theme_override_constants/line_spacing = 5
-theme_override_colors/font_shadow_color = Color(0.008, 0.03, 0.04, 0.75)
-theme_override_constants/shadow_offset_y = 1
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 3
 horizontal_alignment = 1

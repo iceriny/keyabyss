@@ -1,6 +1,6 @@
 class_name BattleWord
 extends Control
-## A measured word, optional two-line meaning and a shared feathered reading layer.
+## Measured text with a shared background sample and glyph-local adaptive shade.
 
 const FONT: FontFile = preload("res://assets/fonts/jinghua-song.ttf")
 const MEANING_SIZE := 14

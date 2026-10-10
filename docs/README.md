@@ -29,6 +29,7 @@
 | [流体工具](FLUID-EFFECTS.md) | 当前原生流体、预设、照明和质量成本 |
 | [渲染准备方案](migration/PLAN.md#渲染准备与原生资源实施方案) | 首屏反馈、原生场景／材质、计算管线复用、Shader Baker 与必要验收 |
 | [战斗算法优化](migration/PLAN.md#战斗算法优化)、[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md) | 查询、首击选择与 .NET 闪避评分核；保留碰撞／视觉语义，记录性能取舍及验证 |
+| [周期卡顿调查](migration/PERIODIC-STALL-INVESTIGATION.md) | 目标机复现、诊断对照、指标边界与WPR线程／GPU采集 |
 | [音频库](../development/audio_library/README.md)、[音频接线](audio/README.md) | Agent 按描述、时长和变体组选择已切好的 WAV；原件映射与实际事件接线 |
 | [Git 与资产开发](GIT-AND-ASSETS.md)、[实施记录](migration/ASSET-UPLOAD-IMPLEMENTATION.md) | 双仓版本锁、完整资产、单命令交接与实际恢复证据 |
 

@@ -39,6 +39,7 @@
 [ext_resource type="PackedScene" path="res://ui/scenes/archive_effects.tscn" id="s30"]
 [ext_resource type="PackedScene" path="res://ui/scenes/archive_book_visual.tscn" id="s31"]
 [ext_resource type="PackedScene" path="res://ui/effects/archive_dust.tscn" id="s32"]
+[ext_resource type="PackedScene" path="res://ui/first_visit_setup.tscn" id="s33"]
 [ext_resource type="Material" path="res://ui/effects/archive_dust_process.tres" id="m0"]
 [ext_resource type="Material" path="res://ui/effects/burst_splinter_process.tres" id="m1"]
 [ext_resource type="Material" path="res://ui/effects/spell_motes_process.tres" id="m2"]
@@ -65,6 +66,7 @@
 [ext_resource type="Material" path="res://ui/materials/spell_link.tres" id="m23"]
 [ext_resource type="Material" path="res://ui/materials/corrosion.tres" id="m24"]
 [ext_resource type="Material" path="res://ui/materials/book_seal.tres" id="m25"]
+[ext_resource type="Material" path="res://ui/materials/about_reading.tres" id="m26"]
 [ext_resource type="RDShaderFile" path="res://ui/effects/fluid_solver.glsl" id="c0"]
 [ext_resource type="RDShaderFile" path="res://ui/effects/combustion.glsl" id="c1"]
 [ext_resource type="RDShaderFile" path="res://ui/effects/frost_growth.glsl" id="c2"]
@@ -89,8 +91,8 @@ glow_enabled = true
 
 [node name="RenderPreparation" type="Node"]
 script = ExtResource("script")
-scenes = Array[PackedScene]([ExtResource("s0"), ExtResource("s1"), ExtResource("s2"), ExtResource("s3"), ExtResource("s4"), ExtResource("s5"), ExtResource("s6"), ExtResource("s7"), ExtResource("s8"), ExtResource("s9"), ExtResource("s10"), ExtResource("s11"), ExtResource("s12"), ExtResource("s13"), ExtResource("s14"), ExtResource("s15"), ExtResource("s16"), ExtResource("s17"), ExtResource("s18"), ExtResource("s19"), ExtResource("s20"), ExtResource("s21"), ExtResource("s22"), ExtResource("s23"), ExtResource("s24"), ExtResource("s25"), ExtResource("s26"), ExtResource("s27"), ExtResource("s28"), ExtResource("s29"), ExtResource("s30"), ExtResource("s31"), ExtResource("s32"), ExtResource("extra0"), ExtResource("extra1"), ExtResource("extra2"), ExtResource("extra3"), ExtResource("extra4")])
-materials = Array[Material]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3"), ExtResource("m4"), ExtResource("m5"), ExtResource("m6"), ExtResource("m7"), ExtResource("m8"), ExtResource("m9"), ExtResource("m10"), ExtResource("m11"), ExtResource("m12"), ExtResource("m13"), ExtResource("m14"), ExtResource("m15"), ExtResource("m16"), ExtResource("m17"), ExtResource("m18"), ExtResource("m19"), ExtResource("m20"), ExtResource("m21"), ExtResource("m22"), ExtResource("m23"), ExtResource("m24"), ExtResource("m25")])
+scenes = Array[PackedScene]([ExtResource("s0"), ExtResource("s1"), ExtResource("s2"), ExtResource("s3"), ExtResource("s4"), ExtResource("s5"), ExtResource("s6"), ExtResource("s7"), ExtResource("s8"), ExtResource("s9"), ExtResource("s10"), ExtResource("s11"), ExtResource("s12"), ExtResource("s13"), ExtResource("s14"), ExtResource("s15"), ExtResource("s16"), ExtResource("s17"), ExtResource("s18"), ExtResource("s19"), ExtResource("s20"), ExtResource("s21"), ExtResource("s22"), ExtResource("s23"), ExtResource("s24"), ExtResource("s25"), ExtResource("s26"), ExtResource("s27"), ExtResource("s28"), ExtResource("s29"), ExtResource("s30"), ExtResource("s31"), ExtResource("s32"), ExtResource("s33"), ExtResource("extra0"), ExtResource("extra1"), ExtResource("extra2"), ExtResource("extra3"), ExtResource("extra4")])
+materials = Array[Material]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3"), ExtResource("m4"), ExtResource("m5"), ExtResource("m6"), ExtResource("m7"), ExtResource("m8"), ExtResource("m9"), ExtResource("m10"), ExtResource("m11"), ExtResource("m12"), ExtResource("m13"), ExtResource("m14"), ExtResource("m15"), ExtResource("m16"), ExtResource("m17"), ExtResource("m18"), ExtResource("m19"), ExtResource("m20"), ExtResource("m21"), ExtResource("m22"), ExtResource("m23"), ExtResource("m24"), ExtResource("m25"), ExtResource("m26")])
 computes = Array[RDShaderFile]([ExtResource("c0"), ExtResource("c1"), ExtResource("c2"), ExtResource("c3")])
 
 [node name="World" type="SubViewport" parent="."]

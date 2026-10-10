@@ -1366,11 +1366,7 @@ func _advance_hazards(delta: float) -> void:
 					threats[-1].previous_position = hazard.center
 		hazard.active_remaining = maxf(0.0, hazard.active_remaining - delta)
 		if hazard.contains(player_position) and not _settled_player_attacks.has(hazard.attack_id):
-			if parry_window > 0.0:
-				_settled_player_attacks[hazard.attack_id] = true
-				_parry_feedback(hazard.source_id, _defense_grade())
-				event_committed.emit({"kind": &"enemy_attack", "at": player_position, "from": hazard.center, "outcome": &"parry", "grade": _defense_grade(), "damage_q": 0})
-			elif dodge_window <= 0.0 and hurt_window <= 0.0:
+			if dodge_window <= 0.0 and hurt_window <= 0.0:
 				_take_player_damage(hazard.damage_q, hazard.attack_id)
 				hurt_window = _hurt_iframe
 				event_committed.emit({"kind": &"enemy_attack", "at": player_position, "from": hazard.center, "outcome": &"hit", "damage_q": hazard.damage_q})
@@ -1580,7 +1576,9 @@ func _imminent_dodge_source() -> StringName:
 			if CombatGeometry.disc_in_sector(offset, 21.0, enemy.melee_direction, BattleEnemy.MELEE_REACH, BattleEnemy.MELEE_HALF_ANGLE): return enemy.id
 	for hazard in hazards:
 		var source := enemy_by_id(hazard.source_id)
-		if source != null and source.alive() and enemy_in_combat(source) and not _settled_player_attacks.has(hazard.attack_id) and hazard.warning_remaining <= horizon and hazard.contains(player_position): return hazard.source_id
+		if source != null and source.alive() and enemy_in_combat(source) and not _settled_player_attacks.has(hazard.attack_id) and hazard.active_remaining > 0.0 and hazard.warning_remaining <= horizon:
+			var predicted := clamp_player(player_position + player_impulse * horizon / ARENA_SIZE)
+			if hazard.intersects_motion(player_position, predicted): return hazard.source_id
 	return &""
 
 

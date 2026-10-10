@@ -7,3 +7,5 @@
 直接双击 keyabyss.exe 也默认记录诊断，文件位于 %APPDATA%\Keyabyss\diagnostics；Godot 引擎日志通常位于 %APPDATA%\Keyabyss\logs。
 
 “无诊断对照.cmd”仅关闭诊断记录，使用相同存档、设置和游戏效果，可比较记录本身是否影响卡顿。
+
+关闭诊断仍有周期卡顿时，按“系统记录说明.txt”使用 Windows 自带 WPR 采集约30秒的线程与 GPU 活动；两个系统记录脚本需要右键以管理员身份运行，游戏仍正常启动。

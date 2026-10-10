@@ -21,6 +21,10 @@ func _run() -> void:
 	evidence = "res://.temp/godot-m2/presentation-%s" % Time.get_ticks_usec()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	root.size = Vector2i(1920, 1080)
+	if "--word-contrast" in OS.get_cmdline_user_args():
+		await _check_word_contrast()
+		quit()
+		return
 	if "--refresh-cost" in OS.get_cmdline_user_args():
 		await _check_refresh_cost()
 		quit()
@@ -61,6 +65,11 @@ func _run() -> void:
 		if argument == "--movie":
 			recording = true
 	process_frame.connect(_sample_audio)
+	if "--time-dispersion" in OS.get_cmdline_user_args():
+		await _check_time_dispersion()
+		print("Time dispersion presentation: " + evidence)
+		quit()
+		return
 	if "--combat-feedback" in OS.get_cmdline_user_args():
 		await _check_combat_feedback()
 		print("Combat feedback presentation: " + evidence)
@@ -313,6 +322,71 @@ func _four_book_window(session: BattleSession, page: BattlePage) -> void:
 	if reduced: assert(page.visuals.camera_offset == Vector2.ZERO)
 
 
+func _check_time_dispersion() -> void:
+	var session := BattleSession.new()
+	var words: Array[VocabularyEntry] = [VocabularyEntry.new("amber", "琥珀"), VocabularyEntry.new("bloom", "绽放"), VocabularyEntry.new("crystal", "水晶")]
+	session.start_baseline(&"frost", words, "normal", "time-dispersion", false)
+	for index in session.enemies.size():
+		var enemy := session.enemies[index]
+		enemy.position = [Vector2(.12, .5), Vector2(.88, .48), Vector2(.68, .83)][index]
+		enemy.previous_position = enemy.position
+		enemy.combat_locked = true
+		enemy.word_age = 1.0
+		enemy.speed = 0.0
+		enemy.stationary = true
+		enemy.attack_clock = 1000.0
+	var options := AppSettings.new(evidence.path_join("settings.cfg"))
+	options.sound = false
+	var page := BattlePage.create(session, options, ArchiveHome.BOOKS[0])
+	page.theme = ArchiveTheme.create(ArchiveHome.BOOKS[0].color)
+	root.add_child(page)
+	# Control the committed timeline so screenshot readback cannot consume it.
+	session.set_physics_process(false)
+	session.step(1.0 / 60.0)
+	session.step(.3)
+	await _advance(.2)
+	await _capture("time-normal")
+	var threat := BattleThreat.new()
+	threat.position = session.player_position + Vector2(36, 0) / BattleSession.ARENA_SIZE
+	threat.previous_position = threat.position
+	threat.velocity = Vector2(-200, 0)
+	threat.radius = 6.0
+	threat.damage_q = 10 * BattleSession.Q
+	threat.source_id = session.enemies[0].id
+	threat.attack_id = "time-dispersion"
+	session.threats.append(threat)
+	session.queue_action(&"dodge_down")
+	session.step(1.0 / 60.0)
+	assert(session.perfect_dodge_remaining > 0.0, "Actual imminent attack triggers perfect-dodge slow time")
+	await _advance(.04)
+	await _capture("time-onset")
+	await _advance(.3)
+	await _capture("time-sustain")
+	var held_amount := page.slow_lens.amount
+	paused = true
+	await create_timer(.15, true).timeout
+	assert(page.slow_lens.amount == held_amount, "Pause holds the time lens transition")
+	paused = false
+	options.quality = 0
+	page.apply_options()
+	await _advance(.1)
+	await _capture("time-low")
+	options.reduce_motion = true
+	page.apply_options()
+	await _advance(.1)
+	assert(is_zero_approx(float((page.slow_lens.material as ShaderMaterial).get_shader_parameter("dispersion_pixels"))), "Reduced motion disables channel displacement")
+	await _capture("time-reduced")
+	options.quality = 2
+	options.reduce_motion = false
+	page.apply_options()
+	session.step(1.1)
+	await _advance(.7)
+	assert(not page.slow_lens.visible and page.slow_lens.capture.copy_mode == BackBufferCopy.COPY_MODE_DISABLED, "Expired slow time disables the composite and its screen copy")
+	await _capture("time-ended")
+	page.queue_free()
+	await process_frame
+
+
 func _check_combat_feedback() -> void:
 	# Controlled state fixtures isolate the committed visual paths; rule tests own
 	# acquisition and collision timing. No synthetic presentation events are used.
@@ -531,6 +605,35 @@ func _check_refresh_cost() -> void:
 	await _capture("refresh-words")
 	page.queue_free()
 	await process_frame
+
+
+func _check_word_contrast() -> void:
+	var background := ColorRect.new()
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background.color = Color(.02, .03, .04)
+	root.add_child(background)
+	var capture := BackBufferCopy.new()
+	capture.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	root.add_child(capture)
+	var target := load("res://ui/scenes/battle_word.tscn").instantiate() as BattleWord
+	root.add_child(target)
+	target.configure("crystal", "水晶；柔和的墨光", true, false, 0, false)
+	target.position = Vector2(800, 440)
+	for value: Vector3 in [Vector3(.02, .03, .04), Vector3(.25, .27, .29), Vector3(.94, .95, .96)]:
+		background.color = Color(value.x, value.y, value.z)
+		await process_frame
+		await process_frame
+		await _capture("word-background-%s" % str(value.x))
+		await RenderingServer.frame_post_draw
+		var pixels := root.get_texture().get_image()
+		var corner := pixels.get_pixel(795, 435)
+		var nearby := pixels.get_pixel(700, 435)
+		assert(Vector3(corner.r, corner.g, corner.b).distance_to(Vector3(nearby.r, nearby.g, nearby.b)) < .01, "Adaptive word shadow never darkens the empty label rectangle")
+	background.queue_free()
+	capture.queue_free()
+	target.queue_free()
+	await process_frame
+	print("Word contrast evidence: ", evidence)
 
 
 func _check_headwords() -> void:

@@ -1,0 +1,127 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://ui/scenes/page_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://ui/first_visit_setup.gd" id="2"]
+[ext_resource type="PackedScene" path="res://ui/fps_display.tscn" id="3"]
+[ext_resource type="Shader" path="res://ui/materials/setup_reading.gdshader" id="4"]
+[ext_resource type="Script" path="res://audio/battle_audio.gd" id="5"]
+[ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="6"]
+
+[sub_resource type="ShaderMaterial" id="Reading"]
+shader = ExtResource("4")
+
+[node name="FirstVisitSetup" instance=ExtResource("1")]
+script = ExtResource("2")
+
+[node name="Wash" parent="." index="1"]
+material = SubResource("Reading")
+
+[node name="SampleAudio" type="Node2D" parent="." index="3"]
+script = ExtResource("5")
+
+[node name="Layout" parent="ContentLayer/Panel" index="0"]
+theme_override_constants/separation = 20
+
+[node name="Heading" parent="ContentLayer/Panel/Layout/Header" index="0"]
+theme_override_font_sizes/font_size = 29
+
+[node name="Body" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin" index="0"]
+theme_override_constants/separation = 24
+
+[node name="Volume" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Heading" type="HBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Volume"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Volume/Heading"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "总音量"
+
+[node name="Value" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Volume/Heading"]
+layout_mode = 2
+text = "28%"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.76, 0.7, 0.55, 1)
+
+[node name="Slider" type="HSlider" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Volume"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+focus_mode = 0
+max_value = 1.0
+step = 0.01
+value = 0.28
+
+[node name="Meaning" type="CheckButton" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="1"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+focus_mode = 0
+text = "显示中文释义"
+button_pressed = true
+
+[node name="Quality" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="2"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Quality"]
+layout_mode = 2
+text = "画面品质"
+
+[node name="Select" type="OptionButton" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Quality"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+
+[node name="Fluid" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="3"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Fluid"]
+layout_mode = 2
+text = "流体精度"
+
+[node name="Select" type="OptionButton" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Fluid"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+
+[node name="Description" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="4"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.57, 0.65, 0.64, 1)
+text = "背景持续试映密集战斗，可一边观察流畅度，一边调整画面。"
+autowrap_mode = 3
+
+[node name="Finish" type="Button" parent="ContentLayer/Panel/Layout/Footer" index="0"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "保存并进入书库"
+
+[node name="PreviewCaption" type="VBoxContainer" parent="ContentLayer" index="4"]
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="ContentLayer/PreviewCaption"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.74, 0.78, 0.73, 1)
+text = "墨光试映"
+horizontal_alignment = 2
+
+[node name="FpsDisplay" parent="ContentLayer/PreviewCaption" instance=ExtResource("3")]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+
+[node name="Recommendation" type="Label" parent="ContentLayer/PreviewCaption"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("6")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.66, 0.73, 0.7, 1)
+text = "推荐 FPS 大于 60 帧"
+horizontal_alignment = 2

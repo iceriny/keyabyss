@@ -6,6 +6,7 @@ signal layout_changed
 
 const DESIGN_SIZE := Vector2(1920, 1080)
 var settings: AppSettings
+var _frame_limit_screen := -1
 
 
 func _ready() -> void:
@@ -13,6 +14,14 @@ func _ready() -> void:
 	get_window().gui_snap_controls_to_pixels = false
 	get_window().size_changed.connect(refresh, CONNECT_DEFERRED)
 	refresh()
+
+
+func _process(_delta: float) -> void:
+	if settings.vsync: return
+	var window := get_window()
+	if window.current_screen != _frame_limit_screen:
+		_frame_limit_screen = window.current_screen
+		settings.apply_frame_pacing(window)
 
 
 func refresh() -> void:

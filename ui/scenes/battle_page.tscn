@@ -367,6 +367,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="WordCapture" type="BackBufferCopy" parent="."]
+copy_mode = 2
+
 [node name="TargetWords" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15

@@ -54,6 +54,9 @@ var run: RunSession
 var god_enabled := false
 var _restart_requested := false
 var _history_detail: VBoxContainer
+var fps_display: FpsDisplay
+var _calibration_return := "home"
+var _calibration_archive_visible := true
 
 
 func _enter_tree() -> void:
@@ -74,6 +77,9 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	_load_profile()
+	fps_display = FpsDisplay.create()
+	fps_display.z_index = 90
+	root.add_child(fps_display)
 	get_tree().auto_accept_quit = false
 	_settings_save_timer.timeout.connect(_persist_audio_settings)
 	archive.navigate.connect(_archive_navigate)
@@ -147,6 +153,8 @@ func _ready() -> void:
 			settings.intro_complete = true
 			_save_preparation()
 			_configure_archive_commands()
+			if not settings.first_setup_complete:
+				_first_setup_page.call_deferred()
 		)
 	if not settings.last_error.is_empty():
 		archive.command_label.text = settings.last_error
@@ -163,6 +171,8 @@ func _apply_visual_settings() -> void:
 	archive.fluid.scene_quality = settings.quality
 	archive.fluid.set_options(settings.fluid_quality, settings.reduce_motion)
 	cursor.reduced_motion = settings.reduce_motion
+	if is_instance_valid(fps_display):
+		fps_display.visible = settings.show_fps
 	archive._layout()
 	get_tree().call_group("open_motion_controls", "set_motion_reduced", settings.reduce_motion)
 	get_tree().call_group("smooth_scroll_controls", "set_motion_reduced", settings.reduce_motion)
@@ -240,7 +250,7 @@ func _return_archive() -> void:
 		archive.set_prepared(true, false)
 
 
-func _open(next_route: String, title: String, subtitle: String, audible: bool = true) -> void:
+func _open(next_route: String, title: String, subtitle: String, audible: bool = true, shell: PageShell = null) -> void:
 	_persist_audio_settings()
 	if route in ["home", "prepare"]:
 		archive_return = route
@@ -250,7 +260,7 @@ func _open(next_route: String, title: String, subtitle: String, audible: bool = 
 			page.queue_free()
 	commands.clear()
 	route = next_route
-	page = PageShell.create(title, subtitle)
+	page = shell if shell != null else PageShell.create(title, subtitle)
 	page.theme = _archive_theme
 	page.reduced_motion = settings.reduce_motion
 	page.accent = archive.accent
@@ -331,13 +341,14 @@ func _field_command(control: Control, word: String) -> void:
 
 func _configure_new_control(node: Node) -> void:
 	if node is Control and is_ancestor_of(node):
-		_apply_control_policy.call_deferred(node)
+		_apply_control_policy.call_deferred(node.get_instance_id())
 
 
-func _apply_control_policy(node: Node) -> void:
-	if not is_instance_valid(node):
+func _apply_control_policy(node_id: int) -> void:
+	# A page can close before this deferred node-added callback is delivered.
+	var control := instance_from_id(node_id) as Control
+	if control == null:
 		return
-	var control := node as Control
 	control.focus_mode = Control.FOCUS_CLICK if control is LineEdit or control is TextEdit else Control.FOCUS_NONE
 	control.tooltip_text = ""
 
@@ -406,6 +417,8 @@ func _back() -> void:
 		"battle": _pause()
 		"pause": _resume()
 		"settings": _settings_back()
+		"about": _settings_page(settings_return)
+		"calibration": _complete_first_setup()
 		"import": _vocabulary_page()
 		"result": _home()
 		"prepare": archive.set_prepared(false)
@@ -824,6 +837,8 @@ func _settings_page(return_to: String) -> void:
 		_settings_groups[id] = group
 	_settings_body = _settings_groups["display"]
 	_check("fullscreen", "全屏显示", settings.fullscreen)
+	_check("show_fps", "显示帧率", settings.show_fps)
+	_check("vsync", "垂直同步", settings.vsync)
 	var resolution_row := _setting_row("游戏分辨率", "resolution")
 	var resolution_select := OptionButton.new()
 	for value in AppSettings.RESOLUTIONS:
@@ -874,6 +889,9 @@ func _settings_page(return_to: String) -> void:
 	_select_settings_tab(settings_tab, false)
 	_button(page.footer, "返回", "back", _settings_back)
 	_button(page.footer, "恢复默认", "defaults", _defaults)
+	_button(page.footer, "关于", "about", _about_page)
+	var calibrate := _button(_settings_groups["visuals"], "画面校准", "calibrate", _first_setup_page.bind("settings"))
+	calibrate.set_meta("settings_tab", "visuals")
 	page.status.text = "设置自动保存于本机"
 	for control: Control in settings_controls.values():
 		if control is CheckButton:
@@ -952,7 +970,7 @@ func _setting_row(caption: String, word: String = "") -> HBoxContainer:
 
 
 func _check(key: String, caption: String, checked: bool) -> void:
-	var word: String = {"ambience": "music", "fullscreen": "full", "reduce_motion": "motion", "show_meaning": "translation"}.get(key, key)
+	var word: String = {"ambience": "music", "fullscreen": "full", "reduce_motion": "motion", "show_meaning": "translation", "show_fps": "fps"}.get(key, key)
 	var row := _setting_row(caption, word)
 	var toggle := CheckButton.new()
 	toggle.layout_direction = Control.LAYOUT_DIRECTION_RTL
@@ -962,7 +980,7 @@ func _check(key: String, caption: String, checked: bool) -> void:
 	toggle.toggled.connect(func(value: bool) -> void: toggle.text = "开启" if value else "关闭")
 	row.add_child(toggle)
 	settings_controls[key] = toggle
-	toggle.set_meta("settings_tab", "gameplay" if key == "show_meaning" else "visuals" if key == "reduce_motion" else "display" if key == "fullscreen" else "audio")
+	toggle.set_meta("settings_tab", "gameplay" if key == "show_meaning" else "visuals" if key == "reduce_motion" else "display" if key in ["fullscreen", "show_fps", "vsync"] else "audio")
 	_bind_control_command(toggle, word)
 
 
@@ -970,6 +988,8 @@ func _defaults() -> void:
 	for control: Control in settings_controls.values():
 		control.set_block_signals(true)
 	(settings_controls["fullscreen"] as CheckButton).button_pressed = false
+	(settings_controls["show_fps"] as CheckButton).button_pressed = false
+	(settings_controls["vsync"] as CheckButton).button_pressed = true
 	(settings_controls["resolution"] as OptionButton).selected = 0
 	(settings_controls["ui_scale"] as OptionButton).selected = 1
 	(settings_controls["reduce_motion"] as CheckButton).button_pressed = false
@@ -1042,6 +1062,51 @@ func _settings_back() -> void:
 		_pause()
 	else:
 		_return_archive()
+
+
+func _about_page() -> void:
+	_open("about", "关于", "")
+	page.set_width(780)
+	AboutContent.populate(page.body)
+	_button(page.footer, "返回设置", "back", _settings_page.bind(settings_return))
+	page.status.hide()
+
+
+func _first_setup_page(return_to: String = "home") -> void:
+	_calibration_return = return_to
+	_calibration_archive_visible = archive.visible
+	var setup := FirstVisitSetup.create_setup(settings)
+	_open("calibration", "画面校准", "", true, setup)
+	if return_to == "settings":
+		setup.close_button.show()
+		setup.confirm_button.text = "保存并返回"
+	archive.hide()
+	setup.settings_changed.connect(_apply_calibration_settings)
+	setup.completed.connect(_complete_first_setup)
+	commands["ready"] = _complete_first_setup
+	commands["back"] = _complete_first_setup
+	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+
+
+func _apply_calibration_settings() -> void:
+	settings.apply(get_window())
+	_apply_visual_settings()
+	(page as FirstVisitSetup).set_options()
+
+
+func _complete_first_setup() -> void:
+	var was_complete := settings.first_setup_complete
+	settings.first_setup_complete = true
+	if not settings.save_settings():
+		settings.first_setup_complete = was_complete
+		page.status.text = settings.last_error
+		page.status.show()
+		return
+	archive.visible = _calibration_archive_visible
+	if _calibration_return == "settings":
+		_settings_page(settings_return)
+	else:
+		_home(false)
 
 
 func _start_practice() -> void:

@@ -17,6 +17,9 @@ var ui_scale: float = 1.0
 var reduce_motion: bool = false
 var quality: int = 2
 var fluid_quality: int = 2
+var show_fps: bool = false
+var vsync: bool = true
+var first_setup_complete: bool = false
 var show_meaning: bool = true # Enemy overhead meanings; the bottom cast hint is independent.
 var volume: float = 0.28
 var sound: bool = true
@@ -59,6 +62,10 @@ func load_settings() -> void:
 	reduce_motion = bool(config.get_value("display", "reduce_motion", false))
 	quality = clampi(int(config.get_value("display", "quality", 2)), 0, 2)
 	fluid_quality = clampi(int(config.get_value("display", "fluid_quality", 2)), 0, 4)
+	show_fps = bool(config.get_value("display", "show_fps", false))
+	vsync = bool(config.get_value("display", "vsync", true))
+	# Existing players keep their choices; new user directories open calibration.
+	first_setup_complete = bool(config.get_value("presentation", "first_setup_complete", true))
 	show_meaning = bool(config.get_value("words", "show_meaning", true))
 	volume = clampf(float(config.get_value("audio", "volume", 0.28)), 0.0, 1.0)
 	sound = bool(config.get_value("audio", "sound", true))
@@ -87,7 +94,7 @@ func _save_settings() -> bool:
 	last_error = ""
 	var config := ConfigFile.new()
 	config.set_value("meta", "schema_version", 1)
-	for property: String in ["fullscreen", "resolution", "ui_scale", "reduce_motion", "quality", "fluid_quality"]:
+	for property: String in ["fullscreen", "resolution", "ui_scale", "reduce_motion", "quality", "fluid_quality", "show_fps", "vsync"]:
 		config.set_value("display", property, get(property))
 	for property: String in ["show_meaning", "vocabulary_id", "min_length", "max_length", "progressive"]:
 		config.set_value("words", property, get(property))
@@ -96,6 +103,7 @@ func _save_settings() -> bool:
 	config.set_value("audio", "ambience", ambience)
 	config.set_value("audio", "effects_volume", effects_volume)
 	config.set_value("presentation", "intro_complete", intro_complete)
+	config.set_value("presentation", "first_setup_complete", first_setup_complete)
 	for property: String in ["book_id", "difficulty", "run_seed"]:
 		config.set_value("preparation", property, get(property))
 	var error := config.save(path + ".tmp")
@@ -116,13 +124,13 @@ func _save_settings() -> bool:
 
 
 func apply(window: Window) -> void:
+	var native_window := DisplayServer.get_name() != "headless"
 	# One output resolution for the whole game. Layout scaling belongs to GameDisplay.
 	window.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
 	window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	window.content_scale_factor = 1.0
 	window.min_size = Vector2i(960, 540)
 	if not _display_applied or fullscreen != _applied_fullscreen or resolution != _applied_resolution:
-		var native_window := DisplayServer.get_name() != "headless"
 		if fullscreen and not _applied_fullscreen:
 			_windowed_size = window.size
 		if native_window:
@@ -143,9 +151,18 @@ func apply(window: Window) -> void:
 		_applied_resolution = resolution
 		_applied_fullscreen = fullscreen
 		_display_applied = true
+	apply_frame_pacing(window)
 	update_output(window)
 	AudioServer.set_bus_volume_db(0, linear_to_db(maxf(volume, 0.0001)))
 	AudioServer.set_bus_mute(0, volume <= 0.0)
+
+
+func apply_frame_pacing(window: Window) -> void:
+	if DisplayServer.get_name() == "headless": return
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED, window.get_window_id())
+	# Turning off synchronization still respects this monitor's refresh ceiling.
+	var refresh_rate := DisplayServer.screen_get_refresh_rate(window.current_screen)
+	Engine.max_fps = 0 if vsync or refresh_rate <= 0.0 else roundi(refresh_rate)
 
 
 func update_output(window: Window) -> void:
