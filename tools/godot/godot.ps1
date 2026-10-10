@@ -187,7 +187,8 @@ if ($Task -in @('import', 'export', 'export-release')) {
             Push-Location -LiteralPath $outputDirectory
             try {
                 # The console wrapper captures output and waits for the game.
-                $smokeOutput = & $consoleWrapper --quit-after 240 --max-fps 60 --headless --log-file $smokeLog 2>&1
+                # A fresh user directory rebuilds all vocabulary indices in a worker.
+                $smokeOutput = & $consoleWrapper --quit-after 1800 --max-fps 60 --headless --log-file $smokeLog 2>&1
                 $smokeExitCode = $LASTEXITCODE
             } finally { Pop-Location }
         } finally { $env:APPDATA = $previousAppData }
