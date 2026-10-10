@@ -6,17 +6,20 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R054:rule"
-operation = &"empowered-shield"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R054"
 title = "炽炭书封"
-description = "强化施法将一小份预算用于护盾；无"
+description = "每次焰印施法获得5点护盾。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2
+allowed_books = PackedStringArray("flame")

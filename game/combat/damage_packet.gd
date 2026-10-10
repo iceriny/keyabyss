@@ -1,6 +1,7 @@
 class_name DamagePacket
 extends RefCounted
 ## Damage is a composition, never a source of cold, heat or charge.
+## Annotated integer divisions truncate fixed-point shares; remainders are distributed explicitly.
 
 enum Element { NEUTRAL, ICE, FIRE, LIGHTNING, PAPER }
 const Q := 1024
@@ -43,6 +44,7 @@ func take(amount: int) -> DamagePacket:
 	for element in _parts.size():
 		# Both factors are bounded to 2^30; the product fits in int64.
 		var product := _parts[element] * amount
+		@warning_ignore("integer_division")
 		packet._parts[element] = product / size
 		remainder -= packet._parts[element]
 		fractions.append({"element": element, "remainder": product % size})
@@ -64,18 +66,21 @@ func add(packet: DamagePacket) -> void:
 func actual(resistances: PackedInt64Array) -> int:
 	var amount := 0
 	for element in _parts.size():
+		@warning_ignore("integer_division")
 		amount += _parts[element] * (Q - resistances[element]) / Q
 	return amount
 
 
+@warning_ignore("integer_division")
 func refract(resistances: PackedInt64Array, ratio_q: int = Q / 4) -> bool:
 	var best := Element.ICE
 	for element in range(Element.FIRE, Element.PAPER + 1):
 		if resistances[element] < resistances[best]:
-			best = element
+			best = element as Element
 	var converted := 0
 	for element in range(Element.ICE, Element.PAPER + 1):
 		if resistances[element] > resistances[best]:
+			@warning_ignore("integer_division")
 			var share: int = _parts[element] * ratio_q / Q
 			_parts[element] -= share
 			converted += share

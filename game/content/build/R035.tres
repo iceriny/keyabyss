@@ -6,17 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R035:rule"
-operation = &"summon"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"summon_efficiency_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R035"
 title = "共命书线"
-description = "提供或强化纸灵维持，所有纸灵共用有限维持收入；无"
+description = "纸灵游击伤害提高30%，停笔后的活动时间增加2秒；其他法书也可完词唤醒纸灵。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

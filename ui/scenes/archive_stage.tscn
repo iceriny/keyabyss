@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://ui/archive_stage.gd" id="1"]
 [ext_resource type="Shader" path="res://ui/materials/archive_lens.gdshader" id="2"]
 [ext_resource type="Shader" path="res://ui/materials/archive_paper.gdshader" id="3"]
+[ext_resource type="Texture2D" path="res://assets/art/runes/arcana-atlas.svg" id="arcana"]
 [ext_resource type="Texture2D" path="res://ui/effects/paper_noise.tres" id="4"]
 [ext_resource type="Script" path="res://ui/viewport_output.gd" id="5_output"]
 
@@ -32,6 +33,7 @@ resource_local_to_scene = true
 shader = ExtResource("3")
 shader_parameter/presence = 0.64
 shader_parameter/paper_noise = ExtResource("4")
+shader_parameter/rune_atlas = ExtResource("arcana")
 
 [node name="ArchiveStage" type="Control"]
 layout_mode = 3

@@ -103,7 +103,7 @@ func _ready() -> void:
 	home_keys.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bottom_hint.add_child(home_keys)
 	home_keys.add_child(KeyHint.create("← / →", "切换法书"))
-	home_keys.add_child(KeyHint.create("Enter", "进入战斗"))
+	home_keys.add_child(KeyHint.create("Enter", "准备出征"))
 	hint.text = ""
 	for button: Button in book_hits.get_children():
 		cards.append(button)
@@ -135,6 +135,9 @@ func _ready() -> void:
 		var emblem := TextureRect.new()
 		emblem.texture = book.seal
 		emblem.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		emblem.material = preload("res://ui/materials/book_seal.tres").duplicate()
+		(emblem.material as ShaderMaterial).set_shader_parameter("tint", book.color)
+		(emblem.material as ShaderMaterial).set_shader_parameter("strength", .65)
 		emblem.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		emblem.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		emblem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -154,7 +157,7 @@ func _ready() -> void:
 		(aura.material as ShaderMaterial).set_shader_parameter("school_color", BOOKS[i].color)
 		auras.append(aura)
 		var pattern := visual.get_node("Pattern") as TextureRect
-		pattern.texture = BOOKS[i].seal
+		pattern.texture = ArcanaRunes.seal(BOOKS[i].id, 320.0)
 		patterns.append(pattern)
 		var artwork := visual.get_node("Artwork") as TextureRect
 		artwork.texture = BOOKS[i].artwork
@@ -287,7 +290,7 @@ func _set_accent(value: Color) -> void:
 	fluid.update_appearance()
 	title_accent.add_theme_color_override("font_color", accent)
 	for i in seal_layers.size():
-		seal_layers[i].modulate = Color(accent, pow(.13,2.2) * seal_weights[i])
+		seal_layers[i].modulate = Color(1,1,1,.045 * seal_weights[i])
 		seal_layers[i].visible = seal_weights[i] > 0.0001
 	(floor_plane.material as ShaderMaterial).set_shader_parameter("school_color", accent)
 	portal.set("tint", accent)
@@ -326,7 +329,7 @@ func _difficulty(index: int, notify: bool = true) -> void:
 	for i in difficulty_buttons.size():
 		difficulty_buttons[i].add_theme_color_override("font_color", accent.lerp(Color.WHITE,.4) if i == index else Color("788a8c"))
 		(difficulty_buttons[i] as OpenButton).set_selected_visual(i == index)
-	difficulty_text.text = ["宽裕预警与生命，适合初次落笔。", "从容开场，逐波迎接完整挑战。", "更快攻势，考验处置顺序与弹反时机。", "精英围猎，需要成熟构筑。", "极限压力，留给熟练的施法者。"] [index]
+	difficulty_text.text = ["宽裕预警与生命，适合初次落笔。", "从容开场，逐波迎接完整挑战。", "更快攻势，考验处置顺序与御术时机。", "精英围猎，考验持续输入与防御。", "敌人耐久、攻势密集、伤害极高。适合保留遗物升档挑战。"] [index]
 	if notify:
 		preparation_changed.emit()
 
@@ -340,6 +343,9 @@ func _sync_visibility() -> void:
 
 
 func _process(delta: float) -> void:
+	for emblem in seal_layers:
+		(emblem.material as ShaderMaterial).set_shader_parameter("clock", 0.0 if reduced_motion else clock)
+	var started := DebugLog.begin()
 	Input.use_accumulated_input = _accumulated_input if not interactive or reduced_motion or fluid.quality == FluidField2D.Quality.OFF else false
 	if not reduced_motion:
 		clock += delta
@@ -364,6 +370,7 @@ func _process(delta: float) -> void:
 	if not interactive:
 		fluid.untrack(&"pointer")
 	decoration.queue_redraw()
+	DebugLog.end(&"home.layout", started)
 
 
 func _input(event: InputEvent) -> void:
@@ -401,18 +408,19 @@ func _layout() -> void:
 	counter.position = Vector2(safe_left + safe_width * .95 - 100, (size.y-64) * .08)
 	counter.size.x = 100
 	var content_height := size.y - 64.0
+	var sigil_center := Vector2(size.x * .5, content_height * .465)
 	fluid.position = Vector2.ZERO
 	fluid.size = size
 	effects.configure(Vector2(size.x*.5,content_height*.45),size,quality,reduced_motion)
 	var card_width := minf(390, minf(safe_width*.25, size.y*.37))
 	var card_height := minf(440, size.y*.42)
 	var front_bottom := content_height - clampf(size.y*.14,100,170) - 128 - 38
-	effects.set_anchors(Vector2(size.x*.5,content_height*.44),minf(safe_width*.51,content_height*.46),Vector2(size.x*.5,front_bottom-card_height*.56),maxf(card_width,card_height*.88)*.86)
+	effects.set_anchors(sigil_center,minf(safe_width*.51,content_height*.46),Vector2(size.x*.5,front_bottom-card_height*.56),maxf(card_width,card_height*.88)*.86)
 	portal.size = Vector2.ONE * minf(safe_width * .68, content_height * .85)
-	portal.position = Vector2(size.x * .5, content_height * .475) - portal.size * .5
+	portal.position = sigil_center - portal.size * .5
 	for emblem in seal_layers:
-		emblem.size = Vector2.ONE * minf(safe_width * .66, 800)
-		emblem.position = Vector2(size.x * .5, content_height * .45) - emblem.size * .5
+		emblem.size = Vector2.ONE * minf(safe_width * .54, 660)
+		emblem.position = sigil_center - emblem.size * .5
 	floor_plane.size = Vector2(minf(safe_width * .85, 1200), content_height * .35)
 	floor_plane.position = Vector2(size.x*.5, content_height*.62) - floor_plane.size*.5
 	caption.size.x = minf(470.0, safe_width * .44)

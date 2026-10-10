@@ -41,11 +41,12 @@ var _damage_feedback: Dictionary[String, Dictionary] = {}
 var hud: Control
 var hud_details: Control
 var defense_keys: KeyHint
-var cast_keys: HBoxContainer
 var cast_progress: ColorRect
 var _cast_progress_target := 0.0
 var _cast_progress_display := 0.0
 var _cast_progress_word := ""
+var slow_lens: BattleSlowLens
+var _refresh_pending := false
 
 
 static func create(battle: BattleSession, options: AppSettings, book: BookPresentation) -> BattlePage:
@@ -63,6 +64,8 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	session.name = "BattleSession"
 	add_child(session)
 	stage = $BattleStage
+	slow_lens = $SlowLens
+	slow_lens.capture = $SlowCapture
 	stage._bind_scene()
 	stage.set_quality(settings.quality)
 	var background := stage.scenery.get_node("Atmosphere") as ColorRect
@@ -95,6 +98,8 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	shield_bar = $HUD/ShieldFill
 	dodge_label = $HUD/Dodge
 	chapter_label = $HUD/BattleChapter
+	if not session.run_id.is_empty():
+		chapter_label.text = "第 %d 章 · 第 %d 页" % [session.encounter.chapter_number, (session.run_state.room_serial - 1) % 3 + 1]
 	room_dots = $HUD/RoomProgress
 	wave_label = $HUD/BattleWave
 	timer_label = $HUD/BattleTimer
@@ -104,8 +109,11 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	pause_button = $HUD/Pause
 	pause_button.pressed.connect(func() -> void: pause_requested.emit())
 	bottom_label = $HUD/BattleMode
+	bottom_label.text = session.encounter.display_name + " · " + RunSession.DIFFICULTY_NAMES[RunSession.DIFFICULTIES.find(session.difficulty)]
+	if session.loop_index > 0: bottom_label.text += " · 第 %d 周目" % (session.loop_index + 1)
 	cast_label = $HUD/CastLabel
 	cast_word = $HUD/CastWord
+	cast_word.add_theme_font_size_override("normal_font_size", 30)
 	ultimate_indicator = $HUD/Ultimate
 	ultimate_indicator.configure(session, settings, book)
 	ultimate_indicator.activated.connect(func() -> void: session.queue_action(&"ultimate"))
@@ -114,23 +122,14 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	var defense_stack := VBoxContainer.new()
 	defense_stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	defense_label.add_child(defense_stack)
-	defense_keys = KeyHint.create("Space", "弹反")
+	defense_keys = KeyHint.create("Space", "御术")
 	defense_stack.add_child(defense_keys)
 	defense_stack.add_child(KeyHint.create_row([{ "key": "↑↓←→", "description": "闪避" }, { "key": "Alt", "description": "自动择位" }]))
 	pause_button.text = ""
 	pause_button.add_child(KeyHint.create("Esc", "暂停"))
-	cast_keys = KeyHint.create_row([{ "key": "Tab", "description": "切换目标" }, { "key": "⌫", "description": "取消锁定" }])
-	hud.add_child(cast_keys)
-	cast_keys.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	cast_keys.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	cast_keys.offset_left = -135
-	cast_keys.offset_right = 135
-	cast_keys.offset_top = -40
-	cast_keys.offset_bottom = -20
 	cast_progress = ColorRect.new()
 	cast_progress.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var progress_material := ShaderMaterial.new()
-	progress_material.shader = preload("res://ui/materials/cast_progress.gdshader")
+	var progress_material := preload("res://ui/materials/cast_progress.tres").duplicate() as ShaderMaterial
 	cast_progress.material = progress_material
 	hud.add_child(cast_progress)
 	cast_progress.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -141,13 +140,22 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	hud_details = $HUD/HudDetails
 	hud_details.draw.connect(_draw_details)
 	_ensure_targets()
-	session.state_changed.connect(_refresh)
-	session.typing.changed.connect(_refresh)
+	session.state_changed.connect(_request_refresh)
+	session.typing.changed.connect(_request_refresh)
 	session.event_committed.connect(_present)
 
 
+func _word_targets() -> Array:
+	var targets: Array = []
+	targets.append_array(session.enemies)
+	targets.append_array(session.pickups)
+	return targets
+
+
 func _ensure_targets() -> void:
-	for enemy in session.enemies:
+	var active: Dictionary = {}
+	for enemy in _word_targets():
+		active[enemy.id] = true
 		if enemy_words.has(enemy.id):
 			continue
 		var word_label := preload("res://ui/scenes/battle_word.tscn").instantiate() as BattleWord
@@ -158,6 +166,10 @@ func _ensure_targets() -> void:
 		)
 		$TargetWords.add_child(word_label)
 		enemy_words[enemy.id] = word_label
+	for id in enemy_words.keys():
+		if not active.has(id):
+			enemy_words[id].queue_free()
+			enemy_words.erase(id)
 
 
 func _ready() -> void:
@@ -189,11 +201,17 @@ func _layout() -> void:
 	_place_targets()
 
 
+func _request_refresh() -> void:
+	_refresh_pending = true
+
+
 func _refresh() -> void:
+	_refresh_pending = false
 	if health_label == null:
 		return
+	var started := DebugLog.begin()
 	_ensure_targets()
-	atmosphere.set_shader_parameter("visual_time", session.elapsed)
+	atmosphere.set_shader_parameter("visual_time", session.world_time)
 	atmosphere.set_shader_parameter("player_uv", BattleStage.arena_point(session.player_position, size) / size)
 	atmosphere.set_shader_parameter("activity", minf(1.0, session.typing.progress * 0.14))
 	health_label.text = "生命"
@@ -203,33 +221,32 @@ func _refresh() -> void:
 	shield_label.visible = session.run_state.shield_q > 0
 	shield_bar.visible = shield_label.visible
 	$HUD/ShieldTrack.visible = shield_label.visible
-	shield_bar.size.x = $HUD/ShieldTrack.size.x * minf(1.0, session.run_state.shield_q / float(20 * 1024))
+	shield_bar.size.x = $HUD/ShieldTrack.size.x * minf(1.0, session.run_state.shield_q / float(60 * 1024))
 	var charge_marks := ""
 	for index in 2 + session.compiled_build.value(&"dodge_capacity"):
 		charge_marks += "◆" if session.dodge_charges >= index + 1 else "◇"
 	dodge_label.text = "闪避  " + charge_marks
 	progress_label.text = "%d" % session.completed_words
-	var cycle: int = BattleSession.MAIN_SPELL_CYCLES[session.book_id]
+	var cycle: int = session.compiled_build.value(&"cadence", BattleSession.MAIN_SPELL_CYCLES[session.book_id])
 	var cadence: String = {&"frost": "霜印", &"flame": "焰印", &"storm": "雷印", &"spirit": "灵印"}[session.book_id]
-	var counter := session.completed_words % cycle
+	var counter := session.runtime.book_cast_count() % cycle
 	cadence_label.text = "施法\n\n%s" % cadence
 	cadence_label.modulate = Color("ffe7b2") if counter == cycle - 1 else Color.WHITE
-	defense_keys.description = "弹反%s" % ["  %.1fs" % session.parry_cooldown if session.parry_cooldown > 0.0 else ""]
+	defense_keys.description = "御术%s" % ["  %.1fs" % session.parry_cooldown if session.parry_cooldown > 0.0 else ""]
 	var living := 0
 	for enemy in session.enemies:
 		if enemy.alive():
 			living += 1
 	timer_label.text = "%02d:%02d  ·  %d 击破" % [floori(session.elapsed / 60.0), floori(fmod(session.elapsed, 60.0)), session.enemies.size() - living]
-	wave_label.text = "下一波 · %.1f 秒" % session.intermission if session.intermission >= 0.0 else "第 %d / %d 波 · %s侧来袭 · %d / %d" % [session.wave, session.encounter.wave_count, session.arrival_direction, living, session.encounter.enemies.size()]
+	wave_label.text = "下一波 · %.1f 秒" % session.intermission if session.intermission >= 0.0 else "第 %d / %d 波 · %s侧来袭 · 存活 %d" % [session.wave, session.encounter.wave_count, session.arrival_direction, living]
 	var selected_enemy := session.enemy_by_id(session.typing.target_id)
 	cast_label.text = ("残响续写" if selected_enemy != null and not selected_enemy.alive() else "正在施法") if session.typing.target_id != &"" else "输入词咒"
 	if session.typing.target_id != &"":
-		cast_word.add_theme_font_size_override("normal_font_size", 30)
 		var boundary := session.typing.display_boundary()
-		cast_word.text = "[center][color=#ffb567]%s[/color][color=#e9ece5]%s[/color][/center]" % [session.typing.word.left(boundary), session.typing.word.substr(boundary)]
+		var text := "[center][color=#ffb567]%s[/color][color=#e9ece5]%s[/color][/center]" % [session.typing.word.left(boundary), session.typing.word.substr(boundary)]
+		if cast_word.text != text: cast_word.text = text
 	else:
-		cast_word.add_theme_font_size_override("normal_font_size", 15)
-		cast_word.text = "[center][color=#b6c6c4]R E A D Y   T O   C A S T[/color][/center]"
+		cast_word.text = ""
 	if selected_enemy != null:
 		hint_label.text = session.word_meaning(session.typing.word)
 		if not selected_enemy.resistance_label.is_empty():
@@ -237,9 +254,6 @@ func _refresh() -> void:
 		hint_label.visible = not hint_label.text.is_empty()
 	else:
 		hint_label.text = ""
-	if session.compiled_build.has(&"assist"):
-		if not hint_label.text.is_empty(): hint_label.text += "\n"
-		hint_label.text += "Ctrl 补全 · 按已输入部分施法" if session.runtime.assist_ready() else "补全准备中 · 完词积累"
 	hint_label.visible = not hint_label.text.is_empty()
 	_cast_progress_target = float(session.typing.progress) / maxf(1.0, session.typing.word.length())
 	var attempt := "%s:%s" % [session.typing.target_id, session.typing.word]
@@ -250,27 +264,36 @@ func _refresh() -> void:
 		var word_label := enemy_words[enemy.id]
 		var selected := session.typing.target_id == enemy.id
 		var display_word := session.typing.word if selected else enemy.word
-		var marks: PackedInt32Array = []
-		for mark in session.runtime.letter_marks:
-			if mark.target == enemy.id: marks.append(mark.position)
-		word_label.configure(display_word, session.word_meaning(display_word), settings.show_meaning, selected, session.typing.display_boundary() if selected else 0, settings.reduce_motion, enemy.resistance_label, marks)
+		word_label.configure(display_word, session.word_meaning(display_word), settings.show_meaning, selected, session.typing.display_boundary() if selected else 0, settings.reduce_motion, enemy.resistance_label, [])
 		word_label.z_index = 1 if selected else 0
-		word_label.visible = (enemy.alive() and not enemy.word_pending and (selected or BattleSession.enemy_in_combat(enemy))) or (selected and not enemy.alive())
+		word_label.visible = not display_word.is_empty() and ((enemy.alive() and not enemy.word_pending and (selected or BattleSession.enemy_in_combat(enemy))) or (selected and not enemy.alive()))
 		word_label.modulate.a = smoothstep(0.0, 0.28, enemy.word_age)
+	for pickup in session.pickups:
+		var word_label := enemy_words[pickup.id]
+		var selected := session.typing.target_id == pickup.id
+		word_label.configure(pickup.word, session.word_meaning(pickup.word), settings.show_meaning, selected, session.typing.display_boundary() if selected else 0, settings.reduce_motion, "反制" if pickup.kind == &"rune" else "爆墨", [])
+		word_label.z_index = 1 if selected else 0
+		word_label.visible = pickup.alive() or selected
+		word_label.modulate.a = smoothstep(0.0, 0.28, pickup.age)
+	DebugLog.end(&"battle.ui_refresh", started)
 
 
 func _process(delta: float) -> void:
+	if _refresh_pending: _refresh()
+	var started := DebugLog.begin()
+	slow_lens.update_effect(session, delta, settings.reduce_motion)
 	_cast_progress_display = _cast_progress_target if settings.reduce_motion else lerpf(_cast_progress_display, _cast_progress_target, 1.0 - exp(-delta * 18.0))
 	(cast_progress.material as ShaderMaterial).set_shader_parameter("progress", _cast_progress_display)
 	_camera_offset = visuals.camera_offset
 	$BattleCompass.position = BattleStage.arena_point(session.previous_player_position.lerp(session.player_position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset
 	stage.output.position = _camera_offset
 	warnings.position = BattleStage.arena_origin(size) + _camera_offset
-	_place_targets()
+	_place_targets(delta)
 	hud_details.queue_redraw()
+	DebugLog.end(&"battle.ui_layout", started)
 
 
-func _place_targets() -> void:
+func _place_targets(delta: float = 0.0) -> void:
 	var occupied: Array[Rect2] = []
 	var arena_scale := BattleStage.arena_scale(size)
 	# HUD global coordinates include the UI scale; words use this page's coordinates.
@@ -284,19 +307,21 @@ func _place_targets() -> void:
 		(page_transform * timer_label.get_global_rect()).merge(page_transform * pause_button.get_global_rect()).grow(10.0),
 		(page_transform * ultimate_indicator.get_global_rect()).grow(8.0),
 	]
-	var ordered := session.enemies.duplicate()
-	ordered.sort_custom(func(a: BattleEnemy, b: BattleEnemy) -> bool: return a.id == session.typing.target_id and b.id != session.typing.target_id)
+	var ordered := _word_targets()
+	# Entity order is stable: selection only changes the reading emphasis, not layout priority.
 	for enemy in ordered:
-		var point := BattleStage.arena_point(enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset
+		var point := slow_lens.project(BattleStage.arena_point(enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset)
 		var word_label := enemy_words[enemy.id]
 		var bounds := Rect2(point + Vector2(-word_label.size.x * 0.5, -enemy.radius * arena_scale - word_label.size.y - 8), word_label.size)
 		var arena_left := BattleStage.arena_origin(size).x
 		bounds.position.x = clampf(bounds.position.x, arena_left + 8.0, maxf(arena_left + 8.0, arena_left + BattleSession.ARENA_SIZE.x * arena_scale - bounds.size.x - 8.0))
 		bounds.position.y = clampf(bounds.position.y, top_limit, maxf(top_limit, bottom_limit - bounds.size.y))
+		var ideal := bounds.position
 		if word_label.visible:
 			var obstacles := fixed_obstacles + occupied
-			var ideal := bounds.position
-			var candidates: Array[Vector2] = [ideal]
+			var previous := ideal + word_label.layout_offset
+			# Keep the previous side available while easing back toward the head when space clears.
+			var candidates: Array[Vector2] = [ideal, previous, ideal + word_label.layout_offset * 0.85]
 			for obstacle in obstacles:
 				if bounds.intersects(obstacle.grow(4.0)):
 					candidates.append(Vector2(obstacle.end.x + 6.0, ideal.y))
@@ -308,15 +333,16 @@ func _place_targets() -> void:
 				candidate.x = clampf(candidate.x, arena_left + 8.0, arena_left + BattleSession.ARENA_SIZE.x * arena_scale - bounds.size.x - 8.0)
 				candidate.y = clampf(candidate.y, top_limit, maxf(top_limit, bottom_limit - bounds.size.y))
 				var trial := Rect2(candidate, bounds.size)
-				var cost := candidate.distance_squared_to(ideal)
+				var cost := candidate.distance_squared_to(ideal) + candidate.distance_squared_to(previous) * 2.0
 				for obstacle in obstacles:
 					if trial.intersects(obstacle):
 						cost += trial.intersection(obstacle).get_area() * 100.0
 				if cost < best:
 					best = cost
 					bounds.position = candidate
-			occupied.append(bounds)
-		word_label.position = bounds.position
+		word_label.place(ideal, bounds.position - ideal, delta)
+		if word_label.visible:
+			occupied.append(Rect2(word_label.position, word_label.size))
 
 
 func _present(event: Dictionary) -> void:
@@ -336,7 +362,8 @@ func _present(event: Dictionary) -> void:
 			var label := _float_feedback(str(roundi(float(event.damage_q) / BattleSession.Q)) + response, event.at, school_color, 18)
 			_damage_feedback[key] = {"label":label, "amount_q":event.damage_q, "until":now + 180}
 	elif event.kind == &"counter_pulse":
-		_float_feedback("弹反", event.at, Color("eaffcf"), 23)
+		var perfect: bool = event.get("grade", &"success") == &"perfect"
+		_float_feedback("完美御术" if perfect else "御术", event.at, Color("ffe4a0") if perfect else Color("b9d6ce"), 23 if perfect else 19)
 	elif event.kind == &"enemy_attack" and event.outcome == &"hit":
 		_float_feedback("−%d" % roundi(float(event.damage_q) / BattleSession.Q), event.at, Color("eeae9f"), 23)
 
@@ -346,7 +373,7 @@ func _float_feedback(value: String, at: Vector2, tint: Color, font_size: int) ->
 	label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.size = label.get_minimum_size() + Vector2(8, 0)
-	label.position = BattleStage.arena_point(at, size) + (Vector2(32 - label.size.x * 0.5, -28) if font_size == 18 else Vector2(-label.size.x * 0.5, -76))
+	label.position = slow_lens.project(BattleStage.arena_point(at, size) + _camera_offset) + (Vector2(32 - label.size.x * 0.5, -28) if font_size == 18 else Vector2(-label.size.x * 0.5, -76))
 	# New text moves upward faster than older text, so stack above current bounds.
 	for attempt in _feedback_labels.size() + 1:
 		var shifted := false
@@ -361,7 +388,7 @@ func _float_feedback(value: String, at: Vector2, tint: Color, font_size: int) ->
 	_feedback_labels.append(label)
 	label.add_theme_color_override("font_shadow_color", Color("081018"))
 	label.add_theme_constant_override("shadow_offset_y", 2)
-	var tween := create_tween().set_parallel()
+	var tween := BattleVisualClock.tween_for(visuals).set_parallel()
 	if not settings.reduce_motion:
 		tween.tween_property(label, "position:y", label.position.y - 30, 0.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(label, "modulate:a", 0.0, 0.4).set_delay(0.25)
@@ -382,14 +409,14 @@ func _draw_details() -> void:
 	for x in range(1, 20):
 		var at := health_track.position + Vector2(x * health_track.size.x / 20.0, 0)
 		hud_details.draw_line(at, at + Vector2(0, health_track.size.y), Color("101b20", 0.5), 1)
-	var cycle: int = BattleSession.MAIN_SPELL_CYCLES[session.book_id]
+	var cycle: int = session.compiled_build.value(&"cadence", BattleSession.MAIN_SPELL_CYCLES[session.book_id])
 	for i in cycle:
 		var at := cadence_label.position + Vector2(i * 18, 28)
-		hud_details.draw_line(at, at + Vector2(13, 0), school_color if i < session.completed_words % cycle else Color("4b595e", 0.6), 2.0, true)
+		hud_details.draw_line(at, at + Vector2(13, 0), school_color if i < session.runtime.book_cast_count() % cycle else Color("4b595e", 0.6), 2.0, true)
 	for i in session.encounter.wave_count:
 		var at := Vector2(hud.size.x * 0.5 - 36 + i * 28, 65)
 		hud_details.draw_line(at, at + Vector2(19, 0), Color("dec692") if i < session.wave else Color("48575e"), 3.0, true)
-	for enemy in session.enemies:
+	for enemy in _word_targets():
 		var word := enemy_words[enemy.id]
 		if word.visible:
 			var center := BattleStage.arena_point(enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()), size) + _camera_offset - hud.position
@@ -397,6 +424,6 @@ func _draw_details() -> void:
 			if center.y < word.position.y + word.size.y * 0.5:
 				label_end.y -= word.size.y
 			var toward := center - label_end
-			var radius := enemy.radius * BattleStage.arena_scale(size)
+			var radius: float = enemy.radius * BattleStage.arena_scale(size)
 			if toward.length() > radius + 24.0:
 				hud_details.draw_line(label_end, center - toward.normalized() * (radius + 3.0), Color("a0b4b7", 0.16 * word.modulate.a), 0.7, true)

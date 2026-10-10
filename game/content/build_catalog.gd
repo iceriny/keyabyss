@@ -5,14 +5,12 @@ var definitions: Dictionary[StringName, CombatContentDefinition] = {}
 
 
 func _init() -> void:
-	var directory := DirAccess.open("res://game/content/build")
-	if directory == null:
-		return
-	for filename in directory.get_files():
-		if filename.ends_with(".tres"):
-			var definition := load("res://game/content/build/" + filename) as CombatContentDefinition
-			assert(definition != null and not definitions.has(definition.id))
-			definitions[definition.id] = definition
+	var ids: PackedStringArray = ["frost", "flame", "storm", "spirit"]
+	for index in range(1, 59): ids.append("R%03d" % index)
+	for id in ids:
+		var definition := load("res://game/content/build/" + id + ".tres") as CombatContentDefinition
+		assert(definition != null and definition.id == StringName(id))
+		definitions[definition.id] = definition
 
 
 func get_definition(id: StringName) -> CombatContentDefinition:

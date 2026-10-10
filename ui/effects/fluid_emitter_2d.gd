@@ -30,6 +30,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	delta = BattleVisualClock.delta_for(self, delta)
 	if field == null or profile == null:
 		return
 	if not field.active:
@@ -108,6 +109,7 @@ func sample(delta: float) -> Array[FluidInfluence]:
 				source.temperature *= distance / delta
 			source.spin = original.spin * weight
 			source.radial = original.radial * exposure
+			source.expansion = original.expansion * exposure
 			source.coupling = original.coupling * exposure
 			if source.displacement_radius > 0.0 and profile.sweep and distance > 0.0:
 				source.coupling = original.coupling * weight * FluidMotionPath.exposure(source.sweep_length, distance, source.displacement_radius)

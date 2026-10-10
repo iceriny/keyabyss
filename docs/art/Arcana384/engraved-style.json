@@ -1,0 +1,60 @@
+{
+  "name": "engraved-v4",
+  "nominal_width": 5.6,
+  "weight_widths": {
+    "300": 4.2,
+    "400": 5.6,
+    "750": 8.0
+  },
+  "nib_angle_degrees": -32,
+  "min_radius_factor": 0.7,
+  "max_radius_factor": 1.26,
+  "shared_pressure_wave": 0.045,
+  "pressure_cycles_open": 1.15,
+  "pressure_cycles_closed": 1.0,
+  "side_drift": 0.025,
+  "faceted_sidewall_amplitude": 0.045,
+  "secondary_edge_wave": 0.022,
+  "gouge_spacing_px": 20,
+  "minimum_gouges_per_subpath": 3,
+  "gouge_radius_depth_range": [
+    0.16,
+    0.38
+  ],
+  "gouge_left_span_range_px": [
+    1.4,
+    3.0
+  ],
+  "gouge_right_span_range_px": [
+    2.0,
+    4.0
+  ],
+  "seed_rule": "ord(char) + linked centerline path index",
+  "topology": "Fixed sample points, fixed deterministic events, all contour offsets proportional to weight width",
+  "geometry_source": "engraved_geometry.py",
+  "preview": "font-style-comparison.png",
+  "status": "approved-frozen",
+  "approved_at": "2026-09-30T12:54:52Z",
+  "geometry_sha256": "11f155696a83bec0326e52c9f19dbdd7c9d5875bdd8f0e8142d3851e8a36a602",
+  "terminal_categories": {
+    "long_strokes": {
+      "plain_or_slanted": 0.45,
+      "worn": 0.25,
+      "one_sided_chip": 0.2,
+      "shallow_split": 0.1
+    },
+    "short_strokes": {
+      "plain_or_slanted": 0.58,
+      "worn": 0.27,
+      "one_sided_chip": 0.13,
+      "shallow_split": 0.02
+    },
+    "observed_foundation_percentages": {
+      "chip": 20.3,
+      "worn": 30.8,
+      "plain": 43.7,
+      "split": 5.2
+    }
+  },
+  "terminal_context": "Deterministic BLAKE2s hash of Han seed, stroke and start/end; orientation and nominal width/length bias; no per-weight choice"
+}

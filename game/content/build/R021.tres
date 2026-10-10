@@ -6,17 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R021:rule"
-operation = &"progression-policy"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"experience_cap_q": 256,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R021"
 title = "鎏金藏书票"
-description = "额外经验设章级上限；新增奖励机会计入完整远征预算；无"
+description = "之后击杀获得的经验增加 35%。"
 stage = &"M4"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

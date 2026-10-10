@@ -3,8 +3,10 @@
 [resource]
 script = ExtResource("1")
 kind = &"quill"
-radius = 32.0
-mass = 0.85
-health = 28
+experience = 7
+radius = 18.81
+mass = 1.0
+health = 65
+speed = 37.5
 attack_damage = 11
-attack_interval = 6.2
+attack_interval = 3.6

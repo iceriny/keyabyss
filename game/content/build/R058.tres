@@ -9,14 +9,14 @@ id = &"R058:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"parry_cooldown_ms": -70,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R058"
 title = "回锋笔套"
-description = "改善弹反冷却，但同一敌弹只有一次可领取事件；无"
+description = "御术冷却缩短 30%：0.70 秒 → 0.49 秒。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

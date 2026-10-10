@@ -40,6 +40,7 @@ func _apply_configuration() -> void:
 
 func sync_frame(view_size: Vector2, fraction: float, remaining: float, delta: float, detail: int, reduce: bool) -> void:
 	world_size = view_size
+	_apply_configuration()
 	age += delta
 	body.position = spirit.previous_position.lerp(spirit.position, fraction) * view_size
 	var desired := (spirit.velocity * view_size / BattleSession.ARENA_SIZE).angle()
@@ -60,7 +61,7 @@ func retire() -> void:
 	for at in spirit.trail:
 		samples.append(at * world_size)
 	_set_trail(samples, spirit.position * world_size)
-	var fade := create_tween()
+	var fade := BattleVisualClock.tween_for(self)
 	fade.tween_property(self, "modulate:a", 0.0, 0.25)
 	fade.tween_callback(queue_free)
 

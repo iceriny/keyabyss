@@ -4,11 +4,12 @@ extends ShaderMaterial
 var _world := Transform2D.IDENTITY
 var _size := Vector2.ZERO
 var _box := Vector2.ZERO
+var _emission_shape := -1
+var _sphere_radius := -1.0
 
 
 static func create(motion: ParticleProcessMaterial, coupling: float) -> FluidParticleFlow:
-	var flow := FluidParticleFlow.new()
-	flow.shader = preload("res://ui/effects/fluid_particles.gdshader")
+	var flow := load("res://ui/effects/fluid_particle_flow.tres").duplicate() as FluidParticleFlow
 	flow.set_shader_parameter("coupling", coupling)
 	flow.set_shader_parameter("box_emission", motion.emission_shape == ParticleProcessMaterial.EMISSION_SHAPE_BOX)
 	flow.set_shader_parameter("sphere_radius", motion.emission_sphere_radius)
@@ -28,6 +29,13 @@ static func create(motion: ParticleProcessMaterial, coupling: float) -> FluidPar
 
 
 func sync(field: FluidField2D, motion: ParticleProcessMaterial) -> void:
+	# Fields set their paid radius after binding. Keep the GPU emitter in sync.
+	if motion.emission_shape != _emission_shape:
+		_emission_shape = motion.emission_shape
+		set_shader_parameter("box_emission", _emission_shape == ParticleProcessMaterial.EMISSION_SHAPE_BOX)
+	if motion.emission_sphere_radius != _sphere_radius:
+		_sphere_radius = motion.emission_sphere_radius
+		set_shader_parameter("sphere_radius", _sphere_radius)
 	var world := field.get_global_transform()
 	if world != _world or field.size != _size:
 		_world = world

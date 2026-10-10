@@ -9,17 +9,18 @@ id = &"R056:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"ultimate_pulses": 2,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R056"
 title = "不灭灰烬卷"
-description = "保留灰烬终式改写，频率、次数与每次威力一起计价；T49"
+description = "灼烧每跳伤害额外提高35%；焚世余烬的火域延长至7秒。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
-permits = PackedStringArray("T49")
+permits = PackedStringArray()
 max_stacks = 1
 allowed_books = PackedStringArray("flame")
+requires_all = PackedStringArray("R050", "R051")

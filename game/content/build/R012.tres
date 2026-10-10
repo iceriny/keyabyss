@@ -9,14 +9,14 @@ id = &"R012:rule"
 operation = &"acquisition-heal"
 phase = &"compile"
 parameters = {
-&"max_hp_bonus_q": 102,
+&"max_hp_flat_q": 20480,
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R012"
 title = "生命页签"
-description = "提高生命上限并一次恢复，替换与借还不重复治疗；无"
+description = "最大生命增加 20，并立即回复 30 点生命。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

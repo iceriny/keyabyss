@@ -5,6 +5,7 @@ signal changed
 signal completed(target_id: StringName, manual_count: int, assisted: bool, attempt_id: String)
 signal abandoned(attempt_id: String)
 signal word_completed(fact: WordCompletion)
+signal character_judged(attempt_id: String, target_word: String, correct: bool)
 
 static var _serial: int = 0
 var target_id: StringName = &""
@@ -51,7 +52,9 @@ func upsert_target(id: StringName, next_word: String) -> void:
 
 
 func retire_target(id: StringName) -> void:
+	if not _targets.has(id) and target_id != id: return
 	if target_id == id and progress > 0:
+		_targets.erase(id)
 		return
 	_targets.erase(id)
 	if target_id == id:
@@ -114,6 +117,7 @@ func feed(character: String) -> void:
 				break
 	if target_id == &"":
 		last_feedback = "没有以此字符开头的词咒"
+		character_judged.emit(current_attempt_id(), "", false)
 		changed.emit()
 		return
 	var playable := word.replace(" ", "")
@@ -121,7 +125,7 @@ func feed(character: String) -> void:
 		return
 	if character != playable[progress]:
 		var prefix := playable.left(progress) + character
-		for id: StringName in _targets:
+		for id: StringName in _targets if _targets.has(target_id) else {}:
 			if _targets[id].replace(" ", "").begins_with(prefix):
 				target_id = id
 				word = _targets[id]
@@ -131,6 +135,7 @@ func feed(character: String) -> void:
 		if character != playable[progress]:
 			mistakes += 1
 			_attempt_mistakes += 1
+			character_judged.emit(current_attempt_id(), word, false)
 			last_feedback = "错字 · 进度保留"
 			changed.emit()
 			return
@@ -146,6 +151,7 @@ func feed(character: String) -> void:
 	receipt.completes_word = progress == playable.length()
 	receipt.word_version = target_version(target_id)
 	_pending.append(receipt)
+	character_judged.emit(receipt.attempt_id, word, true)
 	last_feedback = "落笔 %s / %s" % [progress, playable.length()]
 	changed.emit()
 	if receipt.completes_word:

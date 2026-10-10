@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"mortar"
+behavior = &"bombard"
+health = 80
+speed = 28.5
+radius = 22.77
+mass = 1.6
+experience = 10
+attack_damage = 12
+attack_interval = 3.6

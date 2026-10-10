@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="320" viewBox="0 0 150 160">
+ <defs><linearGradient id="stone" x2=".75" y2="1"><stop stop-color="#ab9aaf"/><stop offset=".38" stop-color="#5a5068"/><stop offset="1" stop-color="#242c3d"/></linearGradient></defs>
+ <path d="M46 12L75 5L104 12L108 39L133 49L143 112L124 129L112 105L108 144L83 151L75 131L66 151L41 144L38 105L25 129L7 112L17 49L42 39Z" fill="url(#stone)" stroke="#c4b6a1" stroke-width="1.8"/>
+ <path d="M22 53L37 59L31 104L17 112M128 53L113 59L119 104L133 112" fill="#a898b8" opacity=".18"/>
+ <path d="M50 18L75 13L100 18L97 47L75 57L53 47Z" fill="#383449" stroke="#9a8b9d"/>
+ <path d="M56 30L67 34M83 34L94 30" stroke="#e9d8bd" stroke-width="3"/>
+ <path d="M51 65L75 72L99 65L95 104L75 118L55 104Z" fill="#151f2d" stroke="#b5a181" stroke-width="1.4"/>
+ <path d="M62 76Q74 88 61 99Q77 94 86 105Q76 87 88 76" fill="none" stroke="#a88bbb" stroke-width="2"/>
+ <path d="M47 111L54 135M103 111L96 135M24 60L20 87M126 60L130 87" fill="none" stroke="#d6c19a" stroke-width="1"/>
+</svg>

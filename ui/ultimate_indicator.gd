@@ -14,7 +14,7 @@ var _clock := 0.0
 func configure(battle: BattleSession, settings: AppSettings, book: BookPresentation) -> void:
 	session = battle
 	options = settings
-	$Seal.texture = book.seal
+	$Seal.texture = ArcanaRunes.seal(book.id, 100.0)
 	$Key.description = book.ultimate
 	$Key.accent = book.color
 	($Light.material as ShaderMaterial).set_shader_parameter("tint", book.color)

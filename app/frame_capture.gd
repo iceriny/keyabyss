@@ -106,10 +106,10 @@ func _collect_viewports(node: Node, found: Array[SubViewport]) -> void:
 func _finish() -> void:
 	_active = false
 	set_process(false)
-	RenderingServer.viewport_set_measure_render_time(_main_rid, false)
+	RenderingServer.viewport_set_measure_render_time(_main_rid, DebugLog.enabled)
 	for viewport: SubViewport in _viewports:
 		if is_instance_valid(viewport):
-			RenderingServer.viewport_set_measure_render_time(viewport.get_viewport_rid(), false)
+			RenderingServer.viewport_set_measure_render_time(viewport.get_viewport_rid(), DebugLog.enabled)
 	var path := output_path
 	if path.is_empty():
 		path = "user://performance/frames-%s-%d.json" % [Time.get_datetime_string_from_system().replace(":", "-"), OS.get_process_id()]

@@ -11,7 +11,6 @@ var target_id: StringName
 var cooldown: float = 0.0
 var damage_q: int = 0
 var effect: BattleEffect
-var cargo: StoredSpell
 var crossing: bool = false
 var struck: bool = false
 var trail: PackedVector2Array = []

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"tower"
+behavior = &"ring"
+health = 135
+speed = 0
+radius = 23.76
+mass = 99
+experience = 13
+attack_damage = 12
+attack_interval = 3.6
+stationary = true

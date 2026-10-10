@@ -20,6 +20,9 @@ var _shift_solo: bool = false
 func configure(next_context: Context, next_commands: PackedStringArray = []) -> void:
 	context = next_context
 	commands = next_commands
+	if context == Context.MENU and not "imsuperman" in commands:
+		commands = commands.duplicate()
+		commands.append("imsuperman")
 	clear_held()
 	buffer = ""
 	command_progress.emit(buffer)

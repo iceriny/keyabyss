@@ -2,9 +2,9 @@
 
 **用键盘施法，在失控的咒典中写出下一章。**
 
-键渊面向桌面键盘与鼠标：打字施法、弹反与闪避、四书构筑、遗物和跨局成长。主工程采用 Godot 原生 2D、类型化 GDScript、Forward+／HDR 2D，Windows 为首要平台。
+键渊面向桌面键盘与鼠标：打字施法、弹反与闪避、四书、局内遗物和少量线性成长。主工程采用 Godot 原生 2D、类型化 GDScript、Forward+／HDR 2D，Windows 为首要平台。
 
-当前 Godot 的 M1 应用底座与 M2 单房完整战斗已通过用户验收；M3 已接入构筑编译、统一战斗规则和开发试验场，逐项内容与体验仍有待验收。当前优先推进 [M4 天赋图基础](docs/migration/M4-TALENT-GRAPH-PLAN.md)，整体平衡留到 M5 完成后的 M6。Godot 按新游戏建立成长，不迁入旧浏览器进度。既有 Web 实现保留于 [legacy/web](legacy/web/README.md)，实际范围见[阶段总结](docs/STAGE-SUMMARY.md)和[体验映射](docs/migration/EXPERIENCE-MAP.md)。
+正式流程包含四书、58 件局内遗物、三章九场、五档难度与保留遗物的连续挑战；大型天赋、专属许可、副书、形状配置和复杂加工／事件已退出。场外成长由有效人工字符自动推进，全书共享且有上限。最高档的成长与继承路径正在按[收益评估](docs/COMBAT-BALANCE-DESIGN.md)复验，实际状态与证据边界见[阶段总结](docs/STAGE-SUMMARY.md)。Godot 使用自己的档案，不迁入旧浏览器进度；玩法基线为[实施交接](docs/migration/AGENT-HANDOFF.md)指定的 Git 提交，当前 [legacy/web](legacy/web/README.md) 已含后续重构。
 
 ## 开发入口
 

@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R031:rule"
-operation = &"brittle"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R031"
 title = "脆裂书页"
-description = "对实际受控目标提高部分命中收益，与外壳易碎分开；无"
+description = "冻结敌人受到的施法伤害额外提高40%；非冰霜法书也生效。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2

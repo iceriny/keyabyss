@@ -1,0 +1,27 @@
+{
+  "count": 50,
+  "length_counts": {
+    "2": 47,
+    "3": 3
+  },
+  "all_roots_exist": true,
+  "unique_sequences": true,
+  "root_objects_exactly_unchanged": true,
+  "root_objects_sha256": "901463188649c69b770023ab43054eefbf836a276f427829d9436bee3f5e037f",
+  "base_art_sha256": "01913d58357a8a7e3ad67d1bc043c9de6237993841e978174fe35ba24b209a3d",
+  "base_art_unchanged": true,
+  "old80_active_lookup": false,
+  "semantic_register_complete": true,
+  "art_acceptance_complete": true,
+  "canonical_semantic_hashes": {
+    "concepts.json": "efe91b0af19f166396898597e85a7bb72585b15094063e28077c5d68bf9c0bb8",
+    "ligatures.json": "cf3e9887f2bc4eea2af3cab20eab2c3cfed604b38ca361186b79f5c63f4b2817",
+    "grammar.json": "c87e953e6acef53c36a392f8a89baebeb2a866584a9da2c8bd4bd3f22fd2ab19",
+    "grammar-lexical-50.json": "6c64a4e81829a7fd3804977837d4bdbed79cb7b97bb086d90904c7473dfa959f",
+    "compound-lexicon.json": "952d6b62432564d2f2fec0da4c81349fbff665db351012c9975f95b6d068eba7"
+  },
+  "boundary_vector_count": 73,
+  "accepted_lexical_shapes": 50,
+  "canonical_art_sha256": "1efb63ce255667f809698ed3b8f7d284ab7a798df5d71adb0a650800cb370f74",
+  "unresolved_semantic_art_issues": 0
+}

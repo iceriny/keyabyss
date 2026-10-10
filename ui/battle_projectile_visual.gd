@@ -114,7 +114,7 @@ func retire() -> void:
 	_set_trail(samples, projectile.position * world_size)
 	head.hide()
 	embers.emitting = false
-	var fade := create_tween()
+	var fade := BattleVisualClock.tween_for(self)
 	fade.tween_property(self, "modulate:a", 0.0, 0.22)
 	fade.tween_callback(queue_free)
 

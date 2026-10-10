@@ -6,17 +6,20 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R055:rule"
-operation = &"trail"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R055"
 title = "灼痕行书"
-description = "扩展有限闪避热区，实际消耗输入储备；无"
+description = "闪避火场半径增加20，持续时间延长1秒。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2
+allowed_books = PackedStringArray("flame")

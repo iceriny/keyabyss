@@ -1,5 +1,10 @@
 class_name BattleEncounter
 extends Resource
+@export var room_id: StringName
+@export var display_name: String
+@export var chapter_number: int = 1
+@export var room_number: int = 1
+@export var reinforcement: EnemyCombatDefinition
 ## Read-only room composition; BattleSession owns every spawned entity and timer.
 
 @export var wave_count: int = 3
@@ -10,6 +15,7 @@ extends Resource
 ## Off-axis arrivals share the same entry, grace and compass pipeline.
 ## Disabled for the current single-room composition; content can opt in later.
 @export_range(0.0, 1.0) var ambush_chance: float = 0.0
+@export var formation_spread: float = 1.0
 const DIRECTIONS := ["北", "东北", "东", "东南", "南", "西南", "西", "西北"]
 
 
@@ -19,10 +25,10 @@ func approach_direction(main_direction: String, rng: RandomNumberGenerator) -> S
 	return main_direction
 
 
-static func entry_position(direction: String, index: int, count: int, arena_size: Vector2) -> Vector2:
+static func entry_position(direction: String, index: int, count: int, arena_size: Vector2, spread: float = 1.0) -> Vector2:
 	# Cast formation rays onto the rectangular cold boundary. Pixel-space angles
 	# remain consistent at every aspect ratio and diagonals cover adjacent edges.
-	var lane := (float(index) + 0.5) / float(count) - 0.5
+	var lane := ((float(index) + 0.5) / float(count) - 0.5) * spread
 	var angle := DIRECTIONS.find(direction) * PI / 4.0 - PI / 2.0 + lane * deg_to_rad(90.0)
 	var ray := Vector2.from_angle(angle)
 	var half := arena_size * 0.5 - Vector2.ONE * 64.0

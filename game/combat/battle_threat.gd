@@ -13,3 +13,6 @@ var trail: PackedVector2Array = []
 var attack_id: String
 var effect: BattleEffect
 var grazed: bool = false
+var curvature: float = 0.0
+var acceleration: float = 0.0
+var heavy: bool = false

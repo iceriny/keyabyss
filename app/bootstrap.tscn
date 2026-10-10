@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://app/bootstrap.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/scenes/departure_ritual.tscn" id="2"]
+
+[node name="Startup" type="Node"]
+script = ExtResource("1")
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+layer = 120
+
+[node name="DepartureRitual" parent="Overlay" instance=ExtResource("2")]
+startup = true

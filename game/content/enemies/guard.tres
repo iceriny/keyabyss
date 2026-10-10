@@ -3,8 +3,12 @@
 [resource]
 script = ExtResource("1")
 kind = &"guard"
-radius = 32.0
-mass = 1.8
-health = 34
-attack_damage = 13
-attack_interval = 7.0
+speed = 31.5
+long_word = true
+front_armor = true
+experience = 10
+radius = 24.75
+mass = 2.6
+health = 122
+attack_damage = 11
+attack_interval = 3.6

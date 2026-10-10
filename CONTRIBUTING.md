@@ -2,6 +2,8 @@
 
 先阅读 [AGENTS.md](AGENTS.md)、[阶段总结](docs/STAGE-SUMMARY.md)和[迁移方案](docs/migration/PLAN.md)。有效产品语义与技术实现分开维护，旧版通过的测试不代表 Godot 已实现对应能力。
 
+Git 与素材协作采用[公开代码＋私有资产方案](docs/GIT-AND-ASSETS.md)。该文档规定 LFS、版本清单、跨设备准备和分支策略；私有资产仓库及同步工具尚未建立，不能把其中的目标命令当成现成入口。
+
 ## 本地运行
 
 使用 `tools/godot/toolchain.json` 锁定的 Godot **4.7.2 .NET**，直接打开根 `project.godot`。PowerShell 入口读取 `GODOT_PATH`，或本地 `tools/godot/local.paths.json`：
@@ -33,7 +35,7 @@ Windows x86_64 开发导出：
 pwsh -File tools/godot/godot.ps1 export
 ```
 
-输出在 `builds/windows/`，本机需安装匹配版本模板。此入口生成开发用 Debug 包；正式游戏发行另需 M6 验收、完整素材许可与 Release 打包。导出覆盖活动资源，显式包含词库 JSON，并排除 tests、legacy、docs、tools 与调试桥。新增动态资源时核对实际包内容和独立启动，不把整个仓库打包。
+输出在 `builds/windows/`，本机需安装匹配版本模板。此入口生成开发用 Debug 包；正式游戏发行另需[实施方案](docs/migration/PLAN.md)中的 S4 验收、完整素材许可与 Release 打包。导出覆盖活动资源，显式包含词库 JSON，并排除 tests、legacy、docs、tools 与调试桥。新增动态资源时核对实际包内容和独立启动，不把整个仓库打包。
 
 ## 修改与检查
 

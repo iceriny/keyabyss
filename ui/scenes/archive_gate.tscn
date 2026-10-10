@@ -1,168 +1,259 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://cwstcbt2appx1"]
 
-[ext_resource type="Script" path="res://ui/archive_gate.gd" id="1"]
-[ext_resource type="Script" path="res://ui/startup_sigil.gd" id="2"]
-[ext_resource type="Theme" path="res://ui/theme/keyabyss.tres" id="3"]
-[ext_resource type="FontFile" path="res://assets/fonts/huiwen-ming.ttf" id="4"]
-[ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="5"]
+[ext_resource type="Script" uid="uid://kbyrirb8l56g" path="res://ui/archive_gate.gd" id="1"]
+[ext_resource type="Script" uid="uid://dbfc7gonvui74" path="res://ui/startup_sigil.gd" id="2"]
+[ext_resource type="Theme" uid="uid://b7yda6e4tr0hn" path="res://ui/theme/keyabyss.tres" id="3"]
+[ext_resource type="FontFile" uid="uid://ialbqqxqqmm5" path="res://assets/fonts/huiwen-ming.ttf" id="4"]
+[ext_resource type="FontFile" uid="uid://b2tua330w4cgd" path="res://assets/fonts/jinghua-song.ttf" id="5"]
 [ext_resource type="PackedScene" path="res://ui/effects/archive_dust.tscn" id="6"]
-[ext_resource type="Shader" path="res://ui/materials/startup_wave.gdshader" id="7"]
+[ext_resource type="Shader" uid="uid://cfjwh85n0cafp" path="res://ui/materials/startup_wave.gdshader" id="7"]
+[ext_resource type="Texture2D" uid="uid://cg0rirwok7o2x" path="res://ui/effects/archive_dust_life.tres" id="7_lfkk4"]
 [ext_resource type="Animation" path="res://ui/effects/archive_awakening.tres" id="8"]
-[ext_resource type="Script" path="res://ui/viewport_output.gd" id="9_output"]
+[ext_resource type="Script" uid="uid://dlhg2qcr4hhh5" path="res://ui/viewport_output.gd" id="9_output"]
+[ext_resource type="Material" path="res://ui/materials/ritual_light.tres" id="10_light"]
+[ext_resource type="Shader" uid="uid://df60ch2ca71i" path="res://ui/materials/ritual_light.gdshader" id="11_light_shader"]
+[ext_resource type="PackedScene" path="res://ui/scenes/ritual_backdrop.tscn" id="12_backdrop"]
+[ext_resource type="Material" path="res://ui/materials/engraved_gold.tres" id="13_gold"]
+
+[sub_resource type="ShaderMaterial" id="OrbitLight"]
+resource_local_to_scene = true
+shader = ExtResource("11_light_shader")
+shader_parameter/clock = 0.0
+shader_parameter/core_softness = 3.0
+shader_parameter/core_light = 0.2
+shader_parameter/halo_light = 0.8
+shader_parameter/spread = 1.6
+shader_parameter/metal_strength = 0.0
+shader_parameter/highlight_energy = 0.15
+
+[sub_resource type="ShaderMaterial" id="OuterRuneLight"]
+resource_local_to_scene = true
+shader = ExtResource("11_light_shader")
+shader_parameter/clock = 0.0
+shader_parameter/core_softness = 0.3
+shader_parameter/core_light = 0.9
+shader_parameter/halo_light = 0.3
+shader_parameter/spread = 0.25
+shader_parameter/metal_strength = 0.7
+shader_parameter/highlight_energy = 1.0
+
+[sub_resource type="ShaderMaterial" id="ConnectionLight"]
+resource_local_to_scene = true
+shader = ExtResource("11_light_shader")
+shader_parameter/clock = 0.0
+shader_parameter/core_softness = 1.1
+shader_parameter/core_light = 1.0
+shader_parameter/halo_light = 0.7
+shader_parameter/spread = 0.3
+shader_parameter/metal_strength = 0.7
+shader_parameter/highlight_energy = 1.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lqia1"]
+resource_local_to_scene = true
+emission_shape = 3
+emission_box_extents = Vector3(640, 400, 0)
+direction = Vector3(0, -1, 0)
+spread = 42.0
+initial_velocity_min = 1.5
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.08
+scale_max = 0.2
+color = Color(1, 0.82, 0.54, 0.38)
+color_ramp = ExtResource("7_lfkk4")
 
 [sub_resource type="ShaderMaterial" id="Material_wave"]
 resource_local_to_scene = true
 shader = ExtResource("7")
+shader_parameter/viewport_size = Vector2(1920, 1080)
+shader_parameter/wave_center = Vector2(960, 518.4)
+shader_parameter/wave_radius = 0.0
+shader_parameter/wave_energy = 0.0
+shader_parameter/strength_pixels = 18.0
+shader_parameter/band_width = 28.0
+shader_parameter/flare = 0.0
+shader_parameter/light_color = Color(0.68, 0.83, 1, 1)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_872sa"]
+viewport_path = NodePath("RitualViewport")
 
 [sub_resource type="AnimationLibrary" id="Library_ritual"]
 resource_local_to_scene = true
 _data = {
-"awaken": ExtResource("8")
+&"awaken": ExtResource("8")
 }
 
-[node name="ArchiveGate" type="Control"]
+[node name="ArchiveGate" type="Control" unique_id=24031565]
+z_index = 60
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-z_index = 60
-mouse_filter = 0
 script = ExtResource("1")
 
-[node name="RitualViewport" type="SubViewport" parent="."]
+[node name="RitualViewport" type="SubViewport" parent="." unique_id=1966547755]
 disable_3d = true
-size = Vector2i(1920, 1080)
-use_hdr_2d = true
 msaa_2d = 2
+use_hdr_2d = true
 gui_disable_input = true
 gui_snap_controls_to_pixels = false
+size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
-[node name="Stage" type="Control" parent="RitualViewport"]
-layout_mode = 0
+[node name="Stage" type="Control" parent="RitualViewport" unique_id=1731736642]
+layout_mode = 3
+anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 theme = ExtResource("3")
 
-[node name="Orbit" type="Control" parent="RitualViewport/Stage"]
-layout_mode = 0
+[node name="Backdrop" parent="RitualViewport/Stage" unique_id=134932954 instance=ExtResource("12_backdrop")]
+layout_mode = 1
+welcome = true
+
+[node name="SigilLight" type="CanvasGroup" parent="RitualViewport/Stage" unique_id=325985249]
+material = SubResource("OrbitLight")
+fit_margin = 28.0
+clear_margin = 48.0
+
+[node name="Orbit" type="Control" parent="RitualViewport/Stage/SigilLight" unique_id=417190229]
+layout_mode = 3
+anchors_preset = 0
 offset_left = 590.0
 offset_top = 148.4
 offset_right = 1330.0
 offset_bottom = 888.4
 mouse_filter = 2
 script = ExtResource("2")
+geometry_layer = 4
 tint = Color(0.741176, 0.654902, 0.419608, 1)
-progress = 0.18
+progress = 0.0
 core_reverse_period = 75.0
 
-[node name="Mark" type="Control" parent="RitualViewport/Stage"]
-layout_mode = 0
+[node name="OuterRuneLight" type="CanvasGroup" parent="RitualViewport/Stage" unique_id=1350308685]
+material = SubResource("OuterRuneLight")
+fit_margin = 20.0
+clear_margin = 40.0
+
+[node name="Runes" type="Control" parent="RitualViewport/Stage/OuterRuneLight" unique_id=1525803120]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("2")
+geometry_layer = 3
+tint = Color(0.827451, 0.733333, 0.509804, 1)
+
+[node name="ConnectionLight" type="CanvasGroup" parent="RitualViewport/Stage" unique_id=2039611753]
+material = SubResource("ConnectionLight")
+fit_margin = 20.0
+clear_margin = 40.0
+
+[node name="Mark" type="Control" parent="RitualViewport/Stage/ConnectionLight" unique_id=1302068547]
+layout_mode = 3
+anchors_preset = 0
 offset_left = 819.6
 offset_top = 275.504
 offset_right = 1100.4
 offset_bottom = 556.304
 mouse_filter = 2
 script = ExtResource("2")
+geometry_layer = 1
 tint = Color(0.827451, 0.733333, 0.509804, 1)
+core_reverse_period = 48.0
 
-[node name="Title" type="Label" parent="RitualViewport/Stage"]
+[node name="InscriptionLight" type="CanvasGroup" parent="RitualViewport/Stage" unique_id=203174329]
+material = ExtResource("10_light")
+fit_margin = 16.0
+clear_margin = 32.0
+
+[node name="Details" type="Control" parent="RitualViewport/Stage/InscriptionLight" unique_id=900977312]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("2")
+geometry_layer = 2
+tint = Color(0.827451, 0.733333, 0.509804, 1)
+core_reverse_period = 48.0
+
+[node name="Title" type="Label" parent="RitualViewport/Stage" unique_id=804477105]
+material = ExtResource("13_gold")
 layout_mode = 0
 offset_left = 640.0
 offset_top = 595.616
 offset_right = 1280.0
 offset_bottom = 675.616
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.933333, 0.878431, 0.72549, 1)
+theme_override_colors/font_color = Color(0.94, 0.83, 0.6, 1)
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 64
 text = "键  渊"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="RitualViewport/Stage"]
+[node name="Subtitle" type="Label" parent="RitualViewport/Stage" unique_id=987288209]
 layout_mode = 0
 offset_left = 640.0
 offset_top = 677.616
 offset_right = 1280.0
 offset_bottom = 712.616
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.654902, 0.611765, 0.513725, 1)
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 13
 text = "失 控 咒 典"
 horizontal_alignment = 1
 
-[node name="Prompt" type="Label" parent="RitualViewport/Stage"]
+[node name="Prompt" type="Label" parent="RitualViewport/Stage" unique_id=2063282801]
 layout_mode = 0
 offset_left = 640.0
 offset_top = 753.616
 offset_right = 1280.0
 offset_bottom = 793.616
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.713725, 0.74902, 0.729412, 1)
+theme_override_colors/font_color = Color(0.69, 0.59, 0.39, 1)
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 15
-text = "点击任意位置或按任意键继续"
+text = "任意键继续"
 horizontal_alignment = 1
 
-[node name="PromptHint" type="Label" parent="RitualViewport/Stage"]
-layout_mode = 0
-offset_left = 640.0
-offset_top = 795.616
-offset_right = 1280.0
-offset_bottom = 825.616
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.560784, 0.615686, 0.6, 1)
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 10
-text = "F11 切换全屏 · 其他任意键继续"
-horizontal_alignment = 1
+[node name="ArchiveDust" parent="RitualViewport/Stage" unique_id=333163013 instance=ExtResource("6")]
+amount = 28
+process_material = SubResource("ParticleProcessMaterial_lqia1")
 
-[node name="ArchiveDust" parent="RitualViewport/Stage" instance=ExtResource("6")]
-amount = 64
-
-[node name="Wave" type="TextureRect" parent="."]
-script = ExtResource("9_output")
-viewport_path = NodePath("../RitualViewport")
+[node name="Wave" type="TextureRect" parent="." unique_id=4041927]
 material = SubResource("Material_wave")
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
+texture = SubResource("ViewportTexture_872sa")
 expand_mode = 1
+script = ExtResource("9_output")
+viewport_path = NodePath("../RitualViewport")
 
-[node name="PhaseLabel" type="Label" parent="."]
+[node name="PhaseLabel" type="Label" parent="." unique_id=615898835]
 visible = false
 layout_mode = 0
 offset_left = 640.0
 offset_top = 896.4
 offset_right = 1280.0
 offset_bottom = 932.4
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.858824, 0.905882, 0.94902, 1)
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 15
 text = "封印回应"
 horizontal_alignment = 1
 
-[node name="PhaseSmall" type="Label" parent="."]
+[node name="PhaseSmall" type="Label" parent="." unique_id=1389928331]
 visible = false
 layout_mode = 0
 offset_left = 640.0
 offset_top = 938.4
 offset_right = 1280.0
 offset_bottom = 962.4
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.505882, 0.596078, 0.682353, 1)
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 9
 text = "THE ARCHIVE AWAKENS"
 horizontal_alignment = 1
 
-[node name="RitualTimeline" type="AnimationPlayer" parent="."]
-root_node = NodePath("..")
-libraries = {
-"": SubResource("Library_ritual")
-}
+[node name="RitualTimeline" type="AnimationPlayer" parent="." unique_id=1808785674]
+libraries/ = SubResource("Library_ritual")

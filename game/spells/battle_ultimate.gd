@@ -20,8 +20,8 @@ func _init(school: StringName, origin: Vector2) -> void:
 	book = school
 	center = origin
 	duration = DURATIONS[school]
-	lifetime = 6.0 if school == &"frost" else duration
-	radius = {&"frost": 375.0, &"flame": 360.0, &"storm": 315.0, &"spirit": 420.0}[school]
+	lifetime = duration
+	radius = {&"frost": 420.0, &"flame": 460.0, &"storm": 420.0, &"spirit": 260.0}[school]
 	pulses_left = 16 if school == &"frost" else (7 if school == &"flame" else 0)
 
 

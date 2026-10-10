@@ -1,10 +1,15 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://ui/departure_ritual.gd" id="1"]
 [ext_resource type="Shader" path="res://ui/materials/departure_ritual.gdshader" id="2"]
 [ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="3"]
+[ext_resource type="PackedScene" path="res://ui/scenes/loading_feedback.tscn" id="4"]
+[ext_resource type="FontFile" path="res://assets/fonts/huiwen-ming.ttf" id="5"]
+[ext_resource type="PackedScene" path="res://ui/scenes/loading_runes.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://ui/scenes/ritual_backdrop.tscn" id="7"]
 
 [sub_resource type="ShaderMaterial" id="Veil"]
+resource_local_to_scene = true
 shader = ExtResource("2")
 
 [node name="DepartureRitual" type="Control"]
@@ -18,6 +23,9 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
+[node name="Backdrop" parent="." instance=ExtResource("7")]
+visible = false
+
 [node name="Veil" type="ColorRect" parent="."]
 material = SubResource("Veil")
 layout_mode = 1
@@ -27,6 +35,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="LoadingRunes" parent="." instance=ExtResource("6")]
+visible = false
 
 [node name="Seal" type="TextureRect" parent="."]
 layout_mode = 0
@@ -42,6 +53,7 @@ offset_bottom = 32.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.91,0.84,0.67,1)
 theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("5")
 horizontal_alignment = 1
 
 [node name="Chapter" type="Label" parent="."]
@@ -53,3 +65,7 @@ theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.61,0.68,0.68,1)
 text = "第 1 章 · 失落书库"
 horizontal_alignment = 1
+
+[node name="LoadingFeedback" parent="." instance=ExtResource("4")]
+visible = false
+layout_mode = 0

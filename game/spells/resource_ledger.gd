@@ -1,5 +1,6 @@
 class_name SpellResourceLedger
 extends RefCounted
+## Annotated integer divisions retain exact int64 resource amounts and occupancy limits.
 ## A word attempt owns its manual income until a completed cast commits it.
 
 const Q := 1024
@@ -127,11 +128,13 @@ func spend(transaction: String, lot: SpellLot, amount: int, claim: StringName = 
 func convert(transaction: String, lot: SpellLot, amount: int, material: SpellLot.Kind, ratio_q: int, next_owner: StringName) -> SpellLot:
 	if not _prepare(transaction, lot, amount, &"") or ratio_q < 0 or ratio_q > 64 * Q:
 		return null
+	@warning_ignore("integer_division")
 	if amount * ratio_q / Q > 1 << 30:
 		return null
 	_transactions[transaction] = true
 	var child := lot.portion(amount, next_owner)
 	child.material = material
+	@warning_ignore("integer_division")
 	child.amount_q = amount * ratio_q / Q
 	child.packet = null
 	_register(child)
@@ -155,9 +158,12 @@ func pay_and_transfer(transaction: String, fee: SpellLot, cost: int, lot: SpellL
 
 
 func reclaim(transaction: String, lot: SpellLot, ratio_q: int, available_space: int) -> SpellLot:
+	@warning_ignore("integer_division")
 	if lot == null or lot.material in [SpellLot.Kind.WORK, SpellLot.Kind.OPPORTUNITY] or ratio_q < 0 or ratio_q > Q * 7 / 10:
 		return null
+	@warning_ignore("integer_division")
 	var retained := lot.amount_q * ratio_q / Q
+	@warning_ignore("integer_division")
 	retained = mini(retained, available_space / maxi(1, SpellLot.SPACE_WEIGHTS[lot.material]))
 	if not _prepare(transaction, lot, lot.amount_q, &"recovered"):
 		return null

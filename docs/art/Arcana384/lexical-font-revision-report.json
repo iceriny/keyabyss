@@ -1,0 +1,26 @@
+{
+  "font_version": "3.002",
+  "baseline_version": "3.001",
+  "base_count": 384,
+  "changed_base_count": 0,
+  "old_active_ligatures": 80,
+  "active_lexical_ligatures": 50,
+  "length_counts": {
+    "2": 47,
+    "3": 3
+  },
+  "base_meanings_and_mapping_unchanged": true,
+  "base_source_shapes_unchanged": true,
+  "engraved_v4_geometry_unchanged": true,
+  "baseline_zip_sha256": "2c53235cb49498e42a09b8314d8a19b9244cb1df966dd00cb3e2f7dc7da69d84",
+  "unchanged_outlines": {
+    "Arcana384": 384,
+    "Arcana384-Imprint": 384
+  },
+  "source_hashes": {
+    "glyphs.json": "01913d58357a8a7e3ad67d1bc043c9de6237993841e978174fe35ba24b209a3d",
+    "concepts.json": "efe91b0af19f166396898597e85a7bb72585b15094063e28077c5d68bf9c0bb8",
+    "ligature-glyphs.json": "1efb63ce255667f809698ed3b8f7d284ab7a798df5d71adb0a650800cb370f74",
+    "engraved_geometry.py": "11f155696a83bec0326e52c9f19dbdd7c9d5875bdd8f0e8142d3851e8a36a602"
+  }
+}

@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R057:rule"
-operation = &"parry"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R057"
 title = "返咒铭文"
-description = "返还攻击可以附着现有材料，不能伪造完整人工施法；无"
+description = "完美御术的反射命中与近战迎击附带法书效果：冰霜积寒、雷鸣导电、火焰灼烧、纸灵标记并唤醒纸灵。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

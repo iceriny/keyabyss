@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R022:rule"
-operation = &"rhythm"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R022"
 title = "惊叹号"
-description = "用已赚强化额度周期性集中一发，不新增独立无成本全伤乘区；无"
+description = "每第4次完词若是敌人词咒，该次施法造成2倍伤害；道具词咒也计入次数。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

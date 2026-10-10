@@ -9,17 +9,18 @@ id = &"R047:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"ultimate_duration_ms": 2000,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R047"
 title = "永昼雷章"
-description = "延长雷鸣终式机会，追加落雷由真实输入与预算支持；T51"
+description = "雷鸣终章延长3秒；期间每条电链的前三次命中各获得2点护盾。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
-permits = PackedStringArray("T51")
+permits = PackedStringArray()
 max_stacks = 1
 allowed_books = PackedStringArray("storm")
+requires_all = PackedStringArray("R034", "R040")

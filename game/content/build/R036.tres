@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R036:rule"
-operation = &"low-health"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R036"
 title = "背水誓书"
-description = "低生命时提高一个收益池，不能把自动治疗与伤害分别乘满；无"
+description = "生命低于40%时，施法和纸灵伤害提高50%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

@@ -9,14 +9,16 @@ id = &"R006:rule"
 operation = &"copy"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R006"
 title = "双生笔尖"
-description = "按人工输入额度准备一次弱化复制，不能由复制继续准备复制；无"
+description = "每第 3 次完词，向另一个敌人复制 65% 伤害法术。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

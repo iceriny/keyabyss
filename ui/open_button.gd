@@ -7,6 +7,10 @@ const LIGHT_PADDING := 48.0
 const CONTENT_PADDING := 12.0
 @export var caption_alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT
 @export var filament_extension: float = 0.0
+var defer_decoration := false
+static var _decoration_frame := -1
+static var _decoration_spent_usec := 0
+const DECORATION_BUDGET_USEC := 2000
 
 var motion_reduced: bool = false
 var selected_visual: bool = false
@@ -36,54 +40,68 @@ func _ready() -> void:
 	_caption_alignment = caption_alignment
 	alignment = caption_alignment
 	_base_minimum_width = custom_minimum_size.x
-	for state: String in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
-		var clear := StyleBoxEmpty.new()
-		clear.content_margin_left = CONTENT_PADDING
-		clear.content_margin_right = CONTENT_PADDING
-		clear.content_margin_top = 7
-		clear.content_margin_bottom = 7
-		add_theme_stylebox_override(state, clear)
-	_light = ColorRect.new()
-	_light.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_light.show_behind_parent = true
-	_light_material = ShaderMaterial.new()
-	_light_material.shader = preload("res://ui/materials/open_button_light.gdshader")
-	_light.material = _light_material
-	add_child(_light)
-	_gold = GoldFilaments.new()
-	_gold.name = "GoldFilaments"
-	_light.add_child(_gold)
-	resized.connect(_sync_light_layout)
-	theme_changed.connect(_sync_light_theme)
-	_sync_light_layout()
-	_sync_light_theme()
-	if custom_minimum_size.y <= 0.0:
-		custom_minimum_size.y = 40.0
-	if not has_theme_font_size_override("font_size"):
-		add_theme_font_size_override("font_size", 16)
-	_sync_light_text()
 	var parts := text.split("    ", false, 1)
 	if parts.size() == 2:
 		text = parts[0]
 		_command_word = parts[1].to_lower()
+	if custom_minimum_size.y <= 0.0:
+		custom_minimum_size.y = 40.0
+	if not has_theme_font_size_override("font_size"):
+		add_theme_font_size_override("font_size", 16)
+	for state: String in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
+		var clear := preload("res://ui/theme/open_button_spacing.tres").duplicate() as StyleBoxEmpty
+		add_theme_stylebox_override(state, clear)
 	if not _command_word.is_empty():
 		_ensure_badge()
+	resized.connect(_sync_light_layout)
+	theme_changed.connect(_sync_light_theme)
 	resized.connect(_layout_badge)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	_sync_light_text()
+	if not defer_decoration:
+		_ensure_decoration()
 	mouse_entered.connect(_refresh_state)
-	mouse_entered.connect(_gold.trigger_flow)
+	mouse_entered.connect(_trigger_flow)
 	mouse_exited.connect(_refresh_state)
 	button_down.connect(func() -> void:
 		_held = true
 		_press_flash = 1.0
-		_gold.trigger_flow()
+		_trigger_flow()
 		_refresh_state()
 	)
 	button_up.connect(func() -> void:
 		_held = false
 		_refresh_state()
 	)
+	_sync_light_state()
+
+
+func _ensure_decoration() -> void:
+	if _light != null:
+		return
+	_light = preload("res://ui/scenes/open_button_light.tscn").instantiate() as ColorRect
+	add_child(_light)
+	_gold = _light.get_node("GoldFilaments") as GoldFilaments
+	_light_material = _light.material as ShaderMaterial
+	_sync_light_layout()
+	_sync_light_theme()
+	_sync_light_state()
+
+
+func _trigger_flow() -> void:
+	_ensure_decoration()
+	_gold.trigger_flow()
+
+
+func _within_visible_clip() -> bool:
+	var bounds := get_global_rect().grow(LIGHT_PADDING)
+	var ancestor := get_parent()
+	while ancestor != null:
+		if ancestor is Control and ancestor.clip_contents:
+			bounds = bounds.intersection(ancestor.get_global_rect())
+			if not bounds.has_area():
+				return false
+		ancestor = ancestor.get_parent()
+	return true
 
 
 func set_motion_reduced(value: bool) -> void:
@@ -200,6 +218,19 @@ func _refresh_state() -> void:
 func _process(delta: float) -> void:
 	if not is_visible_in_tree():
 		return
+	if defer_decoration:
+		if not _within_visible_clip():
+			return
+		if _light == null:
+			var frame := Engine.get_process_frames()
+			if _decoration_frame != frame:
+				_decoration_frame = frame
+				_decoration_spent_usec = 0
+			if _decoration_spent_usec >= DECORATION_BUDGET_USEC:
+				return
+			var started := Time.get_ticks_usec()
+			_ensure_decoration()
+			_decoration_spent_usec += Time.get_ticks_usec() - started
 	if not motion_reduced:
 		_gold_clock += delta
 		_gold.ribbon.set_shader_parameter("clock", _gold_clock)
@@ -230,6 +261,8 @@ func _sync_light_state() -> void:
 
 
 func _sync_light_layout() -> void:
+	if _light == null:
+		return
 	_light.position = Vector2.ONE * -LIGHT_PADDING
 	_light.size = size + Vector2.ONE * LIGHT_PADDING * 2.0
 	_light_material.set_shader_parameter("canvas_size", _light.size)
@@ -259,7 +292,8 @@ func _sync_light_text() -> void:
 
 
 func _sync_light_theme() -> void:
-	_light_material.set_shader_parameter("accent", get_theme_color("accent", "Archive"))
-	_sync_light_text()
+	if _light_material != null:
+		_light_material.set_shader_parameter("accent", get_theme_color("accent", "Archive"))
+		_sync_light_text()
 	if _prefix_label != null:
 		_prefix_label.add_theme_color_override("font_color", get_theme_color("accent", "Archive"))

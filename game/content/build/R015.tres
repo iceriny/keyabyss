@@ -9,14 +9,14 @@ id = &"R015:rule"
 operation = &"long-word"
 phase = &"compile"
 parameters = {
-&"long_clear_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R015"
 title = "长句回响"
-description = "长词偏向较大单份收益，额外清弹实际付费；无"
+description = "长度至少 7 的词咒伤害提高 75%，并清除目标周围子弹。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

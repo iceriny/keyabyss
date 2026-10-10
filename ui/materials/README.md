@@ -1,5 +1,11 @@
 # UI 材质
 
+## 启动背景细尘
+
+加载完成时由 `ArchiveGate.reveal_from_loading` 将实际 `RitualBackdrop` 节点接入欢迎视口，保留 `clock`；`formation` 从 0 到 1 插值装饰位置、透明度和尘埃浓度。加载 CanvasLayer 的输出像素坐标必须转换为 GameDisplay 下的 Stage 逻辑坐标，再交接符文与文字的位置、缩放；验证需包含实际 GameDisplay 父节点和非 1080p 输出。不要重新创建背景、重置噪声相位或将整个不透明背景一起淡出。交接期间只启用欢迎层的处理，等待 `welcome_ready` 后再恢复应用输入。
+
+`ritual_atmosphere.gdshader` 采样 `assets/art/effects/ritual_dust.png` 的线性密度。纹理由 `python tools/art/bake_ritual_dust.py` 确定性重建：独立散点与宽幅弯曲随机点云叠加，实际点数和间距形成疏密，周期边界支持重复采样；导入需保留 mipmaps。不要恢复为每格一个点再用遮罩调亮度，也不要将宽云拆成重复的细碎小团。两层点云坐标以不同相位平移、弯曲，受光区域独立缓慢漂移；共用 `clock`，减少动态时保持静止。`test_feedback_presentation.gd -- --ritual-boundary --dust-motion` 可输出像素尺度局部连续帧。
+
 ## 金丝与水晶阅读层
 
 | 资源 | 用途 | 接入方式 |

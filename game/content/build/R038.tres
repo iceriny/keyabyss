@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R038:rule"
-operation = &"graze"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R038"
 title = "飞白笔锋"
-description = "每敌弹一次擦弹收益，可在共鸣和护盾间分配；无"
+description = "擦弹获得双倍共鸣，同时获得少量护盾；每颗子弹仅结算一次。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

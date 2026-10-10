@@ -12,6 +12,12 @@ var reduced_motion: bool = false:
 		if is_inside_tree():
 			_update_motion()
 
+var gameplay := false:
+	set(value):
+		gameplay = value
+		if value:
+			_hide_ring()
+
 var _normal_texture: Texture2D
 var _hot_texture: Texture2D
 var _cursor_position := Vector2.ZERO
@@ -74,14 +80,12 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	if not _show_ring:
+	if not _show_ring or gameplay:
 		return
 	if _hot:
 		for index in 12:
 			var start_angle := _ring_angle + TAU * float(index) / 12.0
 			draw_arc(_cursor_position, RING_RADIUS, start_angle, start_angle + TAU / 24.0, 3, Color("e6d5a7", 0.53), 1.0, true)
-	else:
-		draw_arc(_cursor_position, RING_RADIUS, 0.0, TAU, 48, Color("e6d5a7", 0.29), 1.0, true)
 	if not reduced_motion and _pulse_elapsed < PULSE_DURATION:
 		var progress := _pulse_elapsed / PULSE_DURATION
 		var eased := 1.0 - pow(1.0 - progress, 2.0)

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://ui/effects/frost_impact_light.tres" id="1"]
+
+[node name="ImpactLight" type="PointLight2D"]
+texture = ExtResource("1")
+color = Color(0.662745, 0.901961, 1, 1)
+range_item_cull_mask = 2
+texture_scale = 2.0
+energy = 0.55

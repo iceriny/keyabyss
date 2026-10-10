@@ -6,10 +6,11 @@ var effect: BattleEffect
 var position := Vector2.ZERO
 var previous_position := Vector2.ZERO
 var velocity := Vector2.ZERO # Arena units per second.
+var attraction_impulse := Vector2.ZERO # Applied after homing, before swept movement.
 var speed: float = 1080.0
 var radius: float = 6.0
 var life: float = 2.1
-var homing: bool = true
+var homing: bool = false
 var remaining_hits: int = 1
 var hit_ids: PackedStringArray = []
 var trail: PackedVector2Array = []

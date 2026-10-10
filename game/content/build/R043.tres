@@ -6,18 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R043:rule"
-operation = &"glass"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"power_bonus_q": 205,
-&"incoming_bonus_q": 205,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R043"
 title = "玻璃书封"
-description = "输出与承伤同时变化；重新定价同预算的风险交换；无"
+description = "施法与纸灵伤害提高45%，受到的伤害也提高30%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

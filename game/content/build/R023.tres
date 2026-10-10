@@ -9,15 +9,14 @@ id = &"R023:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"hop_range_q": 102,
-&"field_radius_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R023"
 title = "远行墨迹"
-description = "扩大合法作用距离，收益通过实际覆盖而非面板范围计价；无"
+description = "电弧传导范围增加 100，爆炸范围增加 25。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

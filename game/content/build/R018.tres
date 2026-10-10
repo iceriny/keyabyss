@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R018:rule"
-operation = &"input-slow"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R018"
 title = "时间书签"
-description = "对输入目标附近局部缓行，移除全世界无条件减速；无"
+description = "锁定输入时，敌人与子弹移动速度降低 18%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

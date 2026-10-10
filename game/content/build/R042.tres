@@ -9,14 +9,14 @@ id = &"R042:rule"
 operation = &"room-price"
 phase = &"compile"
 parameters = {
-&"power_bonus_q": 154,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R042"
 title = "血字契约"
-description = "公开每房一次生命代价换有限输出，结算不能重复扣费或返还套利；无"
+description = "施法伤害提高40%；领取时及之后每进入新的一页损失8生命，同一页只扣一次，不会致死。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

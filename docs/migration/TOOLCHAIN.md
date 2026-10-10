@@ -26,9 +26,16 @@ pwsh -NoProfile -File tools/godot/godot.ps1 editor
 pwsh -NoProfile -File tools/godot/godot.ps1 run
 pwsh -NoProfile -File tools/godot/godot.ps1 run --headless --quit-after 3
 pwsh -NoProfile -File tools/godot/godot.ps1 export
+pwsh -NoProfile -File tools/godot/godot.ps1 export-release
 ```
 
-`doctor` 验证精确引擎版本和 console.exe 哈希，并报告 MCP 和模板是否就绪。其他任务也拒绝版本不符。导入／导出除了退出码还检查显式引擎错误。`export` 生成 `builds/windows/keyabyss.exe`、PCK 与调试 console wrapper；它是开发包，不是正式 Release。
+`doctor` 验证精确引擎版本和 console.exe 哈希，并报告 MCP 和模板是否就绪。其他任务也拒绝版本不符。导入／导出除了退出码还检查显式引擎错误。`export` 生成 `builds/windows/` 下的 Debug 包；`export-release` 使用官方 Release 模板生成 `builds/windows-release/` 下的 EXE 与 PCK。两者同时复制项目声明、引擎及词库许可。导出不表示玩法、目标机器或素材许可已经验收，当前实际证据见阶段总结。
+
+Windows 预设已启用 Shader Baker。`export`／`export-release` 使用真实 RenderingDevice，不能追加 `--headless`；官方烘焙步骤需要图形设备。日志应包含 `baking_shaders` 完成及 `res://.godot/shader_cache/` 入包记录，独立启动仍需创建硬件相关管线。资源导入和成品 Boss 检查继续使用 headless。原理与资源入口见[渲染准备方案](PLAN.md#渲染准备与原生资源实施方案)。
+
+独立导出 EXE 从包含同名 PCK 的目录启动，不传 `--path`；锁定的官方模板不支持路径覆盖，会在创建日志前退出。`--path` 留给编辑器引擎命令使用。
+
+导出前把 `.godot/exported/` 的转换缓存移入 `.delete/godot-export-cache/<唯一目录>/`，重新生成二进制资源；导入与 shader 缓存保留。锁定引擎曾将 `PackedInt32Array = []` 的导出属性漏掉，修正声明后旧转换缓存仍会保留坏数据。导出后用编辑器引擎加载成品 PCK，核对三个 Boss 的五档生成和血量；该检查失败时不将产物视为可分发包。Debug 包附带“启动并记录.cmd”和“无诊断对照.cmd”，可回收目标设备日志。
 
 官方 CLI 始终可直接使用。例如 `& $env:GODOT_PATH --headless --path . --editor --import`。便利脚本不承担游戏运行逻辑。原生 CLI 与导出能力参见 [Godot CLI 文档](https://docs.godotengine.org/en/4.7/tutorials/editor/command_line_tutorial.html)。
 

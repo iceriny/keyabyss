@@ -20,22 +20,13 @@ float contour(float phase,float softness){
   float d=abs(sin(phase));
   return 1.-smoothstep(.03,.045+max(fwidth(d),.008)*softness,d);
 }
-// Twelve original Arcane Folio SVG glyphs, expressed as line-distance strokes.
-float segment(vec2 p,vec2 a,vec2 b){vec2 q=p-a,v=b-a;return length(q-v*clamp(dot(q,v)/dot(v,v),0.,1.));}
-float rune(vec2 p,float id){float d=100.;
-if(id<0.5){d=min(d,segment(p,vec2(0.0,-7.0),vec2(0.0,7.0)));d=min(d,segment(p,vec2(-4.0,-4.0),vec2(0.0,-7.0)));d=min(d,segment(p,vec2(0.0,-7.0),vec2(4.0,-4.0)));d=min(d,segment(p,vec2(-3.0,2.0),vec2(3.0,2.0)));}
-else if(id<1.5){d=min(d,segment(p,vec2(-4.0,-6.0),vec2(3.0,0.0)));d=min(d,segment(p,vec2(3.0,0.0),vec2(-4.0,6.0)));d=min(d,segment(p,vec2(3.0,-6.0),vec2(3.0,6.0)));d=min(d,segment(p,vec2(-3.0,0.0),vec2(5.0,0.0)));}
-else if(id<2.5){d=min(d,segment(p,vec2(-4.0,5.0),vec2(0.0,-7.0)));d=min(d,segment(p,vec2(0.0,-7.0),vec2(4.0,5.0)));d=min(d,segment(p,vec2(-3.0,1.0),vec2(3.0,1.0)));d=min(d,segment(p,vec2(0.0,5.0),vec2(0.0,8.0)));}
-else if(id<3.5){d=min(d,segment(p,vec2(-4.0,-5.0),vec2(4.0,5.0)));d=min(d,segment(p,vec2(4.0,-5.0),vec2(-4.0,5.0)));d=min(d,segment(p,vec2(0.0,-7.0),vec2(0.0,-3.0)));d=min(d,segment(p,vec2(0.0,3.0),vec2(0.0,7.0)));}
-else if(id<4.5){d=min(d,segment(p,vec2(0.0,-7.0),vec2(0.0,7.0)));d=min(d,segment(p,vec2(0.0,-5.0),vec2(4.0,-1.0)));d=min(d,segment(p,vec2(4.0,-1.0),vec2(0.0,2.0)));d=min(d,segment(p,vec2(0.0,2.0),vec2(-4.0,-1.0)));d=min(d,segment(p,vec2(-4.0,-1.0),vec2(0.0,-5.0)));}
-else if(id<5.5){d=min(d,segment(p,vec2(-4.0,-5.0),vec2(4.0,-5.0)));d=min(d,segment(p,vec2(4.0,-5.0),vec2(-4.0,5.0)));d=min(d,segment(p,vec2(-4.0,5.0),vec2(4.0,5.0)));d=min(d,segment(p,vec2(0.0,-7.0),vec2(0.0,-5.0)));d=min(d,segment(p,vec2(0.0,5.0),vec2(0.0,7.0)));}
-else if(id<6.5){d=min(d,segment(p,vec2(-4.0,-6.0),vec2(-4.0,6.0)));d=min(d,segment(p,vec2(4.0,-6.0),vec2(4.0,6.0)));d=min(d,segment(p,vec2(-4.0,0.0),vec2(0.0,-4.0)));d=min(d,segment(p,vec2(0.0,-4.0),vec2(4.0,0.0)));d=min(d,segment(p,vec2(0.0,-4.0),vec2(0.0,6.0)));}
-else if(id<7.5){d=min(d,segment(p,vec2(-3.0,-6.0),vec2(3.0,0.0)));d=min(d,segment(p,vec2(3.0,0.0),vec2(-3.0,6.0)));d=min(d,segment(p,vec2(0.0,-7.0),vec2(0.0,-3.0)));d=min(d,segment(p,vec2(0.0,3.0),vec2(0.0,7.0)));}
-else if(id<8.5){d=min(d,segment(p,vec2(-4.0,-2.0),vec2(0.0,-7.0)));d=min(d,segment(p,vec2(0.0,-7.0),vec2(4.0,-2.0)));d=min(d,segment(p,vec2(4.0,-2.0),vec2(0.0,3.0)));d=min(d,segment(p,vec2(0.0,3.0),vec2(-4.0,-2.0)));d=min(d,segment(p,vec2(0.0,3.0),vec2(0.0,7.0)));d=min(d,segment(p,vec2(-3.0,7.0),vec2(3.0,7.0)));}
-else if(id<9.5){d=min(d,segment(p,vec2(-4.0,-6.0),vec2(0.0,-2.0)));d=min(d,segment(p,vec2(0.0,-2.0),vec2(4.0,-6.0)));d=min(d,segment(p,vec2(0.0,-2.0),vec2(0.0,7.0)));d=min(d,segment(p,vec2(-4.0,2.0),vec2(0.0,5.0)));d=min(d,segment(p,vec2(0.0,5.0),vec2(4.0,2.0)));}
-else if(id<10.5){d=min(d,segment(p,vec2(-4.0,5.0),vec2(-4.0,-5.0)));d=min(d,segment(p,vec2(-4.0,-5.0),vec2(4.0,5.0)));d=min(d,segment(p,vec2(4.0,5.0),vec2(4.0,-5.0)));d=min(d,segment(p,vec2(-1.0,0.0),vec2(1.0,0.0)));}
-else if(id<11.5){d=min(d,segment(p,vec2(0.0,-7.0),vec2(-4.0,0.0)));d=min(d,segment(p,vec2(-4.0,0.0),vec2(0.0,7.0)));d=min(d,segment(p,vec2(0.0,7.0),vec2(4.0,0.0)));d=min(d,segment(p,vec2(4.0,0.0),vec2(0.0,-7.0)));d=min(d,segment(p,vec2(-6.0,0.0),vec2(6.0,0.0)));}
-return 1.-smoothstep(.28,.28+max(fwidth(p.x),fwidth(p.y)),d);
+// One filtered atlas lookup replaces dozens of per-fragment line distances.
+uniform sampler2D rune_atlas : filter_linear_mipmap, repeat_disable;
+float rune(vec2 p,float id){
+  vec2 local=p/20.+.5;
+  if(any(lessThan(local,vec2(0.))) || any(greaterThan(local,vec2(1.)))) return 0.;
+  vec2 tile=vec2(mod(id,8.),floor(id/8.));
+  return texture(rune_atlas,(tile+local)/vec2(8.,4.)).a;
 }
 float seal(vec2 p,float radius,float phase){
   float r=length(p),a=atan(p.y,p.x)+phase;

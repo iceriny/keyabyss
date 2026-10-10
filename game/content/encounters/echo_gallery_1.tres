@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BattleEncounter" load_steps=7 format=3]
+[ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="2"]
+[ext_resource type="Resource" path="res://game/content/enemies/split.tres" id="3"]
+[ext_resource type="Resource" path="res://game/content/enemies/scribe.tres" id="4"]
+[ext_resource type="Resource" path="res://game/content/enemies/mirror.tres" id="5"]
+[ext_resource type="Resource" path="res://game/content/enemies/leech.tres" id="6"]
+[resource]
+script = ExtResource("1")
+room_id = &"echo-gallery-1"
+display_name = "镜页回廊 · 入口"
+chapter_number = 2
+wave_count = 3
+enemies = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])

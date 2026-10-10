@@ -6,20 +6,21 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R044:rule"
-operation = &"avalanche"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"split_targets": 2,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R044"
 title = "雪崩圣典"
-description = "改造冻结击杀的已付碎片方向与次数，保留寒墨专用身份；T02"
+description = "冻裂击杀向四周射出6枚冰针，冰枪额外穿透2次；连锁冰针不再自我复制。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
-permits = PackedStringArray("T02")
+permits = PackedStringArray()
 max_stacks = 1
 allowed_books = PackedStringArray("frost")
+requires_all = PackedStringArray("R004", "R032")

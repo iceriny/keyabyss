@@ -7,6 +7,23 @@ const ENEMIES = {
 	&"nib": preload("res://assets/art/actors/nib.svg"),
 	&"quill": preload("res://assets/art/actors/quill.svg"),
 	&"guard": preload("res://assets/art/actors/guard.svg"),
+	&"wisp": preload("res://assets/art/actors/wisp.svg"),
+	&"ram": preload("res://assets/art/actors/ram.svg"),
+	&"ink-colossus": preload("res://assets/art/actors/ink_colossus.svg"),
+	&"binder": preload("res://assets/art/actors/binder.svg"),
+	&"brood": preload("res://assets/art/actors/brood.svg"),
+	&"leech": preload("res://assets/art/actors/leech.svg"),
+	&"mirror": preload("res://assets/art/actors/mirror.svg"),
+	&"mortar": preload("res://assets/art/actors/mortar.svg"),
+	&"priest": preload("res://assets/art/actors/priest.svg"),
+	&"reaper": preload("res://assets/art/actors/reaper.svg"),
+	&"scribe": preload("res://assets/art/actors/enemy_scribe.svg"),
+	&"sentinel": preload("res://assets/art/actors/sentinel.svg"),
+	&"split": preload("res://assets/art/actors/split.svg"),
+	&"tower": preload("res://assets/art/actors/tower.svg"),
+	&"vortex": preload("res://assets/art/actors/vortex.svg"),
+	&"echo-archivist": preload("res://assets/art/actors/echo_archivist.svg"),
+	&"final-editor": preload("res://assets/art/actors/final_editor.svg"),
 }
 @onready var body: Sprite2D = $Body
 @onready var surface: ShaderMaterial = body.material as ShaderMaterial
@@ -40,6 +57,8 @@ func _ready() -> void:
 
 
 func _apply_configuration() -> void:
+	scale = Vector2.ONE * (1.0 if _kind == &"player" else BattleEnemy.SIZE_SCALE)
+	surface.set_shader_parameter("ice_grain", preload("res://assets/art/effects/frost_microfacets.png"))
 	body.light_mask = 2
 	shadow.texture = _glow
 	aura.texture = _glow
@@ -82,7 +101,7 @@ func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, redu
 	if axis.is_zero_approx():
 		axis = Vector2.UP
 	var compression := 0.0 if reduced else minf(0.15, enemy.squash * 0.35 + _hit_motion.position.length() / 5.0 * 0.09)
-	body.scale = (Vector2.ONE * (1.0 + compression * 0.45) - axis * axis * (compression * 1.45)) * 0.44
+	body.scale = (Vector2.ONE * (1.0 + compression * 0.45) - axis * axis * (compression * 1.45)) * (0.64 if enemy.boss else 0.28 if enemy.small else 0.44)
 	surface.set_shader_parameter("flash", minf(0.68, enemy.hit_flash / 0.12 * 0.68))
 	surface.set_shader_parameter("frozen", minf(1.0, enemy.frozen_time * 2.0))
 	surface.set_shader_parameter("burning", minf(1.0, enemy.burn_time))

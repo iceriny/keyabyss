@@ -11,6 +11,7 @@ var density_texture := Texture2DRD.new()
 var _rd: RenderingDevice
 var _shader: RID
 var _pipeline: RID
+var _program: EffectPipeline
 var _buffer: RID
 var _sampler: RID
 var _mask: RID
@@ -34,9 +35,10 @@ func configure(grid: Vector2i, dye_grid: Vector2i, mask_image: Image) -> void:
 		return # Headless and Compatibility have no compute device.
 	_grid = grid
 	_dye_grid = dye_grid
-	_shader = _keep(_rd.shader_create_from_spirv(SHADER.get_spirv()))
-	_pipeline = _keep(_rd.compute_pipeline_create(_shader))
-	_buffer = _keep(_rd.storage_buffer_create(MAX_INFLUENCES * 96))
+	_program = EffectPipeline.acquire(SHADER)
+	_shader = _program.shader
+	_pipeline = _program.pipeline
+	_buffer = _keep(_rd.storage_buffer_create(MAX_INFLUENCES * 112))
 	var sampler := RDSamplerState.new()
 	sampler.min_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
 	sampler.mag_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
@@ -52,7 +54,7 @@ func configure(grid: Vector2i, dye_grid: Vector2i, mask_image: Image) -> void:
 	for i in 2:
 		_states.append(_image(RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT))
 		_matter.append(_image(RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT, _dye_grid))
-		_dye.append(_image(RenderingDevice.DATA_FORMAT_R16G16_SFLOAT, _dye_grid))
+		_dye.append(_image(RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT, _dye_grid))
 		_pressures.append(_image(RenderingDevice.DATA_FORMAT_R32_SFLOAT))
 	_geometry = _image(RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT)
 	for state_index in 2:
@@ -163,6 +165,7 @@ func dispose() -> void:
 	matter_texture.texture_rd_rid = RID()
 	density_texture.texture_rd_rid = RID()
 	_free_resources(_take_resources())
+	_program = null
 	_rd = null
 
 

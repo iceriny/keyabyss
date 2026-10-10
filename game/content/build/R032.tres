@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R032:rule"
-operation = &"cold-field"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R032"
 title = "永冻墨池"
-description = "扩展有限寒区，非冰主书也可通过合法供给使用；无"
+description = "霜场持续增加3秒，半径增加35；无霜场时施法额外生成小型霜场。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

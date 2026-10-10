@@ -67,25 +67,9 @@ func show_configuration() -> void:
 			show_configuration())
 	var mode_row := HBoxContainer.new()
 	shell.body.add_child(mode_row)
-	_choice(mode_row, "副书", ["无", "frost", "flame", "storm", "spirit"], str(selection.secondary_book), func(value: String) -> void:
-		selection.secondary_book = StringName(value if value != "无" else "")
-		_refresh_diagnostics())
-	var shapes: Array = ["无"] + BuildCompiler.SHAPES[selection.book_id]
-	_choice(mode_row, "独卷形状", shapes, str(selection.focus_shape), func(value: String) -> void:
-		selection.focus_shape = StringName(value if value != "无" else "")
-		_refresh_diagnostics())
 	_choice(mode_row, "遭遇", ["neutral", "dense", "spread", "durable", "barrage", "resistance", "successive", "priority", "escort", "waves"], scenario, func(value: String) -> void:
 		scenario = value
 		_refresh_diagnostics())
-	var material_row := HBoxContainer.new()
-	shell.body.add_child(material_row)
-	for index in 2:
-		_choice(material_row, "校准材料 %d" % (index + 1), ["自动", "cold", "heat", "charge", "summon"], selection.calibrated_materials[index] if selection.calibrated_materials.size() == 2 else "自动", func(value: String) -> void:
-			if value == "自动": selection.calibrated_materials = []
-			else:
-				if selection.calibrated_materials.size() != 2: selection.calibrated_materials = ["cold", "heat"]
-				selection.calibrated_materials[index] = value
-			_refresh_diagnostics())
 	var columns := HBoxContainer.new()
 	columns.add_theme_constant_override("separation", 60)
 	shell.body.add_child(columns)
@@ -138,6 +122,7 @@ func _refresh_rows() -> void:
 	for id in compiler.catalog.ordered_ids():
 		if id == str(selection.book_id): continue
 		var definition := compiler.catalog.get_definition(StringName(id))
+		if not definition is RelicDefinition: continue
 		if search.text.is_empty() or (id + definition.title + definition.description).to_lower().contains(search.text.to_lower()): matches.append(definition)
 	if not search.text.is_empty():
 		matches.sort_custom(func(a: CombatContentDefinition, b: CombatContentDefinition) -> bool:
@@ -148,17 +133,11 @@ func _refresh_rows() -> void:
 	for definition in matches.slice(offset, offset + 16):
 		var row := HBoxContainer.new()
 		rows.add_child(row)
-		var chosen := str(definition.id) in selection.talents or selection.assets.has(definition.id)
+		var chosen := selection.assets.has(definition.id)
 		var button := _button(row, "%s  %s · %s" % ["✓" if chosen else "＋", definition.id, definition.title], func() -> void:
 			_inspected = definition.id
-			if definition is RelicDefinition:
-				if selection.assets.has(definition.id): selection.assets.erase(definition.id)
-				else: selection.assets[definition.id] = 1
-			else:
-				if str(definition.id) in selection.talents:
-					var index := selection.talents.find(str(definition.id))
-					selection.talents.remove_at(index)
-				else: selection.talents.append(str(definition.id))
+			if selection.assets.has(definition.id): selection.assets.erase(definition.id)
+			else: selection.assets[definition.id] = 1
 			_refresh_rows()
 			_refresh_diagnostics())
 		button.custom_minimum_size.x = 420
@@ -179,16 +158,16 @@ func _refresh_rows() -> void:
 
 func _refresh_diagnostics() -> void:
 	var compiled := compiler.compile(selection)
-	var selected := selection.talents.duplicate()
+	var selected := PackedStringArray()
 	for id in selection.assets: selected.append("%s ×%s" % [id, selection.assets[id]])
 	selected.sort()
 	selected_label.text = "%s主书\n\n%s" % [BOOK_PRESENTATIONS[selection.book_id].title, " · ".join(selected)]
-	diagnostic.text = "编译通过 · 参数 %s\n\n本入口绕过成长图选取，仍检查内容前置、许可、层数和模式。" % CompiledBuild.PARAMETER_VERSION if compiled.success() else "\n\n".join(compiled.diagnostics)
+	diagnostic.text = "编译通过 · 参数 %s\n\n本入口可直接选择遗物，仍检查主书、局内前置与叠层上限。" % CompiledBuild.PARAMETER_VERSION if compiled.success() else "\n\n".join(compiled.diagnostics)
 	if scenario in CHOICE_SCENARIOS:
 		diagnostic.text += "\n\n" + BuildLabScenarios.description(scenario)
 	launch.disabled = not compiled.success()
 	var inspected := compiler.catalog.get_definition(_inspected)
-	details.text = "" if inspected == null else "%s · %s\n\n%s\n\n%s" % [inspected.id, inspected.title, inspected.description, "许可：" + " / ".join(inspected.permits) if not inspected.permits.is_empty() else ""]
+	details.text = "" if inspected == null else "%s · %s\n\n%s" % [inspected.id, inspected.title, ContentDescription.text(inspected, compiler.catalog)]
 
 
 func _start_battle() -> void:
@@ -202,6 +181,8 @@ func _start_battle() -> void:
 	var request := BattleStartRequest.new()
 	request.build = compiled.build
 	request.vocabulary = vocabulary.select_entries(PackedStringArray([settings.vocabulary_id]), settings.min_length, settings.max_length)
+	request.vocabulary_index = vocabulary.prepared_index(settings.vocabulary_id)
+	request.maximum_length = settings.max_length
 	if request.vocabulary.is_empty():
 		diagnostic.text = "当前词库没有可用词条，请在主界面准备词库。"
 		return
@@ -324,7 +305,7 @@ func _choice(parent: Node, caption: String, values: Array, current: String, chan
 func _save_selection() -> void:
 	DirAccess.make_dir_recursive_absolute("user://development")
 	var file := FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
-	file.store_string(JSON.stringify({"book": selection.book_id, "talents": Array(selection.talents), "assets": selection.assets, "secondary": selection.secondary_book, "shape": selection.focus_shape, "materials": Array(selection.calibrated_materials), "scenario": scenario}))
+	file.store_string(JSON.stringify({"book": selection.book_id, "assets": selection.assets, "scenario": scenario}))
 	diagnostic.text = "开发配置已保存。"
 
 
@@ -334,9 +315,5 @@ func _load_selection() -> void:
 	if not parsed is Dictionary: return
 	selection.book_id = StringName(parsed.get("book", "frost"))
 	if selection.book_id not in BuildCompiler.BOOKS: selection.book_id = &"frost"
-	selection.talents = PackedStringArray(parsed.get("talents", []))
 	for id: String in parsed.get("assets", {}): selection.assets[StringName(id)] = int(parsed.assets[id])
-	selection.secondary_book = StringName(parsed.get("secondary", ""))
-	selection.focus_shape = StringName(parsed.get("shape", ""))
-	selection.calibrated_materials = PackedStringArray(parsed.get("materials", []))
 	scenario = str(parsed.get("scenario", "neutral"))

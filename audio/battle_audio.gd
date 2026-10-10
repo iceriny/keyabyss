@@ -44,7 +44,9 @@ func present(event: Dictionary, viewport_size: Vector2) -> void:
 	match event.kind:
 		&"manual_input": cue = "key"
 		&"ultimate_ready": cue = "ready"
-		&"warning": cue = "charge"
+		&"warning", &"hazard_warning": cue = "charge"
+		&"hazard_active": cue = "laser" if event.hazard == &"laser" else "impact.blast"
+		&"pickup_trigger": cue = "parry" if event.pickup == &"rune" else "impact.blast"
 		&"enemy_shot": cue = "laser"
 		&"melee_swing": cue = "melee.swing"
 		&"spirit_summon": cue = "spirit.summon"
@@ -98,7 +100,7 @@ func _play(cue: String, at: Vector2) -> void:
 		return
 	var priority := 5 if cue.begins_with("ultimate") or cue in ["victory", "defeat", "parry", "hit", "ready"] else (4 if cue in ["charge", "laser", "melee.swing", "parry.ring"] else 1)
 	if _voices.size() >= MAX_VOICES:
-		var retired: AudioStreamPlayer2D
+		var retired: AudioStreamPlayer2D = null
 		for active in _voices:
 			if _voice_priority[active] < priority and (retired == null or _voice_priority[active] < _voice_priority[retired]):
 				retired = active

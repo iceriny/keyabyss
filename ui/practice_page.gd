@@ -16,11 +16,14 @@ var _words: VBoxContainer
 var _stats: Label
 var _meanings: Array[Label] = []
 var _rng := RandomNumberGenerator.new()
+var _sampler: VocabularySampler
+var _shortest_length := 1
 
 
-static func create_practice(source: Array[VocabularyEntry], options: AppSettings) -> PracticePage:
+static func create_practice(source: Array[VocabularyEntry], options: AppSettings, prepared: VocabularyIndex) -> PracticePage:
 	var scene := load("res://ui/scenes/practice_page.tscn") as PackedScene
 	var page := scene.instantiate() as PracticePage
+	page._sampler = VocabularySampler.new(prepared)
 	page._configure_practice(source, options)
 	return page
 
@@ -29,6 +32,9 @@ func _configure_practice(source: Array[VocabularyEntry], options: AppSettings) -
 	configure("习字", "首字母锁定词咒 · 正确字符逐字落笔")
 	entries = source
 	settings = options
+	_shortest_length = settings.min_length
+	while _shortest_length < settings.max_length and _sampler.index.count(0, settings.min_length, _shortest_length) == 0:
+		_shortest_length += 1
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	_rng.randomize()
 	_stats = body.get_node("Stats")
@@ -57,32 +63,12 @@ func _next_words() -> void:
 	var targets: Dictionary[StringName, String] = {}
 	var upper := settings.max_length
 	if settings.progressive:
-		upper = mini(upper, settings.min_length + 3 + floori(completed_words / 5.0))
-	var available: Array[VocabularyEntry] = []
-	for entry in entries:
-		if entry.playable_length() <= upper:
-			available.append(entry)
-	# Sparse imported libraries begin at their shortest selected word.
-	if available.is_empty():
-		var shortest := 24
-		for entry in entries:
-			shortest = mini(shortest, entry.playable_length())
-		for entry in entries:
-			if entry.playable_length() == shortest:
-				available.append(entry)
-	var initials: PackedStringArray = []
-	for slot in mini(3, available.size()):
-		var candidates: Array[VocabularyEntry] = []
-		for entry in available:
-			if not entry.word[0] in initials:
-				candidates.append(entry)
-		if candidates.is_empty():
-			candidates = available
-		var chosen := candidates[_rng.randi_range(0, candidates.size() - 1)]
-		available.erase(chosen)
-		initials.append(chosen.word[0])
+		upper = mini(upper, maxi(_shortest_length, settings.min_length + 3 + floori(completed_words / 5.0)))
+	for slot in 3:
 		_generation += 1
 		var id := StringName("word_%d" % _generation)
+		var chosen := _sampler.take(id, _rng, settings.min_length, upper)
+		if chosen == null: break
 		active[id] = chosen
 		targets[id] = chosen.word
 		var row := VBoxContainer.new()
@@ -111,6 +97,7 @@ func _next_words() -> void:
 func _completed(id: StringName, _count: int, _assisted: bool, _attempt_id: String) -> void:
 	completed_words += 1
 	active.erase(id)
+	_sampler.release(id)
 	word_labels[id].text = "[color=#aab9c2]已完成[/color]"
 	if active.is_empty():
 		call_deferred("_next_words")
@@ -131,7 +118,7 @@ func show_action(action: StringName) -> void:
 	if str(action).begins_with("dodge"):
 		status.text = "方向 / Alt · 闪避按键"
 	else:
-		var descriptions := {&"parry": "Space · 弹反按键", &"ultimate": "Shift · 终式按键"}
+		var descriptions := {&"parry": "Space · 御术按键", &"ultimate": "Shift · 终式按键"}
 		status.text = descriptions.get(action, "")
 
 

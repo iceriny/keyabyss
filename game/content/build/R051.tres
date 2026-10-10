@@ -9,17 +9,17 @@ id = &"R051:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"dot_duration_ms": 1000,
-&"dot_pulses": 2,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R051"
 title = "松脂印章"
-description = "每层增加 1 秒和两次作用，同一份总伤害分得更细；无"
+description = "施加的灼烧点数增加20%，让燃烧持续更久；点数上限仍为127。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
 max_stacks = 2
+allowed_books = PackedStringArray("flame")

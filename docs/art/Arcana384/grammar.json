@@ -1,0 +1,432 @@
+{
+  "version": 3,
+  "status": "原创交流文字的基础表达规则与常用词汇层；精确操作式另以参数和分组表达。",
+  "design_principle": "根有固定核心义。常用词可以有明确登记的派生义；日常词汇与精确操作式各有清楚写法。",
+  "roles": {
+    "entity": "可被指称的对象、材料、状态对象、过程对象或数值。",
+    "quality": "可对对象成立的性质；修饰不暗含致使或转化。",
+    "action": "事件或操作；必须按登记的配价明确施者、对象和必要参数。",
+    "relation": "连接明确端点的关系；省略参照只可使用事先声明的上下文。",
+    "logic": "作用于完整表达式的条件、量化、控制或数值运算标记。"
+  },
+  "notation": {
+    "O": "对象或已绑定的对象短语",
+    "Q": "性质根",
+    "A": "动作根",
+    "R": "关系根",
+    "L": "逻辑或控制根",
+    "S": "完整状态陈述",
+    "C": "完整操作或已登记的过程表达",
+    "N": "数值",
+    "O_actor": "在上下文中已绑定的施者对象；不与S（完整状态陈述）混用。"
+  },
+  "rules": [
+    {
+      "id": "quality_noun",
+      "pattern": "Q O",
+      "compact": "QO",
+      "input_roles": [
+        "quality",
+        "entity"
+      ],
+      "result_type": "entity_phrase",
+      "meaning": "具有Q性质的O；在不与登记词冲突的普通表达中使用。精确结构可写Q(O)。",
+      "example": "冷水",
+      "example_meaning": "低温的液态水。"
+    },
+    {
+      "id": "state_assertion",
+      "pattern": "O Q",
+      "compact": "OQ",
+      "input_roles": [
+        "entity",
+        "quality"
+      ],
+      "result_type": "statement",
+      "meaning": "陈述对象O具有性质Q。",
+      "example": "水冷",
+      "example_meaning": "指定水的温度较低。"
+    },
+    {
+      "id": "state_change",
+      "pattern": "O 变 Q",
+      "input_roles": [
+        "entity",
+        "action:变",
+        "quality"
+      ],
+      "result_type": "event",
+      "meaning": "O进入Q状态；不自动指定引起变化的主体。",
+      "example": "水变冷",
+      "example_meaning": "水的温度变低。"
+    },
+    {
+      "id": "kind_change",
+      "pattern": "O 化 O",
+      "input_roles": [
+        "entity",
+        "action:化",
+        "entity"
+      ],
+      "result_type": "event",
+      "meaning": "前一对象转入后一目标类别或物态；目标仅改变已明示的属性。其他变化必须另行声明。",
+      "example": "水化气",
+      "example_meaning": "在保留水的材料身份这一已声明条件下，水转为气态。"
+    },
+    {
+      "id": "cause_state",
+      "pattern": "使(S)",
+      "input_roles": [
+        "logic:使",
+        "statement"
+      ],
+      "result_type": "action_phrase",
+      "meaning": "当前绑定施者使完整状态S成立；施者和作用范围不能由猜测补出。",
+      "example": "使(水冷)",
+      "example_meaning": "使指定水成为低温状态，尚未陈述结冰。"
+    },
+    {
+      "id": "action_object",
+      "pattern": "A(O; parameters)",
+      "compact": "AO",
+      "input_roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "action_phrase",
+      "meaning": "以O为动作对象；需要区分词汇义时用A(O)明确表示操作。",
+      "example": "聚(水)",
+      "example_meaning": "聚集水；具体操作按需要注明目的地。"
+    },
+    {
+      "id": "explicit_actor",
+      "pattern": "O A O",
+      "input_roles": [
+        "entity",
+        "action",
+        "entity"
+      ],
+      "result_type": "action_phrase",
+      "meaning": "第一O为施者，第二O为直接对象；仍须满足动作的其他配价。",
+      "example": "人 聚(水)",
+      "example_meaning": "指定的人聚集指定范围的水；目的地需事先声明。"
+    },
+    {
+      "id": "binary_relation",
+      "pattern": "R(O,O)",
+      "input_roles": [
+        "relation",
+        "entity",
+        "entity"
+      ],
+      "result_type": "relation_expression",
+      "meaning": "按关系根登记的参数次序连接两个端点；关系可以是判断或参数绑定，不能凭字面任意交换。",
+      "example": "属(此,人)",
+      "example_meaning": "当前对象属于人的类别。"
+    },
+    {
+      "id": "attribute_projection",
+      "pattern": "O 之 O",
+      "input_roles": [
+        "entity",
+        "relation:之",
+        "entity"
+      ],
+      "result_type": "entity_phrase",
+      "meaning": "从前一对象取得后一根所命名的属性；属性必须可用于该对象。",
+      "example": "水之温",
+      "example_meaning": "指定水的温度。"
+    },
+    {
+      "id": "result_projection",
+      "pattern": "果(C)",
+      "input_roles": [
+        "relation:果",
+        "event_or_action"
+      ],
+      "result_type": "entity_phrase",
+      "meaning": "指称已登记操作或过程C的结果对象；这一区分避免把过程本身误当成材料名。",
+      "example": "果(凝(冷水))",
+      "example_meaning": "凝固操作产生的结果；日常词可直接写凝水表示冰。"
+    },
+    {
+      "id": "logical_scope",
+      "pattern": "L(S) / L(C)",
+      "input_roles": [
+        "logic",
+        "complete_expression"
+      ],
+      "result_type": "typed_expression",
+      "meaning": "逻辑根只作用于紧接的一项完整表达，复杂范围必须用括号显式界定。",
+      "example": "否(存(水))",
+      "example_meaning": "指定范围内不存在所指的水。"
+    },
+    {
+      "id": "condition",
+      "pattern": "若(S)则(C)",
+      "input_roles": [
+        "logic:若",
+        "statement",
+        "logic:则",
+        "action_phrase"
+      ],
+      "result_type": "conditional_action",
+      "meaning": "仅在S成立时才实施C。",
+      "example": "若(水冷)则(凝(水))",
+      "example_meaning": "在已声明的水为低温时实施凝固操作；不是说任意冷水都会自然成冰。"
+    },
+    {
+      "id": "decimal",
+      "pattern": "连续数位",
+      "result_type": "number",
+      "meaning": "零一二三四五六七八九按十进制位值连接；十百千万不占独立根。",
+      "examples": [
+        {
+          "text": "二五六",
+          "value": 256
+        },
+        {
+          "text": "三八四",
+          "value": 384
+        }
+      ]
+    }
+  ],
+  "operator_signatures": {
+    "若": {
+      "inputs": [
+        "statement"
+      ],
+      "pairs_with": "则"
+    },
+    "则": {
+      "inputs": [
+        "action_phrase"
+      ]
+    },
+    "且": {
+      "inputs": [
+        "statement",
+        "statement"
+      ]
+    },
+    "或": {
+      "inputs": [
+        "statement",
+        "statement"
+      ]
+    },
+    "否": {
+      "inputs": [
+        "statement"
+      ]
+    },
+    "存": {
+      "inputs": [
+        "entity_phrase"
+      ]
+    },
+    "无": {
+      "inputs": [
+        "entity_phrase"
+      ]
+    },
+    "可": {
+      "inputs": [
+        "complete_expression"
+      ]
+    },
+    "必": {
+      "inputs": [
+        "complete_expression"
+      ]
+    },
+    "全": {
+      "inputs": [
+        "bound_set"
+      ]
+    },
+    "每": {
+      "inputs": [
+        "bound_set",
+        "action_template"
+      ]
+    },
+    "任": {
+      "inputs": [
+        "bound_set"
+      ],
+      "binding": "one_selected_member"
+    },
+    "某": {
+      "inputs": [
+        "class",
+        "condition"
+      ],
+      "binding": "one_fixed_witness"
+    },
+    "仅": {
+      "inputs": [
+        "bound_set",
+        "complete_expression"
+      ]
+    },
+    "并": {
+      "inputs": [
+        "action_phrase",
+        "action_phrase"
+      ]
+    },
+    "待": {
+      "inputs": [
+        "statement",
+        "action_phrase"
+      ]
+    },
+    "已": {
+      "inputs": [
+        "event_or_action"
+      ]
+    },
+    "使": {
+      "inputs": [
+        "statement_or_event"
+      ]
+    },
+    "半": {
+      "inputs": [
+        "number"
+      ]
+    },
+    "倍": {
+      "inputs": [
+        "number",
+        "number"
+      ]
+    },
+    "正": {
+      "inputs": [
+        "number"
+      ]
+    },
+    "负": {
+      "inputs": [
+        "number"
+      ]
+    }
+  },
+  "relation_signatures": {
+    "属": {
+      "inputs": [
+        "object",
+        "class_or_set"
+      ],
+      "output": "statement"
+    },
+    "有": {
+      "inputs": [
+        "holder",
+        "object_or_condition"
+      ],
+      "output": "statement"
+    },
+    "触": {
+      "inputs": [
+        "object",
+        "object"
+      ],
+      "output": "statement",
+      "note": "触仍是接触关系；其派生词须另行登记，不由汉语字面自动取得。"
+    },
+    "之": {
+      "inputs": [
+        "object",
+        "attribute_name"
+      ],
+      "output": "entity_or_value"
+    },
+    "果": {
+      "inputs": [
+        "registered_event_or_action"
+      ],
+      "output": "result_entity"
+    },
+    "于": {
+      "inputs": [
+        "object_or_event",
+        "spatial_or_temporal_scope"
+      ],
+      "output": "located_expression"
+    },
+    "由": {
+      "inputs": [
+        "action_or_content",
+        "source"
+      ],
+      "output": "source_bound_expression"
+    },
+    "向": {
+      "inputs": [
+        "action",
+        "direction"
+      ],
+      "output": "direction_bound_expression"
+    },
+    "至": {
+      "inputs": [
+        "action",
+        "endpoint"
+      ],
+      "output": "endpoint_bound_expression"
+    },
+    "以": {
+      "inputs": [
+        "action",
+        "means_or_medium"
+      ],
+      "output": "means_bound_expression"
+    },
+    "需": {
+      "inputs": [
+        "process",
+        "condition_or_resource"
+      ],
+      "output": "statement"
+    },
+    "前": {
+      "inputs": [
+        "object",
+        "spatial_reference"
+      ],
+      "output": "statement",
+      "required_context": [
+        "reference_orientation"
+      ]
+    }
+  },
+  "context_policy": [
+    "普通交流中的登记词按上下文指称，不要求每次列出施者和所有参数。",
+    "精确操作式明确对象、必要参照、作用范围和参数；词界、括号都保留其分组作用。",
+    "一个未登记连续根串不自动获得整词意义，也不会被字体内部猜分。",
+    "数位仍按十进制组合。",
+    "这一文字用于创作和排版，不声称能在现实实施魔法。"
+  ],
+  "frontend_policy": {
+    "word_picker": "Insert one registered root spelling and preserve a word boundary around it.",
+    "free_text": "Convert glyphs and recognize exact registered tokens; no automatic sentence translation or inferred internal segmentation.",
+    "toggle": "Change only visual fusion; keep the same selected word, gloss and definition.",
+    "invisible_controls": "不把不可见控制字符当词界；提示用户改为空格或可见标点，并对受影响片段关闭合写。"
+  },
+  "registered_ligature_shortcodes": {
+    "register_file": "ligatures.json",
+    "grammar_file": "grammar-lexical-50.json",
+    "count": 50,
+    "scope": "whole lexical words only",
+    "length_counts": {
+      "2": 47,
+      "3": 3
+    }
+  },
+  "lexical_layer_file": "grammar-lexical-50.json",
+  "lexical_priority": "完整登记词先按词义理解；精确操作使用明确括号与参数，不依赖dlig开关区分。"
+}

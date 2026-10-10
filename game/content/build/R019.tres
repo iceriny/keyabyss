@@ -9,14 +9,14 @@ id = &"R019:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"armor_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R019"
 title = "硬壳书封"
-description = "基础承伤效率按递减池合并，不能多来源无限接近免伤；无"
+description = "受到的伤害减少 25%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

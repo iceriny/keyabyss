@@ -1,10 +1,9 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://ui/archive_home.gd" id="1"]
 [ext_resource type="PackedScene" path="res://ui/scenes/archive_stage.tscn" id="2"]
 [ext_resource type="Script" path="res://ui/open_button.gd" id="3"]
 [ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="4"]
-[ext_resource type="Texture2D" path="res://ui/controls/menu-diamond.svg" id="5"]
 [ext_resource type="Shader" path="res://ui/materials/archive_floor.gdshader" id="6"]
 [ext_resource type="PackedScene" path="res://ui/scenes/archive_effects.tscn" id="7"]
 [ext_resource type="Script" path="res://ui/startup_sigil.gd" id="8"]
@@ -349,7 +348,27 @@ layout_mode = 2
 theme_override_constants/h_separation = 40
 theme_override_font_sizes/font_size = 14
 text = "词库    vocab"
-icon = ExtResource("5")
+script = ExtResource("3")
+
+[node name="Profile" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "留痕    profile"
+script = ExtResource("3")
+
+[node name="History" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "远征记录    history"
+script = ExtResource("3")
+
+[node name="Relics" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "遗物图鉴    relics"
 script = ExtResource("3")
 
 [node name="Help" type="Button" parent="Menu"]
@@ -358,7 +377,6 @@ layout_mode = 2
 theme_override_constants/h_separation = 40
 theme_override_font_sizes/font_size = 14
 text = "施法指南    help"
-icon = ExtResource("5")
 script = ExtResource("3")
 
 [node name="Settings" type="Button" parent="Menu"]
@@ -367,7 +385,6 @@ layout_mode = 2
 theme_override_constants/h_separation = 40
 theme_override_font_sizes/font_size = 14
 text = "设置    settings"
-icon = ExtResource("5")
 script = ExtResource("3")
 
 [node name="Quit" type="Button" parent="Menu"]
@@ -376,7 +393,6 @@ layout_mode = 2
 theme_override_constants/h_separation = 40
 theme_override_font_sizes/font_size = 14
 text = "离开    quit"
-icon = ExtResource("5")
 script = ExtResource("3")
 
 [node name="PrepareButton" type="Button" parent="."]
@@ -600,7 +616,7 @@ mouse_filter = 2
 theme_override_colors/font_color = Color(0.505882, 0.576471, 0.647059, 1)
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 11
-text = "← / →  切换法书\nEnter  进入战斗\n输入词令  直达页面"
+text = "← / →  切换法书\nEnter  准备出征\n输入词令  直达页面"
 horizontal_alignment = 2
 autowrap_mode = 3
 
@@ -639,3 +655,5 @@ theme_override_font_sizes/font_size = 12
 text = "点击或输入词令"
 horizontal_alignment = 2
 autowrap_mode = 3
+
+[editable path="ArchiveStage"]

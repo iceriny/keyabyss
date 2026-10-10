@@ -11,9 +11,9 @@ layout(set = 0, binding = 6) uniform sampler2D domain_mask;
 // Density-weighted linear RGB and density-weighted age, advected with state.
 layout(set = 0, binding = 7, rgba16f) uniform readonly image2D matter_in;
 layout(set = 0, binding = 8, rgba16f) uniform writeonly image2D matter_out;
-// Fog has its own resolution: density, signed heat (remaining channels reserved).
-layout(set = 0, binding = 9, rg16f) uniform readonly image2D dye_in;
-layout(set = 0, binding = 10, rg16f) uniform writeonly image2D dye_out;
+// Density, signed heat, density-weighted extra extinction, advected radiance.
+layout(set = 0, binding = 9, rgba16f) uniform readonly image2D dye_in;
+layout(set = 0, binding = 10, rgba16f) uniform writeonly image2D dye_out;
 layout(push_constant, std430) uniform Params {
     vec4 domain; // local width, height, dt, mode
     vec4 environment; // wind x/y, buoyancy, confinement
@@ -48,15 +48,15 @@ vec4 sample_matter(vec2 q) {
     return mix(mix(imageLoad(matter_in, a), imageLoad(matter_in, ivec2(b.x, a.y)), f.x),
                mix(imageLoad(matter_in, ivec2(a.x, b.y)), imageLoad(matter_in, b), f.x), f.y);
 }
-vec2 sample_dye(vec2 q) {
+vec4 sample_dye(vec2 q) {
     q = clamp(q, vec2(0), vec2(imageSize(dye_in) - 1));
     ivec2 a = ivec2(floor(q)); vec2 f = fract(q);
     ivec2 b = min(a + 1, imageSize(dye_in) - 1);
-    return mix(mix(imageLoad(dye_in, a).rg, imageLoad(dye_in, ivec2(b.x, a.y)).rg, f.x),
-               mix(imageLoad(dye_in, ivec2(a.x, b.y)).rg, imageLoad(dye_in, b).rg, f.x), f.y);
+    return mix(mix(imageLoad(dye_in, a), imageLoad(dye_in, ivec2(b.x, a.y)), f.x),
+               mix(imageLoad(dye_in, ivec2(a.x, b.y)), imageLoad(dye_in, b), f.x), f.y);
 }
 float distance_shape(vec2 at, int index) {
-    vec4 a = items[index * 6]; vec4 c = items[index * 6 + 2];
+    vec4 a = items[index * 7]; vec4 c = items[index * 7 + 2];
     vec2 d = at - a.xy;
     d = mat2(cos(c.x), -sin(c.x), sin(c.x), cos(c.x)) * d;
     vec2 e = max(a.zw, vec2(0.001));
@@ -68,12 +68,42 @@ float distance_shape(vec2 at, int index) {
     d.x -= clamp(d.x, -max(e.x - e.y, 0.0), max(e.x - e.y, 0.0));
     return length(d) - e.y;
 }
+vec4 cubic_weights(float t) {
+    float t2=t*t, t3=t2*t;
+    return vec4(-0.5*t+t2-0.5*t3, 1.0-2.5*t2+1.5*t3,
+                0.5*t+2.0*t2-1.5*t3, -0.5*t2+0.5*t3);
+}
+void sample_smoke(vec2 q, out vec4 dye, out vec4 matter) {
+    dye=sample_dye(q);
+    matter=sample_matter(q);
+    // Short-lived VFX need sharper transport. Ordinary atmosphere keeps its
+    // cheaper bilinear path. No extra grids, dispatches or pressure iterations.
+    if (dye.b < 0.0001) return;
+    ivec2 n=imageSize(dye_in)-1;
+    q=clamp(q,vec2(0),vec2(n));
+    ivec2 cell=ivec2(floor(q));
+    vec4 wx=cubic_weights(fract(q.x)), wy=cubic_weights(fract(q.y));
+    vec4 ds=vec4(0), ms=vec4(0), dmin=vec4(1e10), dmax=vec4(-1e10);
+    vec4 mmin=vec4(1e10), mmax=vec4(-1e10);
+    for(int y=0;y<4;y++) for(int x=0;x<4;x++) {
+        ivec2 at=clamp(cell+ivec2(x-1,y-1),ivec2(0),n);
+        vec4 d=imageLoad(dye_in,at), m=imageLoad(matter_in,at);
+        float w=wx[x]*wy[y]; ds+=d*w; ms+=m*w;
+        if(x>=1 && x<=2 && y>=1 && y<=2) {
+            dmin=min(dmin,d); dmax=max(dmax,d);
+            mmin=min(mmin,m); mmax=max(mmax,m);
+        }
+    }
+    // Bound ringing by the donor cells: no negative fog or invented bright rims.
+    dye=clamp(ds,dmin,dmax);
+    matter=clamp(ms,mmin,mmax);
+}
 float neighbor_pressure(ivec2 q, float center) {
     return boundary(q).z > 0.5 ? center : imageLoad(pressure_in, bounded(q)).r;
 }
 vec2 body_flow(vec2 at, int index, vec2 current, vec2 cell) {
-    vec4 a = items[index * 6]; vec4 v = items[index * 6 + 1];
-    vec4 c = items[index * 6 + 2]; vec4 body = items[index * 6 + 5];
+    vec4 a = items[index * 7]; vec4 v = items[index * 7 + 1];
+    vec4 c = items[index * 7 + 2]; vec4 body = items[index * 7 + 5];
     vec2 offset = at - a.xy;
     vec2 direction = vec2(cos(c.x), sin(c.x));
     vec2 nearest = offset - direction * clamp(dot(offset, direction), -body.y * 0.5, body.y * 0.5);
@@ -114,8 +144,8 @@ vec2 body_flow(vec2 at, int index, vec2 current, vec2 cell) {
         change += tangent * (c.y - angular) * envelope;
     }
     float amount = c.w > 0.5 ? p.domain.z : 1.0;
-    float blend = 1.0 - exp(-items[index * 6 + 3].w * amount);
-    return change * blend + offset / max(length(offset), 1.0) * items[index * 6 + 4].x * envelope * amount;
+    float blend = 1.0 - exp(-items[index * 7 + 3].w * amount);
+    return change * blend + offset / max(length(offset), 1.0) * items[index * 7 + 4].x * envelope * amount;
 }
 float mist_hash(vec2 cell) {
     vec3 v = fract(vec3(cell.xyx) * 0.1031);
@@ -128,6 +158,22 @@ float mist_noise(vec2 point) {
     f = f * f * (3.0 - 2.0 * f);
     return mix(mix(mist_hash(cell), mist_hash(cell + vec2(1, 0)), f.x),
                mix(mist_hash(cell + vec2(0, 1)), mist_hash(cell + vec2(1, 1)), f.x), f.y);
+}
+float blast_envelope(float x) {
+    // Linear at the origin: finite expansion instead of a radial singularity.
+    return 2.5*x*exp(-3.0*x*x)*(1.0-smoothstep(0.8,1.0,x));
+}
+float blast_stretch(vec2 offset, int index) {
+    float strength=items[index*7+4].y;
+    if(strength==0.0) return 1.0;
+    // Noise on the unit circle: continuous at the angle seam, fixed for this
+    // pulse. Narrow peaks become fingers rather than a uniformly swollen ring.
+    vec2 direction=offset/max(length(offset),0.001);
+    float seed=items[index*7+2].x*17.0;
+    float noise=mist_noise(direction*4.5+seed)*0.65
+               +mist_noise(direction*11.0-seed)*0.35;
+    float finger=pow(smoothstep(0.35,0.78,noise),3.0);
+    return mix(1.0,0.8+0.65*finger,strength);
 }
 
 void main() {
@@ -145,7 +191,7 @@ void main() {
     }
     if (mode == 7) {
         vec4 s = state(q);
-        s.zw = sample_dye(at / p.domain.xy * vec2(imageSize(dye_in)) - 0.5);
+        s.zw = sample_dye(at / p.domain.xy * vec2(imageSize(dye_in)) - 0.5).rg;
         imageStore(state_out, q, s);
         return;
     }
@@ -158,17 +204,43 @@ void main() {
         for (int i = 1; i <= 4; i++) {
             if (boundary(ivec2(round(vq - flow * dt / h * float(i) * 0.25))).z > 0.5) { back = vec2(q); break; }
         }
-        vec2 dye = sample_dye(back) * exp(-p.decay.yz * dt);
-        vec4 matter = sample_matter(back) * exp(-p.decay.y * dt);
+        vec4 dye, matter;
+        sample_smoke(back, dye, matter);
+        float extinction = p.decay.y + dye.b / max(dye.r, 0.00001);
+        float survival = exp(-extinction * dt);
+        // Expanding gas loses concentration and radiant energy per area. Without
+        // dilution an advected small white core becomes a large white disc.
+        vec2 origin=(mix(back,vec2(q),0.5)+0.5)*fog_h;
+        float expansion_rate=0.0;
+        for (int i=0;i<int(p.counts.x);i++) {
+            float expansion=items[i*7+6].z*dt;
+            if(expansion<=0.0) continue;
+            vec4 shape=items[i*7];
+            if(length(origin-shape.xy)>max(shape.z,shape.w)*1.45) continue;
+            float stretch=blast_stretch(origin-shape.xy,i);
+            float reach=max(shape.z,shape.w)*stretch;
+            float x=length(origin-shape.xy)/reach;
+            if(x>=1.0) continue;
+            float derivative=(blast_envelope(x+0.01)-blast_envelope(x-0.01))/0.02;
+            expansion_rate+=max(0.0,expansion*stretch/reach*(derivative+blast_envelope(x)/max(x,0.05)));
+        }
+        float dilution=exp(-expansion_rate*dt);
+        dye*=dilution;
+        matter*=dilution;
+        dye *= vec4(survival, exp(-p.decay.z * dt), survival, survival * exp(-3.0 * dt));
+        matter *= survival;
         // Mist is a passive concentration in incompressible air. Residual
         // projection error must not amplify it into a bright compression ring.
         matter.a = min(matter.a + dye.x * dt, dye.x * 12.0);
         for (int i = 0; i < int(p.counts.x); i++) {
-            vec4 a = items[i * 6]; vec4 v = items[i * 6 + 1]; vec4 c = items[i * 6 + 2];
+            vec4 a = items[i * 7]; vec4 v = items[i * 7 + 1]; vec4 c = items[i * 7 + 2];
             if (v.z == 0.0 && v.w == 0.0) continue;
+            // Cheap conservative bound before rotations, distance and injection noise.
+            if (any(greaterThan(abs(at - a.xy), vec2(length(a.zw))))) continue;
             float weight = 1.0 - smoothstep(-min(a.z, a.w), 0.0, distance_shape(at, i));
             if (weight <= 0.0) continue;
-            vec4 pigment = items[i * 6 + 3]; vec4 detail = items[i * 6 + 4];
+            vec4 pigment = items[i * 7 + 3]; vec4 detail = items[i * 7 + 4];
+            vec2 optics = items[i * 7 + 6].xy;
             float amount = (c.w > 0.5 ? dt : 1.0) * weight;
             if (detail.y > 0.0) {
                 vec2 drift = vec2(p.decay.w * 0.025, -p.decay.w * 0.016);
@@ -177,13 +249,15 @@ void main() {
                 amount *= mix(1.0, 2.2 * smoothstep(0.28, 0.8, cloud), detail.y);
             }
             float added = max(v.z, 0.0) * amount;
-            dye += vec2(added, v.w * amount);
+            dye += vec4(added, v.w * amount, optics * added);
             matter += vec4(pigment.rgb, detail.w) * added;
         }
-        matter *= min(1.0, 4.0 / max(dye.x, 0.00001));
-        dye = clamp(dye, vec2(0, -4), vec2(4));
-        if (boundary(ivec2(round(vq))).z > 0.5) { dye = vec2(0); matter = vec4(0); }
-        imageStore(dye_out, q, vec4(dye, 0, 0));
+        float capacity = min(1.0, 4.0 / max(dye.x, 0.00001));
+        matter *= capacity;
+        dye *= capacity;
+        dye.g = clamp(dye.g, -4.0, 4.0);
+        if (boundary(ivec2(round(vq))).z > 0.5) { dye = vec4(0); matter = vec4(0); }
+        imageStore(dye_out, q, dye);
         imageStore(matter_out, q, matter);
         return;
     }
@@ -192,9 +266,9 @@ void main() {
         if (p.counts.z > 0.5 && texture(domain_mask, (vec2(q) + 0.5) / vec2(n)).r < 0.5) b.z = 1.0;
         for (int i = int(p.counts.x); i < int(p.counts.x + p.counts.y); i++) {
             if (distance_shape(at, i) <= 0.0) {
-                vec4 a = items[i * 6]; vec4 v = items[i * 6 + 1];
+                vec4 a = items[i * 7]; vec4 v = items[i * 7 + 1];
                 vec2 d = at - a.xy;
-                b = vec4(v.xy + vec2(-d.y, d.x) * items[i * 6 + 2].y, 1, 0);
+                b = vec4(v.xy + vec2(-d.y, d.x) * items[i * 7 + 2].y, 1, 0);
             }
         }
         imageStore(geometry, q, b);
@@ -237,9 +311,9 @@ void main() {
         float shear = min(abs(w) * small_scale * 0.16, 45.0);
         s.xy += small * (p.material.w * 0.22 + shear) * p.detail.x * p.counts.w * dt;
         for (int i = 0; i < int(p.counts.x); i++) {
-            vec4 a = items[i * 6]; vec4 v = items[i * 6 + 1]; vec4 c = items[i * 6 + 2];
-            vec4 pigment = items[i * 6 + 3]; vec4 detail = items[i * 6 + 4];
-            if (items[i * 6 + 5].x > 0.0) {
+            vec4 a = items[i * 7]; vec4 v = items[i * 7 + 1]; vec4 c = items[i * 7 + 2];
+            vec4 pigment = items[i * 7 + 3]; vec4 detail = items[i * 7 + 4];
+            if (items[i * 7 + 5].x > 0.0) {
                 s.xy += body_flow(at, i, s.xy, h);
                 continue;
             }
@@ -281,6 +355,31 @@ void main() {
         vec4 down = boundary(q + ivec2(0, 1)); vec4 up = boundary(q - ivec2(0, 1));
         if (right.z > 0.5) s.x = right.x; else if (left.z > 0.5) s.x = left.x;
         if (down.z > 0.5) s.y = down.y; else if (up.z > 0.5) s.y = up.y;
+        // A brief blast is a local expansion, not an incompressible force that
+        // pressure immediately cancels. It transports the same dye and particles.
+        for (int i=0;i<int(p.counts.x);i++) {
+            float expansion=items[i*7+6].z;
+            if (expansion==0.0) continue;
+            vec4 shape=items[i*7];
+            vec2 offset=at-shape.xy;
+            float radius=length(offset), reach=max(shape.z,shape.w);
+            if(expansion<0.0) {
+                // A local sink must survive pressure projection, just as a
+                // blast does. This prescribes inward flow while the source lives.
+                float falloff=pow(max(0.0,1.0-radius*radius/(reach*reach)),2.0);
+                s.xy+=offset/max(radius,20.0)*expansion*falloff;
+                continue;
+            }
+            if(radius>reach*1.45) continue;
+            float stretch=blast_stretch(offset,i);
+            reach*=stretch;
+            float x=radius/reach;
+            float envelope=blast_envelope(x);
+            // Outward sources are accelerations: integrate once, not an extra
+            // velocity stamp every rendered frame. Inward sinks above prescribe flow.
+            s.xy+=offset/max(radius,1.0)*expansion*stretch*envelope*dt;
+        }
+        s.xy=clamp(s.xy,-h*(3.0/dt),h*(3.0/dt));
         if (b.z > 0.5) s = vec4(b.xy, 0, 0);
         imageStore(state_out, q, s);
     }

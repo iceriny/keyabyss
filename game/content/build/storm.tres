@@ -21,4 +21,4 @@ supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 element = 3
 primary_kind = &"storm_arc"
-cadence = 4
+cadence = 3

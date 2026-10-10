@@ -9,3 +9,5 @@ var interval: float
 var next_at: float
 var advanced: bool = false
 var delayed: bool = false
+var stacks: int = 1
+var spread_depth: int = 0

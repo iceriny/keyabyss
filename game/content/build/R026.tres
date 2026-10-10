@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R026:rule"
-operation = &"pull"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R026"
 title = "引力墨核"
-description = "将部分效果预算用于牵引，保持主目标直接价值；无"
+description = "直接施法命中时，牵引附近敌人靠近落点，便于穿透与连锁。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

@@ -2,7 +2,7 @@ class_name CompiledBuild
 extends RefCounted
 ## Installed snapshots are private. Readers receive values or copies.
 
-const PARAMETER_VERSION := "m3.2"
+const PARAMETER_VERSION := "s2.1"
 var _id: String
 var _book: StringName
 var _rules: Dictionary[StringName, bool] = {}
@@ -30,6 +30,11 @@ func has(operation: StringName) -> bool:
 
 func value(parameter: StringName, fallback: int = 0) -> int:
 	return _values.get(parameter, fallback)
+
+
+func maximum_hp_q() -> int:
+	@warning_ignore("integer_division")
+	return value(&"base_hp_q", 100 * 1024) * (1024 + value(&"max_hp_bonus_q")) / 1024 + value(&"max_hp_flat_q")
 
 
 func mode(slot: StringName) -> StringName:

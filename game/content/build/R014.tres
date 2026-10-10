@@ -9,14 +9,16 @@ id = &"R014:rule"
 operation = &"short-word"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R014"
 title = "短咒连珠"
-description = "短词偏向小份频繁收益，按人工字符预算计价；无"
+description = "长度不超过 4 的词咒伤害提高 60%，并回复少量闪避充能。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2

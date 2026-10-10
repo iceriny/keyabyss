@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('doctor', 'import', 'run', 'editor', 'preview', 'export')]
+    [ValidateSet('doctor', 'import', 'run', 'editor', 'preview', 'export', 'export-release')]
     [string]$Task = 'doctor',
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$EngineArguments = @()
@@ -90,20 +90,54 @@ switch ($Task) {
     'import' { $arguments = @('--headless', '--path', $projectRoot, '--editor', '--import') }
     'run' { $arguments = @('--path', $projectRoot) }
     'editor' { $arguments = @('--path', $projectRoot, '--editor') }
-    'export' {
+    { $_ -in @('export', 'export-release') } {
         if (Select-String -LiteralPath (Join-Path $projectRoot 'project.godot') -Pattern 'McpInteractionServer|mcp_interaction_server' -Quiet) {
             throw 'A development bridge is present in the source project. Restore the clean source configuration before exporting.'
         }
-        New-Item -ItemType Directory -Path (Join-Path $projectRoot 'builds/windows') -Force | Out-Null
-        $arguments = @('--headless', '--path', $projectRoot, '--export-debug', 'Windows Desktop', (Join-Path $projectRoot 'builds/windows/keyabyss.exe'))
+        $outputDirectory = Join-Path $projectRoot $(if ($Task -eq 'export-release') { 'builds/windows-release' } else { 'builds/windows' })
+        New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+        # Converted resources can retain old script properties after a schema
+        # change. Rebuild these disposable export outputs; keep import/shader caches.
+        $convertedCache = [IO.Path]::GetFullPath((Join-Path $projectRoot '.godot/exported'))
+        $retiredExport = [IO.Path]::GetFullPath((Join-Path $projectRoot ('.delete/godot-export-cache/' + [Guid]::NewGuid().ToString('N'))))
+        if (-not $convertedCache.StartsWith($projectRoot + [IO.Path]::DirectorySeparatorChar) -or
+            -not $retiredExport.StartsWith((Join-Path $projectRoot '.delete') + [IO.Path]::DirectorySeparatorChar)) {
+            throw 'Export cache archive escaped project.'
+        }
+        if (Test-Path -LiteralPath $convertedCache) {
+            New-Item -ItemType Directory -Path (Split-Path $retiredExport) -Force | Out-Null
+            Move-Item -LiteralPath $convertedCache -Destination $retiredExport
+        }
+        $exportFlag = if ($Task -eq 'export-release') { '--export-release' } else { '--export-debug' }
+        # Shader Baker requires the real RenderingDevice; headless silently skips it.
+        $arguments = @('--path', $projectRoot, $exportFlag, 'Windows Desktop', (Join-Path $outputDirectory 'keyabyss.exe'))
     }
 }
-if ($Task -in @('import', 'export')) {
+if ($Task -in @('import', 'export', 'export-release')) {
     $output = & $godotPath @arguments @EngineArguments 2>&1
     $engineExitCode = $LASTEXITCODE
     $output | ForEach-Object { Write-Output $_ }
     if ($engineExitCode -ne 0) { exit $engineExitCode }
     if ($output | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:') { throw 'Godot reported errors; inspect the output.' }
+    if ($Task -in @('export', 'export-release')) {
+        $bossCheck = & $godotPath --headless --main-pack (Join-Path $outputDirectory 'keyabyss.pck') --script (Join-Path $projectRoot 'tests/godot/test_boss_resources.gd') 2>&1
+        $bossExitCode = $LASTEXITCODE
+        $bossCheck | ForEach-Object { Write-Output $_ }
+        if ($bossExitCode -ne 0 -or ($bossCheck | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
+            throw 'Exported Boss resource check failed; this package is not ready to publish.'
+        }
+        Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE'), (Join-Path $projectRoot 'THIRD_PARTY_NOTICES.md') -Destination $outputDirectory
+        $licenseDirectory = Join-Path $outputDirectory 'licenses'
+        New-Item -ItemType Directory -Path $licenseDirectory -Force | Out-Null
+        foreach ($relative in @('licenses/GODOT_LICENSE.txt', 'licenses/GODOT_COPYRIGHT.txt', 'legacy/web/licenses/CMUdict-LICENSE.txt', 'legacy/web/licenses/Qwerty-Learner-GPL-3.0.txt')) {
+            Copy-Item -LiteralPath (Join-Path $projectRoot $relative) -Destination $licenseDirectory
+        }
+        Copy-Item -LiteralPath (Join-Path $projectRoot 'assets/vocabulary/sources.json') -Destination (Join-Path $licenseDirectory 'vocabulary-sources.json')
+        if ($Task -eq 'export') {
+            Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'playtest') | Copy-Item -Destination $outputDirectory
+        }
+        Write-Output "Export and notices: $outputDirectory"
+    }
 } else {
     & $godotPath @arguments @EngineArguments
     exit $LASTEXITCODE

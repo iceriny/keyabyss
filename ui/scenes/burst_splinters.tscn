@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ParticleProcessMaterial" path="res://ui/effects/burst_splinter_process.tres" id="1"]
+[ext_resource type="Material" path="res://ui/materials/burst_splinter.tres" id="2"]
+
+[node name="CrystalSplinters" type="GPUParticles2D"]
+physics_interpolation_mode = 2
+emitting = false
+amount = 22
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.96
+local_coords = false
+process_material = ExtResource("1")
+material = ExtResource("2")
+

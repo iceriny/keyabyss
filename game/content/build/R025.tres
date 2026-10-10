@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R025:rule"
-operation = &"push"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R025"
 title = "鲸骨笔杆"
-description = "提高付费击退与一次碰撞效果，不把每次接触当完整新攻击；无"
+description = "法术击退提高60%；撞墙与撞敌造成的碰撞伤害翻倍。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2

@@ -6,17 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R030:rule"
-operation = &"rhythm"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"power_bonus_q": 51,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R030"
 title = "连笔字帖"
-description = "连笔收益进入声明加法池，断连只失未获得的奖励；无"
+description = "每次连续完词的伤害加成由2.5%提高至5%，最高加成由25%提高至50%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

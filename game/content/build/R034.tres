@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R034:rule"
-operation = &"charge-clear"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R034"
 title = "避雷印"
-description = "过载时用部分份额清弹，非雷主书可取得基础电性入口；无"
+description = "同一敌人每受到3次直接施法或电链命中，引发过载并清除周围敌弹；其他法书也生效。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

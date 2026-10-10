@@ -6,18 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R008:rule"
-operation = &"parry"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"parry_efficiency_q": 154,
-&"parry_followup_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R008"
 title = "镜面批注"
-description = "打字积累制作额度，强化真实弹反，并从同份反击力量中留一部分给下次人工主术；无"
+description = "反制道具的范围伤害提高60%；反制后下一次施法伤害翻倍。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

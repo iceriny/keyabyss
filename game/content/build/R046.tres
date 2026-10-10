@@ -6,20 +6,21 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R046:rule"
-operation = &"conduct"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"chain_targets": 1,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R046"
 title = "超导禁卷"
-description = "改造雷鸣的传导与过载形状，保持每份电荷支出；T13"
+description = "电弧额外跳跃2次，过载向内牵引敌人并造成更大范围爆炸。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
-permits = PackedStringArray("T13")
+permits = PackedStringArray()
 max_stacks = 1
 allowed_books = PackedStringArray("storm")
+requires_all = PackedStringArray("R002", "R033")

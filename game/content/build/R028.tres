@@ -6,17 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R028:rule"
-operation = &"dot"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"dot_retention_q": 31,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R028"
 title = "腐蚀墨迹"
-description = "分出主术已有伤害转为灼烧，每层改善加工保留 3%；剩余可统一抽取或回收；无"
+description = "直接施法留下4秒腐蚀，每秒造成8点伤害，最多叠3层。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

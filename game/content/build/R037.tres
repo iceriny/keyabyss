@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R037:rule"
-operation = &"dodge-pull"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R037"
 title = "折返墨涡"
-description = "闪避留下有限引力作用，落点清弹消耗独立已付机会；无"
+description = "闪避起点留下引力井，短暂牵引附近敌人，落点释放小型清弹。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

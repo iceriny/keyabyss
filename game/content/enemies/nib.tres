@@ -3,3 +3,11 @@
 [resource]
 script = ExtResource("1")
 kind = &"nib"
+behavior = &"melee"
+speed = 49.5
+health = 43
+radius = 15.84
+mass = 0.9
+attack_damage = 12
+attack_interval = 3.6
+experience = 5

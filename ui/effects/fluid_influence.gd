@@ -21,6 +21,8 @@ enum BodyShape { BLUNT, POINTED }
 @export_range(0.0, 60.0) var coupling: float = 0.0
 ## Signed radial acceleration/impulse: outward blast or inward attraction.
 @export var radial: float = 0.0
+## After projection: positive outward acceleration, negative inward flow speed.
+@export var expansion: float = 0.0
 @export_range(0.0, 1.0) var noise_amount: float = 0.0
 @export var noise_scale: float = 360.0
 @export var initial_age: float = 0.0
@@ -48,4 +50,5 @@ func packed(ambient: Color = Color("668b9b")) -> PackedFloat32Array:
 		rotation, spin, float(shape), 1.0 if continuous else 0.0,
 		tint.r, tint.g, tint.b, coupling,
 		radial, noise_amount, noise_scale, initial_age,
-		displacement_radius, sweep_length, body_aspect if body_shape == BodyShape.POINTED else 0.0, response_speed])
+		displacement_radius, sweep_length, body_aspect if body_shape == BodyShape.POINTED else 0.0, response_speed,
+		medium.dissipation if medium != null else 0.0, medium.emission if medium != null else 0.0, expansion, 0.0])

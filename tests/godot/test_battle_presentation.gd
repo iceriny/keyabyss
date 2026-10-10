@@ -21,6 +21,26 @@ func _run() -> void:
 	evidence = "res://.temp/godot-m2/presentation-%s" % Time.get_ticks_usec()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	root.size = Vector2i(1920, 1080)
+	if "--refresh-cost" in OS.get_cmdline_user_args():
+		await _check_refresh_cost()
+		quit()
+		return
+	if "--book-seals" in OS.get_cmdline_user_args():
+		var home := ArchiveHome.create()
+		home.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+		home.repository = VocabularyRepository.new()
+		home.theme = ArchiveTheme.create(ArchiveHome.BOOKS[0].color)
+		root.add_child(home)
+		home.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		for index in 4:
+			home.select_book(index, false)
+			await _advance(1.1)
+			await _capture("seal-" + str(ArchiveHome.BOOKS[index].id))
+		print("Book seal evidence: ", evidence)
+		home.queue_free()
+		await process_frame
+		quit()
+		return
 	if "--words-only" in OS.get_cmdline_user_args():
 		await _check_headwords()
 		print("Headword presentation: " + evidence)
@@ -69,6 +89,12 @@ func _run() -> void:
 		router.action_requested.connect(session.queue_action)
 		page.add_child(router)
 		await _advance(0.15)
+		if "--four-books" in OS.get_cmdline_user_args():
+			await _four_book_window(session, page)
+			page.queue_free()
+			current_audio = null
+			await process_frame
+			continue
 		if "--ultimates-only" in OS.get_cmdline_user_args():
 			session.resonance_q = BattleSession.ULTIMATE_COST_Q
 			session.queue_action(&"ultimate")
@@ -239,6 +265,95 @@ func _run() -> void:
 		print("Battle mix: peak %.2f dBFS; max %d concurrent voices" % [peak_db, max_voices])
 	print("Battle presentation timeline: " + evidence)
 	quit()
+
+
+func _four_book_window(session: BattleSession, page: BattlePage) -> void:
+	# High-health bodies keep the actual state readable through three inputs.
+	for enemy in session.enemies:
+		enemy.hp_q = 2000 * BattleSession.Q
+		enemy.max_hp_q = enemy.hp_q
+		enemy.attack_clock = 1000.0
+		enemy.speed = 0.0
+		enemy.stationary = true
+	for cast in 3:
+		session.typing.select_target(session.enemies[0].id)
+		var word := session.typing.word
+		for letter in word.length():
+			var character := word[letter]
+			var key := InputEventKey.new()
+			key.keycode = character.to_upper().unicode_at(0) as Key
+			key.unicode = character.unicode_at(0)
+			key.pressed = true
+			Input.parse_input_event(key)
+			await _advance(.03 if session.book_id == &"storm" and cast == 2 and letter == word.length() - 1 else .09)
+		if session.book_id == &"storm" and cast == 2:
+			assert(page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.has("node") and pulse.node is LightningArc and pulse.node.burst_radius > 0.0), "third lightning hit has its own radius-matched burst geometry")
+			await _capture("storm-electric-burst")
+		await _advance(.15)
+		if cast == 2: await _capture(str(session.book_id) + "-third-cast")
+		await _advance(.6)
+	assert(session.runtime.book_cast_count() == 3, "three native Unicode words reach the shared cadence")
+	await _capture(str(session.book_id) + "-statuses")
+	session.queue_action(&"dodge_left")
+	await _advance(.09)
+	await _capture(str(session.book_id) + "-native-dodge")
+	await _advance(.35)
+	session.resonance_q = BattleSession.ULTIMATE_COST_Q
+	session.queue_action(&"ultimate")
+	await _advance(.45)
+	assert(not page.visuals._ultimate_nodes.is_empty(), "native ultimate creates its visible finite timeline")
+	await _capture(str(session.book_id) + "-domain")
+	await _advance(.7)
+	await _capture(str(session.book_id) + "-domain-sustain")
+	if reduced: assert(page.visuals.camera_offset == Vector2.ZERO)
+
+
+func _check_refresh_cost() -> void:
+	# Large vocabulary and retained dead bodies reproduce the user's UI workload.
+	var words: Array[VocabularyEntry] = []
+	for index in 10000:
+		var word := "entry" + String.chr(97 + index % 26) + String.chr(97 + floori(index / 26.0) % 26) + String.chr(97 + floori(index / 676.0))
+		words.append(VocabularyEntry.new(word, "用于检查词咒刷新与词库查询开销的释义"))
+	var session := BattleSession.new()
+	session.start_baseline(&"spirit", words, "normal", "refresh-cost", false)
+	for index in 29:
+		session._spawn_enemy(load("res://game/content/enemies/nib.tres"), Vector2(.2 + .025 * (index % 20), .5))
+	for index in session.enemies.size():
+		var enemy := session.enemies[index]
+		enemy.word = words[9999 - index].word
+		enemy.combat_locked = true
+		if index > 19: enemy.hp_q = 0
+	var options := AppSettings.new(evidence.path_join("settings.cfg"))
+	options.sound = false
+	options.fluid_quality = 0
+	var page := BattlePage.create(session, options, ArchiveHome.BOOKS[2])
+	page.theme = ArchiveTheme.create(ArchiveHome.BOOKS[2].color)
+	root.add_child(page)
+	session.set_physics_process(false)
+	await _advance(.1)
+	page.set_process(false)
+	var samples: Array[float] = []
+	for iteration in 60:
+		var started := Time.get_ticks_usec()
+		page._refresh()
+		samples.append((Time.get_ticks_usec() - started) / 1000.0)
+	samples.sort()
+	var signal_count := [0]
+	session.typing.changed.connect(func() -> void: signal_count[0] += 1)
+	for index in 100: session.typing.retire_target(&"already_absent")
+	assert(signal_count[0] == 0, "absent entry cannot repeatedly refresh the entire UI")
+	var label := page.enemy_words[session.enemies[0].id]
+	label.place(Vector2(500,400), Vector2.ZERO, 1.0)
+	var before := label.position
+	label.configure("extraordinarilylongword", "改变尺寸", true, true, 1, false)
+	label.place(Vector2(250,200), Vector2(60,0), 0.0)
+	assert(label.position == before, "layout-only refresh cannot snap an existing word")
+	label.place(Vector2(250,200), Vector2(60,0), 1.0/60.0)
+	assert(label.position.distance_to(before) <= 15.01, "combined anchor and avoidance motion is bounded per frame")
+	print("UI_REFRESH 10000 words, ", session.enemies.size(), " retained targets, 60 unchanged refreshes: median=", samples[30], "ms p95=", samples[57], "ms max=", samples[-1], "ms; position/no-op regressions passed")
+	await _capture("refresh-words")
+	page.queue_free()
+	await process_frame
 
 
 func _check_headwords() -> void:

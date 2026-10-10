@@ -21,6 +21,9 @@ var _row_height := 34.0
 var _surface: ShaderMaterial
 var _trait := ""
 var _marked_positions: PackedInt32Array = []
+var layout_offset := Vector2.ZERO
+var _layout_initialized := false
+var _boundary := -1
 
 
 func _ready() -> void:
@@ -29,11 +32,18 @@ func _ready() -> void:
 
 
 func configure(display_word: String, meaning: String, show_meaning: bool, selected: bool, boundary: int, reduced_motion: bool, feature_text: String = "", marks: PackedInt32Array = []) -> void:
+	var content_changed := _display_word != display_word or _meaning != meaning or _show_meaning != show_meaning or _trait != feature_text
+	if not content_changed and _selected == selected and _boundary == boundary and _marked_positions == marks:
+		if reduced_motion:
+			_selection_weight = 1.0 if selected else 0.0
+			_update_selection()
+		return
 	_selected = selected
+	_boundary = boundary
 	if reduced_motion:
 		_selection_weight = 1.0 if selected else 0.0
 	_marked_positions = marks
-	if _display_word != display_word or _meaning != meaning or _show_meaning != show_meaning or _trait != feature_text:
+	if content_changed:
 		_display_word = display_word
 		_meaning = meaning
 		_show_meaning = show_meaning
@@ -103,3 +113,14 @@ func _process(delta: float) -> void:
 func _update_selection() -> void:
 	meaning_label.modulate = Color("8b9e9f").lerp(Color("c6bba4"), _selection_weight)
 	_surface.set_shader_parameter("selection", _selection_weight)
+
+
+func place(anchor: Vector2, avoidance: Vector2, delta: float) -> void:
+	# Smooth the final position too: word width and renewed head anchors can change.
+	if not _layout_initialized:
+		layout_offset = avoidance
+	elif delta > 0.0:
+		layout_offset = layout_offset.move_toward(avoidance, 520.0 * delta)
+	var destination := anchor + layout_offset
+	position = destination if not _layout_initialized else position.move_toward(destination, 900.0 * delta)
+	_layout_initialized = true

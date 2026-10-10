@@ -8,6 +8,7 @@ var resonance_q: int = 0
 var reserve: Array[SpellLot] = []
 var reserve_cooldown_words: int = 0
 var asset_claims: Dictionary[String, bool] = {}
+var relic_counters: Dictionary = {}
 var room_serial: int = 0
 
 

@@ -20,10 +20,10 @@
 | --- | --- | --- |
 | 总纲 | [总体思路](00-DESIGN-BRIEF.md) | 目标、空间规则、操作负担、三者职责与八步顺序 |
 | 1 | [现状汇总](01-CURRENT-SYSTEM.md) | 308 项旧内容和 6 条路线，执行入口与资料冲突 |
-| 2 | [组合探索](../../build-system-design/02-COMBINATION-EXPLORATION.md) | 六类对象、通用操作、30 个碰撞探针与价值反转 |
-| 3 | [内容取舍](../../build-system-design/03-CONTENT-DECISIONS.md) | 保留、重写、合并、移除、暂缓与全部旧内容去向 |
-| 4 | [系统框架](../../build-system-design/04-SYSTEM-FRAMEWORK.md) | 权限、阶段、有限性、成长、获取、事件和期限语义 |
-| 5 | [候选内容](../../build-system-design/05-CONTENT-CATALOG.md) | 206 个天赋、171 件遗物、32 个事件与起始参数 |
+| 2 | [组合探索](../2026-10-08-build-system/build-system-design/02-COMBINATION-EXPLORATION.md) | 六类对象、通用操作、30 个碰撞探针与价值反转 |
+| 3 | [内容取舍](../2026-10-08-build-system/build-system-design/03-CONTENT-DECISIONS.md) | 保留、重写、合并、移除、暂缓与全部旧内容去向 |
+| 4 | [系统框架](../2026-10-08-build-system/build-system-design/04-SYSTEM-FRAMEWORK.md) | 权限、阶段、有限性、成长、获取、事件和期限语义 |
+| 5 | [候选内容](../2026-10-08-build-system/build-system-design/05-CONTENT-CATALOG.md) | 206 个天赋、171 件遗物、32 个事件与起始参数 |
 | 6 | [数据与算法](06-DATA-AND-ALGORITHMS.md) | 定义、编译、资源事务、资产交易、平面布局、搜索和迁移 |
 | 7 | 本文 | 完整流程推演、矛盾审查、验收与实施拆分 |
 

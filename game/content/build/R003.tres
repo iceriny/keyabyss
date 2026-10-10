@@ -6,17 +6,17 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R003:rule"
-operation = &"cold"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"cold_efficiency_q": 154,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R003"
 title = "零度批注"
-description = "将主术少量威力转为寒气，每层提高积寒效率 15%；与天赋、原生寒墨共用入口；无"
+description = "所有施法附加寒气；已有寒气增加，冻结持续更久。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

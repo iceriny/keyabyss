@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R027:rule"
-operation = &"execute"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R027"
 title = "终止符"
-description = "低生命普通敌人可消耗有限处决机会；Boss 使用单独受限增量；无"
+description = "直接施法处决生命低于18%的普通敌人；对Boss伤害提高15%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

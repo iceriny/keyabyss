@@ -6,18 +6,21 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R049:rule"
-operation = &"spirit-guard"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R049"
 title = "傀儡纸冠"
-description = "纸灵拦截消耗真实机会，标记击杀不重复发共鸣；T21"
+description = "纸灵在飞行中拦截敌弹；击杀标记目标额外获得8点共鸣。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
-permits = PackedStringArray("T21")
+permits = PackedStringArray()
+max_stacks = 1
 allowed_books = PackedStringArray("spirit")
+requires_all = PackedStringArray("R039", "R011")

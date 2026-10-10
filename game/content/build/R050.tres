@@ -9,16 +9,17 @@ id = &"R050:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"dot_retention_q": 31,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R050"
 title = "余烬墨水"
-description = "每层提高持续加工保留 3%，与其他来源同池且总保留不超过投入；无"
+description = "火焰每跳伤害提高30%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
 max_stacks = 3
+allowed_books = PackedStringArray("flame")

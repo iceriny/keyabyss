@@ -6,66 +6,17 @@
 
 [node name="BattleResult" type="VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 32
-script = ExtResource("1")
-
-[node name="Intro" type="HBoxContainer" parent="."]
-layout_mode = 2
 theme_override_constants/separation = 24
-
-[node name="Seal" type="Control" parent="Intro"]
-custom_minimum_size = Vector2(112,112)
-layout_mode = 2
-
-[node name="Art" type="TextureRect" parent="Intro/Seal"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Character" type="Label" parent="Intro/Seal"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 36
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Words" type="VBoxContainer" parent="Intro"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_constants/separation = 16
-
-[node name="Eyebrow" type="Label" parent="Intro/Words"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 11
-
-[node name="Line" type="Label" parent="Intro/Words"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 15
-theme_override_colors/font_color = Color(0.67,0.71,0.74,1)
-autowrap_mode = 3
-
-[node name="Stamp" type="Label" parent="Intro"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
+script = ExtResource("1")
 
 [node name="Stage" type="Label" parent="."]
 layout_mode = 2
-theme_override_font_sizes/font_size = 21
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.65, 0.70, 0.69, 1)
 horizontal_alignment = 1
 
 [node name="Stats" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
 theme_override_constants/separation = 12
 
@@ -73,73 +24,125 @@ theme_override_constants/separation = 12
 layout_mode = 2
 caption = "击破敌人"
 
-[node name="Combo" parent="Stats" instance=ExtResource("2")]
-layout_mode = 2
-caption = "最高连笔"
-
 [node name="Accuracy" parent="Stats" instance=ExtResource("2")]
 layout_mode = 2
 caption = "准确率"
-
-[node name="Wpm" parent="Stats" instance=ExtResource("2")]
-layout_mode = 2
-caption = "每分钟词数"
 
 [node name="Time" parent="Stats" instance=ExtResource("2")]
 layout_mode = 2
 caption = "战斗时长"
 
-[node name="Casts" parent="Stats" instance=ExtResource("2")]
+[node name="DetailTabs" type="HBoxContainer" parent="."]
 layout_mode = 2
-caption = "施法次数"
+alignment = 1
+theme_override_constants/separation = 48
 
-[node name="Input" type="Label" parent="."]
+[node name="DetailSlot" type="Control" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 200)
+
+[node name="Statistics" type="VBoxContainer" parent="DetailSlot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 22
+
+[node name="Pace" type="Label" parent="DetailSlot/Statistics"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6,0.67,0.7,1)
-horizontal_alignment = 1
-
-[node name="Columns" type="HBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 40
-
-[node name="Build" type="VBoxContainer" parent="Columns"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="Columns/Build"]
-layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "此行构筑"
-
-[node name="Book" type="Label" parent="Columns/Build"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.76,0.71,0.57,1)
-
-[node name="Description" type="Label" parent="Columns/Build"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.54,0.61,0.65,1)
+theme_override_colors/font_color = Color(0.80, 0.79, 0.72, 1)
 autowrap_mode = 3
 
-[node name="Mistakes" type="VBoxContainer" parent="Columns"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="Columns/Mistakes"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 17
-text = "待重写的词"
-
-[node name="Empty" type="Label" parent="Columns/Mistakes"]
+[node name="Input" type="Label" parent="DetailSlot/Statistics"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.54,0.61,0.65,1)
-text = "—"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.65, 0.70, 0.69, 1)
+autowrap_mode = 3
+
+[node name="Tactics" type="Label" parent="DetailSlot/Statistics"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.65, 0.70, 0.69, 1)
+autowrap_mode = 3
+
+[node name="Build" type="VBoxContainer" parent="DetailSlot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Book" type="Label" parent="DetailSlot/Build"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.76, 0.71, 0.57, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="DetailSlot/Build"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Description" type="Label" parent="DetailSlot/Build/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 6
+theme_override_colors/font_color = Color(0.66, 0.71, 0.70, 1)
+autowrap_mode = 3
+
+[node name="Mistakes" type="VBoxContainer" parent="DetailSlot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Summary" type="Label" parent="DetailSlot/Mistakes"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.76, 0.71, 0.57, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="DetailSlot/Mistakes"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Words" type="Label" parent="DetailSlot/Mistakes/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.66, 0.73, 0.71, 1)
+autowrap_mode = 3
+
+[node name="Secondary" type="HBoxContainer" parent="DetailSlot"]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 2
+theme_override_constants/separation = 30

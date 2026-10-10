@@ -75,6 +75,15 @@ func load_settings() -> void:
 
 
 func save_settings() -> bool:
+	# Startup reads display settings before the application and its diagnostics load.
+	var logger: Script = load("res://app/debug_log.gd")
+	var started: int = logger.begin()
+	var saved := _save_settings()
+	logger.operation(&"settings.save", started, {"ok": saved, "error": last_error}, true)
+	return saved
+
+
+func _save_settings() -> bool:
 	last_error = ""
 	var config := ConfigFile.new()
 	config.set_value("meta", "schema_version", 1)

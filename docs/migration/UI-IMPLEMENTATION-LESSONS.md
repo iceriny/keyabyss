@@ -38,6 +38,8 @@
 
 **已证实的问题。** 书库背景曾出现矩形断层。仅保留 paper 层仍可复现；把连续纸纹的程序噪声换成 Godot `NoiseTexture2D` 并启用 `seamless` 后，分层截图中的断层消失。**尚未证实**底层是否由某一 GPU 精度、导数或驱动行为单独导致，不能把该推测写成根因。旧 Web 的实时生成纹理或滤镜也不应逐项复制为每帧 CPU 图像编码。
 
+2026-10-10 启动背景再次出现相同外观的直边。逐层关闭法阵后仍可见，单独输出 `ritual_atmosphere` 的 cloud 项可清楚复现噪声格子接缝；中心光晕与尘点单独输出无对应长边。将 `sin/dot` 浮点哈希替换为整数格点哈希后，公共顶点连续，放大的 cloud 输出也无矩形断层。不要仅压暗背景或套用 CanvasGroup 的旧修复。锁定 4.7.2 / Forward+ / RTX 4070 SUPER 的 GPU 测试覆盖水平、垂直共 8192 个格边，HDR 读回最大跳变均为 0；不据此断言特定驱动或编译器机制。入口 `test_feedback_presentation.gd -- --ritual-boundary`，修复前分层证据 `.temp/feedback-20261009/presentation-4119398/`，修复后 cloud 对照 `presentation-4099610/`，2560×1440 最终截图及检查 `presentation-4073742/`。
+
 **合适做法。** 全幅低频背景使用可重复采样、具有 mipmaps 的原生噪声资源；按完整输出范围检查接缝，而非只观察中心画面。颗粒、尘埃与入场纸屑优先采用原生粒子和资源，按画质及减少动态开关控制数量或停动；保留静态材质，不让随机高频纹理覆盖正文。
 
 **证据。** `ui/materials/archive_paper.gdshader`、`ui/effects/paper_noise.tres`、`ui/effects/archive_dust.tscn`、`ui/archive_effects.gd`；`.temp/legacy-ui-review/{boundary-paper,boundary-noise,boundary-all}.png` 与 `restoration-evidence.md`。

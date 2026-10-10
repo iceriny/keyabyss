@@ -9,14 +9,14 @@ id = &"R001:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"power_bonus_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R001"
 title = "锋利笔尖"
-description = "保留直接伤害加法池强化，重新分配每层预算；无"
+description = "所有直接施法伤害提高 25%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

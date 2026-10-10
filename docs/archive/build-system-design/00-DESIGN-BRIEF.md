@@ -95,7 +95,7 @@
 
 部分特殊遗物只有在对应天赋解锁后才进入可获取范围；基础遗物仍为通用构筑与探索提供空间。进入池子不等于保证掉落。
 
-本轮方案采用：以本次出征实际分配的天赋配置生成许可，避免点亮后撤回仍永久开放。许可与能力使用条件分别判断；具体语义见[系统框架](../../build-system-design/04-SYSTEM-FRAMEWORK.md)。这是方案中的选择，不是已经实现的规则。
+本轮方案采用：以本次出征实际分配的天赋配置生成许可，避免点亮后撤回仍永久开放。许可与能力使用条件分别判断；具体语义见[系统框架](../2026-10-08-build-system/build-system-design/04-SYSTEM-FRAMEWORK.md)。这是方案中的选择，不是已经实现的规则。
 
 框架必须区分并回答，现已在第四步统一定义：
 
@@ -139,10 +139,10 @@
 
 - 总纲：本文。
 - 第一步：[当前系统汇总](01-CURRENT-SYSTEM.md)。
-- 第二步：[组合空间与玩法探索](../../build-system-design/02-COMBINATION-EXPLORATION.md)。
-- 第三步：[内容取舍与职责调整](../../build-system-design/03-CONTENT-DECISIONS.md)。
-- 第四步：[天赋—遗物—事件框架](../../build-system-design/04-SYSTEM-FRAMEWORK.md)。
-- 第五步：[候选内容集](../../build-system-design/05-CONTENT-CATALOG.md)。
+- 第二步：[组合空间与玩法探索](../2026-10-08-build-system/build-system-design/02-COMBINATION-EXPLORATION.md)。
+- 第三步：[内容取舍与职责调整](../2026-10-08-build-system/build-system-design/03-CONTENT-DECISIONS.md)。
+- 第四步：[天赋—遗物—事件框架](../2026-10-08-build-system/build-system-design/04-SYSTEM-FRAMEWORK.md)。
+- 第五步：[候选内容集](../2026-10-08-build-system/build-system-design/05-CONTENT-CATALOG.md)。
 - 第六步：[数据结构与算法](06-DATA-AND-ALGORITHMS.md)。
 - 第七步：[整体方案与实施交接](07-INTEGRATED-PLAN.md)。
 - 原始设计动机：[Combat_System_Refactoring_Plan.md](../Combat_System_Refactoring_Plan.md)。

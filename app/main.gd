@@ -5,12 +5,17 @@ extends Node
 @onready var root: GameDisplay = $Interface/Root
 @onready var router: InputRouter = $InputRouter
 var settings := AppSettings.new()
+var settings_prepared := false
 var vocabulary := VocabularyRepository.new()
 var page: PageShell
 var practice: PracticePage
 var battle: BattlePage
 var departure: DepartureRitual
-var route: String = "home"
+var route: String = "home":
+	set(value):
+		route = value
+		if is_instance_valid(cursor):
+			cursor.gameplay = value == "battle"
 var paused_route: String = ""
 var settings_return: String = "home"
 var commands: Dictionary[String, Callable] = {}
@@ -19,6 +24,7 @@ var commands: Dictionary[String, Callable] = {}
 @onready var cursor: ArchiveCursor = $Interface/Root/Cursor
 var archive_return: String = "home"
 var presentation_enabled: bool = true
+var welcome_gate: ArchiveGate
 var preview: VocabularyImport
 var import_name: LineEdit
 var import_text: TextEdit
@@ -40,13 +46,25 @@ var _volume_labels: Dictionary[String, Label] = {}
 var _audio_settings_dirty := false
 @onready var _settings_save_timer: Timer = $SettingsSaveTimer
 var _syncing_source: String = ""
+var profile_base_path: String = "user://profiles"
+var profile_mode: StringName = &"normal"
+var saves: SaveRepository
+var profile: ProfileState
+var run: RunSession
+var god_enabled := false
+var _restart_requested := false
+var _history_detail: VBoxContainer
 
 
 func _enter_tree() -> void:
+	# Bootstrap already prepares this service; direct editor launches use it here.
+	vocabulary.prepare_catalog()
+	add_child(DebugLog.new())
 	# Native preview uses an isolated user space prepared by godot.ps1 preview.
 	# Inject services before the authored home scene enters its ready phase.
 	get_tree().node_added.connect(_configure_new_control)
-	settings.load_settings()
+	if not settings_prepared:
+		settings.load_settings()
 	settings.apply(get_window())
 	($Interface/Root as GameDisplay).settings = settings
 	var home: ArchiveHome = $Interface/Root/ArchiveHome
@@ -55,6 +73,8 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	_load_profile()
+	get_tree().auto_accept_quit = false
 	_settings_save_timer.timeout.connect(_persist_audio_settings)
 	archive.navigate.connect(_archive_navigate)
 	archive.cue_requested.connect(sound.play_cue)
@@ -76,7 +96,7 @@ func _ready() -> void:
 			sound.play_cue("ui.type")
 		if is_instance_valid(page):
 			if route in ["practice", "battle"]:
-				page.command_hint.text = "Space 弹反 · 方向 / Alt 闪避 · 单独松开 Shift 终式"
+				page.command_hint.text = "Space 御术 · 方向 / Alt 闪避 · 单独松开 Shift 终式"
 			else:
 				page.command_hint.text = "词令  %s▏" % value if not value.is_empty() else "点击或输入词令"
 	)
@@ -94,10 +114,10 @@ func _ready() -> void:
 			match action:
 				&"menu_previous": archive.select_book(archive.selected - 1)
 				&"menu_next": archive.select_book(archive.selected + 1)
-				&"menu_confirm": _start_battle()
+				&"menu_confirm": archive.set_prepared(true)
 			return
 		if route == "prepare" and action == &"menu_confirm":
-			_start_battle()
+			_launch_prepared()
 			return
 		if route == "battle" and is_instance_valid(battle):
 			battle.session.queue_action(action)
@@ -112,6 +132,7 @@ func _ready() -> void:
 	_home()
 	if presentation_enabled:
 		var gate := ArchiveGate.create()
+		welcome_gate = gate
 		gate.sound = sound
 		gate.reduced_motion = settings.reduce_motion
 		gate.can_skip = settings.intro_complete
@@ -129,7 +150,7 @@ func _ready() -> void:
 		)
 	if not settings.last_error.is_empty():
 		archive.command_label.text = settings.last_error
-	print("Keyabyss M1 ready | %s | %s" % [Engine.get_version_info()["string"], RenderingServer.get_current_rendering_method()])
+	print("Keyabyss ready | %s | %s" % [Engine.get_version_info()["string"], RenderingServer.get_current_rendering_method()])
 	if "--frame-profile" in OS.get_cmdline_user_args() and not "--profile-driver" in OS.get_cmdline_user_args():
 		add_child(load("res://app/frame_capture.gd").new() as Node)
 
@@ -167,10 +188,17 @@ func _archive_navigate(destination: String) -> void:
 		"vocab": _vocabulary_page()
 		"help": _guide()
 		"settings": _settings_page(route)
-		"quit": get_tree().quit()
-		"battle": _start_battle()
+		"quit": _quit_game()
+		"battle": _launch_prepared()
+		"profile": _profile_page()
+		"relics": _relics_page()
+		"history": _run_records()
 		"prepared", "archive":
 			route = "prepare" if destination == "prepared" else "home"
+			if destination == "archive": _restart_requested = false
+			if destination == "prepared" and run != null and run.has_pending_run() and not _restart_requested:
+				_pending_run_page()
+				return
 			_configure_archive_commands()
 
 
@@ -182,14 +210,18 @@ func _configure_archive_commands() -> void:
 	commands["help"] = _guide
 	commands["guide"] = _guide
 	commands["settings"] = func() -> void: _settings_page(route)
-	commands["quit"] = func() -> void: get_tree().quit()
+	commands["quit"] = _quit_game
+	commands["profile"] = _profile_page
+	commands["relics"] = _relics_page
+	commands["history"] = _run_records
+	if run != null and run.has_pending_run(): commands["continue"] = _resume_run
 	if route == "home":
 		commands["start"] = func() -> void: archive.set_prepared(true)
 		for i in ArchiveHome.BOOKS.size():
 			commands[str(ArchiveHome.BOOKS[i].id)] = func() -> void: archive.select_book(i)
 			commands[str(i + 1)] = func() -> void: archive.select_book(i)
 	elif route == "prepare":
-		commands["start"] = _start_battle
+		commands["start"] = _launch_prepared
 		for i in ArchiveHome.MODE_IDS.size():
 			_bind_control_command(archive.difficulty_buttons[i], ArchiveHome.MODE_IDS[i])
 		_bind_control_command(archive.seed_edit, "seed")
@@ -256,6 +288,8 @@ func _bind_control_command(control: Control, word: String) -> void:
 
 
 func _activate_control(control: Control) -> void:
+	if is_instance_valid(page) and page.has_node("RewardDetail"):
+		return
 	if route == "settings" and is_instance_valid(control) and control.has_meta("settings_tab"):
 		_select_settings_tab(str(control.get_meta("settings_tab")))
 	if not is_instance_valid(control) or not control.is_visible_in_tree():
@@ -314,6 +348,12 @@ func _apply_book_theme() -> void:
 
 
 func _command(command: String) -> void:
+	if is_instance_valid(page) and page.has_node("RewardDetail"):
+		if command == "back": _back()
+		return
+	if command == "imsuperman":
+		_activate_god_mode()
+		return
 	if commands.has(command):
 		commands[command].call()
 
@@ -346,7 +386,16 @@ func _home() -> void:
 
 
 func _back() -> void:
+	if is_instance_valid(page) and page.has_node("RewardDetail"):
+		page.get_node("RewardDetail").queue_free()
+		return
 	match route:
+		"reward", "reward_error", "settlement": pass
+		"relics", "build":
+			if run != null and run.phase in ["REWARD", "BATTLE_REWARD", "EVENT"]:
+				_show_run_stage()
+			else:
+				_return_archive()
 		"practice": _pause()
 		"battle": _pause()
 		"pause": _resume()
@@ -361,17 +410,55 @@ func _back() -> void:
 
 func _guide() -> void:
 	_open("guide", "施法指南", "")
-	GuideContent.build(page.body, ArchiveHome.BOOKS[archive.selected], _start_practice)
+	var opened_page := page
+	_catalog_button(page.footer, "返回", "back", _return_archive)
+	if not get_tree().paused:
+		commands["practice"] = _start_practice
+	# Example commands remain available while their sections are being built.
+	var requested_example := {"command": ""}
+	for index in GuideContent.EXAMPLES.size():
+		var command := "note-%02d" % (index + 1)
+		commands[command] = func() -> void: requested_example.command = command
+	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+	var labels: Array[Dictionary] = []
+	var rules: Array[Dictionary] = []
+	var book := ArchiveHome.BOOKS[archive.selected]
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 20)
+	grid.add_theme_constant_override("v_separation", 20)
+	grid.focus_mode = Control.FOCUS_NONE
+	page.body.add_child(grid)
+	page.body.theme_changed.connect(GuideContent._update_accents.bind(page.body, book.color, labels, rules))
+	var build_started := Time.get_ticks_usec()
+	for article: Dictionary in GuideContent.ARTICLES:
+		GuideContent._add_article(grid, article, labels, rules)
+		if Time.get_ticks_usec() - build_started >= 2000:
+			GuideContent._update_accents(page.body, book.color, labels, rules)
+			await get_tree().process_frame
+			if not is_instance_valid(opened_page) or opened_page != page or not opened_page.visible:
+				return
+			build_started = Time.get_ticks_usec()
+	var sections := VBoxContainer.new()
+	GuideContent._add_demonstration(sections, labels, rules)
+	GuideContent._add_practice(sections, rules, _start_practice)
+	for button: OpenButton in sections.find_children("*", "OpenButton", true, false):
+		button.defer_decoration = true
+		button.set_motion_reduced(settings.reduce_motion)
+	for section in sections.get_children():
+		sections.remove_child(section)
+		page.body.add_child(section)
+	sections.free()
 	for button: Button in page.body.find_children("*", "Button", true, false):
 		if button is OpenButton and not button._command_word.is_empty():
 			if get_tree().paused and button._command_word == "practice":
 				button.disabled = true
 				continue
 			_bind_control_command(button, button._command_word)
-	_button(page.footer, "返回", "back", _return_archive)
-	if not get_tree().paused:
-		commands["practice"] = _start_practice
-	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+	GuideContent._update_accents(page.body, book.color, labels, rules)
+	if not requested_example.command.is_empty():
+		commands[requested_example.command].call()
 
 
 func _vocabulary_page() -> void:
@@ -412,8 +499,8 @@ func _vocabulary_page() -> void:
 			word_command = "custom%d" % (index + 1)
 		var choice := _button(list, str(book.title), word_command, func() -> void: _show_vocabulary(str(book.id)))
 		choice.name = "V%02d" % (index + 1)
-		choice.custom_minimum_size.y = 60
-		choice.add_theme_font_size_override("font_size", 23)
+		choice.custom_minimum_size.y = 44
+		choice.add_theme_font_size_override("font_size", 18)
 	selected_id = settings.vocabulary_id
 	if not catalog.any(func(book: Dictionary) -> bool: return str(book.id) == selected_id) and not catalog.is_empty():
 		selected_id = str(catalog[0].id)
@@ -435,7 +522,7 @@ func _show_vocabulary(id: String) -> void:
 	for book: Dictionary in vocabulary.catalog():
 		if str(book.id) == id:
 			title = str(book.title)
-	PageShell.label(vocab_detail, title, 30, Color("f0ddae"))
+	PageShell.label(vocab_detail, title, 25, Color("f0ddae"))
 	var metadata := vocabulary.describe(id)
 	PageShell.label(vocab_detail, str(metadata.get("description", "")), 16, Color("a8b6b4"))
 	PageShell.label(vocab_detail, str(metadata.get("source", "")), 13, Color("82918c"))
@@ -942,7 +1029,7 @@ func _start_practice() -> void:
 	if is_instance_valid(page):
 		page.queue_free()
 	commands.clear()
-	practice = PracticePage.create_practice(entries, settings)
+	practice = PracticePage.create_practice(entries, settings, vocabulary.prepared_index(settings.vocabulary_id))
 	practice.theme = _archive_theme
 	practice.name = "Practice"
 	root.add_child(practice)
@@ -951,7 +1038,7 @@ func _start_practice() -> void:
 	practice.set_width(1160)
 	practice.close_button.pressed.connect(_pause)
 	PageShell.button(practice.footer, "暂停    Esc", _pause)
-	practice.command_hint.text = "Space 弹反 · 方向 / Alt 闪避 · 单独松开 Shift 终式"
+	practice.command_hint.text = "Space 御术 · 方向 / Alt 闪避 · 单独松开 Shift 终式"
 	router.typing = practice.typing
 	router.configure(InputRouter.Context.TYPING)
 	var focus := get_viewport().gui_get_focus_owner()
@@ -962,11 +1049,24 @@ func _start_practice() -> void:
 func _start_battle() -> void:
 	if route == "departure":
 		return
-	var entries := vocabulary.select_entries(PackedStringArray([settings.vocabulary_id]), settings.min_length, settings.max_length)
+	var active_options: Dictionary = run.options if run != null and run.phase == "READY_FOR_ROOM" else {"vocabulary_id": settings.vocabulary_id, "minimum_length": settings.min_length, "maximum_length": settings.max_length}
+	var entries := vocabulary.select_entries(PackedStringArray([str(active_options.vocabulary_id)]), int(active_options.minimum_length), int(active_options.maximum_length))
 	if entries.is_empty():
 		_vocabulary_page()
 		page.status.text = "当前词库或词长范围不可用，请重新选择。"
 		return
+	if profile == null:
+		archive.command_label.text = saves.last_error
+		return
+	if run != null and run.phase not in ["RESULT", "READY_FOR_ROOM"]:
+		_resume_run()
+		return
+	if run == null or run.phase == "RESULT":
+		run = RunSession.new(saves, profile)
+		if not run.begin(StringName(settings.book_id), settings):
+			archive.command_label.text = run.last_error
+			return
+		profile = run.profile
 	if is_instance_valid(page):
 		page.queue_free()
 	page = null
@@ -977,12 +1077,16 @@ func _start_battle() -> void:
 	router.configure(InputRouter.Context.MODAL)
 	archive.set_interactive(false)
 	departure = preload("res://ui/scenes/departure_ritual.tscn").instantiate() as DepartureRitual
-	departure.book = ArchiveHome.BOOKS[archive.selected]
+	departure.book = _run_book()
+	departure.stage_text = "第 %d 章 · 第 %d 页" % [run.itinerary.chapter_of(run.room_serial + 1), run.room_serial % run.itinerary.rooms_per_chapter + 1]
 	departure.reduced_motion = settings.reduce_motion
 	departure.cue_requested.connect(sound.play_cue)
 	departure.covered.connect(_enter_battle.bind(entries))
 	departure.completed.connect(func() -> void:
 		departure = null
+		if not is_instance_valid(battle):
+			_run_records()
+			return
 		route = "battle"
 		battle.session.set_physics_process(true)
 		router.typing = battle.session.typing
@@ -993,65 +1097,742 @@ func _start_battle() -> void:
 	root.add_child(departure)
 
 
+func _launch_prepared() -> void:
+	if run != null and run.has_pending_run():
+		if not _restart_requested:
+			_pending_run_page()
+			return
+		if not run.restart(StringName(settings.book_id), settings):
+			if is_instance_valid(page): page.status.text = run.last_error
+			else: archive.command_label.text = run.last_error
+			return
+		profile = run.profile
+	_restart_requested = false
+	_start_battle()
+
+
+func _pending_run_page() -> void:
+	_open("resume_run", "未完的远征", "")
+	page.compact_height = 650
+	page.set_width(920)
+	var hero := HBoxContainer.new()
+	hero.add_theme_constant_override("separation", 42)
+	page.body.add_child(hero)
+	var art := TextureRect.new()
+	art.texture = _run_book().artwork
+	art.custom_minimum_size = Vector2(250, 260)
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	hero.add_child(art)
+	var description := VBoxContainer.new()
+	description.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	description.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	description.add_theme_constant_override("separation", 18)
+	hero.add_child(description)
+	PageShell.label(description, _run_book().title, 28, Color("e8d4a4"))
+	var next_room := mini(9, run.room_serial + (1 if run.phase in ["READY_FOR_ROOM", "REWARD"] else 0))
+	PageShell.label(description, "%s · 第 %d 章 · 第 %d 页 · %d 件遗物" % [RunSession.DIFFICULTY_NAMES[RunSession.DIFFICULTIES.find(str(run.options.get("difficulty", "normal")))], run.itinerary.chapter_of(maxi(1, next_room)), (maxi(1, next_room) - 1) % run.itinerary.rooms_per_chapter + 1, run.selection.instances.size()], 18)
+	PageShell.label(description, "继续这次远征，或重新出征。重开会归档当前远征并清空局内遗物。", 17, Color("9daea7"))
+	_button(page.footer, "重新出征", "restart", func() -> void:
+		_home()
+		_restart_requested = true
+		archive.set_prepared(true))
+	_button(page.footer, "继续远征" if not bool(run.facts.get("victory_pending", false)) else "继续挑战", "continue", _resume_run)
+	_button(page.footer, "返回书库", "back", _home)
+
+
+func _resume_run() -> void:
+	_restart_requested = false
+	if is_instance_valid(battle) and battle.session.result == 0:
+		if run.phase == "BATTLE_REWARD": _show_run_stage()
+		else: _resume()
+	elif run.phase == "READY_FOR_ROOM": _start_battle()
+	elif bool(run.facts.get("victory_pending", false)): _continue_challenge()
+	else: _show_run_stage()
+
+
+func _activate_god_mode() -> void:
+	if god_enabled: return
+	var god_saves := SaveRepository.new(&"god", profile_base_path)
+	if run != null and run.has_pending_run():
+		var current_battle: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
+		if not run.isolate_to_god(god_saves, current_battle):
+			profile = run.profile
+			if is_instance_valid(page):
+				page.status.text = run.last_error
+				page.status.show()
+			else: archive.command_label.text = run.last_error
+			return
+		saves = run.repository
+		profile = run.profile
+		profile_mode = &"god"
+		if current_battle == null:
+			if not run.restore():
+				if is_instance_valid(page): page.status.text = run.last_error
+				return
+			profile = run.profile
+	else:
+		profile_mode = &"god"
+		_load_profile()
+	god_enabled = true
+	if is_instance_valid(battle) and battle.session.result == 0:
+		battle.session.activate_god_mode()
+		_pause()
+	elif route in ["home", "prepare"]:
+		_configure_archive_commands()
+		archive.command_label.text = "God · 致死回满 · 无限终式与闪避"
+	else:
+		_home()
+		archive.command_label.text = "God · 致死回满 · 无限终式与闪避"
+
+
 func _enter_battle(entries: Array[VocabularyEntry]) -> void:
 	if is_instance_valid(battle):
 		battle.queue_free()
 	var session := BattleSession.new()
 	session.name = "Session"
-	var selection := BuildSelection.new()
-	selection.book_id = StringName(settings.book_id)
-	var compiled := BuildCompiler.new().compile(selection)
-	assert(compiled.success(), str(compiled.diagnostics))
-	var request := BattleStartRequest.new()
-	request.build = compiled.build
-	request.vocabulary = entries
-	request.difficulty = settings.difficulty
-	request.seed_text = settings.run_seed
-	request.progressive = settings.progressive
-	request.minimum_length = settings.min_length
-	session.start(request)
-	battle = BattlePage.create(session, settings, ArchiveHome.BOOKS[archive.selected])
+	var request := run.start_room(entries, vocabulary.prepared_index(str(run.options.vocabulary_id)))
+	if request == null:
+		session.free()
+		_open("room_error", "未能进入书页", run.last_error)
+		page.add_action("重试进入").pressed.connect(_start_battle)
+		if is_instance_valid(departure):
+			departure.release()
+		return
+	profile = run.profile
+	request.god_mode = god_enabled
+	session.start(request, run.combat)
+	run.install_room_opening(session)
+	battle = BattlePage.create(session, settings, _run_book())
 	battle.theme = _archive_theme
 	battle.name = "Battle"
 	root.add_child(battle)
 	session.set_physics_process(false)
 	battle.pause_requested.connect(_pause)
 	session.finished.connect(_battle_finished)
+	session.progression_changed.connect(_progression_changed)
 	archive.hide()
 	archive.set_interactive(false)
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus != null:
 		focus.release_focus()
+	# The paid session remains stopped until its real viewport has drawn.
+	await get_tree().process_frame
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+	await get_tree().process_frame
+	if is_instance_valid(departure):
+		departure.release()
 
 
 func _battle_finished(victory: bool) -> void:
 	if not is_instance_valid(battle):
 		return
 	var session := battle.session
+	if run != null:
+		if not run.finish_room(session):
+			_open("settlement", "正在归档", run.last_error)
+			_button(page.footer, "重试保存", "retry", _battle_finished.bind(victory))
+			return
+		profile = run.profile
+		if run.phase != "RESULT":
+			_show_run_stage()
+			return
 	if not session.abandoned_run:
 		battle.audio.play_result(victory, battle.size)
 	_open("result", "墨迹 · 此页已明" if victory else ("归卷 · 重返书库" if session.abandoned_run else "墨尽 · 未完待续"), "")
-	page.compact_height = 850.0
-	page.set_width(1180)
+	page.compact_height = 740.0
+	page.set_width(960)
 	page.heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	page.heading.add_theme_color_override("font_color", Color("dfc58b") if victory else (Color("9bb8c8") if session.abandoned_run else Color("d58f83")))
 	page.pattern.hide()
 	page.get_node("ContentLayer/GoldBranch").hide()
 	page.status.hide()
-	var report := preload("res://ui/scenes/battle_result.tscn").instantiate() as BattleResult
+	var report := load("res://ui/scenes/battle_result.tscn").instantiate() as BattleResult
 	page.body.add_child(report)
-	report.configure(session, ArchiveHome.BOOKS[archive.selected], session.abandoned_run)
+	var vocabulary_title := str(run.options.get("vocabulary_id", settings.vocabulary_id)) if run != null else settings.vocabulary_id
+	for entry: Dictionary in vocabulary.catalog():
+		if str(entry.id) == vocabulary_title:
+			vocabulary_title = str(entry.title)
+			break
+	report.configure(session, _run_book(), session.abandoned_run, run, vocabulary_title)
+	for detail in [{"title": "战斗详情", "command": "stats"}, {"title": "此行构筑", "command": "build"}, {"title": "错词回顾", "command": "words"}]:
+		var detail_index := report.detail_buttons.size()
+		report.detail_buttons.append(_button(report.get_node("DetailTabs"), detail.title, detail.command, report.show_detail.bind(detail_index)))
 	var atmosphere := preload("res://ui/scenes/outcome_atmosphere.tscn").instantiate() as OutcomeAtmosphere
 	atmosphere.victory = victory
 	atmosphere.reduced_motion = settings.reduce_motion or session.abandoned_run
 	page.add_child(atmosphere)
 	page.move_child(atmosphere, page.content_layer.get_index())
-	page.footer.alignment = BoxContainer.ALIGNMENT_END
+	page.footer.alignment = BoxContainer.ALIGNMENT_CENTER
 	_button(page.footer, "返回书库", "home", _home)
-	for item: Array in [["远征记录", "history"], ["调整天赋", "talents"], ["导出战报", "report"]]:
-		var placeholder := _button(page.footer, item[0], item[1], func() -> void: pass)
-		placeholder.disabled = true
-	_button(page.footer, "再写一局", "retry", _start_battle)
+	_button(report.get_node("DetailSlot/Secondary"), "远征记录", "history", _run_records)
+	_button(report.get_node("DetailSlot/Secondary"), "导出战报", "export", _export_battle_report.bind(report.report))
+	if run != null and bool(run.facts.get("victory_pending", false)):
+		_button(page.footer, "保留遗物 · 挑战" + run.next_challenge_label(), "continue", _continue_challenge)
+		_button(page.footer, "结束远征", "finish", _end_challenge)
+	_button(page.footer, "再写一局", "retry", func() -> void:
+		_restart_requested = true
+		_launch_prepared())
+	if profile != null:
+		report.report["profile_characters"] = profile.manual_characters
+
+
+func _export_battle_report(report: Dictionary) -> void:
+	var dialog := FileDialog.new()
+	dialog.use_native_dialog = true
+	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.filters = PackedStringArray(["*.json ; 战报"])
+	dialog.current_file = "keyabyss-report-%s.json" % Time.get_date_string_from_system()
+	add_child(dialog)
+	dialog.file_selected.connect(func(path: String) -> void:
+		var file := FileAccess.open(path, FileAccess.WRITE)
+		if file == null:
+			page.status.text = "战报保存失败：%s" % error_string(FileAccess.get_open_error())
+			page.status.show()
+		else:
+			file.store_string(JSON.stringify(report, "\t"))
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered_ratio(0.7)
+
+
+func _load_profile() -> void:
+	saves = SaveRepository.new(profile_mode, profile_base_path)
+	profile = saves.load_profile()
+	if profile != null:
+		run = RunSession.new(saves, profile)
+		if run.restore():
+			profile = run.profile
+		else:
+			profile.diagnostics.append(run.last_error)
+
+
+func _run_book() -> BookPresentation:
+	for book in ArchiveHome.BOOKS:
+		if book.id == run.selection.book_id: return book
+	return ArchiveHome.BOOKS[archive.selected]
+
+
+func _continue_challenge() -> void:
+	if not run.continue_challenge():
+		page.status.text = run.last_error
+		return
+	profile = run.profile
+	_start_battle()
+
+
+func _end_challenge() -> void:
+	if not run.end_challenge():
+		page.status.text = run.last_error
+		return
+	profile = run.profile
+	_home()
+
+
+func _profile_page() -> void:
+	if is_instance_valid(battle) and battle.session.result == 0:
+		return
+	_open("profile", "留痕", "每一次落笔，都留下痕迹")
+	page.compact_height = 730
+	page.set_width(1040)
+	if profile == null:
+		page.status.text = saves.last_error
+		return
+	var growth := TalentProgress.level_for(profile.manual_characters)
+	var hero := HBoxContainer.new()
+	hero.add_theme_constant_override("separation", 40)
+	page.body.add_child(hero)
+	var emblem := JourneyEmblem.new()
+	emblem.kind = &"growth"
+	emblem.progress = float(growth) / TalentProgress.MAX_LEVEL
+	emblem.custom_minimum_size = Vector2(220, 220)
+	hero.add_child(emblem)
+	var progress_body := VBoxContainer.new()
+	progress_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	progress_body.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	progress_body.add_theme_constant_override("separation", 18)
+	hero.add_child(progress_body)
+	PageShell.label(progress_body, "%s  累计正确输入" % ("GOD ·" if god_enabled else ""), 14, Color("94aaa5"))
+	PageShell.label(progress_body, "%s" % profile.manual_characters, 54, Color("ead8ac"))
+	PageShell.label(progress_body, "初始生命 +%d     ·     留痕 %d / %d" % [TalentProgress.health_for(profile.manual_characters), growth, TalentProgress.MAX_LEVEL], 20)
+	var track := ProgressBar.new()
+	track.custom_minimum_size.y = 4
+	track.show_percentage = false
+	track.max_value = TalentProgress.CHARACTERS_PER_LEVEL
+	track.value = float(profile.manual_characters % TalentProgress.CHARACTERS_PER_LEVEL) if growth < TalentProgress.MAX_LEVEL else track.max_value
+	progress_body.add_child(track)
+	PageShell.label(progress_body, "距下一阶 %d 字符" % [(growth + 1) * TalentProgress.CHARACTERS_PER_LEVEL - profile.manual_characters] if growth < TalentProgress.MAX_LEVEL else "五阶已满，落笔仍会记录。", 16, Color("a2b6ae"))
+	var milestones := HBoxContainer.new()
+	milestones.add_theme_constant_override("separation", 20)
+	page.body.add_child(milestones)
+	for index in TalentProgress.MAX_LEVEL:
+		var mark := VBoxContainer.new()
+		mark.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		milestones.add_child(mark)
+		var lit := growth > index
+		PageShell.label(mark, "+%d 生命" % ((index + 1) * TalentProgress.HP_PER_LEVEL), 19, Color("dcc89a") if lit else Color("7b8c89")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		PageShell.label(mark, "%d 字符" % ((index + 1) * TalentProgress.CHARACTERS_PER_LEVEL), 13, Color("889b94")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	PageShell.label(page.body, "四书共享 · 每 1000 正确字符增加 4 点初始生命 · 在新远征开始时生效", 15, Color("9caaa3")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_button(page.footer, "远征记录", "history", _run_records)
+	_button(page.footer, "返回书库", "back", _home)
+
+
+func _progression_changed() -> void:
+	var started := DebugLog.begin()
+	_observe_battle_progression()
+	DebugLog.end(&"battle.progression", started)
+
+
+func _observe_battle_progression() -> void:
+	if run == null or not is_instance_valid(battle):
+		return
+	if not run.observe_battle(battle.session):
+		_open("reward_error", "奖励暂未保存", run.last_error)
+		_button(page.footer, "重试保存", "retry", _progression_changed)
+		return
+	profile = run.profile
+	if run.phase == "BATTLE_REWARD":
+		_show_run_stage()
+
+
+func _show_run_stage() -> void:
+	if run.phase == "READY_FOR_ROOM":
+		_start_battle()
+		return
+	if run.phase in ["REWARD", "BATTLE_REWARD"]:
+		_open("reward", "选择遗物", "选择一件带走 · 还可领取 %d 件" % run.rewards.available())
+		page.set_width(1320.0)
+		page.close_button.disabled = true
+		var choices := HBoxContainer.new()
+		choices.name = "RewardChoices"
+		choices.add_theme_constant_override("separation", 26)
+		page.body.add_child(choices)
+		for id: String in run.offer.candidates:
+			var definition := run.compiler.catalog.get_definition(StringName(id))
+			var choice := preload("res://ui/scenes/relic_reward_choice.tscn").instantiate() as RelicRewardChoice
+			choice.definition = definition
+			choice.reduced_motion = settings.reduce_motion
+			choice.shortcut = str(run.offer.candidates.find(id) + 1)
+			choices.add_child(choice)
+			var column := choice.content
+			var parent: OptionButton
+			if definition.replaces != &"":
+				parent = OptionButton.new()
+				parent.focus_mode = Control.FOCUS_NONE
+				for instance in run.selection.instances:
+					if instance.content_id == definition.replaces:
+						parent.add_item(_instance_caption(instance))
+						parent.set_item_metadata(parent.item_count - 1, instance.instance_id)
+				column.add_child(parent)
+			var take := _button(column, "取得", "take" + str(run.offer.candidates.find(id) + 1), _choose_reward.bind(StringName(id), str(run.offer.id), parent))
+			commands[str(run.offer.candidates.find(id) + 1)] = take.pressed.emit
+			take.add_theme_font_size_override("font_size", 21)
+			choice.picked.connect(take.pressed.emit)
+			var details := OpenButton.new()
+			details.text = "查看详情"
+			details.pressed.connect(_show_reward_detail.bind(definition))
+			column.add_child(details)
+		_reward_companion()
+		_button(page.footer, "查看遗物", "relics", _relics_page)
+		if run.offer.candidates.is_empty():
+			PageShell.label(page.body, "当前可用遗物已满层。领取补给：恢复 25 点生命，补充一次闪避。", 22)
+			_button(page.footer, "领取补给", "supply", func() -> void:
+				var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
+				if run.supply_reward(str(run.offer.id), session):
+					profile = run.profile
+					_resume_reward_or_stage()
+				else: page.status.text = run.last_error)
+		var reroll := _button(page.footer, "重抽 · 剩余 %d 次" % int(run.facts.get("rerolls", 0)), "reroll", func() -> void:
+			if run.reroll_reward(str(run.offer.id)):
+				profile = run.profile
+				_show_run_stage()
+			else: page.status.text = run.last_error)
+		reroll.disabled = int(run.facts.get("rerolls", 0)) <= 0 or run.offer.candidates.is_empty()
+		_button(page.footer, "放弃本次奖励", "skip", func() -> void:
+			if run.skip_reward(str(run.offer.id)):
+				profile = run.profile
+				_resume_reward_or_stage()
+			else:
+				page.status.text = run.last_error)
+	else:
+		_open("route", "行间", "下一页，选择如何继续。")
+		page.set_width(1080)
+		page.compact_height = 840
+		var path := HBoxContainer.new()
+		path.add_theme_constant_override("separation", 14)
+		page.body.add_child(path)
+		for index in run.itinerary.encounters.size():
+			var marker := PageShell.label(path, "%d章·%d页%s" % [run.itinerary.chapter_of(index + 1), index % run.itinerary.rooms_per_chapter + 1, "\n守关" if (index + 1) % run.itinerary.rooms_per_chapter == 0 else ""], 15, Color("d8c397") if index < run.room_serial else Color("647f7a"))
+			marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var maximum_hp := ceili(run.compiler.compile(run.selection).build.maximum_hp_q() / 1024.0)
+		var hp := ceili(float(run.combat.hp_q) / 1024.0)
+		PageShell.label(page.body, "第 %d 章 · 第 %d 页已完成       生命 %d / %d       持有 %d 件遗物" % [run.itinerary.chapter_of(run.room_serial), (run.room_serial - 1) % run.itinerary.rooms_per_chapter + 1, hp, maximum_hp, run.selection.instances.size()], 16, Color("afc0b5")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var paths := HBoxContainer.new()
+		paths.add_theme_constant_override("separation", 70)
+		page.body.add_child(paths)
+		_route_choice(paths, &"rest", "休息", "生命已满" if hp >= maximum_hp else "恢复 %d 点生命" % mini(20, maximum_hp - hp), "让墨息平稳，再写下一页。", "1", "rest", false)
+		_route_choice(paths, &"offering", "献血", "付出 15 点生命 · 选择一件遗物", "生命需多于 15 点" if hp <= 15 else "以此刻的余力，换取更强的构筑。", "2", "offering", hp <= 15)
+		_button(page.footer, "直接进入下一页", "next", _next_room)
+		_button(page.footer, "保存并返回书库", "home", _home)
+
+
+func _route_choice(parent: HBoxContainer, kind: StringName, title: String, benefit: String, note: String, number: String, command: String, unavailable: bool) -> void:
+	var column := VBoxContainer.new()
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	column.add_theme_constant_override("separation", 14)
+	parent.add_child(column)
+	var emblem := JourneyEmblem.new()
+	emblem.kind = kind
+	emblem.custom_minimum_size.y = 180
+	column.add_child(emblem)
+	PageShell.label(column, title, 29, Color("e4cf9f")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	PageShell.label(column, benefit, 19).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	PageShell.label(column, note, 15, Color("92a69e")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var action_center := CenterContainer.new()
+	column.add_child(action_center)
+	var action := _button(action_center, "选择 · " + number, command, _choose_route.bind(command))
+	action.disabled = unavailable
+	column.mouse_filter = Control.MOUSE_FILTER_STOP
+	column.mouse_default_cursor_shape = Control.CURSOR_ARROW if unavailable else Control.CURSOR_POINTING_HAND
+	column.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not action.disabled:
+			column.accept_event()
+			action.pressed.emit())
+	column.mouse_entered.connect(func() -> void:
+		if not unavailable:
+			emblem.tint = Color("f0d9a1")
+			emblem.queue_redraw())
+	column.mouse_exited.connect(func() -> void:
+		emblem.tint = Color("ccb887")
+		emblem.queue_redraw())
+	commands[number] = func() -> void:
+		if not action.disabled: action.pressed.emit()
+
+
+func _show_reward_detail(definition: CombatContentDefinition) -> void:
+	if page.get_node_or_null("RewardDetail") != null:
+		return
+	var detail := PageShell.create(definition.title, "遗物效果与取得条件")
+	detail.name = "RewardDetail"
+	detail.theme = _archive_theme
+	detail.reduced_motion = settings.reduce_motion
+	detail.accent = archive.accent
+	detail.compact_height = 690
+	page.add_child(detail)
+	detail.set_width(740)
+	detail.command_hint.text = "Esc 返回"
+	PageShell.label(detail.body, ContentDescription.text(definition, run.compiler.catalog), 21)
+	detail.close_button.pressed.connect(detail.queue_free)
+	PageShell.button(detail.footer, "关闭详情", detail.queue_free)
+
+
+func _reward_companion() -> void:
+	var companion := HBoxContainer.new()
+	companion.name = "CurrentBuild"
+	companion.add_theme_constant_override("separation", 30)
+	companion.custom_minimum_size.y = 148
+	page.body.add_child(companion)
+	var art := TextureRect.new()
+	art.texture = load("res://assets/art/books/%s.png" % run.selection.book_id)
+	art.custom_minimum_size = Vector2(126, 146)
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.modulate = Color(0.8, 0.9, 0.9, 0.8)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	companion.add_child(art)
+	var vitals := VBoxContainer.new()
+	vitals.custom_minimum_size.x = 234
+	vitals.add_theme_constant_override("separation", 9)
+	companion.add_child(vitals)
+	PageShell.label(vitals, ContentDescription.BOOKS[str(run.selection.book_id)], 22, Color("bdc4b5"))
+	var hp: int = battle.session.player_hp_q if is_instance_valid(battle) else int(run.combat.hp_q)
+	var maximum_hp: int = battle.session.player_max_hp_q if is_instance_valid(battle) else run.compiler.compile(run.selection).build.maximum_hp_q()
+	PageShell.label(vitals, "生命 %d / %d" % [ceili(hp / 1024.0), ceili(maximum_hp / 1024.0)], 17, Color("a2b2a5"))
+	var health := ProgressBar.new()
+	health.custom_minimum_size.y = 4
+	health.max_value = maximum_hp
+	health.value = hp
+	health.show_percentage = false
+	health.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vitals.add_child(health)
+	var shield: int = battle.session.run_state.shield_q if is_instance_valid(battle) else int(run.combat.shield_q)
+	PageShell.label(vitals, "护盾 %d" % ceili(shield / 1024.0), 17, Color("a2b4bd"))
+	var owned := VBoxContainer.new()
+	owned.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	companion.add_child(owned)
+	PageShell.label(owned, "已持有的遗物", 17, Color("94a59e"))
+	var names: PackedStringArray = []
+	for instance in run.selection.instances:
+		names.append(run.compiler.catalog.get_definition(instance.content_id).title)
+	PageShell.label(owned, "、".join(names) if not names.is_empty() else "尚未取得遗物", 17, Color("8c9f97"))
+
+
+func _choose_route(choice: String) -> void:
+	if not run.take_route(choice):
+		page.status.text = run.last_error
+		return
+	profile = run.profile
+	_show_run_stage()
+
+
+func _instance_caption(instance: CombatAssetInstance) -> String:
+	return run.compiler.catalog.get_definition(instance.content_id).title
+
+
+func _relics_page(owned_only: bool = false) -> void:
+	_open("build" if owned_only else "relics", "当前构筑" if owned_only else "遗物图鉴", "本次远征已取得的遗物" if owned_only else "查看效果、叠层与局内前置")
+	page.set_width(1120)
+	page.scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	page.body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var search := LineEdit.new()
+	search.placeholder_text = "搜索遗物名称"
+	search.focus_mode = Control.FOCUS_CLICK
+	page.body.add_child(search)
+	var workspace := HBoxContainer.new()
+	workspace.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	workspace.add_theme_constant_override("separation", 40)
+	page.body.add_child(workspace)
+	var list_scroll := SmoothScroll.new()
+	list_scroll.custom_minimum_size.x = 320
+	list_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var list := VBoxContainer.new()
+	list_scroll.add_child(list)
+	workspace.add_child(list_scroll)
+	var detail_scroll := SmoothScroll.new()
+	detail_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	workspace.add_child(detail_scroll)
+	var detail := VBoxContainer.new()
+	detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail.add_theme_constant_override("separation", 18)
+	detail_scroll.add_child(detail)
+	var compiler := run.compiler if run != null else BuildCompiler.new()
+	var catalog := compiler.catalog
+	var acquisition := AcquisitionService.new(compiler)
+	var glyph := RelicGlyph.new()
+	glyph.custom_minimum_size = Vector2(100, 100)
+	detail.add_child(glyph)
+	var title := PageShell.label(detail, "", 26, Color("dfc58b"))
+	var description := PageShell.label(detail, "", 18)
+	var eligibility := PageShell.label(detail, "", 17)
+	eligibility.visible = not owned_only
+	var ownership := PageShell.label(detail, "", 18)
+	var current := {"id": &""}
+	var select := func(id: StringName) -> void:
+		if current.id == id:
+			return
+		current.id = id
+		var definition := catalog.get_definition(id)
+		glyph.definition = definition
+		glyph.queue_redraw()
+		title.text = definition.title
+		description.text = ContentDescription.text(definition, catalog)
+		var chosen := run.selection if run != null and run.phase != "RESULT" else BuildSelection.new()
+		if run == null or run.phase == "RESULT":
+			chosen.book_id = StringName(settings.book_id)
+		var context := run.acquisition_context() if run != null else {"shortest": settings.min_length, "longest": settings.max_length}
+		if not owned_only:
+			var qualification := acquisition.evaluate(chosen, id, context)
+			eligibility.text = "当前可取得" if qualification.eligible else ContentDescription.diagnostics(qualification.diagnostics, catalog)
+		var count := 0
+		for instance in chosen.instances:
+			if instance.content_id == id: count += 1
+		ownership.text = "本局持有 %d 层" % count
+		ownership.visible = count > 0
+	var buttons: Array[Button] = []
+	var first_id: StringName = &""
+	var listed: Array[StringName] = []
+	var owned: Dictionary[StringName, int] = {}
+	if run != null:
+		for instance in run.selection.instances:
+			owned[instance.content_id] = owned.get(instance.content_id, 0) + 1
+	for id: String in AcquisitionService.ACTIVE_RELICS:
+		if owned_only and owned.get(StringName(id), 0) <= 0: continue
+		if first_id == &"": first_id = StringName(id)
+		listed.append(StringName(id))
+		# Commands select details immediately, including rows not instantiated yet.
+		commands["relic" + str(listed.size())] = select.bind(StringName(id))
+	search.text_changed.connect(func(query: String) -> void:
+		for button in buttons:
+			button.visible = query.is_empty() or str(button.get_meta("relic_title")).contains(query))
+	if first_id != &"": select.call(first_id)
+	else: PageShell.label(detail, "尚未取得遗物。击败敌人积累经验，获得三选一机会。", 18, Color("acbab2"))
+	_catalog_button(page.footer, "返回", "back", _back)
+	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+	var opened_page := page
+	var build_started := Time.get_ticks_usec()
+	for index in listed.size():
+		var definition := catalog.get_definition(listed[index])
+		var caption := definition.title + (" ×%d" % owned.get(listed[index], 0) if owned_only else "")
+		var button := _catalog_button(list, caption, "relic" + str(index + 1), select.bind(listed[index]))
+		button.set_meta("relic_title", definition.title)
+		button.visible = search.text.is_empty() or definition.title.contains(search.text)
+		buttons.append(button)
+		if Time.get_ticks_usec() - build_started >= 2000 and index + 1 < listed.size():
+			await get_tree().process_frame
+			if not is_instance_valid(opened_page) or opened_page != page or not opened_page.visible:
+				return
+			build_started = Time.get_ticks_usec()
+
+
+func _catalog_button(parent: Node, caption: String, command: String, callback: Callable) -> OpenButton:
+	var button := OpenButton.new()
+	button.text = "%s    %s" % [caption, command]
+	button.defer_decoration = true
+	button.pressed.connect(callback)
+	button.name = command.capitalize()
+	button.set_motion_reduced(settings.reduce_motion)
+	button.pressed.connect(func() -> void: sound.play_cue("ui.select"))
+	button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
+	var scroll_parent := parent.get_parent()
+	if scroll_parent is ScrollContainer:
+		# A newly built row receives its final rectangle in the queued container sort.
+		button.pressed.connect(scroll_parent.ensure_control_visible.bind(button), CONNECT_DEFERRED)
+	_bind_control_command(button, command)
+	parent.add_child(button)
+	return button
+
+
+func _choose_reward(id: StringName, offer_id: String, parent: OptionButton) -> void:
+	var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
+	var parent_id := str(parent.get_selected_metadata()) if parent != null else ""
+	if not run.take_reward(id, offer_id, parent_id, session):
+		page.status.text = run.last_error
+		return
+	profile = run.profile
+	_resume_reward_or_stage()
+
+
+func _resume_reward_or_stage() -> void:
+	if run.phase == "BATTLE":
+		page.queue_free()
+		page = null
+		route = "battle"
+		battle.show()
+		battle.session.set_physics_process(true)
+		router.typing = battle.session.typing
+		router.configure(InputRouter.Context.TYPING)
+	else:
+		_show_run_stage()
+
+
+func _next_room() -> void:
+	if not run.leave_route():
+		page.status.text = run.last_error
+		return
+	profile = run.profile
+	_start_battle()
+
+
+func _run_records() -> void:
+	_open("history", "远征记录", "已经归卷的旅程")
+	page.set_width(1140)
+	page.compact_height = 820
+	page.scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	page.body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	if profile == null:
+		page.status.text = saves.last_error
+		return
+	var workspace := HBoxContainer.new()
+	workspace.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	workspace.add_theme_constant_override("separation", 45)
+	page.body.add_child(workspace)
+	var list_scroll := SmoothScroll.new()
+	list_scroll.custom_minimum_size.x = 310
+	list_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	workspace.add_child(list_scroll)
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 10)
+	list_scroll.add_child(list)
+	var detail_scroll := SmoothScroll.new()
+	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	detail_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	workspace.add_child(detail_scroll)
+	_history_detail = VBoxContainer.new()
+	_history_detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_history_detail.add_theme_constant_override("separation", 20)
+	detail_scroll.add_child(_history_detail)
+	var record_index := 0
+	var records := profile.records.duplicate()
+	records.reverse()
+	for record in records:
+		record_index += 1
+		var book_title := BuildCatalog.new().get_definition(StringName(record.book)).title
+		var action := _button(list, "%02d · %s" % [records.size() - record_index + 1, book_title], "entry%d" % record_index, _record_detail.bind(record))
+		action.add_theme_font_size_override("font_size", 18)
+		PageShell.label(list, "%s · %d 页" % [_result_name(record), int(record.rooms)], 14, Color("92a69f"))
+	if not records.is_empty(): _record_detail(records[0])
+	else:
+		var emblem := JourneyEmblem.new()
+		emblem.kind = &"growth"
+		emblem.custom_minimum_size.y = 210
+		_history_detail.add_child(emblem)
+		PageShell.label(_history_detail, "这里还没有归卷的远征", 25, Color("ddc79b"))
+		PageShell.label(_history_detail, "远征结束后，法书、遗物与行间选择会留在这里。", 17, Color("a0b1a8"))
+	_button(page.footer, "返回书库", "back", _home)
+
+
+func _result_name(record: Dictionary) -> String:
+	return {"victory": "通关", "defeat": "战败", "abandon": "主动结束", "interrupted": "中断", "incompatible": "旧远征"}.get(str(record.reason), str(record.reason))
+
+
+func _record_detail(record: Dictionary) -> void:
+	for child in _history_detail.get_children():
+		_history_detail.remove_child(child)
+		child.queue_free()
+	var book := BuildCatalog.new().get_definition(StringName(record.book))
+	PageShell.label(_history_detail, book.title, 30, Color("e4ce9b"))
+	PageShell.label(_history_detail, "%s   ·   %d 页   ·   %d 正确字符" % [_result_name(record), int(record.rooms), int(record.get("characters", 0))], 18)
+	var mode := str(record.get("difficulty", "normal"))
+	PageShell.label(_history_detail, "%s · 第 %d 周目" % [RunSession.DIFFICULTY_NAMES[RunSession.DIFFICULTIES.find(mode)], int(record.get("loop", 0)) + 1], 15, Color("94aba3"))
+	PageShell.label(_history_detail, "随行遗物", 21, Color("d8c496"))
+	var build: Dictionary = record.get("build", {})
+	var assets: Dictionary = build.get("assets", {}).duplicate()
+	if not build.get("instances", []).is_empty():
+		assets.clear()
+		for instance: Dictionary in build.instances:
+			var id := str(instance.content_id)
+			assets[id] = int(assets.get(id, 0)) + 1
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 16)
+	grid.add_theme_constant_override("v_separation", 20)
+	_history_detail.add_child(grid)
+	for id in assets:
+		var definition := BuildCatalog.new().get_definition(StringName(id))
+		if definition == null: continue
+		var cell := VBoxContainer.new()
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		grid.add_child(cell)
+		var glyph := RelicGlyph.new()
+		glyph.definition = definition
+		glyph.custom_minimum_size = Vector2(120, 65)
+		cell.add_child(glyph)
+		PageShell.label(cell, "%s ×%d" % [definition.title, int(assets[id])], 15).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if assets.is_empty(): PageShell.label(_history_detail, "未携带遗物", 16, Color("91a69b"))
+	PageShell.label(_history_detail, "行间足迹", 21, Color("d8c496"))
+	for item: Dictionary in record.get("routes", []):
+		PageShell.label(_history_detail, "%02d  ─  %s" % [int(item.room), {"continue": "前行", "rest": "休息", "offering": "献血换取遗物"}.get(str(item.choice), str(item.choice))], 16)
+	if record.get("routes", []).is_empty():
+		PageShell.label(_history_detail, "尚未经过行间", 16, Color("91a69b"))
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_quit_game()
+
+
+func _quit_game() -> void:
+	if run != null and is_instance_valid(battle) and battle.session.result == 0:
+		if not profile.run_checkpoint.get("facts", {}).has("god_transfer") and not run.suspend_battle(battle.session):
+			if is_instance_valid(page):
+				page.status.text = run.last_error
+				page.status.show()
+			return
+		profile = run.profile
+	get_tree().quit()
 
 
 func _pause() -> void:
@@ -1077,9 +1858,10 @@ func _pause() -> void:
 		content.get_node("Stats/Health").display(str(ceili(float(session.player_hp_q)/BattleSession.Q)))
 		content.get_node("Stats/Kills").display(str(kills))
 		content.get_node("Stats/Time").display("%02d:%02d" % [floori(session.elapsed/60.0), floori(fmod(session.elapsed,60.0))])
+		content.get_node("Stats/Level").display(str(run.rewards.level))
 	else:
 		content.get_node("Stats").hide()
-	var actions := {"Vocabulary": _vocabulary_page, "Guide": _guide, "Settings": func() -> void: _settings_page("pause")}
+	var actions := {"Build": func() -> void: _relics_page(true), "Codex": _relics_page, "Guide": _guide, "Settings": func() -> void: _settings_page("pause")}
 	for node_name: String in actions:
 		var button := content.get_node("Menu/" + node_name) as OpenButton
 		button.set_motion_reduced(settings.reduce_motion)
@@ -1088,26 +1870,25 @@ func _pause() -> void:
 		button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
 		_bind_control_command(button, button._command_word)
 	page.footer.alignment = BoxContainer.ALIGNMENT_END
-	_button(page.footer, "结束本局", "quit", _confirm_quit)
+	_button(page.footer, "结束并返回书库", "quit", _end_current_run)
 	_button(page.footer, "继续战斗" if paused_route == "battle" else "继续习字", "resume", _resume)
 
 
-func _confirm_quit() -> void:
-	_open("quit", "合上此页", "结束后进入本局战报。" if paused_route == "battle" else "结束本次习字，返回书库。")
-	page.compact_height = 330.0
-	page.set_width(620)
-	page.status.hide()
-	_button(page.footer, "继续冒险", "cancel", _pause)
-	_button(page.footer, "结束并结算" if paused_route == "battle" else "返回书库", "confirm", func() -> void:
-		if paused_route == "battle":
-			_resume()
-			battle.session.queue_action(&"abandon")
-		else:
-			_home()
-	)
+func _end_current_run() -> void:
+	if paused_route == "battle":
+		if not run.end_run(battle.session):
+			page.status.show()
+			page.status.text = run.last_error
+			return
+		profile = run.profile
+	_home()
 
 
 func _resume() -> void:
+	if profile.run_checkpoint.get("facts", {}).has("god_transfer"):
+		page.status.show()
+		page.status.text = "档案接管尚未完成，请重新输入激活词令重试。"
+		return
 	if paused_route == "battle" and is_instance_valid(battle):
 		page.queue_free()
 		page = null

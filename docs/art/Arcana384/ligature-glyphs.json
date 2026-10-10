@@ -1,0 +1,4470 @@
+{
+  "version": 12,
+  "edition": "Arcana384 lexical register 50",
+  "status": "art_frozen",
+  "viewBox_height": 128,
+  "stroke_width": 4.8,
+  "count": 50,
+  "feature": "dlig",
+  "semantic_change_when_enabled": false,
+  "variable_advance": true,
+  "lexical_meaning_independent_of_dlig": true,
+  "replaces": "archived 80 phrase ligatures",
+  "ligatures": [
+    {
+      "index": 1,
+      "id": "liga-001",
+      "lexical_id": "lex-001",
+      "proposal_id": "L01",
+      "chars": "时空",
+      "name": "时空",
+      "meaning": "事件所处的时间与空间所组成的共同参照整体。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        20,
+        38
+      ],
+      "glyph_ids": [
+        "rune-020",
+        "rune-038"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "时",
+          "index": 20,
+          "glyph_id": "rune-020",
+          "role": "entity",
+          "concept": "时间"
+        },
+        {
+          "position": 2,
+          "char": "空",
+          "index": 38,
+          "glyph_id": "rune-038",
+          "role": "entity",
+          "concept": "空间"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈时空〉：时空",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "时间与空间并列合称",
+      "distinction_from_existing_roots": "时与空各只给出一种参照；合词可一次指称两者构成的整体。",
+      "admission_reason": "叙事背景、位置说明、世界设定、时空魔法",
+      "boundary_note": "不自动指相对论中的特定数学模型。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M42 24 Q17 45 24 64 Q25 89 42 105",
+        "M83 24 Q116 43 109 65 Q106 87 83 105",
+        "M24 64 L42 64",
+        "M83 86 L101 86",
+        "M131 96 L109 65 L148 24 L190 65 L160 96",
+        "M131 114 L160 114"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 88810,
+      "metaphor": "时间的双参照弧和空间的开放斜界共用一个坐标接点，保留两处时位与空间底部开口，整体成为可共同定位事件的参照域。",
+      "component_transformations": [
+        {
+          "char": "时",
+          "source_index": 20,
+          "retained_anchor": "时间",
+          "contextual_form": "时间双弧及两个不同高度刻度仍可辨，右弧与空间左端共点"
+        },
+        {
+          "char": "空",
+          "source_index": 38,
+          "retained_anchor": "空间",
+          "contextual_form": "开放菱域的左端改作时间参照点，底部仍保持开放与基线"
+        }
+      ],
+      "label": "时空",
+      "lexical_label": "时空",
+      "sequence": "时空",
+      "number": 1
+    },
+    {
+      "index": 2,
+      "id": "liga-002",
+      "lexical_id": "lex-002",
+      "proposal_id": "L02",
+      "chars": "命运",
+      "name": "命运",
+      "meaning": "初始条件、根本限度与后续遭遇共同构成的存在历程。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        11,
+        12
+      ],
+      "glyph_ids": [
+        "rune-011",
+        "rune-012"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "命",
+          "index": 11,
+          "glyph_id": "rune-011",
+          "role": "entity",
+          "concept": "定命"
+        },
+        {
+          "position": 2,
+          "char": "运",
+          "index": 12,
+          "glyph_id": "rune-012",
+          "role": "entity",
+          "concept": "际运"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈命运〉：命运",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "定命与际运合称",
+      "distinction_from_existing_roots": "命只讲不能自选的条件，运只讲境况展开，合词兼指二者。",
+      "admission_reason": "人物经历、人生讨论、预言与改命叙事",
+      "boundary_note": "不暗含一切已经预定，也不承诺可被改变。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M30 34 Q60 18 88 39 L72 64 Q46 64 46 87 Q50 108 77 96 C101 87 101 64 116 49 C135 24 169 21 187 48 C207 76 170 101 153 79 Q143 66 158 54",
+        "M39 36 L72 64",
+        "M77 96 L96 112"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 95261,
+      "metaphor": "定命的起始折盖和不可自选的回限直接延续为际运的开放盘旋轨迹，固定条件与展开遭遇组成同一条存在历程。",
+      "component_transformations": [
+        {
+          "char": "命",
+          "source_index": 11,
+          "retained_anchor": "定命",
+          "contextual_form": "保留封定的斜盖、折返和下部受限钩形；钩尾成为际运入口"
+        },
+        {
+          "char": "运",
+          "source_index": 12,
+          "retained_anchor": "际运",
+          "contextual_form": "回旋轨迹从命的末端连续展开，保留内向卷入和继续行程的外脚"
+        }
+      ],
+      "label": "命运",
+      "lexical_label": "命运",
+      "sequence": "命运",
+      "number": 2
+    },
+    {
+      "index": 3,
+      "id": "liga-003",
+      "lexical_id": "lex-003",
+      "proposal_id": "L03",
+      "chars": "因果",
+      "name": "因果关系",
+      "meaning": "前置条件与其结果之间的作用联系。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "relation"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        285,
+        286
+      ],
+      "glyph_ids": [
+        "rune-285",
+        "rune-286"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "因",
+          "index": 285,
+          "glyph_id": "rune-285",
+          "role": "relation",
+          "concept": "成因"
+        },
+        {
+          "position": 2,
+          "char": "果",
+          "index": 286,
+          "glyph_id": "rune-286",
+          "role": "relation",
+          "concept": "结果关联"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈因果〉：因果关系",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "关系端点组成整体关系名",
+      "distinction_from_existing_roots": "因和果分别标记前置与结果，合词指称二者之间的联系。",
+      "admission_reason": "解释、推理、责任讨论、魔法代价",
+      "boundary_note": "不能把时间先后直接当成因果。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M40 57 A12 12 0 1 1 64 57 A12 12 0 1 1 40 57",
+        "M20 29 Q24 55 40 57",
+        "M64 57 Q112 45 140.6 83.4",
+        "M52 69 L52 102",
+        "M191 29 Q175 54 157.4 83.4",
+        "M149 69 L170 105 L128 105 L149 69"
+      ],
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "advance": 208,
+      "style_seed": 75288,
+      "metaphor": "成因圆核的作用支路直接成为结果三角的一路成因；另一前置路径共同汇入结果，使图形指向作用联系而非只有时间先后。",
+      "component_transformations": [
+        {
+          "char": "因",
+          "source_index": 285,
+          "retained_anchor": "成因",
+          "contextual_form": "成因核心、前置输入和持续作用支仍保留；右支延长并共享结果入口"
+        },
+        {
+          "char": "果",
+          "source_index": 286,
+          "retained_anchor": "结果关联",
+          "contextual_form": "结果三角和两路汇入保留，左路与成因的输出为同一笔"
+        }
+      ],
+      "label": "因果关系",
+      "lexical_label": "因果关系",
+      "sequence": "因果",
+      "number": 3
+    },
+    {
+      "index": 4,
+      "id": "liga-004",
+      "lexical_id": "lex-004",
+      "proposal_id": "L04",
+      "chars": "昔事",
+      "name": "往事",
+      "meaning": "参照时点以前已经发生、可以被回顾的事件。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        21,
+        16
+      ],
+      "glyph_ids": [
+        "rune-021",
+        "rune-016"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "昔",
+          "index": 21,
+          "glyph_id": "rune-021",
+          "role": "entity",
+          "concept": "过去"
+        },
+        {
+          "position": 2,
+          "char": "事",
+          "index": 16,
+          "glyph_id": "rune-016",
+          "role": "entity",
+          "concept": "事件"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈昔事〉：往事",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "过去时段限定事件",
+      "distinction_from_existing_roots": "昔是过去时段，事是任意事件，合词指可谈论的过去经历或事迹。",
+      "admission_reason": "回忆、故事、人物背景、历史材料",
+      "boundary_note": "不直接等同于完整历史学或历史记录。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M66 22 L66 106",
+        "M66 39 Q30 31 29 61 Q30 84 52 84",
+        "M32 100 L66 100",
+        "M66 39 L101 39 L101 59 L128 59",
+        "M128 59 A13 13 0 1 1 154 59 A13 13 0 1 1 128 59",
+        "M154 59 L190 59 L190 103",
+        "M141 72 L141 102"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 66346,
+      "metaphor": "昔的回顾弧与时间界直接成为事件的前置定位支架，事件核及可再次引用的落点仍完整，合词固定为可回顾的过去发生。",
+      "component_transformations": [
+        {
+          "char": "昔",
+          "source_index": 21,
+          "retained_anchor": "过去",
+          "contextual_form": "过去时界和回顾弧、低位已发生参照保留"
+        },
+        {
+          "char": "事",
+          "source_index": 16,
+          "retained_anchor": "事件",
+          "contextual_form": "事件左角架直接起于过去参照，事件核及右侧定位、下落点保留"
+        }
+      ],
+      "label": "往事",
+      "lexical_label": "往事",
+      "sequence": "昔事",
+      "number": 4
+    },
+    {
+      "index": 5,
+      "id": "liga-005",
+      "lexical_id": "lex-005",
+      "proposal_id": "L05",
+      "chars": "生续",
+      "name": "生命",
+      "meaning": "生命体持续活着、维持和延续自身的整体活动与状态。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        3,
+        263
+      ],
+      "glyph_ids": [
+        "rune-003",
+        "rune-263"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "生",
+          "index": 3,
+          "glyph_id": "rune-003",
+          "role": "action",
+          "concept": "生成"
+        },
+        {
+          "position": 2,
+          "char": "续",
+          "index": 263,
+          "glyph_id": "rune-263",
+          "role": "action",
+          "concept": "接续"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈生续〉：生命",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "生成与接续词汇化为持续活着的生命状态",
+      "distinction_from_existing_roots": "生只指开始出现，续只指过程接续，合词稳定指称生命。",
+      "admission_reason": "日常人生话题、生命与死亡、生命魔法、世界叙事",
+      "boundary_note": "生命是本合词的约定义；命仍保留定命义。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M39 103 Q36 78 60 60 L82 29 L123 29 Q147 29 147 53 L147 74",
+        "M60 60 L38 29",
+        "M111 57 L111 79 Q111 102 134 102 L190 102",
+        "M111 57 L147 74"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 94969,
+      "metaphor": "新生分支直接长成接续的上段，并通过斜接口接入下段延续；连续活着由共同支架维持，作为生命的约定词形而非两条命令。",
+      "component_transformations": [
+        {
+          "char": "生",
+          "source_index": 3,
+          "retained_anchor": "生成",
+          "contextual_form": "生成的立起主干和分支保留，上分支同时成为接续前段"
+        },
+        {
+          "char": "续",
+          "source_index": 263,
+          "retained_anchor": "接续",
+          "contextual_form": "前后两段开口回折及共接的斜接口保留，接续后段向右延展"
+        }
+      ],
+      "label": "生命",
+      "lexical_label": "生命",
+      "sequence": "生续",
+      "number": 5
+    },
+    {
+      "index": 6,
+      "id": "liga-006",
+      "lexical_id": "lex-006",
+      "proposal_id": "L06",
+      "chars": "恒生",
+      "name": "永生",
+      "meaning": "生命持续不止、不因时间流逝而自然终结的状态。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        24,
+        3
+      ],
+      "glyph_ids": [
+        "rune-024",
+        "rune-003"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "恒",
+          "index": 24,
+          "glyph_id": "rune-024",
+          "role": "quality",
+          "concept": "恒定"
+        },
+        {
+          "position": 2,
+          "char": "生",
+          "index": 3,
+          "glyph_id": "rune-003",
+          "role": "action",
+          "concept": "生成"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈恒生〉：永生",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "恒定与生命生成的意象词汇化",
+      "distinction_from_existing_roots": "恒并非生命概念，生是生成；合词专指持续活着。",
+      "admission_reason": "生命愿望、神话叙事、魔法目标",
+      "boundary_note": "不把它直接等同于不可受伤。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 45 L109 45 L129 29",
+        "M24 82 L109 82 Q129 84 145 69",
+        "M37 27 Q57 65 37 101",
+        "M91 27 Q70 65 91 101",
+        "M132 104 Q128 86 145 69 L152 57 L176 28",
+        "M152 57 L129 29 M145 69 L193 78"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 84624,
+      "metaphor": "恒定的双层参照分别进入生成分支的两端，恒常条件与持续生命的枝点共用支撑，形体向右开放而不封成终止记号。",
+      "component_transformations": [
+        {
+          "char": "恒",
+          "source_index": 24,
+          "retained_anchor": "恒定",
+          "contextual_form": "两条平行参照及内弯双界保留，参照的右端各自并入生命分支"
+        },
+        {
+          "char": "生",
+          "source_index": 3,
+          "retained_anchor": "生成",
+          "contextual_form": "生成的主干和两条上分支清楚可辨，上端与恒的条件参照共享节点"
+        }
+      ],
+      "label": "永生",
+      "lexical_label": "永生",
+      "sequence": "恒生",
+      "number": 6
+    },
+    {
+      "index": 7,
+      "id": "liga-007",
+      "lexical_id": "lex-007",
+      "proposal_id": "L07",
+      "chars": "复生",
+      "name": "复生",
+      "meaning": "经历死亡的主体重新活着。",
+      "category": "时间与存在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        33,
+        3
+      ],
+      "glyph_ids": [
+        "rune-033",
+        "rune-003"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "复",
+          "index": 33,
+          "glyph_id": "rune-033",
+          "role": "action",
+          "concept": "复现"
+        },
+        {
+          "position": 2,
+          "char": "生",
+          "index": 3,
+          "glyph_id": "rune-003",
+          "role": "action",
+          "concept": "生成"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈复生〉：复生",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "再次出现与生成组成生命返回的词",
+      "distinction_from_existing_roots": "复可以是任意状态重现，生可以是首次生成；合词指死亡后的生命返回。",
+      "admission_reason": "生死、重逢、治疗与亡者叙事",
+      "boundary_note": "本词约定恢复的是先前主体的生命。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M35 37 A14 14 0 1 1 63 37 A14 14 0 1 1 35 37",
+        "M75 86 A14 14 0 1 1 103 86 A14 14 0 1 1 75 86",
+        "M49 51 C42 80 72 88 75 86",
+        "M103 86 Q139 92 144 63 L171 27",
+        "M144 63 L123 31",
+        "M144 63 Q134 79 135 106"
+      ],
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "advance": 208,
+      "style_seed": 82763,
+      "metaphor": "复现的前后圆核保持同一身份，后核直接重新长出生命分支，回来的主体与新生成节点相连，约定指死亡后的生命返回。",
+      "component_transformations": [
+        {
+          "char": "复",
+          "source_index": 33,
+          "retained_anchor": "复现",
+          "contextual_form": "两个相同圆核及返回路径保留，后核成为生成的实际主体"
+        },
+        {
+          "char": "生",
+          "source_index": 3,
+          "retained_anchor": "生成",
+          "contextual_form": "生命分支直接从复现后的同一核延出，分立枝点与立起主干保留"
+        }
+      ],
+      "label": "复生",
+      "lexical_label": "复生",
+      "sequence": "复生",
+      "number": 7
+    },
+    {
+      "index": 8,
+      "id": "liga-008",
+      "lexical_id": "lex-008",
+      "proposal_id": "L08",
+      "chars": "记忆",
+      "name": "记忆内容",
+      "meaning": "心智中保存、能够被重新调取的经历或内容。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        329,
+        145
+      ],
+      "glyph_ids": [
+        "rune-329",
+        "rune-145"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "记",
+          "index": 329,
+          "glyph_id": "rune-329",
+          "role": "action",
+          "concept": "记存"
+        },
+        {
+          "position": 2,
+          "char": "忆",
+          "index": 145,
+          "glyph_id": "rune-145",
+          "role": "action",
+          "concept": "记忆"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈记忆〉：记忆内容",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "记存与回忆组成内容名",
+      "distinction_from_existing_roots": "记是保存动作，忆是调取动作，合词可直接指称所保存的内容。",
+      "admission_reason": "自我叙述、学习、失忆、记忆魔法",
+      "boundary_note": "不把一切外部文件都算作心智记忆；外部记录仍另称。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 26 L51 26 L51 54",
+        "M42 54 L103 54 C107 16 166 14 194 31",
+        "M42 54 L42 104 L103 104 L103 54",
+        "M61 70 L75 86 Q118 116 170 95",
+        "M178 51 Q145 39 138 66 Q136 85 160 85"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 84796,
+      "metaphor": "记录腔保留一段经历，腔壁转入回忆的返入弧；内向回钩与储存核相呼应，表达可调取的心智内容",
+      "component_transformations": [
+        "记录腔保留一段经历，腔壁转入回忆的返入弧；内向回钩与储存核相呼应，表达可调取的心智内容"
+      ],
+      "label": "记忆内容",
+      "lexical_label": "记忆内容",
+      "sequence": "记忆",
+      "number": 8
+    },
+    {
+      "index": 9,
+      "id": "liga-009",
+      "lexical_id": "lex-009",
+      "proposal_id": "L09",
+      "chars": "事知",
+      "name": "经验",
+      "meaning": "通过经历或观察事件而获得的认识。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        16,
+        141
+      ],
+      "glyph_ids": [
+        "rune-016",
+        "rune-141"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "事",
+          "index": 16,
+          "glyph_id": "rune-016",
+          "role": "entity",
+          "concept": "事件"
+        },
+        {
+          "position": 2,
+          "char": "知",
+          "index": 141,
+          "glyph_id": "rune-141",
+          "role": "entity",
+          "concept": "认知"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈事知〉：经验",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "事件作为认知的来源",
+      "distinction_from_existing_roots": "知不限定来源，本词专指从实际经历取得的认识。",
+      "admission_reason": "学习、交流、技能传授、人物成长",
+      "boundary_note": "不保证认识正确，也不等同于已经验证的科学结论。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 29 L24 59 L40 59",
+        "M40 59 A12 12 0 1 1 64 59 A12 12 0 1 1 40 59",
+        "M52 71 L52 102",
+        "M64 59 L104 59 L119 82 Q152 112 190 85",
+        "M190 35 Q160 16 135 33 Q111 52 119 82",
+        "M132.48 91.72 L148 54 L190 85"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 81493,
+      "metaphor": "事件的右定位支直接成为认知范围的下边界，经历核进入可调用的理解结构；内部辨识折面仍保留，合词指从经历取得的认识。",
+      "component_transformations": [
+        {
+          "char": "事",
+          "source_index": 16,
+          "retained_anchor": "事件",
+          "contextual_form": "事件核、左定位架和下落点保留，右架转为认识范围的入口"
+        },
+        {
+          "char": "知",
+          "source_index": 141,
+          "retained_anchor": "认知",
+          "contextual_form": "认知的开放范围与内部辨识折面保留，下边界接续事件右架"
+        }
+      ],
+      "label": "经验",
+      "lexical_label": "经验",
+      "sequence": "事知",
+      "number": 9
+    },
+    {
+      "index": 10,
+      "id": "liga-010",
+      "lexical_id": "lex-010",
+      "proposal_id": "L10",
+      "chars": "自知",
+      "name": "自我认识",
+      "meaning": "对自身状态、能力与限度形成的认识。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        381,
+        141
+      ],
+      "glyph_ids": [
+        "rune-381",
+        "rune-141"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "自",
+          "index": 381,
+          "glyph_id": "rune-381",
+          "role": "entity",
+          "concept": "自身"
+        },
+        {
+          "position": 2,
+          "char": "知",
+          "index": 141,
+          "glyph_id": "rune-141",
+          "role": "entity",
+          "concept": "认知"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈自知〉：自我认识",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "自身作为认知对象",
+      "distinction_from_existing_roots": "自只指主体自身，知可指任何认识，合词固定其对象。",
+      "admission_reason": "自我描述、反省、精神探索",
+      "boundary_note": "不自动表示完美自省或洞悉所有内心活动。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M39 67 A15 15 0 1 1 69 67 A15 15 0 1 1 39 67",
+        "M39 67 L24 47 Q39 16 77 28 Q103 30 123 58",
+        "M190 35 Q161 16 138 34 Q114 46 123 58 Q115 71 123 82 Q158 109 191 85",
+        "M143.82 93.61 L153 55 L191 85",
+        "M123 82 Q102 100 69 67"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 94644,
+      "metaphor": "从同一主体核出发的观察范围与认知侧界共享节点，认知下缘明确返回原核；理解的对象始终是自身，没有新增另一主体。",
+      "component_transformations": [
+        {
+          "char": "自",
+          "source_index": 381,
+          "retained_anchor": "自身",
+          "contextual_form": "唯一主体圆核保留，外出与返回分别接在同一核两侧"
+        },
+        {
+          "char": "知",
+          "source_index": 141,
+          "retained_anchor": "认知",
+          "contextual_form": "开放认知范围及辨识折面与自省回路共界，所得认识回到原主体"
+        }
+      ],
+      "label": "自我认识",
+      "lexical_label": "自我认识",
+      "sequence": "自知",
+      "number": 10
+    },
+    {
+      "index": 11,
+      "id": "liga-011",
+      "lexical_id": "lex-011",
+      "proposal_id": "L11",
+      "chars": "自主",
+      "name": "自主",
+      "meaning": "主体对自己的方向与选择拥有主导权。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "relation"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        381,
+        298
+      ],
+      "glyph_ids": [
+        "rune-381",
+        "rune-298"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "自",
+          "index": 381,
+          "glyph_id": "rune-381",
+          "role": "entity",
+          "concept": "自身"
+        },
+        {
+          "position": 2,
+          "char": "主",
+          "index": 298,
+          "glyph_id": "rune-298",
+          "role": "relation",
+          "concept": "主导"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈自主〉：自主",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "自身与主导关系词汇化",
+      "distinction_from_existing_roots": "独讲不依赖同类伙伴，主讲关系中的主导方；自主专指自己决定自己的方向。",
+      "admission_reason": "个人选择、关系边界、控制与解控",
+      "boundary_note": "不等于没有任何依赖、规则或后果。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M39 67 A15 15 0 1 1 69 67 A15 15 0 1 1 39 67",
+        "M39 67 L24 47 Q39 16 77 28 Q111 24 145 50",
+        "M164 23 L183 50 L145 50 L164 23",
+        "M164 50 L136 106",
+        "M188 89 L149.5 79 Q105 108 69 67"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 73312,
+      "metaphor": "自身的外出回路接到主导三角，主导轴的反馈又回到同一主体核；选择方向的权源与承担该方向的主体由同一闭合关系绑定。",
+      "component_transformations": [
+        {
+          "char": "自",
+          "source_index": 381,
+          "retained_anchor": "自身",
+          "contextual_form": "单一主体核与绕出、返回路径保留，两条关系均指回自身"
+        },
+        {
+          "char": "主",
+          "source_index": 298,
+          "retained_anchor": "主导",
+          "contextual_form": "主导三角、向下的决定轴及侧向控制支保留，控制支回接自身而非另一主体"
+        }
+      ],
+      "label": "自主",
+      "lexical_label": "自主",
+      "sequence": "自主",
+      "number": 11
+    },
+    {
+      "index": 12,
+      "id": "liga-012",
+      "lexical_id": "lex-012",
+      "proposal_id": "L12",
+      "chars": "安心",
+      "name": "安心",
+      "meaning": "心智感到当前处境能够维持、没有迫近威胁的安稳状态。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        177,
+        158
+      ],
+      "glyph_ids": [
+        "rune-177",
+        "rune-158"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "安",
+          "index": 177,
+          "glyph_id": "rune-177",
+          "role": "quality",
+          "concept": "安稳"
+        },
+        {
+          "position": 2,
+          "char": "心",
+          "index": 158,
+          "glyph_id": "rune-158",
+          "role": "entity",
+          "concept": "心智主体"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈安心〉：安心",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "安稳与心智词汇化为主观安稳感",
+      "distinction_from_existing_roots": "安可指任何范围的安稳，心是主体，合词专指主观安稳感。",
+      "admission_reason": "安慰、日常心情、守护后的感受",
+      "boundary_note": "指主观安心，外部处境未必客观安全；不是使人安心的命令。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 34 L26 82 Q63 108 102 82 Q117 114 136 103",
+        "M49 38 L49 66 L80 66",
+        "M102 82 Q90 70 125 34 Q155 15 200 35 L200 72 Q177 99 156 78 L171 57"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 72463,
+      "metaphor": "安的稳定承托与心智的主观内域共用边界，内部平定参照保留，而心的回向焦点安置于同一范围中，表现主观安稳。",
+      "component_transformations": [
+        {
+          "char": "安",
+          "source_index": 177,
+          "retained_anchor": "安稳",
+          "contextual_form": "浅承托范围和内层平稳折笔保留，右承托端成为心智范围的左界"
+        },
+        {
+          "char": "心",
+          "source_index": 158,
+          "retained_anchor": "心智主体",
+          "contextual_form": "心智开放外域、内转焦点及回折尾保留，外域被安的共同底界承托"
+        }
+      ],
+      "label": "安心",
+      "lexical_label": "安心",
+      "sequence": "安心",
+      "number": 12
+    },
+    {
+      "index": 13,
+      "id": "liga-013",
+      "lexical_id": "lex-013",
+      "proposal_id": "L13",
+      "chars": "思念",
+      "name": "思念",
+      "meaning": "持续想起并牵挂不在身边的人、地方或事物。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        143,
+        144
+      ],
+      "glyph_ids": [
+        "rune-143",
+        "rune-144"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "思",
+          "index": 143,
+          "glyph_id": "rune-143",
+          "role": "action",
+          "concept": "思考"
+        },
+        {
+          "position": 2,
+          "char": "念",
+          "index": 144,
+          "glyph_id": "rune-144",
+          "role": "entity",
+          "concept": "念头"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈思念〉：思念",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "思考与持念词汇化为牵挂状态",
+      "distinction_from_existing_roots": "思是一般思考，念是当前观念；合词加入缺席对象与牵挂这一稳定约定义。",
+      "admission_reason": "离别、亲友、故乡、人物独白",
+      "boundary_note": "“不在身边”和情感牵挂属于公开登记的词义，不能声称字面已严格推出。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 29 L88 29 Q104 45 87 55 L43 55 Q24 72 42 91 L91 91 Q109 91 124 83 Q114 36 155 33 Q187 34 181 68 Q173 98 144 88 Q138 82 144 65 Q149 52 165 58",
+        "M61 55 L61 73 L78 73",
+        "M124 83 L113 105"
+      ],
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "advance": 208,
+      "style_seed": 73735,
+      "metaphor": "思的反复组织轨道在下层连续收进持念的内旋，组织与保持共享长笔和回接尾，形成持续想起并牵挂的约定词形。",
+      "component_transformations": [
+        {
+          "char": "思",
+          "source_index": 143,
+          "retained_anchor": "思考",
+          "contextual_form": "上下组织轨道和内部推演折笔保留，输出直接进入持念范围"
+        },
+        {
+          "char": "念",
+          "source_index": 144,
+          "retained_anchor": "念头",
+          "contextual_form": "持念的环卷焦点与外尾保留，外层入口接续思的下层轨道"
+        }
+      ],
+      "label": "思念",
+      "lexical_label": "思念",
+      "sequence": "思念",
+      "number": 13
+    },
+    {
+      "index": 14,
+      "id": "liga-014",
+      "lexical_id": "lex-014",
+      "proposal_id": "L14",
+      "chars": "善意",
+      "name": "善意",
+      "meaning": "依据所采用伦理标准、朝向善的意向。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        184,
+        164
+      ],
+      "glyph_ids": [
+        "rune-184",
+        "rune-164"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "善",
+          "index": 184,
+          "glyph_id": "rune-184",
+          "role": "quality",
+          "concept": "善"
+        },
+        {
+          "position": 2,
+          "char": "意",
+          "index": 164,
+          "glyph_id": "rune-164",
+          "role": "entity",
+          "concept": "意向"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈善意〉：善意",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "伦理性质限定意向",
+      "distinction_from_existing_roots": "善是判断性质，意是任意意向，合词指善的意图。",
+      "admission_reason": "理解他人、关系沟通、动机描述",
+      "boundary_note": "不保证结果有益，也不把善偷换成任意主体的利益。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 46 Q64 16 105 43 Q151 11 194 35",
+        "M28 77 Q50 97 72 77 L101 100",
+        "M72 77 L77 47",
+        "M72 77 Q134 56 194 35"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 71586,
+      "metaphor": "朝向同一对象的意向由善的扶持结构发出；表达动机，不担保结果。",
+      "component_transformations": [
+        {
+          "char": "善",
+          "source_index": 184,
+          "retained_anchor": "宽护弧、承接曲与短上扶笔",
+          "contextual_form": "护弧右肩直接成为意向的上支；下承接点同时发出意向长笔"
+        },
+        {
+          "char": "意",
+          "source_index": 164,
+          "retained_anchor": "两条向同一端聚拢的曲势",
+          "contextual_form": "下支从善的承接点生出，上支使用护弧右肩，压去独立起笔"
+        }
+      ],
+      "label": "善意",
+      "lexical_label": "善意",
+      "sequence": "善意",
+      "number": 14
+    },
+    {
+      "index": 15,
+      "id": "liga-015",
+      "lexical_id": "lex-015",
+      "proposal_id": "L15",
+      "chars": "恶意",
+      "name": "恶意",
+      "meaning": "依据所采用伦理标准、朝向恶的意向。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        185,
+        164
+      ],
+      "glyph_ids": [
+        "rune-185",
+        "rune-164"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "恶",
+          "index": 185,
+          "glyph_id": "rune-185",
+          "role": "quality",
+          "concept": "恶"
+        },
+        {
+          "position": 2,
+          "char": "意",
+          "index": 164,
+          "glyph_id": "rune-164",
+          "role": "entity",
+          "concept": "意向"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈恶意〉：恶意",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "伦理性质限定意向",
+      "distinction_from_existing_roots": "恶是判断性质，意是任意意向，合词指恶的意图。",
+      "admission_reason": "动机、冲突、警惕、魔法意图",
+      "boundary_note": "不因结果不好就自动断定恶意。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 98 L50 35 L80 54 L101 27",
+        "M27 27 L54 70 L93 97 Q136 58 194 35",
+        "M80 54 Q136 12 194 35"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 74388,
+      "metaphor": "相背的伦理结构被收束成有对象的意图，与善意的承接型起势形成对照。",
+      "component_transformations": [
+        {
+          "char": "恶",
+          "source_index": 185,
+          "retained_anchor": "交错而背离的两条折势",
+          "contextual_form": "上方折点成为意向上支的起源，下方反向笔转折为意向下支"
+        },
+        {
+          "char": "意",
+          "source_index": 164,
+          "retained_anchor": "双支汇聚于同一目标端",
+          "contextual_form": "两个起笔分别吸收恶的折点与末笔，保留弯曲的共同朝向"
+        }
+      ],
+      "label": "恶意",
+      "lexical_label": "恶意",
+      "sequence": "恶意",
+      "number": 15
+    },
+    {
+      "index": 16,
+      "id": "liga-016",
+      "lexical_id": "lex-016",
+      "proposal_id": "L16",
+      "chars": "心态",
+      "name": "心态",
+      "meaning": "心智主体在某个时点所处的整体状态。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        158,
+        17
+      ],
+      "glyph_ids": [
+        "rune-158",
+        "rune-017"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "心",
+          "index": 158,
+          "glyph_id": "rune-158",
+          "role": "entity",
+          "concept": "心智主体"
+        },
+        {
+          "position": 2,
+          "char": "态",
+          "index": 17,
+          "glyph_id": "rune-017",
+          "role": "entity",
+          "concept": "状态"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈心态〉：心态",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "心智作为状态的所属主体",
+      "distinction_from_existing_roots": "心指主体，态泛指任何对象状态；本词限定心理状态。",
+      "admission_reason": "心情、准备、交流、精神作用",
+      "boundary_note": "不把心解释成生理心脏。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M31 96 Q16 58 40 34 Q68 16 95 35 L95 72 Q74 99 52 78 L67 57",
+        "M31 96 L51 105",
+        "M194 41 Q148 11 118 40 Q102 57 95 72",
+        "M133 55 L158 55 L158 97 L133 97",
+        "M194 68 L194 96"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 73669,
+      "metaphor": "暂时状态的外界收进心智主体的自返环路，内折框保留一组成立性质的感觉。",
+      "component_transformations": [
+        {
+          "char": "心",
+          "source_index": 158,
+          "retained_anchor": "自承接的外回路与内折返",
+          "contextual_form": "右侧内回返同时承接状态外界，心的内外回路保持可辨"
+        },
+        {
+          "char": "态",
+          "source_index": 17,
+          "retained_anchor": "上方开弧、内折框与右侧时间截线",
+          "contextual_form": "外开弧左下端并入心的回返笔，心理内部成为状态的所属范围"
+        }
+      ],
+      "label": "心态",
+      "lexical_label": "心态",
+      "sequence": "心态",
+      "number": 16
+    },
+    {
+      "index": 17,
+      "id": "liga-017",
+      "lexical_id": "lex-017",
+      "proposal_id": "L17",
+      "chars": "惧梦",
+      "name": "噩梦",
+      "meaning": "以畏惧或威胁体验为主要内容的梦。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        175,
+        147
+      ],
+      "glyph_ids": [
+        "rune-175",
+        "rune-147"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "惧",
+          "index": 175,
+          "glyph_id": "rune-175",
+          "role": "quality",
+          "concept": "畏惧"
+        },
+        {
+          "position": 2,
+          "char": "梦",
+          "index": 147,
+          "glyph_id": "rune-147",
+          "role": "entity",
+          "concept": "梦境"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈惧梦〉：噩梦",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "畏惧性质限定梦境并约定命名",
+      "distinction_from_existing_roots": "梦包含各种脱离现实约束的体验，惧是一般畏惧，本词是高频梦境类别。",
+      "admission_reason": "睡眠、叙事、梦境魔法",
+      "boundary_note": "不把所有不愉快的梦都强行归入此词。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M38 28 Q16 60 35 96 L57 103",
+        "M104 42 L72 58 Q72 85 96 92",
+        "M53 48 L53 75",
+        "M190 36 C152 11 79 29 72 58",
+        "M126 48 Q193 27 199 62 Q199 89 173 105"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 78387,
+      "metaphor": "梦境的外回环从畏惧的内收折点展开，威胁成为梦境内部的主导体验。",
+      "component_transformations": [
+        {
+          "char": "惧",
+          "source_index": 175,
+          "retained_anchor": "收缩外弧、内向折角与受限短竖",
+          "contextual_form": "内向折角的下臂弯入梦境外壳，形成被威胁收窄的入口"
+        },
+        {
+          "char": "梦",
+          "source_index": 147,
+          "retained_anchor": "两条错位且未闭合的梦境回环",
+          "contextual_form": "第一回环左缘与惧的内收笔共用下行曲段，第二回环保持游离"
+        }
+      ],
+      "label": "噩梦",
+      "lexical_label": "噩梦",
+      "sequence": "惧梦",
+      "number": 17
+    },
+    {
+      "index": 18,
+      "id": "liga-018",
+      "lexical_id": "lex-018",
+      "proposal_id": "L18",
+      "chars": "愿可",
+      "name": "希望",
+      "meaning": "对所愿之事仍有实现可能的期待。",
+      "category": "心智与情感",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "logic"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        160,
+        359
+      ],
+      "glyph_ids": [
+        "rune-160",
+        "rune-359"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "愿",
+          "index": 160,
+          "glyph_id": "rune-160",
+          "role": "entity",
+          "concept": "愿景"
+        },
+        {
+          "position": 2,
+          "char": "可",
+          "index": 359,
+          "glyph_id": "rune-359",
+          "role": "logic",
+          "concept": "可能"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈愿可〉：希望",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "愿景与可能词汇化为向未来的期待",
+      "distinction_from_existing_roots": "愿是所盼的目标，可是可能判断；合词指围绕可能实现而产生的期待。",
+      "admission_reason": "日常鼓励、计划、困境、人物愿望",
+      "boundary_note": "不是对结果的保证。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M49 40 L24 101 L200 101 L175 51",
+        "M78 40 Q97 97 112 101 Q122 91 137 49",
+        "M52 28 L62 17 L74 29",
+        "M151 64 L151 28 M151 42 L169 27"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 67869,
+      "metaphor": "目标与可能性共用尚未封顶的成立基础；中间内谷把愿景承接为仍可能实现的期待。",
+      "component_transformations": [
+        {
+          "char": "愿",
+          "source_index": 160,
+          "retained_anchor": "开放目标围界与悬置小尖冠",
+          "contextual_form": "目标底边延展成共同成立基线，右侧界弯成承托可能性的内谷"
+        },
+        {
+          "char": "可",
+          "source_index": 359,
+          "retained_anchor": "开放可能围界与上升分叉",
+          "contextual_form": "左边界从愿景的内谷翻起，底边与愿景共用，分叉仍保持开放"
+        }
+      ],
+      "label": "希望",
+      "lexical_label": "希望",
+      "sequence": "愿可",
+      "number": 18
+    },
+    {
+      "index": 19,
+      "id": "liga-019",
+      "lexical_id": "lex-019",
+      "proposal_id": "L19",
+      "chars": "亲人",
+      "name": "亲友",
+      "meaning": "与主体具有熟悉、信任或持续相处形成的亲近关系的人。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        338,
+        122
+      ],
+      "glyph_ids": [
+        "rune-338",
+        "rune-122"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "亲",
+          "index": 338,
+          "glyph_id": "rune-338",
+          "role": "relation",
+          "concept": "亲近"
+        },
+        {
+          "position": 2,
+          "char": "人",
+          "index": 122,
+          "glyph_id": "rune-122",
+          "role": "entity",
+          "concept": "人"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈亲人〉：亲友",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "亲近关系派生人物名",
+      "distinction_from_existing_roots": "亲是关系，人是类别，本词指关系中的具体近人。",
+      "admission_reason": "称呼、关系介绍、亲友往来",
+      "boundary_note": "不专指朋友，不专指血亲；需要区分时应另加说明。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M28 37 L28 78 Q42 99 64 79 L64 44",
+        "M135 24 Q113 42 119 70 Q100 98 64 79",
+        "M46 25 L76 25",
+        "M119 70 L102 104",
+        "M119 70 Q157 70 184 103",
+        "M100 38 L119 50 L149 36"
+      ],
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "advance": 208,
+      "style_seed": 60454,
+      "metaphor": "一个可辨的主体轴亲自构成亲近关系的共同边，表示关系中的近人，非血缘专称。",
+      "component_transformations": [
+        {
+          "char": "亲",
+          "source_index": 338,
+          "retained_anchor": "双侧向内相接的关系杯与上方短横",
+          "contextual_form": "右侧关系臂延长为人的弯曲主轴，杯底向主体轴回接"
+        },
+        {
+          "char": "人",
+          "source_index": 122,
+          "retained_anchor": "弯曲直立轴、肩侧折与分足",
+          "contextual_form": "主体轴兼作亲近关系的右臂，左足从双方相接处独立分出"
+        }
+      ],
+      "label": "亲友",
+      "lexical_label": "亲友",
+      "sequence": "亲人",
+      "number": 19
+    },
+    {
+      "index": 20,
+      "id": "liga-020",
+      "lexical_id": "lex-020",
+      "proposal_id": "L20",
+      "chars": "共行人",
+      "name": "同伴",
+      "meaning": "共同参与某项活动、承担同一行程或事业的人。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        336,
+        356,
+        122
+      ],
+      "glyph_ids": [
+        "rune-336",
+        "rune-356",
+        "rune-122"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "共",
+          "index": 336,
+          "glyph_id": "rune-336",
+          "role": "relation",
+          "concept": "共在"
+        },
+        {
+          "position": 2,
+          "char": "行",
+          "index": 356,
+          "glyph_id": "rune-356",
+          "role": "action",
+          "concept": "执行"
+        },
+        {
+          "position": 3,
+          "char": "人",
+          "index": 122,
+          "glyph_id": "rune-122",
+          "role": "entity",
+          "concept": "人"
+        }
+      ],
+      "constituent_count": 3,
+      "layout_class": "horizontal_3",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈共行人〉：同伴",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "共同执行派生参与者名",
+      "distinction_from_existing_roots": "共是共享关系，行是执行，合词指共同活动的伙伴。",
+      "admission_reason": "日常协作、旅行队伍、共同探索",
+      "boundary_note": "行不改成走路义；旅行只是活动的一种。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 31 L24 82 L64 103 L108 74 L108 31",
+        "M24 58 L64 37 L108 58",
+        "M64 37 L64 75",
+        "M108 74 Q108 97 139 97 L203 42 L229 56 L257 37",
+        "M154 37 L184 37 L184 61",
+        "M246 23 Q226 39 229 56 Q230 64 235 71 L216 104",
+        "M235 71 Q260 78 281 103"
+      ],
+      "viewBox": [
+        0,
+        0,
+        304,
+        128
+      ],
+      "advance": 304,
+      "style_seed": 151095,
+      "metaphor": "共的公共边进入行的实施通路，再成为人的肩侧；同伴作为共同活动的参与主体显现，不专指步行者。",
+      "component_transformations": [
+        {
+          "char": "共",
+          "source_index": 336,
+          "retained_anchor": "共享范围的折底双侧界、上折梁和中央竖",
+          "contextual_form": "右侧界同时是执行的起笔，底部提前接入执行转折"
+        },
+        {
+          "char": "行",
+          "source_index": 356,
+          "retained_anchor": "依次转折的实施通路与上方定式折",
+          "contextual_form": "起笔吸收共的右界，终段扩展成人的左肩，使参与者直接属于共同执行"
+        },
+        {
+          "char": "人",
+          "source_index": 122,
+          "retained_anchor": "曲轴、双足与折肩",
+          "contextual_form": "左肩使用执行通路的终段，主体轴在肩部与共同活动相接"
+        }
+      ],
+      "label": "同伴",
+      "lexical_label": "同伴",
+      "sequence": "共行人",
+      "number": 20
+    },
+    {
+      "index": 21,
+      "id": "liga-021",
+      "lexical_id": "lex-021",
+      "proposal_id": "L21",
+      "chars": "归域",
+      "name": "家园",
+      "meaning": "主体认作归属、惯常返回的生活所在。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        53,
+        47
+      ],
+      "glyph_ids": [
+        "rune-053",
+        "rune-047"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "归",
+          "index": 53,
+          "glyph_id": "rune-053",
+          "role": "action",
+          "concept": "归返"
+        },
+        {
+          "position": 2,
+          "char": "域",
+          "index": 47,
+          "glyph_id": "rune-047",
+          "role": "entity",
+          "concept": "作用域"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈归域〉：家园",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "归返所向范围词汇化为归属地",
+      "distinction_from_existing_roots": "域可指任意作用范围，归是返还动作，本词加入生活与归属的约定义。",
+      "admission_reason": "介绍来处、返乡、庇护、共同生活",
+      "boundary_note": "不自动指住宅建筑、土地所有权或安全保证。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M202 28 Q105 11 89 60 Q89 107 202 107",
+        "M125 87 L155 68 L181 81 M155 68 L174 43",
+        "M61 27 C21 27 40 97 66 99 Q92 103 155 68",
+        "M155 68 L137 61"
+      ],
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "advance": 240,
+      "style_seed": 69392,
+      "metaphor": "域的容纳边界保留内部位置岔点，归的回转轨迹直接返回同一位置；以返回与归属表达家园，不画房屋",
+      "component_transformations": [
+        "域的容纳边界保留内部位置岔点，归的回转轨迹直接返回同一位置；以返回与归属表达家园，不画房屋"
+      ],
+      "label": "家园",
+      "lexical_label": "家园",
+      "sequence": "归域",
+      "number": 21
+    },
+    {
+      "index": 22,
+      "id": "liga-022",
+      "lexical_id": "lex-022",
+      "proposal_id": "L22",
+      "chars": "共行",
+      "name": "合作",
+      "meaning": "两个或多个主体相互配合，共同促成某项行动。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        336,
+        356
+      ],
+      "glyph_ids": [
+        "rune-336",
+        "rune-356"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "共",
+          "index": 336,
+          "glyph_id": "rune-336",
+          "role": "relation",
+          "concept": "共在"
+        },
+        {
+          "position": 2,
+          "char": "行",
+          "index": 356,
+          "glyph_id": "rune-356",
+          "role": "action",
+          "concept": "执行"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈共行〉：合作",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "共在关系与执行过程词汇化",
+      "distinction_from_existing_roots": "共并不要求行动，行可以独自完成；合词表示共同参与的活动关系。",
+      "admission_reason": "协作、协商、共同施术",
+      "boundary_note": "不自动保证各方目标、贡献或收益完全相等。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M27 31 L27 82 L64 103 L112 74 L112 31",
+        "M27 58 L64 37 L112 58",
+        "M64 37 L64 75",
+        "M112 74 Q112 97 138 97 L193 48",
+        "M146 37 L181 37 L181 61"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 90633,
+      "metaphor": "共同范围的一侧直接成为实施路径，表达多个主体配合促成行动，而非仅仅共处。",
+      "component_transformations": [
+        {
+          "char": "共",
+          "source_index": 336,
+          "retained_anchor": "共享范围、折梁与中央共轴",
+          "contextual_form": "右侧公共界保留，同时承担执行路径的首段"
+        },
+        {
+          "char": "行",
+          "source_index": 356,
+          "retained_anchor": "下折后上行的实施通路与独立上折",
+          "contextual_form": "首竖与共的右界完全合笔，从公共界底端开始连续实施"
+        }
+      ],
+      "label": "合作",
+      "lexical_label": "合作",
+      "sequence": "共行",
+      "number": 22
+    },
+    {
+      "index": 23,
+      "id": "liga-023",
+      "lexical_id": "lex-023",
+      "proposal_id": "L23",
+      "chars": "言契",
+      "name": "承诺",
+      "meaning": "主体以明示表达使自己受已说出的条件约束。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "relation"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        315,
+        170
+      ],
+      "glyph_ids": [
+        "rune-315",
+        "rune-170"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "言",
+          "index": 315,
+          "glyph_id": "rune-315",
+          "role": "action",
+          "concept": "言说"
+        },
+        {
+          "position": 2,
+          "char": "契",
+          "index": 170,
+          "glyph_id": "rune-170",
+          "role": "relation",
+          "concept": "契约绑定"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈言契〉：承诺",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "言说建立承诺性约束",
+      "distinction_from_existing_roots": "言只是传达，契是双方条件绑定；本词约定为由声明形成的自我约束。",
+      "admission_reason": "约定、诚信、人物誓言、叙事关系",
+      "boundary_note": "主释名只用承诺；誓言是郑重形式，双方契约仍用契。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M37 72 A11 11 0 1 1 59 72 A11 11 0 1 1 37 72",
+        "M48 61 Q50 23 130 28 L130 67 L167 67 L167 104",
+        "M59 72 Q84 78 130 67",
+        "M196 102 L196 47 L167 47 L167 67"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 81058,
+      "metaphor": "表达自身折成约束边界，且送出的内容返回同一约束点，词汇化为以明示表达形成的自我承诺。",
+      "component_transformations": [
+        {
+          "char": "言",
+          "source_index": 315,
+          "retained_anchor": "发言圆核、上扬表达与向外送出笔",
+          "contextual_form": "上扬表达的外端回折为绑定的首竖，向外送出笔也汇入同一条件结点"
+        },
+        {
+          "char": "契",
+          "source_index": 170,
+          "retained_anchor": "两级互扣折臂与共同条件结点",
+          "contextual_form": "首竖由言说上支连续构成，语言来源与条件边界不再分离"
+        }
+      ],
+      "label": "承诺",
+      "lexical_label": "承诺",
+      "sequence": "言契",
+      "number": 23
+    },
+    {
+      "index": 24,
+      "id": "liga-024",
+      "lexical_id": "lex-024",
+      "proposal_id": "L24",
+      "chars": "信人",
+      "name": "信任",
+      "meaning": "接受某人在指定方面可靠，并愿意据此与其相处或合作的关系。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        149,
+        122
+      ],
+      "glyph_ids": [
+        "rune-149",
+        "rune-122"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "信",
+          "index": 149,
+          "glyph_id": "rune-149",
+          "role": "relation",
+          "concept": "确信"
+        },
+        {
+          "position": 2,
+          "char": "人",
+          "index": 122,
+          "glyph_id": "rune-122",
+          "role": "entity",
+          "concept": "人"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈信人〉：信任",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "对人的可靠性判断词汇化",
+      "distinction_from_existing_roots": "信本是接受命题，本词把判断内容限定为一个人的可靠性。",
+      "admission_reason": "关系、委托、共同生活、同伴叙事",
+      "boundary_note": "信任有范围，不等于无条件相信这个人说的一切。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M28 29 L28 95 L107 95",
+        "M28 65 L76 31 L130 60 L80 95",
+        "M153 23 Q133 41 130 60 Q131 68 137 72 L119 104",
+        "M137 72 Q170 75 196 102",
+        "M130 60 L158 40"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 60757,
+      "metaphor": "人的肩部成为可靠性判断的一个边界，表示有指定范围的信任，而非无条件相信。",
+      "component_transformations": [
+        {
+          "char": "信",
+          "source_index": 149,
+          "retained_anchor": "接受判断的基界与内侧菱折",
+          "contextual_form": "菱折右上边的末段兼作人的左肩，判断内容具体落在人这一主体上"
+        },
+        {
+          "char": "人",
+          "source_index": 122,
+          "retained_anchor": "直立曲轴、分足与两肩",
+          "contextual_form": "左肩吸收信的判断折边，右肩及分足保持独立可辨"
+        }
+      ],
+      "label": "信任",
+      "lexical_label": "信任",
+      "sequence": "信人",
+      "number": 24
+    },
+    {
+      "index": 25,
+      "id": "liga-025",
+      "lexical_id": "lex-025",
+      "proposal_id": "L25",
+      "chars": "予取",
+      "name": "交换",
+      "meaning": "参与各方按对应关系互相交付和取得内容。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        269,
+        275
+      ],
+      "glyph_ids": [
+        "rune-269",
+        "rune-275"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "予",
+          "index": 269,
+          "glyph_id": "rune-269",
+          "role": "action",
+          "concept": "给予"
+        },
+        {
+          "position": 2,
+          "char": "取",
+          "index": 275,
+          "glyph_id": "rune-275",
+          "role": "action",
+          "concept": "取用"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈予取〉：交换",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "给予与取用组成双向交付关系",
+      "distinction_from_existing_roots": "予是单向给予，取是取得，本词明确双方对应的交付关系。",
+      "admission_reason": "物品、信息、资源、魔法代价",
+      "boundary_note": "不自动等于买卖、公平交易或同时完成。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M69 20 L24 20 L24 72",
+        "M214 60 L214 108 L141 108 Q105 108 75 89 Q46 89 24 72",
+        "M41 43 A10 10 0 1 1 61 43 A10 10 0 1 1 41 43",
+        "M164 72 A12 12 0 1 1 188 72 A12 12 0 1 1 164 72",
+        "M61 43 C105 40 127 82 164 72",
+        "M201 25 L142 25 L142 95 L163 95",
+        "M188 72 Q212 82 214 108"
+      ],
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "advance": 240,
+      "style_seed": 63028,
+      "metaphor": "第一方的交付抵达第二方已有来源界，第二方的提取借共同持界返回第一方；两条对应路线组成交换，不暗示价钱或公平。",
+      "component_transformations": [
+        {
+          "char": "予",
+          "source_index": 269,
+          "retained_anchor": "分开的施收持界、两端对象核与交付曲",
+          "contextual_form": "接收端对象核同时是取的既有对象，接收持界底笔兼作返回交付的一段"
+        },
+        {
+          "char": "取",
+          "source_index": 275,
+          "retained_anchor": "半开来源界、既有圆核、越界提取与承接钩",
+          "contextual_form": "来源容纳已接收的核，提取笔越出后沿予的下持界返回另一方的承接钩"
+        }
+      ],
+      "label": "交换",
+      "lexical_label": "交换",
+      "sequence": "予取",
+      "number": 25
+    },
+    {
+      "index": 26,
+      "id": "liga-026",
+      "lexical_id": "lex-026",
+      "proposal_id": "L26",
+      "chars": "共亲",
+      "name": "友谊",
+      "meaning": "主体之间自愿建立、相互珍视的亲近关系。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "relation"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        336,
+        338
+      ],
+      "glyph_ids": [
+        "rune-336",
+        "rune-338"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "共",
+          "index": 336,
+          "glyph_id": "rune-336",
+          "role": "relation",
+          "concept": "共在"
+        },
+        {
+          "position": 2,
+          "char": "亲",
+          "index": 338,
+          "glyph_id": "rune-338",
+          "role": "relation",
+          "concept": "亲近"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈共亲〉：友谊",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "共享亲近关系词汇化",
+      "distinction_from_existing_roots": "亲可来自熟悉、亲缘或相处；本词强调自愿且相互珍视的友好关系。",
+      "admission_reason": "朋友、相处、离别、共同经历",
+      "boundary_note": "与亲友人物名亲人、共同活动者共行人分开。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 30 L25 81 L111 105 L198 81 L198 30",
+        "M25 56 L111 34 L198 56",
+        "M111 34 L111 75",
+        "M49 38 L49 75 Q69 99 91 80 L91 49",
+        "M170 37 L170 73 Q147 96 111 75",
+        "M80 18 L141 18"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 61141,
+      "metaphor": "共的共同参照架容纳相向亲近的两路，双方保持独立却共同承接同一低位关系，表现互相珍视的友谊",
+      "component_transformations": [
+        "共的共同参照架容纳相向亲近的两路，双方保持独立却共同承接同一低位关系，表现互相珍视的友谊"
+      ],
+      "label": "友谊",
+      "lexical_label": "友谊",
+      "sequence": "共亲",
+      "number": 26
+    },
+    {
+      "index": 27,
+      "id": "liga-027",
+      "lexical_id": "lex-027",
+      "proposal_id": "L27",
+      "chars": "亲集",
+      "name": "家庭",
+      "meaning": "因亲缘、伴侣关系或长期相互照料而形成的生活共同体。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        338,
+        94
+      ],
+      "glyph_ids": [
+        "rune-338",
+        "rune-094"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "亲",
+          "index": 338,
+          "glyph_id": "rune-338",
+          "role": "relation",
+          "concept": "亲近"
+        },
+        {
+          "position": 2,
+          "char": "集",
+          "index": 94,
+          "glyph_id": "rune-094",
+          "role": "entity",
+          "concept": "集合"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈亲集〉：家庭",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "亲近关系组成持续共同生活与照料的群体",
+      "distinction_from_existing_roots": "集是任意集合，亲是关系；合词约定为长期生活与照料的共同体。",
+      "admission_reason": "亲属、居所、共同生活、人物背景",
+      "boundary_note": "不把一般亲友圈都叫家庭。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M27 50 Q30 25 61 25 L196 25 L196 82 Q160 112 83 104 L27 79 Z",
+        "M50 43 L50 76 Q67 98 89 80 L89 46",
+        "M153 37 L153 73 Q125 99 89 80",
+        "M68 25 L130 25",
+        "M170 58 L179 76"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 97342,
+      "metaphor": "相依的亲近支路作为集内成员，共享集合上缘但保留多成员位置；以生活共同体而非房屋图案表达家庭",
+      "component_transformations": [
+        "相依的亲近支路作为集内成员，共享集合上缘但保留多成员位置；以生活共同体而非房屋图案表达家庭"
+      ],
+      "label": "家庭",
+      "lexical_label": "家庭",
+      "sequence": "亲集",
+      "number": 27
+    },
+    {
+      "index": 28,
+      "id": "liga-028",
+      "lexical_id": "lex-028",
+      "proposal_id": "L28",
+      "chars": "共安",
+      "name": "和平",
+      "meaning": "多个主体彼此不侵害、能够安稳共处的状态。",
+      "category": "人际与共同生活",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "quality"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        336,
+        177
+      ],
+      "glyph_ids": [
+        "rune-336",
+        "rune-177"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "共",
+          "index": 336,
+          "glyph_id": "rune-336",
+          "role": "relation",
+          "concept": "共在"
+        },
+        {
+          "position": 2,
+          "char": "安",
+          "index": 177,
+          "glyph_id": "rune-177",
+          "role": "quality",
+          "concept": "安稳"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈共安〉：和平",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "共同安稳词汇化为主体间的共处状态",
+      "distinction_from_existing_roots": "安是单个范围的安稳，共是共享关系；合词特指主体间无侵害的共处。",
+      "admission_reason": "关系、群体、冲突结束、世界叙事",
+      "boundary_note": "可指群体间或地区间，不要求一切问题已经解决。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 30 L25 82 Q111 120 198 82 L198 30",
+        "M25 56 L111 34 L198 56",
+        "M111 34 L111 75",
+        "M53 36 L53 72 L86 72",
+        "M169 37 L169 72 L136 72"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 67715,
+      "metaphor": "共的多方支架共享安的稳定容纳底部，双方内支各守其位而不相互侵入，表达安稳共处",
+      "component_transformations": [
+        "共的多方支架共享安的稳定容纳底部，双方内支各守其位而不相互侵入，表达安稳共处"
+      ],
+      "label": "和平",
+      "lexical_label": "和平",
+      "sequence": "共安",
+      "number": 28
+    },
+    {
+      "index": 29,
+      "id": "liga-029",
+      "lexical_id": "lex-029",
+      "proposal_id": "L29",
+      "chars": "言码",
+      "name": "语言系统",
+      "meaning": "可反复使用、使主体有意表达和理解内容的符号与组合规则体系。",
+      "category": "交流与内容",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        315,
+        320
+      ],
+      "glyph_ids": [
+        "rune-315",
+        "rune-320"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "言",
+          "index": 315,
+          "glyph_id": "rune-315",
+          "role": "action",
+          "concept": "言说"
+        },
+        {
+          "position": 2,
+          "char": "码",
+          "index": 320,
+          "glyph_id": "rune-320",
+          "role": "entity",
+          "concept": "编码"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈言码〉：语言系统",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "言说用途限定编码体系",
+      "distinction_from_existing_roots": "言是传达行为，码是一般编码，文是一段表达；本词指可共同使用的表达系统。",
+      "admission_reason": "交流、学习、翻译、文字世界观",
+      "boundary_note": "不把任意暗号表都等同于完整自然语言；不限定必须发声。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 74 A12 12 0 1 1 50 74 A12 12 0 1 1 26 74",
+        "M38 62 Q42 23 91 27 Q116 29 136 60",
+        "M50 74 Q83 94 120 86 L170 24",
+        "M129 74 L189 95",
+        "M146 51 L208 67",
+        "M163 30 L211 40"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 96770,
+      "metaphor": "言的意向内核经外向表达通道进入码的稳定分配主脊；同一输入对应多个规则端，构成可重复使用的表达系统",
+      "component_transformations": [
+        "言的意向内核经外向表达通道进入码的稳定分配主脊；同一输入对应多个规则端，构成可重复使用的表达系统"
+      ],
+      "label": "语言系统",
+      "lexical_label": "语言系统",
+      "sequence": "言码",
+      "number": 29
+    },
+    {
+      "index": 30,
+      "id": "liga-030",
+      "lexical_id": "lex-030",
+      "proposal_id": "L30",
+      "chars": "事文",
+      "name": "故事",
+      "meaning": "把发生或设想的事件组织成连贯表达的叙述。",
+      "category": "交流与内容",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        16,
+        321
+      ],
+      "glyph_ids": [
+        "rune-016",
+        "rune-321"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "事",
+          "index": 16,
+          "glyph_id": "rune-016",
+          "role": "entity",
+          "concept": "事件"
+        },
+        {
+          "position": 2,
+          "char": "文",
+          "index": 321,
+          "glyph_id": "rune-321",
+          "role": "entity",
+          "concept": "文理"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈事文〉：故事",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "事件内容组成表达",
+      "distinction_from_existing_roots": "事是事件，文是任意连贯表达，本词指事件叙述。",
+      "admission_reason": "讲述、文学、记事、传说",
+      "boundary_note": "可以是真事也可以虚构，不把故事自动当证据。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 29 L24 59 L66 59",
+        "M66 59 A12 12 0 1 1 90 59 A12 12 0 1 1 66 59",
+        "M78 71 L78 99",
+        "M90 59 Q113 69 138 49 L159 28",
+        "M138 49 L138 91",
+        "M138 49 Q166 71 185 51 L204 31 L219 51",
+        "M185 51 L185 92 L213 92"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 72089,
+      "metaphor": "事件的明确发生核进入文的连续序列，后续异形片段共享一条叙述通路，表达组织起来的事件故事",
+      "component_transformations": [
+        "事件的明确发生核进入文的连续序列，后续异形片段共享一条叙述通路，表达组织起来的事件故事"
+      ],
+      "label": "故事",
+      "lexical_label": "故事",
+      "sequence": "事文",
+      "number": 30
+    },
+    {
+      "index": 31,
+      "id": "liga-031",
+      "lexical_id": "lex-031",
+      "proposal_id": "L31",
+      "chars": "隐讯",
+      "name": "秘密",
+      "meaning": "已经存在、在指定知情范围之外未被直接获知的信息。",
+      "category": "交流与内容",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        186,
+        322
+      ],
+      "glyph_ids": [
+        "rune-186",
+        "rune-322"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "隐",
+          "index": 186,
+          "glyph_id": "rune-186",
+          "role": "quality",
+          "concept": "隐蔽"
+        },
+        {
+          "position": 2,
+          "char": "讯",
+          "index": 322,
+          "glyph_id": "rune-322",
+          "role": "entity",
+          "concept": "信息"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈隐讯〉：秘密",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "隐蔽性质限定信息",
+      "distinction_from_existing_roots": "隐适用于任意对象，讯是新内容，合词指被隐藏的信息内容。",
+      "admission_reason": "保密、揭示、悬念、密语",
+      "boundary_note": "不自动代表加密、绝对不可知或保密成功。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M108 26 C43 8 16 54 35 88 Q53 108 93 105",
+        "M97 49 L66 49 L66 77",
+        "M66 77 L117 77 L117 29 L156 29 L156 55 L205 55",
+        "M92 98 L132 98"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 110062,
+      "metaphor": "讯的既存阶跃信息从隐的遮蔽内区起始，身份仍在但只有一侧可接近，表示受限知情范围内的秘密",
+      "component_transformations": [
+        "讯的既存阶跃信息从隐的遮蔽内区起始，身份仍在但只有一侧可接近，表示受限知情范围内的秘密"
+      ],
+      "label": "秘密",
+      "lexical_label": "秘密",
+      "sequence": "隐讯",
+      "number": 31
+    },
+    {
+      "index": 32,
+      "id": "liga-032",
+      "lexical_id": "lex-032",
+      "proposal_id": "L32",
+      "chars": "契文",
+      "name": "契约文本",
+      "meaning": "把约束双方的条件组织成可读取表达的文本。",
+      "category": "交流与内容",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        170,
+        321
+      ],
+      "glyph_ids": [
+        "rune-170",
+        "rune-321"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "契",
+          "index": 170,
+          "glyph_id": "rune-170",
+          "role": "relation",
+          "concept": "契约绑定"
+        },
+        {
+          "position": 2,
+          "char": "文",
+          "index": 321,
+          "glyph_id": "rune-321",
+          "role": "entity",
+          "concept": "文理"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈契文〉：契约文本",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "契约条件作为文本内容",
+      "distinction_from_existing_roots": "契是绑定关系，文是表达，合词指条件的文字载体内容。",
+      "admission_reason": "协议、约定、阅读条款、魔法契书",
+      "boundary_note": "文本存在不等于双方已经接受或契约已经生效。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M28 23 L28 67 L90 67 L90 104",
+        "M124 104 L124 47 L90 47 L90 67",
+        "M124 47 L146 27",
+        "M124 47 Q151 68 176 49 L197 29 L215 49",
+        "M176 49 L176 91 L210 91"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 74847,
+      "metaphor": "契的双方约束接口保持互锁，右侧约束柱同时成为文的开端，条件被组织为可读取的连续表达",
+      "component_transformations": [
+        "契的双方约束接口保持互锁，右侧约束柱同时成为文的开端，条件被组织为可读取的连续表达"
+      ],
+      "label": "契约文本",
+      "lexical_label": "契约文本",
+      "sequence": "契文",
+      "number": 32
+    },
+    {
+      "index": 33,
+      "id": "liga-033",
+      "lexical_id": "lex-033",
+      "proposal_id": "L33",
+      "chars": "水源",
+      "name": "水源",
+      "meaning": "可为取用或流动提供水的来源。",
+      "category": "自然与所在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        112,
+        355
+      ],
+      "glyph_ids": [
+        "rune-112",
+        "rune-355"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "水",
+          "index": 112,
+          "glyph_id": "rune-112",
+          "role": "entity",
+          "concept": "液态水"
+        },
+        {
+          "position": 2,
+          "char": "源",
+          "index": 355,
+          "glyph_id": "rune-355",
+          "role": "entity",
+          "concept": "来源"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈水源〉：水源",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "水限定来源类别",
+      "distinction_from_existing_roots": "源是任意来源，水是材料，本词指与水供应相关的来源处。",
+      "admission_reason": "生活、旅行、地理、资源讨论",
+      "boundary_note": "不限定泉眼，也不保证饮用安全。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 51 A23 23 0 1 1 72 51 A23 23 0 1 1 26 51",
+        "M72 51 L101 51 Q126 17 150 37 L179 65 Q202 89 172 105",
+        "M49 74 L49 104 L90 104",
+        "M102 76 Q126 97 149 75 L185 35"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 84308,
+      "metaphor": "源的独立来源核直接放出水的连续流势，来源的可取用支架保留；不把来源与水体仅并排罗列",
+      "component_transformations": [
+        "源的独立来源核直接放出水的连续流势，来源的可取用支架保留；不把来源与水体仅并排罗列"
+      ],
+      "label": "水源",
+      "lexical_label": "水源",
+      "sequence": "水源",
+      "number": 33
+    },
+    {
+      "index": 34,
+      "id": "liga-034",
+      "lexical_id": "lex-034",
+      "proposal_id": "L34",
+      "chars": "树集",
+      "name": "树林",
+      "meaning": "在同一片范围内共同生长的一群树木。",
+      "category": "自然与所在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        125,
+        94
+      ],
+      "glyph_ids": [
+        "rune-125",
+        "rune-094"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "树",
+          "index": 125,
+          "glyph_id": "rune-125",
+          "role": "entity",
+          "concept": "树木"
+        },
+        {
+          "position": 2,
+          "char": "集",
+          "index": 94,
+          "glyph_id": "rune-094",
+          "role": "entity",
+          "concept": "集合"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈树集〉：树林",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "树木集合约定为空间林木群",
+      "distinction_from_existing_roots": "树是活体类别，集是任意集合，本词是常见的空间植被群体。",
+      "admission_reason": "地点、风景、旅行、自然魔法",
+      "boundary_note": "空间共同生长是词条约定，不暗含完整生态系统或法定森林面积。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 47 Q28 24 65 24 L204 24 L204 83 Q167 112 74 104 L25 80 Z",
+        "M84 99 Q69 61 82 26",
+        "M75 63 L48 43 M77 50 L62 29 M79 74 L113 44",
+        "M84 99 L64 107 M84 99 L109 105",
+        "M158 96 Q145 66 154 45",
+        "M151 69 L132 56 M154 82 L180 60"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 103837,
+      "metaphor": "集合边界内两株同源但不相同的分枝共生，树的层级分枝与根脚保留，集合中没有单株独占的中央主干",
+      "component_transformations": [
+        "集合边界内两株同源但不相同的分枝共生，树的层级分枝与根脚保留，集合中没有单株独占的中央主干"
+      ],
+      "label": "树林",
+      "lexical_label": "树林",
+      "sequence": "树集",
+      "number": 34
+    },
+    {
+      "index": 35,
+      "id": "liga-035",
+      "lexical_id": "lex-035",
+      "proposal_id": "L35",
+      "chars": "水路",
+      "name": "水道",
+      "meaning": "水流经过、能够被追踪的连续通道。",
+      "category": "自然与所在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        112,
+        64
+      ],
+      "glyph_ids": [
+        "rune-112",
+        "rune-064"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "水",
+          "index": 112,
+          "glyph_id": "rune-112",
+          "role": "entity",
+          "concept": "液态水"
+        },
+        {
+          "position": 2,
+          "char": "路",
+          "index": 64,
+          "glyph_id": "rune-064",
+          "role": "entity",
+          "concept": "路径"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈水路〉：水道",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "水流限定路径用途",
+      "distinction_from_existing_roots": "水是材料，路是通用路径，本词指水的连续行经通道。",
+      "admission_reason": "河道、地形、旅行、水的流向",
+      "boundary_note": "可自然也可人工；不默认等于航线，也不强称所有水道都是河流。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 24 L26 68 Q26 102 59 102 L206 102",
+        "M26 68 L58 68 Q75 92 99 70 L145 26",
+        "M58 35 Q80 15 103 35 L130 64 Q154 91 179 66 L205 40",
+        "M147 26 Q178 23 179 47 L179 66"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 100370,
+      "metaphor": "路的连续承接弯道与水流共用侧界和转折，流体在可追踪通道内延续，区别无边界的普通水流",
+      "component_transformations": [
+        "路的连续承接弯道与水流共用侧界和转折，流体在可追踪通道内延续，区别无边界的普通水流"
+      ],
+      "label": "水道",
+      "lexical_label": "水道",
+      "sequence": "水路",
+      "number": 35
+    },
+    {
+      "index": 36,
+      "id": "liga-036",
+      "lexical_id": "lex-036",
+      "proposal_id": "L36",
+      "chars": "凝水",
+      "name": "冰",
+      "meaning": "水凝固后形成的固态水。",
+      "category": "自然与所在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        190,
+        112
+      ],
+      "glyph_ids": [
+        "rune-190",
+        "rune-112"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "凝",
+          "index": 190,
+          "glyph_id": "rune-190",
+          "role": "action",
+          "concept": "凝固"
+        },
+        {
+          "position": 2,
+          "char": "水",
+          "index": 112,
+          "glyph_id": "rune-112",
+          "role": "entity",
+          "concept": "液态水"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈凝水〉：冰",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "凝固作用派生材料结果名",
+      "distinction_from_existing_roots": "水根指液态水，凝根指凝固过程；合词指其固态结果。",
+      "admission_reason": "饮水、天气、地形、冰系魔法",
+      "boundary_note": "词汇中凝水是冰；精确操作写凝(水)。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 46 L88 22 L178 41 L198 78 L149 108 L44 100 Z",
+        "M50 50 Q71 35 74 53 L108 76 Q132 94 151 80",
+        "M49 77 Q67 92 89 72 L121 43"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 76357,
+      "metaphor": "凝的刚性结果边界成为整个词的主体，水的连续纹理保留在其内部；表达已形成的固态水，而非正在执行凝固命令",
+      "component_transformations": [
+        "凝的刚性结果边界成为整个词的主体，水的连续纹理保留在其内部；表达已形成的固态水，而非正在执行凝固命令"
+      ],
+      "label": "冰",
+      "lexical_label": "冰",
+      "sequence": "凝水",
+      "number": 36
+    },
+    {
+      "index": 37,
+      "id": "liga-037",
+      "lexical_id": "lex-037",
+      "proposal_id": "L37",
+      "chars": "水气",
+      "name": "水汽",
+      "meaning": "以气态存在的水。",
+      "category": "自然与所在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        112,
+        111
+      ],
+      "glyph_ids": [
+        "rune-112",
+        "rune-111"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "水",
+          "index": 112,
+          "glyph_id": "rune-112",
+          "role": "entity",
+          "concept": "液态水"
+        },
+        {
+          "position": 2,
+          "char": "气",
+          "index": 111,
+          "glyph_id": "rune-111",
+          "role": "entity",
+          "concept": "气态介质"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈水气〉：水汽",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "水的材料身份与气态结合成物态名",
+      "distinction_from_existing_roots": "水根是液态水，气根是一般气态介质；本词固定水的材料身份与气态。",
+      "admission_reason": "日常物态、湿度、热水场景、水气魔法",
+      "boundary_note": "与雾的液滴区分。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M28 46 Q21 18 60 23",
+        "M80 35 Q104 14 126 37 L151 63 Q171 82 195 61",
+        "M76 71 Q99 93 123 72 L152 43",
+        "M176 22 Q211 33 204 62",
+        "M191 99 Q154 116 111 99"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 83036,
+      "metaphor": "水的身份流势在疏开的气态范围中舒展，外界没有定形闭壳，表示作为气态水的水汽",
+      "component_transformations": [
+        "水的身份流势在疏开的气态范围中舒展，外界没有定形闭壳，表示作为气态水的水汽"
+      ],
+      "label": "水汽",
+      "lexical_label": "水汽",
+      "sequence": "水气",
+      "number": 37
+    },
+    {
+      "index": 38,
+      "id": "liga-038",
+      "lexical_id": "lex-038",
+      "proposal_id": "L38",
+      "chars": "气水",
+      "name": "雾",
+      "meaning": "悬浮在空气中的细小液态水滴所形成的雾。",
+      "category": "自然与所在",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        111,
+        112
+      ],
+      "glyph_ids": [
+        "rune-111",
+        "rune-112"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "气",
+          "index": 111,
+          "glyph_id": "rune-111",
+          "role": "entity",
+          "concept": "气态介质"
+        },
+        {
+          "position": 2,
+          "char": "水",
+          "index": 112,
+          "glyph_id": "rune-112",
+          "role": "entity",
+          "concept": "液态水"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈气水〉：雾",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "气态介质中的水词汇化为悬浮液滴",
+      "distinction_from_existing_roots": "气和水分别是介质与材料，合词约定水以细滴分散在气中。",
+      "admission_reason": "天气、风景、遮蔽、幻境场景",
+      "boundary_note": "水气指气态水，气水指悬浮液滴；顺序是已登记的词义区别。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 50 Q21 19 59 24",
+        "M183 24 Q219 39 207 77",
+        "M190 103 Q131 119 76 104",
+        "M55 49 Q69 34 83 49 L99 66 Q110 81 91 91",
+        "M55 73 Q70 87 85 72 L101 50",
+        "M135 41 Q148 30 160 43 L174 60 Q184 73 169 83",
+        "M136 65 Q151 80 164 64 L175 46"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 83068,
+      "metaphor": "气的开放范围容纳彼此分立的两枚小水流核，水保持液态团簇而非化入连续气流，表达悬浮细滴的雾",
+      "component_transformations": [
+        "气的开放范围容纳彼此分立的两枚小水流核，水保持液态团簇而非化入连续气流，表达悬浮细滴的雾"
+      ],
+      "label": "雾",
+      "lexical_label": "雾",
+      "sequence": "气水",
+      "number": 38
+    },
+    {
+      "index": 39,
+      "id": "liga-039",
+      "lexical_id": "lex-039",
+      "proposal_id": "L39",
+      "chars": "护符",
+      "name": "护符",
+      "meaning": "关联或承载保护用途的符记。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        280,
+        319
+      ],
+      "glyph_ids": [
+        "rune-280",
+        "rune-319"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "护",
+          "index": 280,
+          "glyph_id": "rune-280",
+          "role": "action",
+          "concept": "保护"
+        },
+        {
+          "position": 2,
+          "char": "符",
+          "index": 319,
+          "glyph_id": "rune-319",
+          "role": "entity",
+          "concept": "符指"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈护符〉：护符",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "保护用途派生符记名",
+      "distinction_from_existing_roots": "护是动作，符是一般符指，本词是具有保护用途的常用符记类别。",
+      "admission_reason": "佩戴、赠予、铭刻、守护叙事",
+      "boundary_note": "词名不保证护效；载体与生效条件另述。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M111 27 C57 9 18 47 33 85 Q48 108 81 96",
+        "M48 56 L75 40 L94 69 L76 87",
+        "M94 69 L120 46 L143 69 L120 93 Z",
+        "M174 27 Q204 59 178 99",
+        "M143 69 L174 61 L159 105"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 88304,
+      "metaphor": "护的承托端与符的约定核共用一个接点，符记保持异形双端及短桥，表示承载保护用途的标记",
+      "component_transformations": [
+        "护的承托端与符的约定核共用一个接点，符记保持异形双端及短桥，表示承载保护用途的标记"
+      ],
+      "label": "护符",
+      "lexical_label": "护符",
+      "sequence": "护符",
+      "number": 39
+    },
+    {
+      "index": 40,
+      "id": "liga-040",
+      "lexical_id": "lex-040",
+      "proposal_id": "L40",
+      "chars": "封符",
+      "name": "封印",
+      "meaning": "用来建立、表明或维持封闭交换关系的符记。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        279,
+        319
+      ],
+      "glyph_ids": [
+        "rune-279",
+        "rune-319"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "封",
+          "index": 279,
+          "glyph_id": "rune-279",
+          "role": "action",
+          "concept": "封存"
+        },
+        {
+          "position": 2,
+          "char": "符",
+          "index": 319,
+          "glyph_id": "rune-319",
+          "role": "entity",
+          "concept": "符指"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈封符〉：封印",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "封存用途派生符记名",
+      "distinction_from_existing_roots": "封是关闭交换的动作，符是一般符指，本词指封存关系的持久标记。",
+      "admission_reason": "封存、解除、禁物、遗迹",
+      "boundary_note": "本词指封印符记；封印的动作仍可用封，不能混成一切限制。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 48 L66 23 L191 40 L202 83 L161 108 L29 89 Z",
+        "M71 39 L93 61 L71 83 L49 61 Z",
+        "M157 35 Q185 63 157 94",
+        "M93 61 L131 50 L170 68 L151 95",
+        "M23 68 L212 68"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 86605,
+      "metaphor": "封的闭合交换界及拦断横笔罩住符的异形核桥，符记成为维持封闭关系的约定载体",
+      "component_transformations": [
+        "封的闭合交换界及拦断横笔罩住符的异形核桥，符记成为维持封闭关系的约定载体"
+      ],
+      "label": "封印",
+      "lexical_label": "封印",
+      "sequence": "封符",
+      "number": 40
+    },
+    {
+      "index": 41,
+      "id": "liga-041",
+      "lexical_id": "lex-041",
+      "proposal_id": "L41",
+      "chars": "护界",
+      "name": "结界",
+      "meaning": "用于保护某个范围、抵挡指定侵害的作用边界。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        280,
+        45
+      ],
+      "glyph_ids": [
+        "rune-280",
+        "rune-045"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "护",
+          "index": 280,
+          "glyph_id": "rune-280",
+          "role": "action",
+          "concept": "保护"
+        },
+        {
+          "position": 2,
+          "char": "界",
+          "index": 45,
+          "glyph_id": "rune-045",
+          "role": "entity",
+          "concept": "界限"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈护界〉：结界",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "保护用途限定界限",
+      "distinction_from_existing_roots": "界只是分界，隔是无法通过；结界具有保护目的，可选择性允许通行。",
+      "admission_reason": "守护地点、区域安全、场景规则",
+      "boundary_note": "不默认隔绝一切、不可破坏或天然带有攻击性。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M100 28 C53 10 18 49 29 85 Q40 111 76 97",
+        "M46 56 L75 41 L94 70 L77 88",
+        "M138 21 L138 108",
+        "M94 70 L120 70 L120 49",
+        "M190 84 L158 84 L158 66"
+      ],
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "advance": 216,
+      "style_seed": 85308,
+      "metaphor": "护的承托内架直接成为界一侧的止步口；保护范围有明确判定轴，另一侧仍有独立接近端",
+      "component_transformations": [
+        "护的承托内架直接成为界一侧的止步口；保护范围有明确判定轴，另一侧仍有独立接近端"
+      ],
+      "label": "结界",
+      "lexical_label": "结界",
+      "sequence": "护界",
+      "number": 41
+    },
+    {
+      "index": 42,
+      "id": "liga-042",
+      "lexical_id": "lex-042",
+      "proposal_id": "L42",
+      "chars": "远域门",
+      "name": "传送门",
+      "meaning": "两侧直接接通两个相隔范围的通道口。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "quality",
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        225,
+        47,
+        357
+      ],
+      "glyph_ids": [
+        "rune-225",
+        "rune-047",
+        "rune-357"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "远",
+          "index": 225,
+          "glyph_id": "rune-225",
+          "role": "quality",
+          "concept": "远"
+        },
+        {
+          "position": 2,
+          "char": "域",
+          "index": 47,
+          "glyph_id": "rune-047",
+          "role": "entity",
+          "concept": "作用域"
+        },
+        {
+          "position": 3,
+          "char": "门",
+          "index": 357,
+          "glyph_id": "rune-357",
+          "role": "entity",
+          "concept": "通道口"
+        }
+      ],
+      "constituent_count": 3,
+      "layout_class": "horizontal_3",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈远域门〉：传送门",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "远隔作用域之间的门词汇化",
+      "distinction_from_existing_roots": "门是一般通道口，本词约定连接两个非邻接范围。",
+      "admission_reason": "旅行、地点连接、空间魔法",
+      "boundary_note": "非邻接直接连接属于约定义；不自动指瞬时、跨世界或双向通行。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 36 L36 24 L48 36 L36 48 Z",
+        "M245 90 L258 76 L272 90 L258 104 Z",
+        "M30 96 Q90 106 121 51 Q134 23 166 31 L166 43",
+        "M256 28 Q179 14 172 58 Q171 104 228 107",
+        "M125 81 L153 81 L216 52 L263 52",
+        "M294 70 Q309 100 272 90"
+      ],
+      "viewBox": [
+        0,
+        0,
+        312,
+        128
+      ],
+      "advance": 312,
+      "style_seed": 196946,
+      "metaphor": "远的两个相隔位置通过直接跨距曲线接到门的入口；域的范围弧与两侧门口共用边界，形成跨域通道而非普通长路",
+      "component_transformations": [
+        "远的两个相隔位置通过直接跨距曲线接到门的入口；域的范围弧与两侧门口共用边界，形成跨域通道而非普通长路"
+      ],
+      "label": "传送门",
+      "lexical_label": "传送门",
+      "sequence": "远域门",
+      "number": 42
+    },
+    {
+      "index": 43,
+      "id": "liga-043",
+      "lexical_id": "lex-043",
+      "proposal_id": "L43",
+      "chars": "术文",
+      "name": "术式文本",
+      "meaning": "表达或记录一项术式的连贯文本。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        354,
+        321
+      ],
+      "glyph_ids": [
+        "rune-354",
+        "rune-321"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "术",
+          "index": 354,
+          "glyph_id": "rune-354",
+          "role": "entity",
+          "concept": "操作式"
+        },
+        {
+          "position": 2,
+          "char": "文",
+          "index": 321,
+          "glyph_id": "rune-321",
+          "role": "entity",
+          "concept": "文理"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈术文〉：术式文本",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "术式作为文本内容",
+      "distinction_from_existing_roots": "术是操作组合，文是表达，本词是术式的文本形态。",
+      "admission_reason": "学习、阅读、抄写、咒文材料",
+      "boundary_note": "可称咒文文本，但不限定口头咒语，不等于实体法术书或阅读即施法。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 26 L25 60 L48 79",
+        "M25 60 L61 36 L98 58 L98 89 L77 104",
+        "M48 79 L69 79 L69 64",
+        "M98 58 Q123 65 148 48 L169 28",
+        "M148 48 L148 92",
+        "M148 48 Q175 70 195 50 L215 30",
+        "M195 50 L195 92 L216 92"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 78397,
+      "metaphor": "术的内部执行接口保持可辨，外缘直接进入文的连贯片段，使术式成为可记录和读取的内容",
+      "component_transformations": [
+        "术的内部执行接口保持可辨，外缘直接进入文的连贯片段，使术式成为可记录和读取的内容"
+      ],
+      "label": "术式文本",
+      "lexical_label": "术式文本",
+      "sequence": "术文",
+      "number": 43
+    },
+    {
+      "index": 44,
+      "id": "liga-044",
+      "lexical_id": "lex-044",
+      "proposal_id": "L44",
+      "chars": "术能",
+      "name": "魔能",
+      "meaning": "可供术式使用的能量。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        354,
+        101
+      ],
+      "glyph_ids": [
+        "rune-354",
+        "rune-101"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "术",
+          "index": 354,
+          "glyph_id": "rune-354",
+          "role": "entity",
+          "concept": "操作式"
+        },
+        {
+          "position": 2,
+          "char": "能",
+          "index": 101,
+          "glyph_id": "rune-101",
+          "role": "entity",
+          "concept": "可用能量"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈术能〉：魔能",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "用途限定可用能量并约定简称",
+      "distinction_from_existing_roots": "能包括全部可用能量，术是操作组合，本词特指施术所用能量。",
+      "admission_reason": "消耗、储备、资源、魔法限制",
+      "boundary_note": "不等于施术技能、权限或能力，也不假定独立的新物质。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 27 L24 61 L45 79",
+        "M24 61 L61 37 L98 59 L98 88 L77 104",
+        "M45 79 L68 79 L68 64",
+        "M98 59 Q100 19 145 23 L181 27 C204 34 213 52 206 73",
+        "M125 66 L148 44 L174 66 L148 90 Z",
+        "M148 44 Q158 23 181 27",
+        "M174 66 L216 66",
+        "M123 100 Q165 119 206 88"
+      ],
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "advance": 240,
+      "style_seed": 92457,
+      "metaphor": "术的作用边接入能的容纳场，核心负载与可用输出支保留，表示可供术式使用的魔能",
+      "component_transformations": [
+        "术的作用边接入能的容纳场，核心负载与可用输出支保留，表示可供术式使用的魔能"
+      ],
+      "label": "魔能",
+      "lexical_label": "魔能",
+      "sequence": "术能",
+      "number": 44
+    },
+    {
+      "index": 45,
+      "id": "liga-045",
+      "lexical_id": "lex-045",
+      "proposal_id": "L45",
+      "chars": "蓄能物",
+      "name": "储能器",
+      "meaning": "为积蓄并保留可用能量而设置的器物。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        259,
+        101,
+        18
+      ],
+      "glyph_ids": [
+        "rune-259",
+        "rune-101",
+        "rune-018"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "蓄",
+          "index": 259,
+          "glyph_id": "rune-259",
+          "role": "action",
+          "concept": "蓄积"
+        },
+        {
+          "position": 2,
+          "char": "能",
+          "index": 101,
+          "glyph_id": "rune-101",
+          "role": "entity",
+          "concept": "可用能量"
+        },
+        {
+          "position": 3,
+          "char": "物",
+          "index": 18,
+          "glyph_id": "rune-018",
+          "role": "entity",
+          "concept": "对象"
+        }
+      ],
+      "constituent_count": 3,
+      "layout_class": "horizontal_3",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈蓄能物〉：储能器",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "蓄积能量的用途派生器物名",
+      "distinction_from_existing_roots": "蓄是过程，能是资源，物是对象，合词指具有此用途的器物。",
+      "admission_reason": "日常器具、能量储备、魔法道具",
+      "boundary_note": "不限定电池、晶石或容器，不保证无限容量。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 25 L24 109 L205 109 L205 55",
+        "M48 36 Q83 25 84 57 L84 82",
+        "M48 84 L65 84 L65 63",
+        "M169 28 C123 11 89 42 103 78 Q120 104 157 87",
+        "M118 61 L140 41 L162 61 L140 83 Z",
+        "M140 41 Q147 22 169 28",
+        "M162 61 L205 61",
+        "M205 55 L242 30 L280 42 L291 79 L269 103 L224 94 Z",
+        "M244 56 Q267 63 251 79"
+      ],
+      "viewBox": [
+        0,
+        0,
+        312,
+        128
+      ],
+      "advance": 312,
+      "style_seed": 187897,
+      "metaphor": "蓄的保留边界围住能的负载核并保留输入支架，能的输出口与物的独立器体边界共用；用途器物身份同时可辨",
+      "component_transformations": [
+        "蓄的保留边界围住能的负载核并保留输入支架，能的输出口与物的独立器体边界共用；用途器物身份同时可辨"
+      ],
+      "label": "储能器",
+      "lexical_label": "储能器",
+      "sequence": "蓄能物",
+      "number": 45
+    },
+    {
+      "index": 46,
+      "id": "liga-046",
+      "lexical_id": "lex-046",
+      "proposal_id": "L46",
+      "chars": "禁术",
+      "name": "禁术",
+      "meaning": "被明确规则排除在允许实施范围之外的术式。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "relation",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        343,
+        354
+      ],
+      "glyph_ids": [
+        "rune-343",
+        "rune-354"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "禁",
+          "index": 343,
+          "glyph_id": "rune-343",
+          "role": "relation",
+          "concept": "禁制"
+        },
+        {
+          "position": 2,
+          "char": "术",
+          "index": 354,
+          "glyph_id": "rune-354",
+          "role": "entity",
+          "concept": "操作式"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈禁术〉：禁术",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "透明复合",
+      "composition_relation": "禁制关系限定术式类别",
+      "distinction_from_existing_roots": "禁是禁止关系，术是任意操作组合，本词指受禁制的术式类别。",
+      "admission_reason": "规范、冲突、世界设定、术式分类",
+      "boundary_note": "禁止来源和范围须可说明，不自动等于邪恶或一定有害。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M26 27 L90 27 L90 55 L69 55",
+        "M91 103 L32 103 L32 74 L56 74",
+        "M26 47 L48 47",
+        "M72 84 L99 84 L127 64 L162 40 L198 61 L198 91 L176 107",
+        "M127 28 L127 64 L148 81",
+        "M148 81 L170 81 L170 67"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 83935,
+      "metaphor": "禁的两道反向许可止口钳住术的接入边，术内执行结构仍完整可识别，表示被规则排除的术式",
+      "component_transformations": [
+        "禁的两道反向许可止口钳住术的接入边，术内执行结构仍完整可识别，表示被规则排除的术式"
+      ],
+      "label": "禁术",
+      "lexical_label": "禁术",
+      "sequence": "禁术",
+      "number": 46
+    },
+    {
+      "index": 47,
+      "id": "liga-047",
+      "lexical_id": "lex-047",
+      "proposal_id": "L47",
+      "chars": "身灵",
+      "name": "灵魂",
+      "meaning": "与某个生命的自我和身份相联系的非实体主体。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "entity"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        135,
+        127
+      ],
+      "glyph_ids": [
+        "rune-135",
+        "rune-127"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "身",
+          "index": 135,
+          "glyph_id": "rune-135",
+          "role": "entity",
+          "concept": "躯体"
+        },
+        {
+          "position": 2,
+          "char": "灵",
+          "index": 127,
+          "glyph_id": "rune-127",
+          "role": "entity",
+          "concept": "非实体主体"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈身灵〉：灵魂",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "躯体与非实体主体之间的关联词汇化",
+      "distinction_from_existing_roots": "灵可以是任意非实体有意向主体；本词限定其与一个生命身份的联系。",
+      "admission_reason": "人物自我、生命与死亡、灵性和魔法叙事",
+      "boundary_note": "不额外规定死后去向或转生制度。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M28 30 L76 30 Q104 44 100 80 L78 103 L28 91 Z",
+        "M28 60 L53 60 Q76 59 76 80",
+        "M76 30 C111 9 148 21 137 47 Q121 77 147 101 L173 109",
+        "M190 25 L214 44 L203 80",
+        "M159 50 Q177 41 183 60 L172 81"
+      ],
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "advance": 232,
+      "style_seed": 94101,
+      "metaphor": "同一躯界的上缘向外延成非实体主体的开放范围，内部意向笔独立存在；身的身份接口与灵保持联系",
+      "component_transformations": [
+        "同一躯界的上缘向外延成非实体主体的开放范围，内部意向笔独立存在；身的身份接口与灵保持联系"
+      ],
+      "label": "灵魂",
+      "lexical_label": "灵魂",
+      "sequence": "身灵",
+      "number": 47
+    },
+    {
+      "index": 48,
+      "id": "liga-048",
+      "lexical_id": "lex-048",
+      "proposal_id": "L48",
+      "chars": "赋恩",
+      "name": "祝福",
+      "meaning": "赋予目标、使其获得持续有利条件的作用。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "relation"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        283,
+        341
+      ],
+      "glyph_ids": [
+        "rune-283",
+        "rune-341"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "赋",
+          "index": 283,
+          "glyph_id": "rune-283",
+          "role": "action",
+          "concept": "赋予"
+        },
+        {
+          "position": 2,
+          "char": "恩",
+          "index": 341,
+          "glyph_id": "rune-341",
+          "role": "relation",
+          "concept": "恩惠"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈赋恩〉：祝福",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "赋予与恩惠词汇化为有利作用",
+      "distinction_from_existing_roots": "赋可授予任何性质，恩涉及受益关系；本词约定为有利的赋加作用。",
+      "admission_reason": "祝愿、赐福、守护、物品与人物状态",
+      "boundary_note": "表示祝福这一作用；具体利益由语境指定。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 39 A13 13 0 1 1 51 39 A13 13 0 1 1 25 39",
+        "M51 39 C92 35 105 79 74 98 Q52 108 31 83",
+        "M93 57 L150 53 L188 29",
+        "M119 29 L150 53 L150 80 Q146 106 115 101",
+        "M198 58 Q217 96 181 108"
+      ],
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "advance": 240,
+      "style_seed": 85533,
+      "metaphor": "赋的持续环抱作用接到恩的下扶支，目标所得有利条件具有可持续承托关系，约定为祝福而不画宗教标志",
+      "component_transformations": [
+        "赋的持续环抱作用接到恩的下扶支，目标所得有利条件具有可持续承托关系，约定为祝福而不画宗教标志"
+      ],
+      "label": "祝福",
+      "lexical_label": "祝福",
+      "sequence": "赋恩",
+      "number": 48
+    },
+    {
+      "index": 49,
+      "id": "liga-049",
+      "lexical_id": "lex-049",
+      "proposal_id": "L49",
+      "chars": "赋亏",
+      "name": "诅咒",
+      "meaning": "赋予目标、使其持续受损、受阻或处于不利状态的作用。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "action",
+        "quality"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        283,
+        261
+      ],
+      "glyph_ids": [
+        "rune-283",
+        "rune-261"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "赋",
+          "index": 283,
+          "glyph_id": "rune-283",
+          "role": "action",
+          "concept": "赋予"
+        },
+        {
+          "position": 2,
+          "char": "亏",
+          "index": 261,
+          "glyph_id": "rune-261",
+          "role": "quality",
+          "concept": "亏欠"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈赋亏〉：诅咒",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "赋予与亏欠词汇化为不利作用",
+      "distinction_from_existing_roots": "赋可授予任何性质，亏表示低于需求；合词将其词汇化为持续的不利赋加。",
+      "admission_reason": "咒害、解咒、人物困境、物品状态",
+      "boundary_note": "利害按目标所受作用定义，不借善恶伦理义。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M25 39 A13 13 0 1 1 51 39 A13 13 0 1 1 25 39",
+        "M51 39 C92 35 105 79 74 98 Q52 108 31 83",
+        "M93 57 Q111 17 146 27 Q173 16 199 38",
+        "M120 52 L154 52",
+        "M111 83 Q112 96 132 96 L159 96 L159 74",
+        "M193 78 L210 100"
+      ],
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "advance": 240,
+      "style_seed": 76393,
+      "metaphor": "赋的持续环抱作用接入亏的不完整容纳与损出端，缺损结构明确而非随机划痕，约定为持续不利的诅咒",
+      "component_transformations": [
+        "赋的持续环抱作用接入亏的不完整容纳与损出端，缺损结构明确而非随机划痕，约定为持续不利的诅咒"
+      ],
+      "label": "诅咒",
+      "lexical_label": "诅咒",
+      "sequence": "赋亏",
+      "number": 49
+    },
+    {
+      "index": 50,
+      "id": "liga-050",
+      "lexical_id": "lex-050",
+      "proposal_id": "L50",
+      "chars": "规行",
+      "name": "仪式",
+      "meaning": "依固定形式完成、具有象征或魔法意义的一组行动。",
+      "category": "魔法对象与概念",
+      "grammar_type": "LEXICAL_WORD",
+      "roles": [
+        "entity",
+        "action"
+      ],
+      "result_type": "lexical_concept",
+      "context": [],
+      "context_note": "按登记词义用于普通交流；复杂操作另用明确的动作表达。",
+      "complete_executable_instruction": false,
+      "indices": [
+        301,
+        356
+      ],
+      "glyph_ids": [
+        "rune-301",
+        "rune-356"
+      ],
+      "constituents": [
+        {
+          "position": 1,
+          "char": "规",
+          "index": 301,
+          "glyph_id": "rune-301",
+          "role": "entity",
+          "concept": "规范"
+        },
+        {
+          "position": 2,
+          "char": "行",
+          "index": 356,
+          "glyph_id": "rune-356",
+          "role": "action",
+          "concept": "执行"
+        }
+      ],
+      "constituent_count": 2,
+      "layout_class": "horizontal_2",
+      "feature": "dlig",
+      "semantic_change_when_enabled": false,
+      "parse": "词〈规行〉：仪式",
+      "parse_is_lexically_registered": true,
+      "registered_unparenthesized_spelling": true,
+      "derivation": "约定词汇",
+      "composition_relation": "规范形式与执行词汇化",
+      "distinction_from_existing_roots": "规是规范，行是执行；合词加入固定形式及象征意义这一常用约定。",
+      "admission_reason": "日常礼仪、节庆、纪念、魔法仪式",
+      "boundary_note": "不要求每个仪式都产生超自然效果。",
+      "lexical_meaning_independent_of_dlig": true,
+      "word_boundary_required": true,
+      "status": "approved_lexical_word",
+      "paths": [
+        "M24 30 L116 30 L116 105",
+        "M38 60 L81 60 L81 92",
+        "M48 87 L48 45 L96 45",
+        "M116 60 L139 37 L183 37 L183 61",
+        "M139 37 L139 74 Q139 104 162 100 L202 57"
+      ],
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "advance": 224,
+      "style_seed": 105052,
+      "metaphor": "规的分层参照架与行的起始路径共享接点，行动按固定阶段推进，表达依形式完成的仪式",
+      "component_transformations": [
+        "规的分层参照架与行的起始路径共享接点，行动按固定阶段推进，表达依形式完成的仪式"
+      ],
+      "label": "仪式",
+      "lexical_label": "仪式",
+      "sequence": "规行",
+      "number": 50
+    }
+  ]
+}

@@ -45,7 +45,7 @@ npm run build
 | 方向 | 参考 |
 | --- | --- |
 | 当前状态与未完成项 | [阶段总结](../../docs/STAGE-SUMMARY.md)、[TODO](../../docs/TODO.md) |
-| 模块与内容扩展 | [实现快照](../../docs/TECHNICAL-SNAPSHOT.md)、[构筑设计](../../docs/build-system-design/00-DESIGN-BRIEF.md) |
+| 模块与内容扩展 | [实现快照](../../docs/TECHNICAL-SNAPSHOT.md)、[构筑设计](../../docs/archive/2026-10-08-build-system/build-system-design/00-DESIGN-BRIEF.md) |
 | UI 与视觉 | [视觉规则](../../docs/ART-DIRECTION.md)、[文案规则](../../docs/CONTENT-STYLE.md) |
 | 难度与战斗节奏 | [产品设计](../../docs/PRODUCT-DESIGN.md)、[收益模型](../../docs/COMBAT-BALANCE-DESIGN.md) |
 | 素材、音效与既有工具 | [实现快照](../../docs/TECHNICAL-SNAPSHOT.md)、[历史资料](../../docs/archive/README.md) |

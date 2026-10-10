@@ -1,0 +1,5 @@
+@font-face {font-family:"Arcana384 VF";src:url("fonts/Arcana384-VF.woff2") format("woff2");font-weight:300 750;font-style:normal;font-display:swap;}
+@font-face {font-family:"Arcana384 Imprint VF";src:url("fonts/Arcana384-Imprint-VF.woff2") format("woff2");font-weight:300 750;font-style:normal;font-display:swap;}
+.arcana {font-family:"Arcana384 VF",serif;font-weight:400;font-style:normal;font-synthesis:none;font-feature-settings:"dlig" 0;}
+.arcana-imprint {font-family:"Arcana384 Imprint VF",serif;}
+.arcana-ligatures {font-feature-settings:"dlig" 1;}

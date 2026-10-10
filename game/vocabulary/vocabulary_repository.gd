@@ -9,6 +9,8 @@ const MAX_RECORDS := 100_000
 
 var last_error: String = ""
 var user_directory: String = USER_DIRECTORY
+var _indices: Dictionary[String, VocabularyIndex] = {}
+var _prepared := false
 
 
 func _init(directory: String = USER_DIRECTORY) -> void:
@@ -50,8 +52,19 @@ func describe(id: String) -> Dictionary:
 	return {}
 
 
+func prepare_catalog() -> void:
+	if _prepared: return
+	for book in catalog(): load_entries(str(book.id))
+	_prepared = true
+
+
+func prepared_index(id: String) -> VocabularyIndex:
+	return _indices.get(id)
+
+
 func load_entries(id: String) -> Array[VocabularyEntry]:
 	last_error = ""
+	_indices.erase(id)
 	var entries: Array[VocabularyEntry] = []
 	var path := ""
 	for book in catalog():
@@ -65,17 +78,51 @@ func load_entries(id: String) -> Array[VocabularyEntry]:
 	if not (data is Dictionary) or not (data.get("words") is Array):
 		last_error = "词库数据无法读取：" + id
 		return entries
+	# Compare source records exactly: edits within the same timestamp/size still
+	# invalidate the cache. This runs in library loading, never during sampling.
+	var cache_path := user_directory.path_join("indices").path_join(id + ".bin")
+	var cache_file := FileAccess.open(cache_path, FileAccess.READ)
+	if cache_file != null:
+		var cached: Variant = cache_file.get_var(false)
+		cache_file.close()
+		if cached is Dictionary and cached.get("source") == data.words and cached.get("index") is Dictionary:
+			var stored: Dictionary = cached.index
+			if stored.get("version") == VocabularyIndex.VERSION and stored.get("buckets", []).size() == 26 and stored.get("prefix", []).size() == 650:
+				_indices[id] = VocabularyIndex.from_data(stored)
+				return _indices[id].entries
 	var seen := {}
 	for item in data["words"]:
-		if not (item is Dictionary):
-			continue
-		var word := _normalize_word(str(item.get("word", "")))
+		var word := _normalize_word(_entry_word(item))
 		if _valid_word(word) and not seen.has(word):
 			seen[word] = true
-			entries.append(VocabularyEntry.new(word, str(item.get("meaning", ""))))
+			entries.append(VocabularyEntry.new(word, _entry_meaning(item)))
 	if entries.is_empty():
 		last_error = "词库没有可用词条：" + id
+	else:
+		_store_index(id, entries, data.words)
 	return entries
+
+
+func _store_index(id: String, entries: Array[VocabularyEntry], source: Array) -> void:
+	var index := VocabularyIndex.build(entries)
+	_indices[id] = index
+	var folder := ProjectSettings.globalize_path(user_directory.path_join("indices"))
+	var error := DirAccess.make_dir_recursive_absolute(folder)
+	if error != OK:
+		last_error = "无法保存词库索引：" + error_string(error)
+		return
+	var target := folder.path_join(id + ".bin")
+	var temporary := target + ".tmp"
+	var file := FileAccess.open(temporary, FileAccess.WRITE)
+	if file == null:
+		last_error = "无法写入词库索引：" + error_string(FileAccess.get_open_error())
+		return
+	file.store_var({"source": source, "index": index.to_data()})
+	file.flush()
+	error = file.get_error()
+	file.close()
+	if error == OK: error = DirAccess.rename_absolute(temporary, target)
+	if error != OK: last_error = "无法保存词库索引：" + error_string(error)
 
 
 func parse_import(text: String, filename: String) -> VocabularyImport:
@@ -205,7 +252,8 @@ func _save_book(result: VocabularyImport, id: String, metadata: Dictionary) -> b
 	if rename_error != OK:
 		last_error = "无法完成用户词库保存（错误码 %d）；临时文件保留在 %s。" % [rename_error, temporary]
 		return false
-	return true
+	_store_index(id, result.entries, words)
+	return last_error.is_empty()
 
 
 func select_entries(ids: PackedStringArray, min_length: int, max_length: int) -> Array[VocabularyEntry]:
@@ -216,7 +264,12 @@ func select_entries(ids: PackedStringArray, min_length: int, max_length: int) ->
 		return selected
 	var seen := {}
 	for id in ids:
-		for entry in load_entries(id):
+		var index := prepared_index(id)
+		if index == null:
+			load_entries(id)
+			index = prepared_index(id)
+		if index == null: continue
+		for entry in index.entries:
 			if not seen.has(entry.word) and entry.playable_length() >= min_length and entry.playable_length() <= max_length:
 				seen[entry.word] = true
 				selected.append(entry)
@@ -407,6 +460,13 @@ func _valid_word(word: String) -> bool:
 
 
 func _read_json(path: String) -> Variant:
+	var started := DebugLog.begin()
+	var data: Variant = _read_json_file(path)
+	DebugLog.operation(&"vocabulary.read_parse", started, {"file": path.get_file()})
+	return data
+
+
+func _read_json_file(path: String) -> Variant:
 	if not FileAccess.file_exists(path):
 		return null
 	var parser := JSON.new()

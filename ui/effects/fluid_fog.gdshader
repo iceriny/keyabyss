@@ -1,4 +1,5 @@
 shader_type canvas_item;
+render_mode blend_premul_alpha;
 uniform sampler2D field_texture : filter_linear, repeat_disable;
 uniform sampler2D density_texture : filter_linear, repeat_disable;
 uniform sampler2D matter_texture : filter_linear, repeat_disable;
@@ -17,7 +18,7 @@ uniform vec4 screen_to_uv_basis;
 varying float fog_presence;
 
 void fragment() {
-	vec2 mist = texture(density_texture, UV).rg;
+	vec4 mist = texture(density_texture, UV);
 	float density = mist.r;
 	vec2 aspect = domain_size / min(domain_size.x, domain_size.y);
 	vec2 edge = min(UV, 1.0 - UV);
@@ -26,8 +27,13 @@ void fragment() {
 	float mask = masked ? texture(domain_mask, UV).r : 1.0;
 	fog_presence = (1.0 - exp(-density)) * opacity * fade * reading * mask;
 	vec3 color = density > 0.0001 ? texture(matter_texture, UV).rgb / density : fog_color.rgb;
-	color += color * max(mist.g, 0.0) * 0.1;
-	COLOR = vec4(color, fog_presence);
+	// Emission follows transported material; it cools before the remaining smoke fades.
+	float radiance = min(mist.a, 12.0);
+	float warm=smoothstep(1.4,2.2,color.r/max(color.b,0.001));
+	vec3 core=mix(color,vec3(1.0,0.88,0.65),warm*smoothstep(2.5,6.0,radiance));
+	vec3 emission=core*radiance*mix(0.32,0.75,warm)*fade*reading*mask;
+	// Radiance is additive energy, independent of dilute smoke's coverage.
+	COLOR = vec4(color*fog_presence+emission, fog_presence);
 }
 
 void light() {
@@ -51,6 +57,6 @@ void light() {
 		}
 	}
 	float transmission = exp(-optical_depth * length((UV - light_uv) * domain_size) / 180.0 / float(max(light_samples, 1)));
-	// CanvasItem blending applies the fragment's density alpha to this light too.
-	LIGHT = vec4(LIGHT_COLOR.rgb * LIGHT_ENERGY * scattering * transmission * mix(vec3(1.0), COLOR.rgb, 0.3), LIGHT_COLOR.a);
+	// Scattered light retains smoke coverage; self-emission above is independent.
+	LIGHT = vec4(LIGHT_COLOR.rgb * LIGHT_ENERGY * scattering * transmission * fog_presence, LIGHT_COLOR.a);
 }

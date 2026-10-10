@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R004:rule"
-operation = &"death-fracture"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R004"
 title = "冰裂残页"
-description = "死亡时展开已付碎裂份额，来源不能重新领取整轮死亡奖励；无"
+description = "冻结敌人死亡时爆裂，范围伤害提高，最多连锁三层。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2

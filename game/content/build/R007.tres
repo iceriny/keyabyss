@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R007:rule"
-operation = &"splash"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R007"
 title = "爆墨瓶"
-description = "将部分主术份额改作小范围溅射；无"
+description = "直接施法造成 90 范围溅射，伤害为本次施法的 35%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2

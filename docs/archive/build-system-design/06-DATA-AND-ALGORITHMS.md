@@ -1,10 +1,10 @@
 # 数据与算法：整理前快照
 
-> 历史归档：2026-09-27 整理前的语义与技术方案。当前语义见[数据与算法](../../build-system-design/06-DATA-AND-ALGORITHMS.md)。
+> 历史归档：2026-09-27 整理前的语义与技术方案。当前语义见[数据与算法](../2026-10-08-build-system/build-system-design/06-DATA-AND-ALGORITHMS.md)。
 
 # 第六步：数据结构、执行与图谱算法
 
-状态：实施使用的接口与算法约定，依据[框架](../../build-system-design/04-SYSTEM-FRAMEWORK.md)与[候选内容](../../build-system-design/05-CONTENT-CATALOG.md)。资源与规则契约随实现校正；各项实际完成范围及检查证据见[实施记录](08-IMPLEMENTATION.md)，本文件不代表图谱、资产与全量内容已完成。
+状态：实施使用的接口与算法约定，依据[框架](../2026-10-08-build-system/build-system-design/04-SYSTEM-FRAMEWORK.md)与[候选内容](../2026-10-08-build-system/build-system-design/05-CONTENT-CATALOG.md)。资源与规则契约随实现校正；各项实际完成范围及检查证据见[实施记录](08-IMPLEMENTATION.md)，本文件不代表图谱、资产与全量内容已完成。
 
 ## 1. 数据边界
 

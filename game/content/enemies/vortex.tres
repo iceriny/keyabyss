@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"vortex"
+behavior = &"vortex"
+health = 134
+speed = 25.5
+radius = 26.73
+mass = 2
+experience = 15
+attack_damage = 12
+attack_interval = 3.6
+spawn_limit = 2
+long_word = true
+aura = &"pull"
+aura_radius = 345.0
+death_pull = true

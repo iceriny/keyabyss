@@ -19,3 +19,6 @@ var kills_by_source: Dictionary[StringName, int] = {}
 var reserve: Array[SpellLot] = []
 var asset_claims: Dictionary[String, bool] = {}
 var progression_requests: Array[Dictionary] = []
+var reward_facts: Array[RewardFact] = []
+var facts: Dictionary = {}
+var statistics: Dictionary = {}

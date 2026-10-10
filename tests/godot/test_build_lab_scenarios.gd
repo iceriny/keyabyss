@@ -19,6 +19,7 @@ func start(scenario: String) -> BattleSession:
 	var request := BattleStartRequest.new()
 	request.build = BuildCompiler.new().compile(BuildSelection.new()).build
 	request.vocabulary = [VocabularyEntry.new("ink", "墨")]
+	request.vocabulary_index = VocabularyIndex.build(request.vocabulary)
 	request.encounter = BuildLabScenarios.encounter(scenario)
 	request.seed_text = "scenario-test"
 	var session := BattleSession.new()

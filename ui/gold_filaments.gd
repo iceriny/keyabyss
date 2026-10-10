@@ -15,8 +15,7 @@ var _configured_seed: int = 0
 
 
 func _ready() -> void:
-	ribbon = ShaderMaterial.new()
-	ribbon.shader = preload("res://ui/materials/gold_filament.gdshader")
+	ribbon = preload("res://ui/materials/gold_filament.tres").duplicate() as ShaderMaterial
 	ribbon.set_shader_parameter("clock", 0.0)
 	material = ribbon
 

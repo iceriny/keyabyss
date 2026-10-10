@@ -1,0 +1,1181 @@
+{
+  "version": 1,
+  "policy": {
+    "unit": "whole_contiguous_mapped_root_token",
+    "ordering": "longer registered words first, with leading and trailing root guards",
+    "length_priority": [
+      3,
+      2
+    ],
+    "orthographies": [
+      "Han",
+      "PUA",
+      "mixed Han/PUA"
+    ],
+    "boundaries": "Use spaces or visible punctuation between words. Parentheses delimit operation arguments and block fusion across them.",
+    "whole_token_only": true,
+    "substring_matching": false,
+    "unknown_tokens": "Keep all roots separate; do not guess internal word boundaries or assign a combined meaning.",
+    "semantics_warning": "The registered word has the same meaning with dlig on and off. GSUB cannot infer a writer intention or translate Chinese glosses.",
+    "invisible_controls": "Invisible joiners, nonjoiners and zero-width characters are not supported word boundaries. The preview warns and disables fusion for affected runs.",
+    "recommended_separators": [
+      "SPACE U+0020",
+      "MIDDLE DOT U+00B7",
+      "visible punctuation"
+    ]
+  },
+  "cases": [
+    {
+      "id": "lex-1",
+      "input_han": "时空",
+      "input_pua": "",
+      "input_mixed": "时",
+      "expected_lexical_indices": [
+        1
+      ],
+      "dlig_off_root_indices": [
+        20,
+        38
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-2",
+      "input_han": "命运",
+      "input_pua": "",
+      "input_mixed": "命",
+      "expected_lexical_indices": [
+        2
+      ],
+      "dlig_off_root_indices": [
+        11,
+        12
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-3",
+      "input_han": "因果",
+      "input_pua": "",
+      "input_mixed": "因",
+      "expected_lexical_indices": [
+        3
+      ],
+      "dlig_off_root_indices": [
+        285,
+        286
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-4",
+      "input_han": "昔事",
+      "input_pua": "",
+      "input_mixed": "昔",
+      "expected_lexical_indices": [
+        4
+      ],
+      "dlig_off_root_indices": [
+        21,
+        16
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-5",
+      "input_han": "生续",
+      "input_pua": "",
+      "input_mixed": "生",
+      "expected_lexical_indices": [
+        5
+      ],
+      "dlig_off_root_indices": [
+        3,
+        263
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-6",
+      "input_han": "恒生",
+      "input_pua": "",
+      "input_mixed": "恒",
+      "expected_lexical_indices": [
+        6
+      ],
+      "dlig_off_root_indices": [
+        24,
+        3
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-7",
+      "input_han": "复生",
+      "input_pua": "",
+      "input_mixed": "复",
+      "expected_lexical_indices": [
+        7
+      ],
+      "dlig_off_root_indices": [
+        33,
+        3
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-8",
+      "input_han": "记忆",
+      "input_pua": "",
+      "input_mixed": "记",
+      "expected_lexical_indices": [
+        8
+      ],
+      "dlig_off_root_indices": [
+        329,
+        145
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-9",
+      "input_han": "事知",
+      "input_pua": "",
+      "input_mixed": "事",
+      "expected_lexical_indices": [
+        9
+      ],
+      "dlig_off_root_indices": [
+        16,
+        141
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-10",
+      "input_han": "自知",
+      "input_pua": "",
+      "input_mixed": "自",
+      "expected_lexical_indices": [
+        10
+      ],
+      "dlig_off_root_indices": [
+        381,
+        141
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-11",
+      "input_han": "自主",
+      "input_pua": "",
+      "input_mixed": "自",
+      "expected_lexical_indices": [
+        11
+      ],
+      "dlig_off_root_indices": [
+        381,
+        298
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-12",
+      "input_han": "安心",
+      "input_pua": "",
+      "input_mixed": "安",
+      "expected_lexical_indices": [
+        12
+      ],
+      "dlig_off_root_indices": [
+        177,
+        158
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-13",
+      "input_han": "思念",
+      "input_pua": "",
+      "input_mixed": "思",
+      "expected_lexical_indices": [
+        13
+      ],
+      "dlig_off_root_indices": [
+        143,
+        144
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-14",
+      "input_han": "善意",
+      "input_pua": "",
+      "input_mixed": "善",
+      "expected_lexical_indices": [
+        14
+      ],
+      "dlig_off_root_indices": [
+        184,
+        164
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-15",
+      "input_han": "恶意",
+      "input_pua": "",
+      "input_mixed": "恶",
+      "expected_lexical_indices": [
+        15
+      ],
+      "dlig_off_root_indices": [
+        185,
+        164
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-16",
+      "input_han": "心态",
+      "input_pua": "",
+      "input_mixed": "心",
+      "expected_lexical_indices": [
+        16
+      ],
+      "dlig_off_root_indices": [
+        158,
+        17
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-17",
+      "input_han": "惧梦",
+      "input_pua": "",
+      "input_mixed": "惧",
+      "expected_lexical_indices": [
+        17
+      ],
+      "dlig_off_root_indices": [
+        175,
+        147
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-18",
+      "input_han": "愿可",
+      "input_pua": "",
+      "input_mixed": "愿",
+      "expected_lexical_indices": [
+        18
+      ],
+      "dlig_off_root_indices": [
+        160,
+        359
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-19",
+      "input_han": "亲人",
+      "input_pua": "",
+      "input_mixed": "亲",
+      "expected_lexical_indices": [
+        19
+      ],
+      "dlig_off_root_indices": [
+        338,
+        122
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-20",
+      "input_han": "共行人",
+      "input_pua": "",
+      "input_mixed": "共人",
+      "expected_lexical_indices": [
+        20
+      ],
+      "dlig_off_root_indices": [
+        336,
+        356,
+        122
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-21",
+      "input_han": "归域",
+      "input_pua": "",
+      "input_mixed": "归",
+      "expected_lexical_indices": [
+        21
+      ],
+      "dlig_off_root_indices": [
+        53,
+        47
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-22",
+      "input_han": "共行",
+      "input_pua": "",
+      "input_mixed": "共",
+      "expected_lexical_indices": [
+        22
+      ],
+      "dlig_off_root_indices": [
+        336,
+        356
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-23",
+      "input_han": "言契",
+      "input_pua": "",
+      "input_mixed": "言",
+      "expected_lexical_indices": [
+        23
+      ],
+      "dlig_off_root_indices": [
+        315,
+        170
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-24",
+      "input_han": "信人",
+      "input_pua": "",
+      "input_mixed": "信",
+      "expected_lexical_indices": [
+        24
+      ],
+      "dlig_off_root_indices": [
+        149,
+        122
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-25",
+      "input_han": "予取",
+      "input_pua": "",
+      "input_mixed": "予",
+      "expected_lexical_indices": [
+        25
+      ],
+      "dlig_off_root_indices": [
+        269,
+        275
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-26",
+      "input_han": "共亲",
+      "input_pua": "",
+      "input_mixed": "共",
+      "expected_lexical_indices": [
+        26
+      ],
+      "dlig_off_root_indices": [
+        336,
+        338
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-27",
+      "input_han": "亲集",
+      "input_pua": "",
+      "input_mixed": "亲",
+      "expected_lexical_indices": [
+        27
+      ],
+      "dlig_off_root_indices": [
+        338,
+        94
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-28",
+      "input_han": "共安",
+      "input_pua": "",
+      "input_mixed": "共",
+      "expected_lexical_indices": [
+        28
+      ],
+      "dlig_off_root_indices": [
+        336,
+        177
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-29",
+      "input_han": "言码",
+      "input_pua": "",
+      "input_mixed": "言",
+      "expected_lexical_indices": [
+        29
+      ],
+      "dlig_off_root_indices": [
+        315,
+        320
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-30",
+      "input_han": "事文",
+      "input_pua": "",
+      "input_mixed": "事",
+      "expected_lexical_indices": [
+        30
+      ],
+      "dlig_off_root_indices": [
+        16,
+        321
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-31",
+      "input_han": "隐讯",
+      "input_pua": "",
+      "input_mixed": "隐",
+      "expected_lexical_indices": [
+        31
+      ],
+      "dlig_off_root_indices": [
+        186,
+        322
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-32",
+      "input_han": "契文",
+      "input_pua": "",
+      "input_mixed": "契",
+      "expected_lexical_indices": [
+        32
+      ],
+      "dlig_off_root_indices": [
+        170,
+        321
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-33",
+      "input_han": "水源",
+      "input_pua": "",
+      "input_mixed": "水",
+      "expected_lexical_indices": [
+        33
+      ],
+      "dlig_off_root_indices": [
+        112,
+        355
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-34",
+      "input_han": "树集",
+      "input_pua": "",
+      "input_mixed": "树",
+      "expected_lexical_indices": [
+        34
+      ],
+      "dlig_off_root_indices": [
+        125,
+        94
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-35",
+      "input_han": "水路",
+      "input_pua": "",
+      "input_mixed": "水",
+      "expected_lexical_indices": [
+        35
+      ],
+      "dlig_off_root_indices": [
+        112,
+        64
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-36",
+      "input_han": "凝水",
+      "input_pua": "",
+      "input_mixed": "凝",
+      "expected_lexical_indices": [
+        36
+      ],
+      "dlig_off_root_indices": [
+        190,
+        112
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-37",
+      "input_han": "水气",
+      "input_pua": "",
+      "input_mixed": "水",
+      "expected_lexical_indices": [
+        37
+      ],
+      "dlig_off_root_indices": [
+        112,
+        111
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-38",
+      "input_han": "气水",
+      "input_pua": "",
+      "input_mixed": "气",
+      "expected_lexical_indices": [
+        38
+      ],
+      "dlig_off_root_indices": [
+        111,
+        112
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-39",
+      "input_han": "护符",
+      "input_pua": "",
+      "input_mixed": "护",
+      "expected_lexical_indices": [
+        39
+      ],
+      "dlig_off_root_indices": [
+        280,
+        319
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-40",
+      "input_han": "封符",
+      "input_pua": "",
+      "input_mixed": "封",
+      "expected_lexical_indices": [
+        40
+      ],
+      "dlig_off_root_indices": [
+        279,
+        319
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-41",
+      "input_han": "护界",
+      "input_pua": "",
+      "input_mixed": "护",
+      "expected_lexical_indices": [
+        41
+      ],
+      "dlig_off_root_indices": [
+        280,
+        45
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-42",
+      "input_han": "远域门",
+      "input_pua": "",
+      "input_mixed": "远门",
+      "expected_lexical_indices": [
+        42
+      ],
+      "dlig_off_root_indices": [
+        225,
+        47,
+        357
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-43",
+      "input_han": "术文",
+      "input_pua": "",
+      "input_mixed": "术",
+      "expected_lexical_indices": [
+        43
+      ],
+      "dlig_off_root_indices": [
+        354,
+        321
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-44",
+      "input_han": "术能",
+      "input_pua": "",
+      "input_mixed": "术",
+      "expected_lexical_indices": [
+        44
+      ],
+      "dlig_off_root_indices": [
+        354,
+        101
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-45",
+      "input_han": "蓄能物",
+      "input_pua": "",
+      "input_mixed": "蓄物",
+      "expected_lexical_indices": [
+        45
+      ],
+      "dlig_off_root_indices": [
+        259,
+        101,
+        18
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-46",
+      "input_han": "禁术",
+      "input_pua": "",
+      "input_mixed": "禁",
+      "expected_lexical_indices": [
+        46
+      ],
+      "dlig_off_root_indices": [
+        343,
+        354
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-47",
+      "input_han": "身灵",
+      "input_pua": "",
+      "input_mixed": "身",
+      "expected_lexical_indices": [
+        47
+      ],
+      "dlig_off_root_indices": [
+        135,
+        127
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-48",
+      "input_han": "赋恩",
+      "input_pua": "",
+      "input_mixed": "赋",
+      "expected_lexical_indices": [
+        48
+      ],
+      "dlig_off_root_indices": [
+        283,
+        341
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-49",
+      "input_han": "赋亏",
+      "input_pua": "",
+      "input_mixed": "赋",
+      "expected_lexical_indices": [
+        49
+      ],
+      "dlig_off_root_indices": [
+        283,
+        261
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "lex-50",
+      "input_han": "规行",
+      "input_pua": "",
+      "input_mixed": "规",
+      "expected_lexical_indices": [
+        50
+      ],
+      "dlig_off_root_indices": [
+        301,
+        356
+      ],
+      "meaning_independent_of_dlig": true
+    },
+    {
+      "id": "boundary-01",
+      "input_han": "共行人",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "共行人",
+          "lexical_index": 20,
+          "lexical_name": "同伴",
+          "root_indices": [
+            336,
+            356,
+            122
+          ]
+        }
+      ],
+      "expected_lexical_indices": [
+        20
+      ]
+    },
+    {
+      "id": "boundary-02",
+      "input_han": "共行 人",
+      "input_pua": " ",
+      "expected_tokens": [
+        {
+          "text": "共行",
+          "lexical_index": 22,
+          "lexical_name": "合作",
+          "root_indices": [
+            336,
+            356
+          ]
+        },
+        {
+          "text": "人",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            122
+          ]
+        }
+      ],
+      "expected_lexical_indices": [
+        22
+      ]
+    },
+    {
+      "id": "boundary-03",
+      "input_han": "共行人身",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "共行人身",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            336,
+            356,
+            122,
+            135
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-04",
+      "input_han": "人共行",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "人共行",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            122,
+            336,
+            356
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-05",
+      "input_han": "凝水",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "凝水",
+          "lexical_index": 36,
+          "lexical_name": "冰",
+          "root_indices": [
+            190,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": [
+        36
+      ]
+    },
+    {
+      "id": "boundary-06",
+      "input_han": "凝(水)",
+      "input_pua": "()",
+      "expected_tokens": [
+        {
+          "text": "凝",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            190
+          ]
+        },
+        {
+          "text": "(",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": []
+        },
+        {
+          "text": "水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            112
+          ]
+        },
+        {
+          "text": ")",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": []
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-07",
+      "input_han": "凝 水",
+      "input_pua": " ",
+      "expected_tokens": [
+        {
+          "text": "凝",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            190
+          ]
+        },
+        {
+          "text": "水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-08",
+      "input_han": "水气 气水",
+      "input_pua": " ",
+      "expected_tokens": [
+        {
+          "text": "水气",
+          "lexical_index": 37,
+          "lexical_name": "水汽",
+          "root_indices": [
+            112,
+            111
+          ]
+        },
+        {
+          "text": "气水",
+          "lexical_index": 38,
+          "lexical_name": "雾",
+          "root_indices": [
+            111,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": [
+        37,
+        38
+      ]
+    },
+    {
+      "id": "boundary-09",
+      "input_han": "水气水",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "水气水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            112,
+            111,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-10",
+      "input_han": "复生续",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "复生续",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            33,
+            3,
+            263
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-11",
+      "input_han": "恒生续",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "恒生续",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            24,
+            3,
+            263
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-12",
+      "input_han": "记忆·归域",
+      "input_pua": "·",
+      "expected_tokens": [
+        {
+          "text": "记忆",
+          "lexical_index": 8,
+          "lexical_name": "记忆内容",
+          "root_indices": [
+            329,
+            145
+          ]
+        },
+        {
+          "text": "·",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": []
+        },
+        {
+          "text": "归域",
+          "lexical_index": 21,
+          "lexical_name": "家园",
+          "root_indices": [
+            53,
+            47
+          ]
+        }
+      ],
+      "expected_lexical_indices": [
+        8,
+        21
+      ]
+    },
+    {
+      "id": "boundary-13",
+      "input_han": "记 忆",
+      "input_pua": " ",
+      "expected_tokens": [
+        {
+          "text": "记",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            329
+          ]
+        },
+        {
+          "text": "忆",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            145
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-14",
+      "input_han": "(凝水)",
+      "input_pua": "()",
+      "expected_tokens": [
+        {
+          "text": "(",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": []
+        },
+        {
+          "text": "凝水",
+          "lexical_index": 36,
+          "lexical_name": "冰",
+          "root_indices": [
+            190,
+            112
+          ]
+        },
+        {
+          "text": ")",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": []
+        }
+      ],
+      "expected_lexical_indices": [
+        36
+      ]
+    },
+    {
+      "id": "boundary-15",
+      "input_han": "冷水",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "冷水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            202,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-16",
+      "input_han": "果凝水",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "果凝水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            286,
+            190,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-17",
+      "input_han": "人取冷水",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "人取冷水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            122,
+            275,
+            202,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "boundary-18",
+      "input_han": "聚清冷水",
+      "input_pua": "",
+      "expected_tokens": [
+        {
+          "text": "聚清冷水",
+          "lexical_index": null,
+          "lexical_name": null,
+          "root_indices": [
+            247,
+            191,
+            202,
+            112
+          ]
+        }
+      ],
+      "expected_lexical_indices": []
+    },
+    {
+      "id": "invisible-control-1",
+      "input_han": "凝​水",
+      "expected_lexical_indices": [],
+      "expected_preview_warning": true,
+      "preview_force_dlig_off": true,
+      "font_alone_boundary_behavior_not_assumed": true
+    },
+    {
+      "id": "invisible-control-2",
+      "input_han": "凝‌水",
+      "expected_lexical_indices": [],
+      "expected_preview_warning": true,
+      "preview_force_dlig_off": true,
+      "font_alone_boundary_behavior_not_assumed": true
+    },
+    {
+      "id": "invisible-control-3",
+      "input_han": "凝‍水",
+      "expected_lexical_indices": [],
+      "expected_preview_warning": true,
+      "preview_force_dlig_off": true,
+      "font_alone_boundary_behavior_not_assumed": true
+    },
+    {
+      "id": "invisible-control-4",
+      "input_han": "凝⁠水",
+      "expected_lexical_indices": [],
+      "expected_preview_warning": true,
+      "preview_force_dlig_off": true,
+      "font_alone_boundary_behavior_not_assumed": true
+    },
+    {
+      "id": "invisible-control-5",
+      "input_han": "凝﻿水",
+      "expected_lexical_indices": [],
+      "expected_preview_warning": true,
+      "preview_force_dlig_off": true,
+      "font_alone_boundary_behavior_not_assumed": true
+    }
+  ]
+}

@@ -1,0 +1,990 @@
+{
+  "version": 1,
+  "scope": "50个新词汇合字的根身份与整体词形语义检查",
+  "semantic_register_sha256": "cf3e9887f2bc4eea2af3cab20eab2c3cfed604b38ca361186b79f5c63f4b2817",
+  "base_art_sha256": "01913d58357a8a7e3ad67d1bc043c9de6237993841e978174fe35ba24b209a3d",
+  "review_method": "检查实际清线预览，并核对组成根与登记全词含义；允许学习性约定，不要求几何形本身证明全部词义。",
+  "revision_acceptance_complete": true,
+  "canonical_art_frozen": true,
+  "accepted_candidate_count": 50,
+  "pending_count": 0,
+  "entries": [
+    {
+      "index": 1,
+      "chars": "时空",
+      "name": "时空",
+      "meaning": "事件所处的时间与空间所组成的共同参照整体。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "两处时位与空间开界共用接点，时间和空间都保持可辨身份。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "ee0fae41c33a6f52240342e40efcb89dad8b15f23181ddcb359c1f747cb01a62",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 2,
+      "chars": "命运",
+      "name": "命运",
+      "meaning": "初始条件、根本限度与后续遭遇共同构成的存在历程。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "起始限形接入开放盘旋轨迹，固定条件与后续展开形成同一整体。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "2ab454cdefac179ab2ea794135845ee784abc06127ccfecaaa79f9d8c5c4cdd9",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 3,
+      "chars": "因果",
+      "name": "因果关系",
+      "meaning": "前置条件与其结果之间的作用联系。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "成因圆核实际接入结果三角，另一路输入也可辨，关系不是无意义并排。",
+      "advance": 208,
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "paths_sha256": "a4eef4e707b4411e5c29c1749cb9cb6b595962ba0dc9f77e9069779217627125",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 4,
+      "chars": "昔事",
+      "name": "往事",
+      "meaning": "参照时点以前已经发生、可以被回顾的事件。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "过去的参照界和回顾弧接入事件核，区别一般事件和单独过去时段。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "2747decd2a05a19b2626547241ce8bddf1e69cad29e850d7502b586ecb1a8fdb",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 5,
+      "chars": "生续",
+      "name": "生命",
+      "meaning": "生命体持续活着、维持和延续自身的整体活动与状态。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "新生支点连接前后接续支架，整体表达生命持续，与恒生和复生轮廓不同。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "adb3301fc84215acc7bab92f452b9716453f74875a9fbcaee2d695ab14db1f0b",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 6,
+      "chars": "恒生",
+      "name": "永生",
+      "meaning": "生命持续不止、不因时间流逝而自然终结的状态。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "恒的双参照直接支持生的分支，持续条件明显，未画成封死的终点。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "3370be5471a92419051c10718890cf466d0136cb094a324d956b3dabf65f88f8",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 7,
+      "chars": "复生",
+      "name": "复生",
+      "meaning": "经历死亡的主体重新活着。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "前后相同身份圆核由回路相接，后核重新长出生命分支，区别首次生成。",
+      "advance": 208,
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "paths_sha256": "0239c330a60ace9dcefd6b5e93422658c643a2043b636d56c14a5f3bdad791e7",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 8,
+      "chars": "记忆",
+      "name": "记忆内容",
+      "meaning": "心智中保存、能够被重新调取的经历或内容。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "保留记录腔与内向调取回钩，储存和可再次取得的内容组成整体。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "9336135de1666759646f11aac30e0907c3a32660f9712dbbeb62d1be4e99f8e7",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 9,
+      "chars": "事知",
+      "name": "经验",
+      "meaning": "通过经历或观察事件而获得的认识。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "事件核成为认识内域的来源，知的内折保留，区别自我认识。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "2edf4fa74f8708699d2b83d190122722ee5baebc5364a8c2b1560d89aca68dde",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 10,
+      "chars": "自知",
+      "name": "自我认识",
+      "meaning": "对自身状态、能力与限度形成的认识。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "自身的闭回识别结构接入认识内域，两根的焦点与内折仍可学习。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "a4ec58dc4b70512cb3660cf004da99608d755f16eb13abe30f5e3c5e3770cf23",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 11,
+      "chars": "自主",
+      "name": "自主",
+      "meaning": "主体对自己的方向与选择拥有主导权。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "自身结构与主导端点共享主线，保留自的内核及主的上位三角标记。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "41d2a8c90f2faf42f1819b69da63e8e94e5f0bda4441b8d0a96886a7da52602c",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 12,
+      "chars": "安心",
+      "name": "安心",
+      "meaning": "心智感到当前处境能够维持、没有迫近威胁的安稳状态。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "安的稳定承托接入心的内向回折，保留主观内域，不误画成生理心形。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "5887ca0c73c15b163e6ca1fc7552117647a7c702c8020aebb90c3381baa3270d",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 13,
+      "chars": "思念",
+      "name": "思念",
+      "meaning": "持续想起并牵挂不在身边的人、地方或事物。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-01-13.json",
+      "visual_rationale": "思的组织折架持续接入念的内卷焦点，整体回环集中而非向外命令。",
+      "advance": 208,
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "paths_sha256": "5234af4fb11228efc7b1fefdea258506712f4c90c6851969c472d8d17e133671",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 14,
+      "chars": "善意",
+      "name": "善意",
+      "meaning": "依据所采用伦理标准、朝向善的意向。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "善的舒展曲线与意的指向延展形成整体，和恶意的折角阻折有明显区别。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "d83110325c0d406dccd0cd42e08f964e734b0330b93ff2b9e648ecf6766fb51b",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 15,
+      "chars": "恶意",
+      "name": "恶意",
+      "meaning": "依据所采用伦理标准、朝向恶的意向。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "恶的逆折交叉保留，接入同族意向长支，与善意共享词族但不只换小刻。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "61900fc90a1bef87d32c8e979c4b208c346959bdc11641fdaa949215b0fcf205",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 16,
+      "chars": "心态",
+      "name": "心态",
+      "meaning": "心智主体在某个时点所处的整体状态。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "心的内域卷折接到状态参照，内在主体与当前配置两类线索均可辨。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "d73063aae04e1a78472ca3ccbbfe0b8286adf9b473ff8bc0afb6f073ae919090",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 17,
+      "chars": "惧梦",
+      "name": "噩梦",
+      "meaning": "以畏惧或威胁体验为主要内容的梦。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "惧的收缩侧界与梦的开放内外弧共用范围，保留收敛感和梦的非封闭形态。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "23e5d22b9d02cefdff985b882675a959ff37fbd8e359c81206b887c24b3d704e",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 18,
+      "chars": "愿可",
+      "name": "希望",
+      "meaning": "对所愿之事仍有实现可能的期待。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "愿的目标开口与可的开放可能支架同时存在，未把期待画成已经达成的封闭结果。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "09559fef5d21345fe523e13dd43dc532ee3781bfea994ab8378c43eb43f40a91",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 19,
+      "chars": "亲人",
+      "name": "亲友",
+      "meaning": "与主体具有熟悉、信任或持续相处形成的亲近关系的人。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "亲的相向低弧与人的直立分枝共享接点，近人身份清楚，不是亲近关系的重复图。",
+      "advance": 208,
+      "viewBox": [
+        0,
+        0,
+        208,
+        128
+      ],
+      "paths_sha256": "1d111860f7f6bcc4b6b5ff4edb1fe7a09ec2d02b2a2900092077604c560a7738",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 20,
+      "chars": "共行人",
+      "name": "同伴",
+      "meaning": "共同参与某项活动、承担同一行程或事业的人。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "共同范围接入执行通路，通路终端明确连接人的肩侧；人物主体并未退化为普通出线。",
+      "advance": 304,
+      "viewBox": [
+        0,
+        0,
+        304,
+        128
+      ],
+      "paths_sha256": "142295170ab51f196e1b118650aeda4cc99ec206788556db4142092fa38f8bb0",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 21,
+      "chars": "归域",
+      "name": "家园",
+      "meaning": "主体认作归属、惯常返回的生活所在。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "返入轨迹回到域内同一定位点，家园以归属和返回构形而非任意房屋图标。",
+      "advance": 240,
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "paths_sha256": "84b346f77cdef4e163286177e25ed161dd24424db9343cd485f83b27ce1bf396",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 22,
+      "chars": "共行",
+      "name": "合作",
+      "meaning": "两个或多个主体相互配合，共同促成某项行动。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "共的右侧界直接成为执行的起始段，区别只有共处而无共同活动。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "65981200c8b4642dffc5e28b94d9ee32ea51c21c296aeef50ee8548f2dbdf8f2",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 23,
+      "chars": "言契",
+      "name": "承诺",
+      "meaning": "主体以明示表达使自己受已说出的条件约束。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "言的发出路径回折成条件约束节点，表达来源与承诺关系连接，言和契都仍可辨。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "05d44bd0645d39f90a2394bdd926e424ea82df637dff67dc14bf276f6e83cd68",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 24,
+      "chars": "信人",
+      "name": "信任",
+      "meaning": "接受某人在指定方面可靠，并愿意据此与其相处或合作的关系。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "人的肩部成为接受判断的一侧，保留人的直立主体，区别抽象确信与对人的可靠性判断。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "09ecc41f8a36a29f83ed8145239af3d0077db86183ff5b52f65788233674b412",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 25,
+      "chars": "予取",
+      "name": "交换",
+      "meaning": "参与各方按对应关系互相交付和取得内容。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-14-25.json",
+      "visual_rationale": "上方交付连接两对象核，下方回程已接回第一方持界端；双向给予与取得形成实际闭合往返，交换不再只靠文字解释。",
+      "advance": 240,
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "paths_sha256": "ff6b4f387945d536bd66946d4486dc1f7805e5bd3b197cc898cc2381bb1f4875",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 26,
+      "chars": "共亲",
+      "name": "友谊",
+      "meaning": "主体之间自愿建立、相互珍视的亲近关系。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "共的共享范围内保留两条相向亲近支路，友谊的相互关系和各自身份同时存在。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "fbe452b1acfe5b2c207626da2c8e242dfca4cfb71d705cc1db720cf5b99fa196",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 27,
+      "chars": "亲集",
+      "name": "家庭",
+      "meaning": "因亲缘、伴侣关系或长期相互照料而形成的生活共同体。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "亲近支路作为集合内的多个成员出现，整体包容范围与家园的返回轮廓不同。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "5daa3dd480d9673c3381cb8117892ea9090ad40e6604f7c66eca1fd075061905",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 28,
+      "chars": "共安",
+      "name": "和平",
+      "meaning": "多个主体彼此不侵害、能够安稳共处的状态。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "共同参照中的两侧内支各守其位，稳定容纳底部与友谊的低位相接形式可区分。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "fb227a19f627396c3048dcb3e64a6b3b7631076a0eee3765361f89c320dce835",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 29,
+      "chars": "言码",
+      "name": "语言系统",
+      "meaning": "可反复使用、使主体有意表达和理解内容的符号与组合规则体系。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "表达源核进入规则分配主脊，保留言的有意外传与码的多级分支身份。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "a72dfe8263fe3ae65edd90916f2c0737c7a231c7ef5a1a7d0e69ccb62e54bbcd",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 30,
+      "chars": "事文",
+      "name": "故事",
+      "meaning": "把发生或设想的事件组织成连贯表达的叙述。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "发生核接入连续组织的表达段，作为事件叙述区别一般文本或单个事件。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "4f87ab685ffd7a87fb2c698af2befa6778cda4fba3479f86931c65130b7439c1",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 31,
+      "chars": "隐讯",
+      "name": "秘密",
+      "meaning": "已经存在、在指定知情范围之外未被直接获知的信息。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "消息阶跃从遮蔽内区延出，左侧遮蔽与信息身份同时保留，适合受限知情的词义。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "9f05b58cfc68a5fb98d6cb9b372a4d326faec52755be2eb695eca360396028a7",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 32,
+      "chars": "契文",
+      "name": "契约文本",
+      "meaning": "把约束双方的条件组织成可读取表达的文本。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "双方约束的共接折架延续为文本序列，条文内容身份可辨，未改成封存容器。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "1a83db18a2181e385ec8f786fb697c0b9d607ebc80d801fd5d7daa373ce24c61",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 33,
+      "chars": "水源",
+      "name": "水源",
+      "meaning": "可为取用或流动提供水的来源。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "独立来源核直接放出水的连续流势，来源和水体构成供给关系。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "46387fed5bb96d178af9355c97ec73b0573e4dd27a99af90ee2cf10fd9438bc9",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 34,
+      "chars": "树集",
+      "name": "树林",
+      "meaning": "在同一片范围内共同生长的一群树木。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "集合范围内容纳两株同族但不同的分枝，保留树的主干与根部，清楚表达林木群。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "1e29bc49c1a32c8cfac220fce7ba6e977436c9b8bcee5dd11676571b2ccd422a",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 35,
+      "chars": "水路",
+      "name": "水道",
+      "meaning": "水流经过、能够被追踪的连续通道。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "连续承接的侧界包容可追踪水流，区别无通道限定的普通水。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "34a6e96ef023d7dd99164b2fb6701e6a00d91c04eb7ba38b162f77663eea4339",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 36,
+      "chars": "凝水",
+      "name": "冰",
+      "meaning": "水凝固后形成的固态水。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "定形闭合外壳成为整体主体，内部保留水的流纹，直接强调固态水这一材料结果。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "9ab0a3f7ac2d1c407b5f1c0675b20f813efd493e5c002b87a3635b1b285265c9",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 37,
+      "chars": "水气",
+      "name": "水汽",
+      "meaning": "以气态存在的水。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "开放气态范围容纳舒展的水身份纹理，整体不形成固态壳，与雾的分立液滴可区分。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "872713ec61f0fbace5370268fac80450429a77d0fe715cf4a332ce088d3c584e",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 38,
+      "chars": "气水",
+      "name": "雾",
+      "meaning": "悬浮在空气中的细小液态水滴所形成的雾。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "开放范围中分立的两枚小水核保留液态团簇身份，区别连续气态水和定形冰块。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "2a62c5891f5a688e0fd4f41a144f7f830d047b55bae54074654c0ea8d5fe93c5",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 39,
+      "chars": "护符",
+      "name": "护符",
+      "meaning": "关联或承载保护用途的符记。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "护持端共接符的约定核，保护侧与异形符记两端仍可辨，区别保护边界护界。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "f4d13a28093ff4a88b39ef1b125269800e5efd8d3954c1ba5407cc6a25fa1493",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 40,
+      "chars": "封符",
+      "name": "封印",
+      "meaning": "用来建立、表明或维持封闭交换关系的符记。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "闭合交换界及横向封挡包容符记核心，固有符号身份保留，区别冰的材料封壳。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "6640692754ae73cb3a07fdc05bea544164eace91fb582322568e3728452a4ee4",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 41,
+      "chars": "护界",
+      "name": "结界",
+      "meaning": "用于保护某个范围、抵挡指定侵害的作用边界。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "目标护持侧与界线均可辨，未把保护边界变成无差别的全封闭结构。",
+      "advance": 216,
+      "viewBox": [
+        0,
+        0,
+        216,
+        128
+      ],
+      "paths_sha256": "6b1a8f700a9226d638e6efa17ae84b1c2d046ceabe664a8abf60015dee6bdd62",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 42,
+      "chars": "远域门",
+      "name": "传送门",
+      "meaning": "两侧直接接通两个相隔范围的通道口。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "远隔位置的两个参照与开放门口同在，横向通路连接两个范围，三根身份未消失。",
+      "advance": 312,
+      "viewBox": [
+        0,
+        0,
+        312,
+        128
+      ],
+      "paths_sha256": "e968fe73ad719d3929f8a2048c4e7f131d7d48802058f9d1db03ce519224902a",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 43,
+      "chars": "术文",
+      "name": "术式文本",
+      "meaning": "表达或记录一项术式的连贯文本。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "术的内部接口接入文的连续内容段，表示术式的文本形态，未误画成实体书本。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "ae6a0a5eaf435aa2c52ed074dba58468591c8f9e636c8440fe7301e49f89c7e1",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 44,
+      "chars": "术能",
+      "name": "魔能",
+      "meaning": "可供术式使用的能量。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "术式结构接到能量的容纳与输出部，负载核清楚，区别文本及一般能量根。",
+      "advance": 240,
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "paths_sha256": "803cd819b5fb73c48a763607502c1483973bb58b3b68cb6d62f41decd6acde47",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 45,
+      "chars": "蓄能物",
+      "name": "储能器",
+      "meaning": "为积蓄并保留可用能量而设置的器物。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "蓄的保留范围、能的负载核、物的独立器体均可辨，三成分通过共接结构组成器物名。",
+      "advance": 312,
+      "viewBox": [
+        0,
+        0,
+        312,
+        128
+      ],
+      "paths_sha256": "02dad54c7350f0e545894818c0dfafdcdfbed80cadda1123803a80553e6876d5",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 46,
+      "chars": "禁术",
+      "name": "禁术",
+      "meaning": "被明确规则排除在允许实施范围之外的术式。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "反向止口限定术的接入边，术内部仍完整，表示受规则排除而非术式已经损坏。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "22956e20eb961ea89651391513bed2164c73f4b14cc3f3f38bb1731c8d282586",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 47,
+      "chars": "身灵",
+      "name": "灵魂",
+      "meaning": "与某个生命的自我和身份相联系的非实体主体。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "躯体的身份接口与灵的开放意向内域连接，实体与非实体结构仍有明显区别。",
+      "advance": 232,
+      "viewBox": [
+        0,
+        0,
+        232,
+        128
+      ],
+      "paths_sha256": "8e4c8f7189f28a1cf3ff41e65157816f2ee19557724cd0b12d27cba5ea32477b",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 48,
+      "chars": "赋恩",
+      "name": "祝福",
+      "meaning": "赋予目标、使其获得持续有利条件的作用。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "赋的来源圆核与环抱支接入恩的承托关系，有利作用以扶持分支呈现，不借善的伦理标记。",
+      "advance": 240,
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "paths_sha256": "b0411c9f966089b6a4647ab9416f7289120d8462196d0c21fe8a8550b32f2b20",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 49,
+      "chars": "赋亏",
+      "name": "诅咒",
+      "meaning": "赋予目标、使其持续受损、受阻或处于不利状态的作用。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "与祝福共用赋的来源，受体明确保留不完整范围和不足标记，两词不是只靠装饰刻痕区分。",
+      "advance": 240,
+      "viewBox": [
+        0,
+        0,
+        240,
+        128
+      ],
+      "paths_sha256": "d00854d93afd1e9abf3a1400778bf595529854aeef4ad087d5c8086f8cb12aef",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    },
+    {
+      "index": 50,
+      "chars": "规行",
+      "name": "仪式",
+      "meaning": "依固定形式完成、具有象征或魔法意义的一组行动。",
+      "decision": "accept",
+      "source_file": "lexical-ligatures/lexical-art-26-50.json",
+      "visual_rationale": "规范的分层参照与执行的顺序路径共接，固定形式的行动可辨，适合作为仪式的学习性词形。",
+      "advance": 224,
+      "viewBox": [
+        0,
+        0,
+        224,
+        128
+      ],
+      "paths_sha256": "86ec0ea6e38d738a47201bc39fa71cf3ca000ffa91aa6662529d4c27ad5ac6cc",
+      "canonical_verified": true,
+      "canonical_art_file": "ligature-glyphs.json"
+    }
+  ],
+  "canonical_art_sha256": "1efb63ce255667f809698ed3b8f7d284ab7a798df5d71adb0a650800cb370f74",
+  "accepted_count": 50,
+  "unresolved_count": 0,
+  "requested_revision_count": 0,
+  "revision_history": [
+    {
+      "chars": "凝水",
+      "resolution": "凝固过程式构形改为定形外壳中的水纹，突出冰的材料结果。"
+    },
+    {
+      "chars": "予取",
+      "resolution": "下方回程接回第一方持界端，明确相互交付。"
+    }
+  ],
+  "width_ranges": {
+    "2": {
+      "count": 47,
+      "advance_min": 208,
+      "advance_max": 240
+    },
+    "3": {
+      "count": 3,
+      "advance_min": 304,
+      "advance_max": 312
+    }
+  },
+  "technical_font_qa": "Font binary, GSUB, weight and preview-control tests are performed and reported separately by the font build."
+}

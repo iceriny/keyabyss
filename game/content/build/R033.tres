@@ -9,14 +9,14 @@ id = &"R033:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"chain_retention_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R033"
 title = "超导银墨"
-description = "改善传递保留，过载仍消费真实电性机会；无"
+description = "电链末段保留伤害从20%提高至35%；遗物触发的过载伤害提高35%。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

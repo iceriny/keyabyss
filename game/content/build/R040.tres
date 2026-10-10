@@ -9,14 +9,14 @@ id = &"R040:rule"
 operation = &"stats"
 phase = &"compile"
 parameters = {
-&"resonance_bonus_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R040"
 title = "共鸣墨晶"
-description = "改善合法人工输入的共鸣收入；无"
+description = "获得的共鸣提高35%；终式持续期间不蓄能。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

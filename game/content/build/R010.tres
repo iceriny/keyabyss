@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R010:rule"
-operation = &"dodge-clear"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R010"
 title = "留白之环"
-description = "闪避消耗有限机会清除近处可清弹幕；无"
+description = "闪避后清除落点周围 135 范围的子弹，并推开附近敌人。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

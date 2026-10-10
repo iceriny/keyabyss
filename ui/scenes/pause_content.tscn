@@ -36,21 +36,13 @@ theme_override_constants/v_separation = 12
 [node name="Build" type="Button" parent="Menu"]
 layout_mode = 2
 size_flags_horizontal = 3
-disabled = true
 text = "当前构筑    bag"
 script = ExtResource("2")
 
 [node name="Codex" type="Button" parent="Menu"]
 layout_mode = 2
 size_flags_horizontal = 3
-disabled = true
 text = "咒典图鉴    codex"
-script = ExtResource("2")
-
-[node name="Vocabulary" type="Button" parent="Menu"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "词库工坊    vocab"
 script = ExtResource("2")
 
 [node name="Guide" type="Button" parent="Menu"]

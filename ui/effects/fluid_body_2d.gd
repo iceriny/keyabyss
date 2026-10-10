@@ -42,6 +42,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	delta = BattleVisualClock.delta_for(self, delta)
 	var local_transform := field.get_global_transform().affine_inverse() * (collision.global_transform if collision != null else global_transform)
 	_obstacle.center = local_transform.origin
 	_obstacle.rotation = local_transform.get_rotation()

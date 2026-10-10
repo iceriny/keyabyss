@@ -4,8 +4,8 @@ extends Control
 ## Multiple transformed fields and alpha masks provide arbitrary local coverage.
 
 enum Quality { OFF, LOW, MEDIUM, HIGH, ULTRA }
-const LONG_EDGES := [0, 96, 160, 256, 384]
-const FOG_LONG_EDGES := [0, 192, 384, 640, 960]
+const LONG_EDGES := [0, 96, 192, 384, 768]
+const FOG_LONG_EDGES := [0, 192, 384, 768, 1536]
 const PRESSURE_ITERATIONS := [0, 6, 10, 18, 24]
 
 @export var quality: Quality = Quality.MEDIUM
@@ -55,20 +55,9 @@ var _light_texture: GradientTexture2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_light_texture = GradientTexture2D.new()
-	_light_texture.width = 256
-	_light_texture.height = 256
-	_light_texture.fill = GradientTexture2D.FILL_RADIAL
-	_light_texture.fill_from = Vector2(.5, .5)
-	_light_texture.fill_to = Vector2(1, .5)
-	_light_texture.gradient = Gradient.new()
-	_light_texture.gradient.colors = PackedColorArray([Color.WHITE, Color(0, 0, 0, 0)])
-	_surface = ColorRect.new()
-	_surface.name = "Fog"
-	_surface.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_surface.light_mask = 2
-	_material = ShaderMaterial.new()
-	_material.shader = preload("res://ui/effects/fluid_fog.gdshader")
+	_light_texture = preload("res://ui/effects/fluid_light.tres")
+	_surface = preload("res://ui/scenes/fluid_surface.tscn").instantiate() as ColorRect
+	_material = _surface.material as ShaderMaterial
 	_material.set_shader_parameter("field_texture", _gpu.texture)
 	_material.set_shader_parameter("density_texture", _gpu.density_texture)
 	_material.set_shader_parameter("boundary_texture", _gpu.boundary_texture)
@@ -202,6 +191,7 @@ func _configure() -> void:
 		grid = Vector2i.ZERO
 		fog_grid = Vector2i.ZERO
 	if grid != grid_size or _configured_quality != quality or _configured_mask != domain_mask:
+		_before_reconfigure()
 		grid_size = grid
 		fog_grid_size = fog_grid
 		_configured_quality = quality
@@ -216,6 +206,7 @@ func _configure() -> void:
 				image.fill(Color.WHITE)
 			image.convert(Image.FORMAT_R8)
 			RenderingServer.call_on_render_thread(_gpu.configure.bind(grid_size, fog_grid_size, image))
+		_after_reconfigure()
 	_material.set_shader_parameter("domain_mask", domain_mask)
 	_material.set_shader_parameter("masked", domain_mask != null)
 	_material.set_shader_parameter("domain_size", size)
@@ -236,6 +227,12 @@ func update_appearance() -> void:
 
 
 func _process(delta: float) -> void:
+	var started := DebugLog.begin()
+	_process_field(delta)
+	DebugLog.end(&"fluid.prepare_submit", started)
+
+
+func _process_field(delta: float) -> void:
 	_sync_particles()
 	_sync_lights()
 	if not active or quality == Quality.OFF or reduced_motion or not is_visible_in_tree() or grid_size == Vector2i.ZERO:
@@ -282,6 +279,14 @@ func _process(delta: float) -> void:
 
 
 func _before_step(_delta: float) -> void:
+	pass
+
+
+func _before_reconfigure() -> void:
+	pass
+
+
+func _after_reconfigure() -> void:
 	pass
 
 

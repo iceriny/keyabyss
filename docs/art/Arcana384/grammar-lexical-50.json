@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "scope": "50个已登记常用词的构词与书写层",
+  "register_file": "ligatures.json",
+  "rules": [
+    {
+      "id": "fixed_words",
+      "text": "已登记根序列按完整词的释义使用；可由透明组合或有限的词汇约定形成。"
+    },
+    {
+      "id": "root_stability",
+      "text": "构词不更改384根的核心义；全词可具有明确登记的派生义。"
+    },
+    {
+      "id": "word_spacing",
+      "text": "词间用空格或可见标点；一个连续根串作为一个待识别词，不在未登记长串中猜词界。"
+    },
+    {
+      "id": "dlig_is_spelling",
+      "text": "合写与分写是同一个词的两种字形；关闭dlig不把冰改成凝固动作。"
+    },
+    {
+      "id": "operations",
+      "text": "明确操作用括号或分组表示。例如凝(水)是操作，凝水这个完整词是冰。"
+    },
+    {
+      "id": "unregistered_composition",
+      "text": "未登记词串可以作为普通根表达继续书写，但字体和词表不自动赋予新词义。"
+    }
+  ],
+  "compounding_families": [
+    {
+      "id": "coordinate_concept",
+      "definition": "已登记的两个方面合成一个整体概念名。",
+      "examples": [
+        "时空",
+        "命运",
+        "因果"
+      ]
+    },
+    {
+      "id": "head_and_relation",
+      "definition": "已登记的限定、内容、来源或所属关系组成一个词；词条明确中心概念与组合关系。",
+      "examples": [
+        "事知",
+        "心态",
+        "契文",
+        "水源"
+      ]
+    },
+    {
+      "id": "use_or_participant",
+      "definition": "已登记的用途可派生器物、符记、场所或参与者名。",
+      "examples": [
+        "护符",
+        "蓄能物",
+        "共行人"
+      ]
+    },
+    {
+      "id": "bounded_convention",
+      "definition": "对于家园、承诺、信任一类常用词，允许透明动机之外的有限约定义，完整写进词条供学习。",
+      "examples": [
+        "归域",
+        "言契",
+        "信人"
+      ]
+    },
+    {
+      "id": "lexicalized_content_or_result",
+      "definition": "登记的动作组合可作为内容或结果名，并以词界和明确操作写法区分。",
+      "examples": [
+        "记忆",
+        "凝水"
+      ]
+    }
+  ],
+  "matching_policy": {
+    "unit": "whole_contiguous_mapped_root_token",
+    "ordering": "longer registered words first, with leading and trailing root guards",
+    "length_priority": [
+      3,
+      2
+    ],
+    "orthographies": [
+      "Han",
+      "PUA",
+      "mixed Han/PUA"
+    ],
+    "boundaries": "Use spaces or visible punctuation between words. Parentheses delimit operation arguments and block fusion across them.",
+    "whole_token_only": true,
+    "substring_matching": false,
+    "unknown_tokens": "Keep all roots separate; do not guess internal word boundaries or assign a combined meaning.",
+    "semantics_warning": "The registered word has the same meaning with dlig on and off. GSUB cannot infer a writer intention or translate Chinese glosses.",
+    "invisible_controls": "Invisible joiners, nonjoiners and zero-width characters are not supported word boundaries. The preview warns and disables fusion for affected runs.",
+    "recommended_separators": [
+      "SPACE U+0020",
+      "MIDDLE DOT U+00B7",
+      "visible punctuation"
+    ]
+  },
+  "examples": [
+    {
+      "text": "凝水",
+      "interpretation": "冰",
+      "tokenization": [
+        "凝水"
+      ],
+      "dlig_on": "one lexical ligature",
+      "dlig_off": "two root glyphs, same word"
+    },
+    {
+      "text": "凝(水)",
+      "interpretation": "凝固水的操作",
+      "tokenization": [
+        "凝",
+        "(",
+        "水",
+        ")"
+      ],
+      "dlig_on": "no ligature"
+    },
+    {
+      "text": "共行人",
+      "interpretation": "同伴",
+      "tokenization": [
+        "共行人"
+      ],
+      "dlig_on": "one three-root word"
+    },
+    {
+      "text": "共行 人",
+      "interpretation": "合作这个词，与人这个单根分别书写",
+      "tokenization": [
+        "共行",
+        "人"
+      ],
+      "dlig_on": "cooperation ligature then person root"
+    },
+    {
+      "text": "共行人身",
+      "interpretation": "未登记连续根串；请按作者本意补词界",
+      "dlig_on": "all four roots remain separate"
+    },
+    {
+      "text": "水气 气水",
+      "interpretation": "水汽与雾两个词",
+      "tokenization": [
+        "水气",
+        "气水"
+      ],
+      "dlig_on": "two lexical ligatures"
+    }
+  ],
+  "ui_policy": {
+    "word_picker": "Insert one registered root spelling and preserve a word boundary around it.",
+    "free_text": "Convert glyphs and recognize exact registered tokens; no automatic sentence translation or inferred internal segmentation.",
+    "toggle": "Change only visual fusion; keep the same selected word, gloss and definition.",
+    "invisible_controls": "不把不可见控制字符当词界；提示用户改为空格或可见标点，并对受影响片段关闭合写。"
+  },
+  "font_is_not_semantic_validator": true
+}

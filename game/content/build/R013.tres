@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R013:rule"
-operation = &"heal"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R013"
 title = "朱砂印"
-description = "以人工输入额度支持有限恢复，满血不生成额外储备；无"
+description = "每完成 6 次词咒恢复 4 点生命。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 2

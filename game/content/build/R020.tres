@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R020:rule"
-operation = &"input-clear"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R020"
 title = "段落终结"
-description = "真实输入积累一次清弹脉冲额度；无"
+description = "每完成 5 次词咒，释放以自身为中心的清弹冲击波。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

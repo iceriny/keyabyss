@@ -18,6 +18,10 @@ func _run() -> void:
 	evidence = "res://.temp/fluid/run-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	root.size = Vector2i(1280, 720)
+	if "--budget" in OS.get_cmdline_user_args():
+		await _smoke_budget()
+		quit(0 if failures == 0 else 1)
+		return
 	if "--usage" in OS.get_cmdline_user_args():
 		await _node_usage()
 		print("Fluid node usage: ", failures, " failures")
@@ -730,6 +734,8 @@ func _wake_transport() -> void:
 
 
 func _material_and_effects() -> void:
+	await _medium_lifetime()
+	await _expansion_transport()
 	var field := FluidField2D.new()
 	field.size = Vector2(640, 360)
 	field.wind = Vector2.ZERO
@@ -859,7 +865,7 @@ func _material_and_effects() -> void:
 	pull.queue_free()
 	var flash := field.emit_effect(load("res://ui/effects/presets/electric_flash.tres"), Vector2(320, 180))
 	field._sync_lights()
-	_check(field._lights.any(func(light: PointLight2D) -> bool: return light.enabled and light.energy > 1.0), "effect resource drives the shared native light pool")
+	_check(field._lights.any(func(light: PointLight2D) -> bool: return light.enabled and is_equal_approx(light.energy, flash.profile.light_energy)), "effect resource drives the shared native light pool")
 	await create_timer(.35).timeout
 	_check(not is_instance_valid(flash) and field._emitters.is_empty(), "effect lifetime unregisters sources and lights")
 	field.queue_free()
@@ -891,6 +897,146 @@ func _particle_transport(field: FluidField2D, at: Vector2) -> void:
 	_check(travelled.dot(Vector2.RIGHT.rotated(field.rotation)) > 2.0, "GPU particle with zero initial velocity is transported by the same field")
 	particles.queue_free()
 	await _settle()
+
+
+func _medium_lifetime() -> void:
+	var field := FluidField2D.new()
+	field.size = Vector2(640, 360)
+	field.wind = Vector2.ZERO
+	field.buoyancy = 0.0
+	field.settling = 0.0
+	field.turbulence = 0.0
+	field.vorticity = 0.0
+	field.density_decay = .2
+	root.add_child(field)
+	field.set_process(false)
+	await _settle()
+	for index in 2:
+		var source := FluidInfluence.new()
+		source.center = Vector2(180 + index * 280, 180)
+		source.extent = Vector2.ONE * 70
+		source.density = 1.0
+		source.medium = FluidMedium.new()
+		source.medium.color = Color("e77b31")
+		source.medium.emission = 4.0
+		source.medium.dissipation = float(index) * 2.0
+		field.inject(source)
+	field._process(.04)
+	await _settle()
+	var first := field.density_texture().get_image()
+	var cell := Vector2i(Vector2(460, 180) / field.size * Vector2(field.fog_grid_size))
+	var initial := first.get_pixelv(cell)
+	_check(absf(initial.b / initial.r - 2.0) < .01 and absf(initial.a / initial.r - 4.0) < .01, "material extinction and radiance reach GPU channels")
+	for i in 20:
+		field._process(.04)
+		await process_frame
+		await RenderingServer.frame_post_draw
+	var image := field.density_texture().get_image()
+	var fast := image.get_pixelv(cell)
+	var slow := image.get_pixelv(Vector2i(Vector2(180, 180) / field.size * Vector2(field.fog_grid_size)))
+	_check(absf(fast.r / slow.r - exp(-2.0 * .8)) < .02, "coexisting media retain different density lifetimes")
+	_check(absf(fast.a / fast.r - 4.0 * exp(-3.0 * .8)) < .025, "emission cools before smoke vanishes")
+	_check(absf(fast.b / fast.r - 2.0) < .025, "extinction is density-weighted, not lost with the source")
+	field.queue_free()
+	await _settle()
+
+
+func _smoke_budget() -> void:
+	var field := FluidField2D.new()
+	field.size = Vector2(1920, 1080)
+	root.add_child(field)
+	field.set_process(false)
+	for quality in [2, 4]:
+		field.set_options(quality, false)
+		await _settle()
+		for count in [0, 3, 36]:
+			field.sources.clear()
+			for index in count:
+				var source := FluidInfluence.new()
+				source.center = Vector2(220 + (index % 6) * 285, 120 + (index / 6) * 165)
+				source.extent = Vector2(150, 125)
+				source.density = 3.0
+				source.spin = 2.0
+				source.noise_amount = .9
+				source.noise_scale = 42.0
+				source.medium = FluidMedium.new()
+				source.medium.dissipation = 1.1
+				source.medium.emission = 5.0
+				field.sources.append(source)
+			timings.clear()
+			for frame in 105:
+				RenderingServer.call_on_render_thread(_timestamp.bind("fluid_begin"))
+				field._process(1.0 / 60.0)
+				RenderingServer.call_on_render_thread(_timestamp.bind("fluid_end"))
+				await process_frame
+				await RenderingServer.frame_post_draw
+				if frame >= 45: RenderingServer.call_on_render_thread(_read_timestamps)
+			await _settle()
+			timings.sort()
+			_check(not timings.is_empty(), "GPU compute timestamps available")
+			var report := {"quality": quality, "sources": count, "samples": timings.size(), "median_ms": timings[timings.size() / 2] / 1000000.0, "p95_ms": timings[int(timings.size() * .95)] / 1000000.0}
+			reports.append(report)
+			print("Fluid smoke budget: ", JSON.stringify(report))
+	var file := FileAccess.open(evidence.path_join("smoke-budget.json"), FileAccess.WRITE)
+	file.store_string(JSON.stringify({"gpu": RenderingServer.get_video_adapter_name(), "failures": failures, "compute": reports}, "\t"))
+	print("Fluid smoke budget evidence: ", evidence)
+	field.queue_free()
+	await _settle()
+
+
+func _expansion_transport() -> void:
+	var field := FluidField2D.new()
+	field.size = Vector2(640,360)
+	field.buoyancy = 0.0
+	field.settling = 0.0
+	field.wind = Vector2.ZERO
+	field.vorticity = 0.0
+	field.turbulence = 0.0
+	field.density_decay = 0.0
+	root.add_child(field)
+	field.set_process(false)
+	await _settle()
+	var cloud := FluidInfluence.new()
+	cloud.center = field.size*.5
+	cloud.extent = Vector2.ONE*35
+	cloud.density = 1.0
+	cloud.medium = FluidMedium.new()
+	cloud.medium.emission = 8.0
+	field.inject(cloud)
+	field._process(1.0/60.0)
+	await _settle()
+	var initial := field.field_texture().get_image()
+	var initial_spread := _density_spread(initial)
+	var expansion := FluidInfluence.new()
+	expansion.center = cloud.center
+	field.sources.append(expansion)
+	for frame in 12:
+		var age := (frame+1)/60.0
+		expansion.extent = Vector2.ONE*180.0*lerpf(.28,1.0,1.0-exp(-age*12.0))
+		expansion.expansion = 900.0*exp(-age*12.0)
+		field._process(1.0/60.0)
+		await process_frame
+		await RenderingServer.frame_post_draw
+	var after := field.field_texture().get_image()
+	_check(_density_spread(after)>initial_spread*1.5,"blast transports existing compact gas outwards")
+	var center := Vector2i(field.fog_grid_size/2)
+	var diluted := field.density_texture().get_image().get_pixelv(center)
+	print("Expansion transport: ", {"spread_before":initial_spread,"spread_after":_density_spread(after),"center_density":diluted.r,"center_emission":diluted.a})
+	_check(diluted.r<.3 and diluted.a<1.0,"expansion dilutes both concentration and radiant energy")
+	field.queue_free()
+	await _settle()
+
+
+func _density_spread(image: Image) -> float:
+	var center := Vector2(image.get_size())*.5
+	var moment := 0.0
+	var mass := 0.0
+	for y in image.get_height():
+		for x in image.get_width():
+			var density := image.get_pixel(x,y).b
+			moment += Vector2(x,y).distance_squared_to(center)*density
+			mass += density
+	return moment/maxf(mass,.00001)
 
 
 func _home_lighting(home: ArchiveHome) -> void:

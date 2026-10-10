@@ -6,17 +6,19 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R011:rule"
-operation = &"continuation"
+operation = &"stats"
 phase = &"compile"
 parameters = {
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R011"
 title = "残句书签"
-description = "真实输入目标先死时，转移一次有限输入机会为护盾；无"
+description = "输入中的目标被击杀时，获得10点护盾。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
+max_stacks = 1

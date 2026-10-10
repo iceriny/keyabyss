@@ -5,6 +5,7 @@ uniform vec2 canvas_size = vec2(1920.0,1080.0);
 uniform vec4 tint : source_color = vec4(0.54,0.8,0.87,1.0);
 uniform float progress = 0.0;
 uniform bool reduced_motion = false;
+uniform bool startup = false;
 
 void fragment() {
 	vec2 p = (UV-0.5)*canvas_size/min(canvas_size.x,canvas_size.y);
@@ -28,6 +29,10 @@ void fragment() {
 	}
 	vec3 light = mix(vec3(0.75,0.61,0.33),tint.rgb,0.3);
 	float glow = reduced_motion ? 0.0 : rhythm*(band+seam*turns*0.23+threads+halo);
+	if (startup) {
+		// The native rune ring carries activity; keep its background softly lit.
+		glow = rhythm * exp(-r*r*13.0) * 0.022;
+	}
 	float alpha = max(veil,clamp(glow*1.8,0.0,0.9));
 	vec3 ink = vec3(0.003,0.009,0.013)*veil;
 	COLOR = vec4((ink+light*glow)/max(alpha,0.0001),alpha);

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RunItinerary" load_steps=6 format=3]
+[ext_resource type="Script" path="res://game/content/run_itinerary.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="2"]
+[ext_resource type="Resource" path="res://game/content/encounters/lost_library_1.tres" id="3"]
+[ext_resource type="Resource" path="res://game/content/encounters/lost_library_2.tres" id="4"]
+[ext_resource type="Resource" path="res://game/content/encounters/ink_colossus.tres" id="5"]
+[resource]
+script = ExtResource("1")
+rooms_per_chapter = 3
+encounters = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5")])

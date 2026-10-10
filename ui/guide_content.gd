@@ -7,34 +7,29 @@ const BODY_COLOR := Color("d9d4c5")
 const MUTED_COLOR := Color("aeb9b5")
 
 const ARTICLES := [
-	{"key": "A–Z", "title": "落笔 · 完词施法", "body": "输入敌人头顶的词咒。首字符锁定目标，写完一词即施法；错字不会清空已写进度。"},
-	{"key": "Space", "title": "回锋 · 弹反", "body": "轻按空格弹反：窗口 0.24 秒，冷却 0.70 秒，次数不限。敌人近战蓄势时会标出打击范围，在挥击到来时弹反，可反击并将敌人推远；也可反射飞抵身边的敌弹。成功时短暂时缓，随后平滑恢复。基础反伤很小；返咒类能力让反击消耗打字积累的力量，继续打字才能持续强化反击。"},
-	{"key": "Ctrl", "title": "补字 · 提前施法", "body": "取得辅助补全能力并积累好机会后，按 Ctrl 提前结束正在输入的词咒，只按已经手打的部分施法。不按即可继续输入。补出的字母不增加威力、成长或完整手打奖励；补全消耗的制作额度与其他辅助效果共享。"},
-	{"key": "方向键 / Alt", "title": "折页 · 闪避", "body": "按方向键立即朝对应方向闪避，或按 Alt 自动选择威胁较低的落点，获得 1 秒无敌。空格独立释放弹反。"},
-	{"key": "Shift", "title": "终章 · 释放终式", "body": "共鸣充满后单独轻按 Shift。组合输入不会误触终式。"},
+	{"key": "A–Z", "title": "落笔 · 完词施法", "body": "输入敌人头顶的词咒。首字符锁定目标，写完一词即施法，每第三次施法强化。错字不清空进度；目标提前倒下时，可继续写完原词，法术会转向其附近的敌人。"},
+	{"key": "Space", "title": "御术 · 迎击防御", "body": "轻按空格御术：防御持续 0.30 秒，冷却 0.70 秒。普通防御免伤，轻推周围敌人和敌弹，不打断敌人动作。前 0.10 秒迎击为完美防御：反弹命中的敌弹、伤害并打断近战攻击者，强力冲开周围敌人和敌弹，并短暂放慢时间。只有真正挡下的敌弹会飞回攻击者，其余敌弹仍有危险。完美防御成功后，接下来 0.30 秒内可连续迎击；后续迎击不延长窗口，闪避会结束窗口。擦身攻击不触发御术，激光与爆圈可防御但不能反弹。"},
+	{"key": "Ctrl", "title": "补字 · 通灵羽毛笔", "body": "获得遗物「通灵羽毛笔」后，每亲手完成 4 个词咒，获得一次补字机会。人物身旁的补字符文亮起时，先输入当前词咒的一部分，再按 Ctrl 消耗机会补齐。法术只按已经亲手输入的部分计算；补出的字母不增加威力、成长或完整输入奖励。"},
+	{"key": "方向键 / Alt", "title": "折页 · 闪避", "body": "按方向键立即朝对应方向闪避，或按 Alt 自动选择威胁较低的落点，获得 1 秒无敌。空格独立释放御术。"},
+	{"key": "Shift", "title": "终章 · 释放终式", "body": "亲手输入与完词积累共鸣，充满后单独轻按 Shift。终式推开近敌并清除大范围敌弹；已落下的激光和地面危险仍需避开。持续期间不积累共鸣。"},
 	{"key": "Tab / ⌫", "title": "换行 · 调整目标", "body": "Tab 切换同前缀目标，退格取消锁定。Esc 暂停。菜单词令敲完即执行。"},
-	{"key": "", "title": "翻卷 · 三章九场", "body": "清除每波增援，选择遗物与补给路线，击败守页者。通关可携构筑挑战下一周目。"},
+	{"key": "", "title": "翻卷 · 行间与守关者", "body": "选择法书与词库即可出征。远征共三章九房，每章末尾迎战守关者。击败敌人积累经验，三选一取得遗物；房间之间可以休息或付血换取遗物。通关后可保留遗物升到下一难度；灭世通关后可继续更强的周目。"},
 	{"key": "", "title": "观潮 · 八向来袭", "body": "每波敌人从随机方向主攻。角色周围的金色箭头指向敌人来处，珊瑚红外围箭头短暂提示其他方向的偷袭。注意观察四周，及时调整目标。"},
-	{"key": "", "title": "留痕 · 远征记录", "body": "书库和结算页可查看最近 50 份战报，回顾到达阶段、施法表现、遗物与错词，并导出留存。记录保存在本机中。"},
+	{"key": "", "title": "留痕 · 输入与记录", "body": "亲手正确输入的字符自动累计；每 1000 字符增加 4 点初始生命，最多增加 20 点，在新远征开始时生效。四书共享，战败或主动结束也会结算。中途关闭游戏会保存远征；再次出征可继续或重开，战斗中断后从该房恢复。远征记录可回顾已结束的旅程与遗物。"},
+	{"key": "", "title": "断墨 · 道具词咒", "body": "输入场上道具的词咒也能解除危机。反制符大范围反弹敌弹、打断敌人及守关者的动作，并清除尚未落下的危险预警；伤害较低。爆墨清除近处敌弹并造成范围伤害。道具有存在时间，需要及时完成。"},
 	{"key": "", "title": "藏词 · 自己的词库", "body": "本局始终使用所选词库。支持英文、数字、下划线、连字符与撇号；请使用英文输入法。"},
 	{"key": "", "title": "页边注 · 术语", "body": "词咒是道具或敌人头顶漂浮的单词；词令是菜单中的英文指令。连续完词积累「连笔」；「共鸣」蓄满后可释放终式。"},
+	{"key": "", "title": "纸灵 · 持续唤醒", "body": "完词逐步唤醒纸灵，标记使目标更易受伤；每第三次施法指挥全员交叉斩。正确输入维持活动，停笔8秒后逐只休眠，换房重新唤醒。闪避留下挡弹反伤的纸鹤；终式唤起纸灵并使其狂暴。"},
+	{"key": "", "title": "灰烬 · 预判转火", "body": "火弹被前排敌人挡住，命中后持续燃烧；血条上的橙色尾段估计余火伤害。每第三次命中触发焰印并留下火雾，闪避也留下火雾。重叠火雾的收益逐层减半；终式释放火浪和持续火域。"},
+	{"key": "", "title": "寒墨 · 争取空档", "body": "冰锥沿弹道穿透两敌，每第三次冰矛可穿透四敌。冰蓝弧线表示寒气积累，寒气减慢移动与攻击，积满触发冻结；解冻后敌人继续原动作。闪避冰雾遮挡远敌视线；终式给予20护盾，领域持续积寒并从不同方向发射冰锥。"},
+	{"key": "", "title": "雷鸣 · 连接敌群", "body": "电链起初连接三敌，伤害逐段降低，每第三次施法附带电爆。感电让幸存敌人成为更远的连接点，侧边雷纹越多，接入距离越远；已带电的目标还能充能并延长电链。闪避路径带电，终式领域持续感电，并让每次施法附带电爆。"},
 ]
 
 const EXAMPLES := [
-	{"title": "复写分栏", "family": "复写", "purpose": "把人工供给分给更多纸页，观察复制数量与威力折算。", "tradeoff": "覆盖扩大，单页变轻；后续交付仍受容量约束。", "event": "覆文归档以一次后续奖励换加工继承。"},
-	{"title": "守页装订", "family": "装订", "purpose": "让载体在正常攻击与护持之间选择出口。", "tradeoff": "保留护页意味着自动交付更慢。", "event": "改页使最新护页优先承受防御消耗。"},
-	{"title": "完整晶壳", "family": "晶壳", "purpose": "集中晶体份额与穿透，处理耐久目标。", "tradeoff": "碎片覆盖减少，群体场面更依赖转目标。", "event": "晶匠校形改作容量更高、交付更慢的冰藏容器。"},
-	{"title": "缓燃炉心", "family": "炉心", "purpose": "把人工热量留下，观察储备和后续释放。", "tradeoff": "高阈值换容量，短战即时兑现较少。", "event": "炉心退火把已有热零件转作封装材料。"},
-	{"title": "长距孤弧", "family": "电路", "purpose": "延长电性片段在分散目标间的有效路径。", "tradeoff": "距离换来较少跳转，密集敌群覆盖下降。", "event": "孤弧定向进一步集中有限电性份额。"},
-	{"title": "展开扇尺", "family": "几何", "purpose": "把已支付威力分给更广的接收者。", "tradeoff": "单体集中下降，远端交付需要等待。", "event": "长廊契约用后续压力换取更长中继。"},
-	{"title": "细口热匣", "family": "储备", "purpose": "比较高效率低容量的回收周转。", "tradeoff": "储备很快触顶，多余热量会损失。", "event": "余量入藏改作跨房封存，兑现阈值提高。"},
-	{"title": "百屑分梳", "family": "分合", "purpose": "用人工热材料加工晶体，把已有威力分成较多较轻的片段。", "tradeoff": "覆盖增加，本体持有威力减少。", "event": "百屑淬炼让热加工提前交出片段。"},
-	{"title": "行间书袋", "family": "运输", "purpose": "纸灵用原攻击周期运输已付载荷。", "tradeoff": "更高容量伴随更长交付等待。", "event": "回航归档把未用运输余额接入回收出口。"},
-	{"title": "分字书签", "family": "词形", "purpose": "观察未完成词的字母寻找其他同字母位置。", "tradeoff": "分散标记降低单目标集中，仍需亲手输入兑现。", "event": "词形重订把部分标记收益改作承载。"},
-	{"title": "守文回敬", "family": "护持", "purpose": "护页挡下普通弹幕后交出尚未释放的余载。", "tradeoff": "同一页不能同时领取完整攻击与完整防御。", "event": "护文契约增加留存但支付生命上限。"},
-	{"title": "尖锋定本", "family": "独卷", "purpose": "以独卷结构把电性份额集中到少数接收者，并让复写承接后续交付。", "tradeoff": "广域传导变少，不能覆盖所有分散目标。", "event": "定本易形交换即时威力与继承加工。"},
-	{"title": "借阅终页", "family": "装订", "purpose": "观察护页余载在本章内取得终结出口。", "tradeoff": "借来的容量较少，同一页仍只能交付一次。", "event": "借阅终章的规则随本章结束到期。"},
-	{"title": "一房旁路", "family": "运输", "purpose": "观察运输载体在当前房间成为电性中继。", "tradeoff": "旁路只在本房有效，下一房恢复原构筑。", "event": "借阅旁路进入下一房时到期。"},
+	{"title": "稳定落笔", "family": "无错字", "purpose": "无瑕落款提高无错字词咒的伤害。", "tradeoff": "错字不会清空输入，但该词失去无错加成。", "note": "先保证输入稳定，再逐渐提速。"},
+	{"title": "短词连珠", "family": "词长", "purpose": "短咒连珠提高不超过 4 字母词咒的伤害。", "tradeoff": "只对符合词长的词咒生效。", "note": "选择含短词的词库与范围。"},
+	{"title": "双生笔尖", "family": "复制", "purpose": "每第 3 次完词时，若对敌人施法，会向另一敌人发出 65% 伤害的回声。", "tradeoff": "回声不会再次触发复制，也不增加人工字符。", "note": "持续完词才能继续触发。"},
+	{"title": "停笔沙漏", "family": "防御", "purpose": "闪避后敌人与弹道明显减速，为输入争取时间。", "tradeoff": "减速只有短暂持续时间，闪避仍需恢复。", "note": "在危险逼近时闪避，利用空档完成词咒。"},
 ]
 
 
@@ -88,8 +83,8 @@ static func _add_demonstration(parent: VBoxContainer, accent_labels: Array[Dicti
 	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(section)
 	_add_rule(section, 0.45, accent_rules)
-	_accent_label(section, "构筑札记 · 实战演示", 24, DISPLAY_FONT, accent_labels, Color("e8d9ad"), 0.2)
-	_label(section, "选一条学习路线，查看它的用途、代价与事件转向。", 16, MUTED_COLOR, SMALL_FONT)
+	_accent_label(section, "搭配示例", 24, DISPLAY_FONT, accent_labels, Color("e8d9ad"), 0.2)
+	_label(section, "选择一个例子，了解它能做什么，以及需要付出什么。", 16, MUTED_COLOR, SMALL_FONT)
 	var picker := GridContainer.new()
 	picker.columns = 4
 	picker.add_theme_constant_override("h_separation", 16)
@@ -102,7 +97,7 @@ static func _add_demonstration(parent: VBoxContainer, accent_labels: Array[Dicti
 	section.add_child(details)
 	var purpose := _detail(details, "用途", accent_labels)
 	var tradeoff := _detail(details, "代价", accent_labels)
-	var event_change := _detail(details, "事件转向", accent_labels)
+	var event_change := _detail(details, "输入建议", accent_labels)
 	var buttons: Array[OpenButton] = []
 	for index in EXAMPLES.size():
 		var example: Dictionary = EXAMPLES[index]
@@ -139,7 +134,7 @@ static func _select_example(index: int, buttons: Array[OpenButton], purpose: Lab
 	var example: Dictionary = EXAMPLES[index]
 	purpose.text = example.purpose
 	tradeoff.text = example.tradeoff
-	event_change.text = example.event
+	event_change.text = example.note
 	for button_index in buttons.size():
 		buttons[button_index].set_selected_visual(button_index == index)
 

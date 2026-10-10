@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"ram"
+behavior = &"charge"
+speed = 46.5
+health = 91
+radius = 23.76
+mass = 2.1
+attack_damage = 19
+attack_interval = 3.3
+experience = 10

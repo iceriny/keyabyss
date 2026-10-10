@@ -9,14 +9,14 @@ id = &"R016:rule"
 operation = &"perfect"
 phase = &"compile"
 parameters = {
-&"perfect_bonus_q": 102,
+&"perfect_bonus_q": 358,
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R016"
 title = "无瑕落款"
-description = "无错字增益进入同一声明加法池；无"
+description = "本次词咒没有错字时，获得额外 35% 伤害。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])

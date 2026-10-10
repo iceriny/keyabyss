@@ -6,20 +6,21 @@
 [sub_resource type="Resource" id="Rule"]
 script = ExtResource("2")
 id = &"R045:rule"
-operation = &"ultimate-shield"
+operation = &"stats"
 phase = &"compile"
 parameters = {
-&"ultimate_power_q": 102,
+
 }
 
 [resource]
 script = ExtResource("1")
 id = &"R045"
 title = "凛冬残卷"
-description = "强化寒墨终式与重型施法，领取额外护盾仍有一次回执；T50"
+description = "冰河纪事的护盾提高至30，冰锥频率翻倍；强化冰矛额外为附近敌人增加100点寒气。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
-permits = PackedStringArray("T50")
+permits = PackedStringArray()
 max_stacks = 1
 allowed_books = PackedStringArray("frost")
+requires_all = PackedStringArray("R003", "R031")

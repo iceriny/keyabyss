@@ -22,7 +22,7 @@ const OPERATIONS: PackedStringArray = [
 	"reserve", "reserved-slot", "return", "return-target", "revive", "rhythm", "room-price", "secondary",
 	"secondary-target", "shared-work", "shell-recover", "short-storage", "short-word", "spirit-guard", "splash", "split",
 	"stagger-release", "stats", "summon", "thin-shell", "trail", "transport", "two-materials", "ultimate-shield",
-	"vault", "work-convert",
+	"vault", "work-convert", "threat-release",
 ]
 
 const UNITS := {
@@ -94,6 +94,22 @@ const UNITS := {
 	&"ultimate_duration_ms": &"milliseconds",
 	&"ultimate_power_q": &"ratio_q",
 	&"ultimate_pulses": &"count",
+	&"meter_ratio_q": &"ratio_q",
+	&"clear_heal_share_q": &"ratio_q",
+	&"guard_spacing_ms": &"milliseconds",
+	&"last_segment_share_q": &"ratio_q",
+	&"continuation_guard_q": &"ratio_q",
+	&"trail_cost_q": &"work_q",
+	&"mastery_step": &"count",
+	&"mark_search_radius_q": &"ratio_q",
+	&"field_pulses": &"count",
+	&"automatic_seek_range_q": &"ratio_q",
+	&"main_auxiliary_share_q": &"ratio_q",
+	&"split_share_q": &"ratio_q",
+	&"clear_heal_efficiency_q": &"ratio_q",
+	&"heat_transfer_uses": &"count",
+	&"material_equal_q": &"ratio_q",
+	&"max_hp_flat_q": &"power_q",
 }
 
 

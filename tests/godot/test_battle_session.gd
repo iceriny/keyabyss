@@ -268,15 +268,14 @@ func _run() -> void:
 	defense.enemies[0].max_hp_q = defense.enemies[0].hp_q
 	defense.enemies[0].position = defense.player_position + Vector2(80.0, 0) / BattleSession.ARENA_SIZE
 	defense.enemies[1].position = defense.player_position + Vector2(0.07, 0.05)
-	var nearby_before := defense.enemies[1].position
 	defense.step(0.01)
 	_check(defense.enemies[0].aiming and defense.player_hp_q == defense.player_max_hp_q, "entering melee range starts a committed warning without contact damage")
 	defense.step(0.62)
 	_check(defense.player_hp_q == defense.player_max_hp_q, "melee warning remains harmless until the strike")
 	defense.queue_action(&"parry")
 	defense.step(0.11)
-	_check(defense.player_hp_q == defense.player_max_hp_q and defense.enemies[0].hp_q == 99 * SpellResourceLedger.Q and defense.enemies[0].impulse.length() > 2000.0, "unfunded melee parry gives bounded base damage while preserving protection and strong physical push")
-	_check((defense.enemies[1].position - nearby_before).dot(nearby_before - defense.player_position) > 0.0 and defense.enemies[1].hp_q == defense.enemies[1].max_hp_q, "successful parry pushes nearby enemies without minting collateral damage")
+	_check(defense.player_hp_q == defense.player_max_hp_q and defense.enemies[0].hp_q == 100 * SpellResourceLedger.Q and defense.enemies[0].impulse.is_zero_approx(), "ordinary melee defense prevents the strike without counter damage or push")
+	_check(defense.enemies[1].counter_push_time == 0.0 and defense.enemies[1].hp_q == defense.enemies[1].max_hp_q, "ordinary defense leaves nearby enemies unaffected")
 	var passing := BattleThreat.new()
 	passing.position = Vector2(0.9, 0.9)
 	passing.velocity = Vector2(120, 0)
@@ -289,7 +288,7 @@ func _run() -> void:
 	defense.queue_action(&"dodge_left")
 	defense.step(0.1)
 	_check(defense.player_position.x < 0.4 and defense.player_hp_q == defense.player_max_hp_q and defense.dodge_window > 0.8, "directional dodge travels out of the attack and retains one second of invulnerability")
-	_check(is_equal_approx(defense.parry_cooldown, 0.49) and ((passing.position - threat_start) * BattleSession.ARENA_SIZE).length() < 2.0, "counter recovery slows the world while input and defense cooldown retain real time")
+	_check(is_equal_approx(defense.parry_cooldown, 0.49) and is_equal_approx(((passing.position - threat_start) * BattleSession.ARENA_SIZE).length(), 12.0), "ordinary defense retains real cooldown and does not apply perfect-defense world slow")
 
 	var ranged := BattleSession.new()
 	sessions.append(ranged)
@@ -318,7 +317,7 @@ func _run() -> void:
 	var incoming := BattleThreat.new()
 	incoming.source_id = reflected.enemies[1].id
 	incoming.attack_id = "fixture-reflected-attack"
-	incoming.position = reflected.player_position + Vector2(0.03, 0)
+	incoming.position = reflected.player_position + Vector2(0.02, 0)
 	incoming.velocity = Vector2(-380, 0)
 	incoming.damage_q = 10 * SpellResourceLedger.Q
 	reflected.threats.append(incoming)
@@ -328,7 +327,7 @@ func _run() -> void:
 	_check(incoming.reflected and incoming.velocity.x > 0 and reflected.enemies[1].hp_q == 100 * SpellResourceLedger.Q, "parry reverses the actual projectile without remote damage, including post-dodge invulnerability")
 	for frame in 90:
 		reflected.step(1.0 / 60.0)
-	_check(reflected.enemies[1].hp_q == 99 * SpellResourceLedger.Q and reflected.player_hp_q == reflected.player_max_hp_q, "unfunded reflection spends only the bounded base response at actual enemy contact")
+	_check(reflected.enemies[1].hp_q == 68 * SpellResourceLedger.Q and reflected.player_hp_q == reflected.player_max_hp_q, "perfect reflection spends its finite base response only at actual enemy contact")
 
 	var crowd := BattleSession.new()
 	sessions.append(crowd)
