@@ -1,0 +1,80 @@
+# 参与贡献
+
+本文描述保留在 `legacy/web/` 的 Web 实现。命令从本目录执行；Godot 主工程入口见[仓库首页](../../README.md)。
+
+感谢你帮助改进键渊。Bug 修复、体验改进、内容扩展、文案和可复现的问题反馈都很有价值。
+
+## 本地运行
+
+需要 Node.js 22.18 或更高版本。在自己的 Fork 或本仓库副本中执行：
+
+```sh
+npm ci
+npm run dev
+```
+
+打开终端显示的本地地址（默认 `http://127.0.0.1:4318`）。开发启动会准备素材、字体、词库和音效；不需要手动打开源码根目录的 HTML。
+
+生成可离线游玩的版本：
+
+```sh
+npm run build
+```
+
+完成后打开 `dist/index.html`。分享离线包时保留整个 `dist` 目录的内容，包括字体、音效、词库和许可文件。
+
+构建最后会保留 `dist/`，并将其中全部内容压缩为 `releases/keyabyss-<版本号>.7z` 和 `releases/keyabyss-<版本号>.zip`。解压后根目录即为 `index.html`。版本号读取 `package.json`；同版本重新构建会替换对应压缩包，不保留旧包中已删除的文件。
+
+打包需要安装 7-Zip：将 `7z` 或 `7zz` 加入 PATH，Windows 也会自动查找 Program Files 下的默认安装位置；自定义路径可用环境变量 `SEVEN_ZIP` 指定可执行文件。两个压缩包均通过完整性检查后才输出；工具缺失或压缩失败会使构建报错，已生成的 `dist/` 保留。
+
+发行构建默认混淆启动、游戏和战场脚本，开发模式不混淆。配置位于 `tools/obfuscate.mjs`；内容哈希与发行清单根据最终产物生成。词库数据和许可保持可读，`THIRD_PARTY_NOTICES.md` 仅保留在源码仓库。
+
+普通构建直接使用已提供的 WOFF2 字体。只有替换 `public/font` 中的源字体后，才需要安装 `requirements-dev.txt` 中的工具并执行 `npm run fonts:build`。
+
+## 改动前先看
+
+[项目规则](../../AGENTS.md)说明了布局、字体、启动与交互约定。尤其注意：
+
+- 面向桌面键鼠，兼顾桌面窗口和全屏；不新增移动端布局或触屏适配。
+- UI 遵循[金丝水晶](../../docs/ART-DIRECTION.md)与[开放式 UI](../../docs/OPEN-UI.md)，使用通透材质、留白、局部金丝与克制光效组织内容。
+- 弹层标题与主要操作固定，长内容在内部滚动；动态效果尊重减少动态设置。
+- 内容扩展遵循已确认的玩法语义与职责；当前模块位置是实现参考。新增遗物需提供可辨认的矢量图案。
+
+按改动需要查阅：
+
+| 方向 | 参考 |
+| --- | --- |
+| 当前状态与未完成项 | [阶段总结](../../docs/STAGE-SUMMARY.md)、[TODO](../../docs/TODO.md) |
+| 模块与内容扩展 | [实现快照](../../docs/TECHNICAL-SNAPSHOT.md)、[构筑设计](../../docs/archive/2026-10-08-build-system/build-system-design/00-DESIGN-BRIEF.md) |
+| UI 与视觉 | [视觉规则](../../docs/ART-DIRECTION.md)、[文案规则](../../docs/CONTENT-STYLE.md) |
+| 难度与战斗节奏 | [产品设计](../../docs/PRODUCT-DESIGN.md)、[收益模型](../../docs/COMBAT-BALANCE-DESIGN.md) |
+| 素材、音效与既有工具 | [实现快照](../../docs/TECHNICAL-SNAPSHOT.md)、[历史资料](../../docs/archive/README.md) |
+| 文本与提示 | [玩家文案](../../docs/CONTENT-STYLE.md) |
+| 验证范围与命令 | [测试说明](../../docs/TESTING.md) |
+
+## 验证改动
+
+选择与改动相称的最低成本检查，优先读取差异和运行受影响的现有测试文件：
+
+```sh
+node --test tests/相关文件.test.cjs
+```
+
+根据风险再选择类型、内容或架构检查；共享核心改动才考虑全单元集合，发行产物需要验证时再构建。具体覆盖与命令见[验证范围](../../docs/TESTING.md)。涉及界面、输入或启动流程时，选择对应浏览器检查。首次使用需准备 Python 依赖：
+
+```sh
+python -m pip install -r requirements-dev.txt
+npm run test:ui
+```
+
+测试会优先寻找已安装的 Chrome / Edge；找不到时可执行 `python -m playwright install chromium`。具体专项检查见[测试说明](../../docs/TESTING.md)。纯文档改动检查内容和链接即可，不必运行游戏测试。
+
+## 提交 PR
+
+每个 PR 尽量围绕一个问题，避免混入无关格式调整或生成文件。请在描述中写明：
+
+- **问题与结果**：什么场景下有问题，改动后是什么表现；如有相关 Issue，请附链接。
+- **验证方式**：运行了哪些检查、结果如何；未能验证的部分直接说明。
+- **体验变化**：界面改动附截图或录屏，玩法调整说明影响和取舍。
+
+新增数据或素材时，请注明来源和许可，并按需要更新第三方声明。请勿提交依赖目录、本地存档或临时输出。对规模较大的改动，先通过 Issue 讨论范围，有助于减少返工。

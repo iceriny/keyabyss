@@ -1,0 +1,58 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://ui/scenes/stat_readout.tscn" id="1"]
+[ext_resource type="Script" path="res://ui/open_button.gd" id="2"]
+
+[node name="PauseContent" type="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 34
+
+[node name="Stats" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Health" parent="Stats" instance=ExtResource("1")]
+layout_mode = 2
+caption = "生命"
+
+[node name="Kills" parent="Stats" instance=ExtResource("1")]
+layout_mode = 2
+caption = "击破"
+
+[node name="Time" parent="Stats" instance=ExtResource("1")]
+layout_mode = 2
+caption = "时间"
+
+[node name="Level" parent="Stats" instance=ExtResource("1")]
+layout_mode = 2
+caption = "等级"
+
+[node name="Menu" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 32
+theme_override_constants/v_separation = 12
+
+[node name="Build" type="Button" parent="Menu"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "当前构筑    bag"
+script = ExtResource("2")
+
+[node name="Codex" type="Button" parent="Menu"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "咒典图鉴    codex"
+script = ExtResource("2")
+
+[node name="Guide" type="Button" parent="Menu"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "施法指南    help"
+script = ExtResource("2")
+
+[node name="Settings" type="Button" parent="Menu"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "设置    settings"
+script = ExtResource("2")

@@ -1,0 +1,86 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://ui/archive_stage.gd" id="1"]
+[ext_resource type="Shader" path="res://ui/materials/archive_lens.gdshader" id="2"]
+[ext_resource type="Shader" path="res://ui/materials/archive_paper.gdshader" id="3"]
+[ext_resource type="Texture2D" path="res://assets/art/runes/arcana-atlas.svg" id="arcana"]
+[ext_resource type="Texture2D" path="res://ui/effects/paper_noise.tres" id="4"]
+[ext_resource type="Script" path="res://ui/viewport_output.gd" id="5_output"]
+
+[sub_resource type="Environment" id="Environment_archive"]
+resource_local_to_scene = true
+background_mode = 4
+glow_enabled = true
+glow_levels/1 = 0.05
+glow_levels/2 = 0.2
+glow_levels/3 = 0.55
+glow_levels/4 = 0.35
+glow_levels/5 = 0.12
+glow_levels/6 = 0.0
+glow_levels/7 = 0.0
+glow_hdr_threshold = 0.55
+glow_hdr_scale = 0.35
+glow_intensity = 0.4
+glow_strength = 0.9
+glow_blend_mode = 0
+
+[sub_resource type="ShaderMaterial" id="Material_lens"]
+resource_local_to_scene = true
+shader = ExtResource("2")
+
+[sub_resource type="ShaderMaterial" id="Material_paper"]
+resource_local_to_scene = true
+shader = ExtResource("3")
+shader_parameter/presence = 0.64
+shader_parameter/paper_noise = ExtResource("4")
+shader_parameter/rune_atlas = ExtResource("arcana")
+
+[node name="ArchiveStage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="World" type="SubViewport" parent="."]
+own_world_3d = true
+gui_disable_input = true
+gui_snap_controls_to_pixels = false
+size = Vector2i(1920, 1080)
+use_hdr_2d = true
+msaa_2d = 2
+render_target_update_mode = 4
+
+[node name="Lighting" type="WorldEnvironment" parent="World"]
+environment = SubResource("Environment_archive")
+
+[node name="Scenery" type="Control" parent="World"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Paper" type="ColorRect" parent="World/Scenery"]
+material = SubResource("Material_paper")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Output" type="TextureRect" parent="."]
+script = ExtResource("5_output")
+material = SubResource("Material_lens")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1

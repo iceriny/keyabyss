@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
+  <title>回蔓 · Unfurling tendril</title>
+  <defs><linearGradient id="gold" x1="22" y1="219" x2="281" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".25" stop-color="#C9AE72" stop-opacity=".8"/><stop offset=".65" stop-color="#F0DDAE"/><stop offset="1" stop-color="#C9AE72" stop-opacity=".15"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 219 C110 210 81 118 160 76 C214 47 270 60 276 100 C282 140 226 161 206 133 C186 105 218 88 232 104 C240 114 233 124 226 120" stroke-width="1.55"/>
+    <path d="M20 219 C110 210 81 118 160 76 C214 47 270 60 276 100 C282 140 226 161 206 133 C186 105 218 88 232 104 C240 114 233 124 226 120" stroke-width=".55" opacity=".4"/>
+    <path d="M95.26 157.45 C72.26 142.45 57.26 120.45 60.26 93.45 C86.26 102.45 98.26 123.45 95.26 157.45 Z M135.45 93.41 C132.45 61.41 152.45 37.41 180.45 23.41 C170.45 54.41 157.45 78.41 135.45 93.41 Z M170.88 70.73 C182.88 43.73 211.88 28.73 239.88 33.73 C220.88 52.73 197.88 64.73 170.88 70.73 Z M98.45 150.58 C126.45 155.58 147.45 146.58 165.45 130.58 C161.45 156.58 130.45 176.58 98.45 150.58 Z" stroke-width="1.05"/>
+    <path d="M95.26 157.45 Q78.26 123.45 60.26 93.45 M135.45 93.41 Q150.45 52.41 180.45 23.41 M170.88 70.73 Q204.88 45.73 239.88 33.73 M98.45 150.58 Q138.45 165.58 165.45 130.58 M82.53 181.65 C111.53 199.65 146.53 186.65 149.53 165.65" stroke-width=".65"/>
+    <path d="M210.18 60.61 C228.18 46.61 258.18 29.61 295.18 36.61" stroke-width=".75" opacity=".4"/>
+  </g>
+</svg>

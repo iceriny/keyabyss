@@ -1,0 +1,7 @@
+.build-trace { margin-top: 24px; padding-top: 14px; border-top: 1px solid #c2b58735; }
+.build-trace summary { cursor: pointer; color: #decea4; }
+.build-trace summary:focus-visible { outline: none; text-decoration: underline; text-underline-offset: 5px; }
+.build-trace > p { color: #aeb2b6; font-size: 14px; }
+.build-trace-entries { max-height: 340px; overflow: auto; padding: 0; list-style: none; scrollbar-width: thin; }
+.build-trace-entries li { display: grid; grid-template-columns: 110px 1fr auto; gap: 6px 14px; padding: 10px 0; border-bottom: 1px solid #c2b58718; }
+.build-trace-entries small { grid-column: 1 / -1; color: #aeb2b6; overflow-wrap: anywhere; }

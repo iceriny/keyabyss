@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="BookPresentation" format=3 uid="uid://c5u6mvwcxbuj4"]
+
+[ext_resource type="Script" uid="uid://cgwgnrywx2sxt" path="res://game/content/book_presentation.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bvcxfqdjbjpsu" path="res://assets/art/books/flame.png" id="2"]
+[ext_resource type="Script" uid="uid://soctqr38u1ie" path="res://ui/effects/fluid_effect_profile.gd" id="2_q4w50"]
+[ext_resource type="Texture2D" uid="uid://xjy7nymuxtfj" path="res://assets/art/runes/flame-seal.svg" id="3"]
+[ext_resource type="Script" uid="uid://cjxk3x7y15tea" path="res://ui/effects/fluid_medium.gd" id="4"]
+
+[sub_resource type="Resource" id="FluidMaterial"]
+script = ExtResource("4")
+color = Color(0.95, 0.43, 0.16, 1)
+density_scale = 0.9
+temperature = 1.1
+
+[resource]
+script = ExtResource("1")
+id = &"flame"
+title = "灰烬之书"
+color = Color(1, 0.6, 0.306, 1)
+artwork = ExtResource("2")
+seal = ExtResource("3")
+eyebrow = "ASHEN GRIMOIRE"
+headline = "点燃。积蓄。焚尽。"
+subtitle = "点燃后转火，让余烬收下最后一击。"
+description = "延迟灼烧 · 焰印火雾"
+ultimate = "焚世余烬"
+fluid_material = SubResource("FluidMaterial")

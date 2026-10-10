@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="240" viewBox="0 0 300 240" fill="none">
+  <title>透叶 · Leaf veins</title>
+  <defs><linearGradient id="gold" x1="31" y1="216" x2="265" y2="27" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".3" stop-color="#C9AE72" stop-opacity=".85"/><stop offset=".63" stop-color="#F0DDAE" stop-opacity=".85"/><stop offset="1" stop-color="#C9AE72" stop-opacity=".08"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 219 C86 193 129 104 270 23" stroke-width="1.55"/>
+    <path d="M67.97 191.07 C58.97 137.07 73 82 131 68 C187 54 230 59 270 23 C248 73 256 139 204 165 C158 188 105.97 167.07 67.97 191.07 Z" stroke-width=".95" opacity=".6"/>
+    <path d="M84.4 175.41 Q78.4 150.41 67.18 135.02 M111.78 147.75 Q98.78 115.75 89.9 90.32 M143.02 117.23 Q145.02 82.23 155.36 62.78 M177.74 86.69 Q184.74 60.69 213.27 52.16 M97.9 161.84 Q127.9 182.84 111.47 177.8 M128.26 131.36 Q169.26 161.36 187.18 171.49 M161.39 100.59 Q206.39 127.59 244.44 115.22 M198.32 70.42 Q223.32 87.42 256.6 67.53" stroke-width=".85"/>
+  </g>
+</svg>

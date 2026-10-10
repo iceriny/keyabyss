@@ -9,7 +9,31 @@ public/assets/
 public/audio/
 public/word/
 art/Magic UI Designed/
-docs/test-output*/
+.temp/
+/.delete/
 .env
 .env.*
 *.tsbuildinfo
+/.godot/
+/.tools/
+/builds/
+/.codex/config.toml
+/tools/godot/local.paths.json
+/export_credentials.cfg
+/development/audio_library/clips/
+/development/audio_library/.build.json
+/.vscode/settings.json
+/legacy/web/public/assets/
+/legacy/web/public/audio/
+/legacy/web/public/word/
+/legacy/web/art/Magic UI Designed/
+/assets/audio/clips/*.wav
+/assets/fonts/*.ttf
+/assets/fonts/*.otf
+/assets/fonts/*.woff
+/assets/fonts/*.woff2
+/assets/art/books/*.png
+/legacy/web/public/font/
+/legacy/web/art/*.png
+/docs/art/Arcana256/fonts/
+/docs/art/Arcana384/fonts/

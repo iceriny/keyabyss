@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Material" path="res://ui/effects/fluid_fog.tres" id="1"]
+
+[node name="Fog" type="ColorRect"]
+mouse_filter = 2
+light_mask = 2
+material = ExtResource("1")

@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://ct62dixe6rlhs"
+path="res://.godot/imported/frost_surface.glsl-928a44cbbd2e630c1cd15e209b8b95be.res"
+
+[deps]
+
+source_file="res://ui/effects/frost_surface.glsl"
+dest_files=["res://.godot/imported/frost_surface.glsl-928a44cbbd2e630c1cd15e209b8b95be.res"]
+
+[params]
+

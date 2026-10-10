@@ -1,0 +1,163 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://ui/page_shell.gd" id="1"]
+[ext_resource type="Material" path="res://ui/materials/crystal_reading.tres" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/runes/frost-seal.svg" id="3"]
+[ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="4"]
+[ext_resource type="Theme" path="res://ui/theme/keyabyss.tres" id="5"]
+[ext_resource type="Script" path="res://ui/smooth_scroll.gd" id="6_scroll"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/goldwork/01-willow-sweep.svg" id="7_filigree"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/goldwork/07-river-thread.svg" id="8_filigree"]
+[ext_resource type="Material" path="res://ui/materials/gold_inlay.tres" id="9_gold"]
+[ext_resource type="Script" path="res://ui/crystal_inlay.gd" id="10_crystal"]
+
+[node name="PageShell" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+z_index = 30
+theme = ExtResource("5")
+script = ExtResource("1")
+
+[node name="Capture" type="BackBufferCopy" parent="."]
+copy_mode = 2
+
+[node name="Wash" type="ColorRect" parent="."]
+material = ExtResource("2")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ContentLayer" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="Pattern" type="TextureRect" parent="ContentLayer"]
+texture_filter = 4
+layout_mode = 0
+offset_right = 170.0
+offset_bottom = 170.0
+mouse_filter = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="MarginContainer" parent="ContentLayer"]
+layout_mode = 0
+offset_left = 580.0
+offset_top = 26.0
+offset_right = 1340.0
+offset_bottom = 970.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 38
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 28
+
+[node name="GoldBranch" type="TextureRect" parent="ContentLayer"]
+show_behind_parent = true
+script = ExtResource("10_crystal")
+material = ExtResource("9_gold")
+mouse_filter = 2
+texture = ExtResource("7_filigree")
+modulate = Color(1, 1, 1, 0.85)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldDivider" type="TextureRect" parent="ContentLayer"]
+show_behind_parent = true
+script = ExtResource("10_crystal")
+material = ExtResource("9_gold")
+mouse_filter = 2
+texture = ExtResource("8_filigree")
+modulate = Color(1, 1, 1, 0.8)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Layout" type="VBoxContainer" parent="ContentLayer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="HBoxContainer" parent="ContentLayer/Panel/Layout"]
+layout_mode = 2
+
+[node name="Heading" type="Label" parent="ContentLayer/Panel/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.929412, 0.87451, 0.741176, 1)
+theme_override_font_sizes/font_size = 32
+autowrap_mode = 3
+
+[node name="CloseButton" type="Button" parent="ContentLayer/Panel/Layout/Header"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+focus_mode = 0
+text = "×"
+
+[node name="Subtitle" type="Label" parent="ContentLayer/Panel/Layout"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.537255, 0.607843, 0.6, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="BodyRegion" type="MarginContainer" parent="ContentLayer/Panel/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 16
+
+[node name="BodyScroll" type="ScrollContainer" parent="ContentLayer/Panel/Layout/BodyRegion"]
+script = ExtResource("6_scroll")
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+follow_focus = false
+
+[node name="ContentMargin" type="MarginContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="Body" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 18
+
+[node name="Status" type="Label" parent="ContentLayer/Panel/Layout"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.760784, 0.701961, 0.545098, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="Separator" type="HSeparator" parent="ContentLayer/Panel/Layout"]
+layout_mode = 2
+
+[node name="Footer" type="HBoxContainer" parent="ContentLayer/Panel/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 26
+
+[node name="CommandHint" type="Label" parent="ContentLayer/Panel/Layout"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.509804, 0.568627, 0.54902, 1)
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 12
+text = "点击或输入词令"
+autowrap_mode = 3

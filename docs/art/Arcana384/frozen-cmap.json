@@ -1,0 +1,2306 @@
+[
+  {
+    "char": "存",
+    "index": 1,
+    "pua": "U+E000",
+    "stable_id": "han-5B58"
+  },
+  {
+    "char": "无",
+    "index": 2,
+    "pua": "U+E001",
+    "stable_id": "han-65E0"
+  },
+  {
+    "char": "生",
+    "index": 3,
+    "pua": "U+E002",
+    "stable_id": "han-751F"
+  },
+  {
+    "char": "灭",
+    "index": 4,
+    "pua": "U+E003",
+    "stable_id": "han-706D"
+  },
+  {
+    "char": "始",
+    "index": 5,
+    "pua": "U+E004",
+    "stable_id": "han-59CB"
+  },
+  {
+    "char": "终",
+    "index": 6,
+    "pua": "U+E005",
+    "stable_id": "han-7EC8"
+  },
+  {
+    "char": "本",
+    "index": 7,
+    "pua": "U+E006",
+    "stable_id": "han-672C"
+  },
+  {
+    "char": "末",
+    "index": 8,
+    "pua": "U+E007",
+    "stable_id": "han-672B"
+  },
+  {
+    "char": "整",
+    "index": 9,
+    "pua": "U+E008",
+    "stable_id": "han-6574"
+  },
+  {
+    "char": "缺",
+    "index": 10,
+    "pua": "U+E009",
+    "stable_id": "han-7F3A"
+  },
+  {
+    "char": "命",
+    "index": 11,
+    "pua": "U+E00A",
+    "stable_id": "han-547D"
+  },
+  {
+    "char": "运",
+    "index": 12,
+    "pua": "U+E00B",
+    "stable_id": "han-8FD0"
+  },
+  {
+    "char": "真",
+    "index": 13,
+    "pua": "U+E00C",
+    "stable_id": "han-771F"
+  },
+  {
+    "char": "幻",
+    "index": 14,
+    "pua": "U+E00D",
+    "stable_id": "han-5E7B"
+  },
+  {
+    "char": "质",
+    "index": 15,
+    "pua": "U+E00E",
+    "stable_id": "han-8D28"
+  },
+  {
+    "char": "事",
+    "index": 16,
+    "pua": "U+E00F",
+    "stable_id": "han-4E8B"
+  },
+  {
+    "char": "态",
+    "index": 17,
+    "pua": "U+E010",
+    "stable_id": "han-6001"
+  },
+  {
+    "char": "物",
+    "index": 18,
+    "pua": "U+E011",
+    "stable_id": "han-7269"
+  },
+  {
+    "char": "类",
+    "index": 19,
+    "pua": "U+E012",
+    "stable_id": "han-7C7B"
+  },
+  {
+    "char": "时",
+    "index": 20,
+    "pua": "U+E013",
+    "stable_id": "han-65F6"
+  },
+  {
+    "char": "昔",
+    "index": 21,
+    "pua": "U+E014",
+    "stable_id": "han-6614"
+  },
+  {
+    "char": "今",
+    "index": 22,
+    "pua": "U+E015",
+    "stable_id": "han-4ECA"
+  },
+  {
+    "char": "后",
+    "index": 23,
+    "pua": "U+E016",
+    "stable_id": "han-540E"
+  },
+  {
+    "char": "恒",
+    "index": 24,
+    "pua": "U+E017",
+    "stable_id": "han-6052"
+  },
+  {
+    "char": "瞬",
+    "index": 25,
+    "pua": "U+E018",
+    "stable_id": "han-77AC"
+  },
+  {
+    "char": "久",
+    "index": 26,
+    "pua": "U+E019",
+    "stable_id": "han-4E45"
+  },
+  {
+    "char": "暂",
+    "index": 27,
+    "pua": "U+E01A",
+    "stable_id": "han-6682"
+  },
+  {
+    "char": "变",
+    "index": 28,
+    "pua": "U+E01B",
+    "stable_id": "han-53D8"
+  },
+  {
+    "char": "常",
+    "index": 29,
+    "pua": "U+E01C",
+    "stable_id": "han-5E38"
+  },
+  {
+    "char": "新",
+    "index": 30,
+    "pua": "U+E01D",
+    "stable_id": "han-65B0"
+  },
+  {
+    "char": "旧",
+    "index": 31,
+    "pua": "U+E01E",
+    "stable_id": "han-65E7"
+  },
+  {
+    "char": "循",
+    "index": 32,
+    "pua": "U+E01F",
+    "stable_id": "han-5FAA"
+  },
+  {
+    "char": "复",
+    "index": 33,
+    "pua": "U+E020",
+    "stable_id": "han-590D"
+  },
+  {
+    "char": "渐",
+    "index": 34,
+    "pua": "U+E021",
+    "stable_id": "han-6E10"
+  },
+  {
+    "char": "骤",
+    "index": 35,
+    "pua": "U+E022",
+    "stable_id": "han-9AA4"
+  },
+  {
+    "char": "夜",
+    "index": 36,
+    "pua": "U+E023",
+    "stable_id": "han-591C"
+  },
+  {
+    "char": "昼",
+    "index": 37,
+    "pua": "U+E024",
+    "stable_id": "han-663C"
+  },
+  {
+    "char": "空",
+    "index": 38,
+    "pua": "U+E025",
+    "stable_id": "han-7A7A"
+  },
+  {
+    "char": "内",
+    "index": 39,
+    "pua": "U+E026",
+    "stable_id": "han-5185"
+  },
+  {
+    "char": "外",
+    "index": 40,
+    "pua": "U+E027",
+    "stable_id": "han-5916"
+  },
+  {
+    "char": "维",
+    "index": 41,
+    "pua": "U+E028",
+    "stable_id": "han-7EF4"
+  },
+  {
+    "char": "位",
+    "index": 42,
+    "pua": "U+E029",
+    "stable_id": "han-4F4D"
+  },
+  {
+    "char": "中",
+    "index": 43,
+    "pua": "U+E02A",
+    "stable_id": "han-4E2D"
+  },
+  {
+    "char": "边",
+    "index": 44,
+    "pua": "U+E02B",
+    "stable_id": "han-8FB9"
+  },
+  {
+    "char": "界",
+    "index": 45,
+    "pua": "U+E02C",
+    "stable_id": "han-754C"
+  },
+  {
+    "char": "距",
+    "index": 46,
+    "pua": "U+E02D",
+    "stable_id": "han-8DDD"
+  },
+  {
+    "char": "域",
+    "index": 47,
+    "pua": "U+E02E",
+    "stable_id": "han-57DF"
+  },
+  {
+    "char": "通",
+    "index": 48,
+    "pua": "U+E02F",
+    "stable_id": "han-901A"
+  },
+  {
+    "char": "隔",
+    "index": 49,
+    "pua": "U+E030",
+    "stable_id": "han-9694"
+  },
+  {
+    "char": "广",
+    "index": 50,
+    "pua": "U+E031",
+    "stable_id": "han-5E7F"
+  },
+  {
+    "char": "狭",
+    "index": 51,
+    "pua": "U+E032",
+    "stable_id": "han-72ED"
+  },
+  {
+    "char": "越",
+    "index": 52,
+    "pua": "U+E033",
+    "stable_id": "han-8D8A"
+  },
+  {
+    "char": "归",
+    "index": 53,
+    "pua": "U+E034",
+    "stable_id": "han-5F52"
+  },
+  {
+    "char": "局",
+    "index": 54,
+    "pua": "U+E035",
+    "stable_id": "han-5C40"
+  },
+  {
+    "char": "上",
+    "index": 55,
+    "pua": "U+E036",
+    "stable_id": "han-4E0A"
+  },
+  {
+    "char": "下",
+    "index": 56,
+    "pua": "U+E037",
+    "stable_id": "han-4E0B"
+  },
+  {
+    "char": "前",
+    "index": 57,
+    "pua": "U+E038",
+    "stable_id": "han-524D"
+  },
+  {
+    "char": "右",
+    "index": 58,
+    "pua": "U+E039",
+    "stable_id": "han-53F3"
+  },
+  {
+    "char": "左",
+    "index": 59,
+    "pua": "U+E03A",
+    "stable_id": "han-5DE6"
+  },
+  {
+    "char": "形",
+    "index": 60,
+    "pua": "U+E03B",
+    "stable_id": "han-5F62"
+  },
+  {
+    "char": "点",
+    "index": 61,
+    "pua": "U+E03C",
+    "stable_id": "han-70B9"
+  },
+  {
+    "char": "线",
+    "index": 62,
+    "pua": "U+E03D",
+    "stable_id": "han-7EBF"
+  },
+  {
+    "char": "触",
+    "index": 63,
+    "pua": "U+E03E",
+    "stable_id": "han-89E6"
+  },
+  {
+    "char": "路",
+    "index": 64,
+    "pua": "U+E03F",
+    "stable_id": "han-8DEF"
+  },
+  {
+    "char": "面",
+    "index": 65,
+    "pua": "U+E040",
+    "stable_id": "han-9762"
+  },
+  {
+    "char": "零",
+    "index": 66,
+    "pua": "U+E041",
+    "stable_id": "han-96F6"
+  },
+  {
+    "char": "一",
+    "index": 67,
+    "pua": "U+E042",
+    "stable_id": "han-4E00"
+  },
+  {
+    "char": "二",
+    "index": 68,
+    "pua": "U+E043",
+    "stable_id": "han-4E8C"
+  },
+  {
+    "char": "三",
+    "index": 69,
+    "pua": "U+E044",
+    "stable_id": "han-4E09"
+  },
+  {
+    "char": "四",
+    "index": 70,
+    "pua": "U+E045",
+    "stable_id": "han-56DB"
+  },
+  {
+    "char": "五",
+    "index": 71,
+    "pua": "U+E046",
+    "stable_id": "han-4E94"
+  },
+  {
+    "char": "六",
+    "index": 72,
+    "pua": "U+E047",
+    "stable_id": "han-516D"
+  },
+  {
+    "char": "七",
+    "index": 73,
+    "pua": "U+E048",
+    "stable_id": "han-4E03"
+  },
+  {
+    "char": "八",
+    "index": 74,
+    "pua": "U+E049",
+    "stable_id": "han-516B"
+  },
+  {
+    "char": "九",
+    "index": 75,
+    "pua": "U+E04A",
+    "stable_id": "han-4E5D"
+  },
+  {
+    "char": "半",
+    "index": 76,
+    "pua": "U+E04B",
+    "stable_id": "han-534A"
+  },
+  {
+    "char": "倍",
+    "index": 77,
+    "pua": "U+E04C",
+    "stable_id": "han-500D"
+  },
+  {
+    "char": "正",
+    "index": 78,
+    "pua": "U+E04D",
+    "stable_id": "han-6B63"
+  },
+  {
+    "char": "负",
+    "index": 79,
+    "pua": "U+E04E",
+    "stable_id": "han-8D1F"
+  },
+  {
+    "char": "加",
+    "index": 80,
+    "pua": "U+E04F",
+    "stable_id": "han-52A0"
+  },
+  {
+    "char": "减",
+    "index": 81,
+    "pua": "U+E050",
+    "stable_id": "han-51CF"
+  },
+  {
+    "char": "乘",
+    "index": 82,
+    "pua": "U+E051",
+    "stable_id": "han-4E58"
+  },
+  {
+    "char": "除",
+    "index": 83,
+    "pua": "U+E052",
+    "stable_id": "han-9664"
+  },
+  {
+    "char": "数",
+    "index": 84,
+    "pua": "U+E053",
+    "stable_id": "han-6570"
+  },
+  {
+    "char": "量",
+    "index": 85,
+    "pua": "U+E054",
+    "stable_id": "han-91CF"
+  },
+  {
+    "char": "率",
+    "index": 86,
+    "pua": "U+E055",
+    "stable_id": "han-7387"
+  },
+  {
+    "char": "比",
+    "index": 87,
+    "pua": "U+E056",
+    "stable_id": "han-6BD4"
+  },
+  {
+    "char": "多",
+    "index": 88,
+    "pua": "U+E057",
+    "stable_id": "han-591A"
+  },
+  {
+    "char": "少",
+    "index": 89,
+    "pua": "U+E058",
+    "stable_id": "han-5C11"
+  },
+  {
+    "char": "单",
+    "index": 90,
+    "pua": "U+E059",
+    "stable_id": "han-5355"
+  },
+  {
+    "char": "双",
+    "index": 91,
+    "pua": "U+E05A",
+    "stable_id": "han-53CC"
+  },
+  {
+    "char": "分",
+    "index": 92,
+    "pua": "U+E05B",
+    "stable_id": "han-5206"
+  },
+  {
+    "char": "总",
+    "index": 93,
+    "pua": "U+E05C",
+    "stable_id": "han-603B"
+  },
+  {
+    "char": "集",
+    "index": 94,
+    "pua": "U+E05D",
+    "stable_id": "han-96C6"
+  },
+  {
+    "char": "极",
+    "index": 95,
+    "pua": "U+E05E",
+    "stable_id": "han-6781"
+  },
+  {
+    "char": "余",
+    "index": 96,
+    "pua": "U+E05F",
+    "stable_id": "han-4F59"
+  },
+  {
+    "char": "次",
+    "index": 97,
+    "pua": "U+E060",
+    "stable_id": "han-6B21"
+  },
+  {
+    "char": "光",
+    "index": 98,
+    "pua": "U+E061",
+    "stable_id": "han-5149"
+  },
+  {
+    "char": "力",
+    "index": 99,
+    "pua": "U+E062",
+    "stable_id": "han-529B"
+  },
+  {
+    "char": "势",
+    "index": 100,
+    "pua": "U+E063",
+    "stable_id": "han-52BF"
+  },
+  {
+    "char": "能",
+    "index": 101,
+    "pua": "U+E064",
+    "stable_id": "han-80FD"
+  },
+  {
+    "char": "音",
+    "index": 102,
+    "pua": "U+E065",
+    "stable_id": "han-97F3"
+  },
+  {
+    "char": "土",
+    "index": 103,
+    "pua": "U+E066",
+    "stable_id": "han-571F"
+  },
+  {
+    "char": "地",
+    "index": 104,
+    "pua": "U+E067",
+    "stable_id": "han-5730"
+  },
+  {
+    "char": "山",
+    "index": 105,
+    "pua": "U+E068",
+    "stable_id": "han-5C71"
+  },
+  {
+    "char": "影",
+    "index": 106,
+    "pua": "U+E069",
+    "stable_id": "han-5F71"
+  },
+  {
+    "char": "日",
+    "index": 107,
+    "pua": "U+E06A",
+    "stable_id": "han-65E5"
+  },
+  {
+    "char": "星",
+    "index": 108,
+    "pua": "U+E06B",
+    "stable_id": "han-661F"
+  },
+  {
+    "char": "月",
+    "index": 109,
+    "pua": "U+E06C",
+    "stable_id": "han-6708"
+  },
+  {
+    "char": "木",
+    "index": 110,
+    "pua": "U+E06D",
+    "stable_id": "han-6728"
+  },
+  {
+    "char": "气",
+    "index": 111,
+    "pua": "U+E06E",
+    "stable_id": "han-6C14"
+  },
+  {
+    "char": "水",
+    "index": 112,
+    "pua": "U+E06F",
+    "stable_id": "han-6C34"
+  },
+  {
+    "char": "海",
+    "index": 113,
+    "pua": "U+E070",
+    "stable_id": "han-6D77"
+  },
+  {
+    "char": "火",
+    "index": 114,
+    "pua": "U+E071",
+    "stable_id": "han-706B"
+  },
+  {
+    "char": "电",
+    "index": 115,
+    "pua": "U+E072",
+    "stable_id": "han-7535"
+  },
+  {
+    "char": "石",
+    "index": 116,
+    "pua": "U+E073",
+    "stable_id": "han-77F3"
+  },
+  {
+    "char": "磁",
+    "index": 117,
+    "pua": "U+E074",
+    "stable_id": "han-78C1"
+  },
+  {
+    "char": "金",
+    "index": 118,
+    "pua": "U+E075",
+    "stable_id": "han-91D1"
+  },
+  {
+    "char": "雨",
+    "index": 119,
+    "pua": "U+E076",
+    "stable_id": "han-96E8"
+  },
+  {
+    "char": "雷",
+    "index": 120,
+    "pua": "U+E077",
+    "stable_id": "han-96F7"
+  },
+  {
+    "char": "风",
+    "index": 121,
+    "pua": "U+E078",
+    "stable_id": "han-98CE"
+  },
+  {
+    "char": "人",
+    "index": 122,
+    "pua": "U+E079",
+    "stable_id": "han-4EBA"
+  },
+  {
+    "char": "伤",
+    "index": 123,
+    "pua": "U+E07A",
+    "stable_id": "han-4F24"
+  },
+  {
+    "char": "兽",
+    "index": 124,
+    "pua": "U+E07B",
+    "stable_id": "han-517D"
+  },
+  {
+    "char": "树",
+    "index": 125,
+    "pua": "U+E07C",
+    "stable_id": "han-6811"
+  },
+  {
+    "char": "渴",
+    "index": 126,
+    "pua": "U+E07D",
+    "stable_id": "han-6E34"
+  },
+  {
+    "char": "灵",
+    "index": 127,
+    "pua": "U+E07E",
+    "stable_id": "han-7075"
+  },
+  {
+    "char": "病",
+    "index": 128,
+    "pua": "U+E07F",
+    "stable_id": "han-75C5"
+  },
+  {
+    "char": "痛",
+    "index": 129,
+    "pua": "U+E080",
+    "stable_id": "han-75DB"
+  },
+  {
+    "char": "睡",
+    "index": 130,
+    "pua": "U+E081",
+    "stable_id": "han-7761"
+  },
+  {
+    "char": "花",
+    "index": 131,
+    "pua": "U+E082",
+    "stable_id": "han-82B1"
+  },
+  {
+    "char": "草",
+    "index": 132,
+    "pua": "U+E083",
+    "stable_id": "han-8349"
+  },
+  {
+    "char": "虫",
+    "index": 133,
+    "pua": "U+E084",
+    "stable_id": "han-866B"
+  },
+  {
+    "char": "血",
+    "index": 134,
+    "pua": "U+E085",
+    "stable_id": "han-8840"
+  },
+  {
+    "char": "身",
+    "index": 135,
+    "pua": "U+E086",
+    "stable_id": "han-8EAB"
+  },
+  {
+    "char": "食",
+    "index": 136,
+    "pua": "U+E087",
+    "stable_id": "han-98DF"
+  },
+  {
+    "char": "饥",
+    "index": 137,
+    "pua": "U+E088",
+    "stable_id": "han-9965"
+  },
+  {
+    "char": "鱼",
+    "index": 138,
+    "pua": "U+E089",
+    "stable_id": "han-9C7C"
+  },
+  {
+    "char": "鸟",
+    "index": 139,
+    "pua": "U+E08A",
+    "stable_id": "han-9E1F"
+  },
+  {
+    "char": "识",
+    "index": 140,
+    "pua": "U+E08B",
+    "stable_id": "han-8BC6"
+  },
+  {
+    "char": "知",
+    "index": 141,
+    "pua": "U+E08C",
+    "stable_id": "han-77E5"
+  },
+  {
+    "char": "觉",
+    "index": 142,
+    "pua": "U+E08D",
+    "stable_id": "han-89C9"
+  },
+  {
+    "char": "思",
+    "index": 143,
+    "pua": "U+E08E",
+    "stable_id": "han-601D"
+  },
+  {
+    "char": "念",
+    "index": 144,
+    "pua": "U+E08F",
+    "stable_id": "han-5FF5"
+  },
+  {
+    "char": "忆",
+    "index": 145,
+    "pua": "U+E090",
+    "stable_id": "han-5FC6"
+  },
+  {
+    "char": "忘",
+    "index": 146,
+    "pua": "U+E091",
+    "stable_id": "han-5FD8"
+  },
+  {
+    "char": "梦",
+    "index": 147,
+    "pua": "U+E092",
+    "stable_id": "han-68A6"
+  },
+  {
+    "char": "醒",
+    "index": 148,
+    "pua": "U+E093",
+    "stable_id": "han-9192"
+  },
+  {
+    "char": "信",
+    "index": 149,
+    "pua": "U+E094",
+    "stable_id": "han-4FE1"
+  },
+  {
+    "char": "疑",
+    "index": 150,
+    "pua": "U+E095",
+    "stable_id": "han-7591"
+  },
+  {
+    "char": "虚",
+    "index": 151,
+    "pua": "U+E096",
+    "stable_id": "han-865A"
+  },
+  {
+    "char": "实",
+    "index": 152,
+    "pua": "U+E097",
+    "stable_id": "han-5B9E"
+  },
+  {
+    "char": "暗",
+    "index": 153,
+    "pua": "U+E098",
+    "stable_id": "han-6697"
+  },
+  {
+    "char": "听",
+    "index": 154,
+    "pua": "U+E099",
+    "stable_id": "han-542C"
+  },
+  {
+    "char": "味",
+    "index": 155,
+    "pua": "U+E09A",
+    "stable_id": "han-5473"
+  },
+  {
+    "char": "嗅",
+    "index": 156,
+    "pua": "U+E09B",
+    "stable_id": "han-55C5"
+  },
+  {
+    "char": "寻",
+    "index": 157,
+    "pua": "U+E09C",
+    "stable_id": "han-5BFB"
+  },
+  {
+    "char": "心",
+    "index": 158,
+    "pua": "U+E09D",
+    "stable_id": "han-5FC3"
+  },
+  {
+    "char": "视",
+    "index": 159,
+    "pua": "U+E09E",
+    "stable_id": "han-89C6"
+  },
+  {
+    "char": "愿",
+    "index": 160,
+    "pua": "U+E09F",
+    "stable_id": "han-613F"
+  },
+  {
+    "char": "欲",
+    "index": 161,
+    "pua": "U+E0A0",
+    "stable_id": "han-6B32"
+  },
+  {
+    "char": "决",
+    "index": 162,
+    "pua": "U+E0A1",
+    "stable_id": "han-51B3"
+  },
+  {
+    "char": "择",
+    "index": 163,
+    "pua": "U+E0A2",
+    "stable_id": "han-62E9"
+  },
+  {
+    "char": "意",
+    "index": 164,
+    "pua": "U+E0A3",
+    "stable_id": "han-610F"
+  },
+  {
+    "char": "志",
+    "index": 165,
+    "pua": "U+E0A4",
+    "stable_id": "han-5FD7"
+  },
+  {
+    "char": "守",
+    "index": 166,
+    "pua": "U+E0A5",
+    "stable_id": "han-5B88"
+  },
+  {
+    "char": "释",
+    "index": 167,
+    "pua": "U+E0A6",
+    "stable_id": "han-91CA"
+  },
+  {
+    "char": "感",
+    "index": 168,
+    "pua": "U+E0A7",
+    "stable_id": "han-611F"
+  },
+  {
+    "char": "应",
+    "index": 169,
+    "pua": "U+E0A8",
+    "stable_id": "han-5E94"
+  },
+  {
+    "char": "契",
+    "index": 170,
+    "pua": "U+E0A9",
+    "stable_id": "han-5951"
+  },
+  {
+    "char": "喜",
+    "index": 171,
+    "pua": "U+E0AA",
+    "stable_id": "han-559C"
+  },
+  {
+    "char": "悲",
+    "index": 172,
+    "pua": "U+E0AB",
+    "stable_id": "han-60B2"
+  },
+  {
+    "char": "爱",
+    "index": 173,
+    "pua": "U+E0AC",
+    "stable_id": "han-7231"
+  },
+  {
+    "char": "恨",
+    "index": 174,
+    "pua": "U+E0AD",
+    "stable_id": "han-6068"
+  },
+  {
+    "char": "惧",
+    "index": 175,
+    "pua": "U+E0AE",
+    "stable_id": "han-60E7"
+  },
+  {
+    "char": "勇",
+    "index": 176,
+    "pua": "U+E0AF",
+    "stable_id": "han-52C7"
+  },
+  {
+    "char": "安",
+    "index": 177,
+    "pua": "U+E0B0",
+    "stable_id": "han-5B89"
+  },
+  {
+    "char": "忧",
+    "index": 178,
+    "pua": "U+E0B1",
+    "stable_id": "han-5FE7"
+  },
+  {
+    "char": "怒",
+    "index": 179,
+    "pua": "U+E0B2",
+    "stable_id": "han-6012"
+  },
+  {
+    "char": "厌",
+    "index": 180,
+    "pua": "U+E0B3",
+    "stable_id": "han-538C"
+  },
+  {
+    "char": "躁",
+    "index": 181,
+    "pua": "U+E0B4",
+    "stable_id": "han-8E81"
+  },
+  {
+    "char": "敬",
+    "index": 182,
+    "pua": "U+E0B5",
+    "stable_id": "han-656C"
+  },
+  {
+    "char": "危",
+    "index": 183,
+    "pua": "U+E0B6",
+    "stable_id": "han-5371"
+  },
+  {
+    "char": "善",
+    "index": 184,
+    "pua": "U+E0B7",
+    "stable_id": "han-5584"
+  },
+  {
+    "char": "恶",
+    "index": 185,
+    "pua": "U+E0B8",
+    "stable_id": "han-6076"
+  },
+  {
+    "char": "隐",
+    "index": 186,
+    "pua": "U+E0B9",
+    "stable_id": "han-9690"
+  },
+  {
+    "char": "显",
+    "index": 187,
+    "pua": "U+E0BA",
+    "stable_id": "han-663E"
+  },
+  {
+    "char": "潜",
+    "index": 188,
+    "pua": "U+E0BB",
+    "stable_id": "han-6F5C"
+  },
+  {
+    "char": "融",
+    "index": 189,
+    "pua": "U+E0BC",
+    "stable_id": "han-878D"
+  },
+  {
+    "char": "凝",
+    "index": 190,
+    "pua": "U+E0BD",
+    "stable_id": "han-51DD"
+  },
+  {
+    "char": "清",
+    "index": 191,
+    "pua": "U+E0BE",
+    "stable_id": "han-6E05"
+  },
+  {
+    "char": "浊",
+    "index": 192,
+    "pua": "U+E0BF",
+    "stable_id": "han-6D4A"
+  },
+  {
+    "char": "纯",
+    "index": 193,
+    "pua": "U+E0C0",
+    "stable_id": "han-7EAF"
+  },
+  {
+    "char": "杂",
+    "index": 194,
+    "pua": "U+E0C1",
+    "stable_id": "han-6742"
+  },
+  {
+    "char": "韵",
+    "index": 195,
+    "pua": "U+E0C2",
+    "stable_id": "han-97F5"
+  },
+  {
+    "char": "刚",
+    "index": 196,
+    "pua": "U+E0C3",
+    "stable_id": "han-521A"
+  },
+  {
+    "char": "柔",
+    "index": 197,
+    "pua": "U+E0C4",
+    "stable_id": "han-67D4"
+  },
+  {
+    "char": "轻",
+    "index": 198,
+    "pua": "U+E0C5",
+    "stable_id": "han-8F7B"
+  },
+  {
+    "char": "重",
+    "index": 199,
+    "pua": "U+E0C6",
+    "stable_id": "han-91CD"
+  },
+  {
+    "char": "强",
+    "index": 200,
+    "pua": "U+E0C7",
+    "stable_id": "han-5F3A"
+  },
+  {
+    "char": "弱",
+    "index": 201,
+    "pua": "U+E0C8",
+    "stable_id": "han-5F31"
+  },
+  {
+    "char": "冷",
+    "index": 202,
+    "pua": "U+E0C9",
+    "stable_id": "han-51B7"
+  },
+  {
+    "char": "热",
+    "index": 203,
+    "pua": "U+E0CA",
+    "stable_id": "han-70ED"
+  },
+  {
+    "char": "缓",
+    "index": 204,
+    "pua": "U+E0CB",
+    "stable_id": "han-7F13"
+  },
+  {
+    "char": "急",
+    "index": 205,
+    "pua": "U+E0CC",
+    "stable_id": "han-6025"
+  },
+  {
+    "char": "深",
+    "index": 206,
+    "pua": "U+E0CD",
+    "stable_id": "han-6DF1"
+  },
+  {
+    "char": "浅",
+    "index": 207,
+    "pua": "U+E0CE",
+    "stable_id": "han-6D45"
+  },
+  {
+    "char": "浓",
+    "index": 208,
+    "pua": "U+E0CF",
+    "stable_id": "han-6D53"
+  },
+  {
+    "char": "淡",
+    "index": 209,
+    "pua": "U+E0D0",
+    "stable_id": "han-6DE1"
+  },
+  {
+    "char": "松",
+    "index": 210,
+    "pua": "U+E0D1",
+    "stable_id": "han-677E"
+  },
+  {
+    "char": "紧",
+    "index": 211,
+    "pua": "U+E0D2",
+    "stable_id": "han-7D27"
+  },
+  {
+    "char": "压",
+    "index": 212,
+    "pua": "U+E0D3",
+    "stable_id": "han-538B"
+  },
+  {
+    "char": "大",
+    "index": 213,
+    "pua": "U+E0D4",
+    "stable_id": "han-5927"
+  },
+  {
+    "char": "小",
+    "index": 214,
+    "pua": "U+E0D5",
+    "stable_id": "han-5C0F"
+  },
+  {
+    "char": "明",
+    "index": 215,
+    "pua": "U+E0D6",
+    "stable_id": "han-660E"
+  },
+  {
+    "char": "易",
+    "index": 216,
+    "pua": "U+E0D7",
+    "stable_id": "han-6613"
+  },
+  {
+    "char": "温",
+    "index": 217,
+    "pua": "U+E0D8",
+    "stable_id": "han-6E29"
+  },
+  {
+    "char": "湿",
+    "index": 218,
+    "pua": "U+E0D9",
+    "stable_id": "han-6E7F"
+  },
+  {
+    "char": "白",
+    "index": 219,
+    "pua": "U+E0DA",
+    "stable_id": "han-767D"
+  },
+  {
+    "char": "短",
+    "index": 220,
+    "pua": "U+E0DB",
+    "stable_id": "han-77ED"
+  },
+  {
+    "char": "红",
+    "index": 221,
+    "pua": "U+E0DC",
+    "stable_id": "han-7EA2"
+  },
+  {
+    "char": "绿",
+    "index": 222,
+    "pua": "U+E0DD",
+    "stable_id": "han-7EFF"
+  },
+  {
+    "char": "蓝",
+    "index": 223,
+    "pua": "U+E0DE",
+    "stable_id": "han-84DD"
+  },
+  {
+    "char": "近",
+    "index": 224,
+    "pua": "U+E0DF",
+    "stable_id": "han-8FD1"
+  },
+  {
+    "char": "远",
+    "index": 225,
+    "pua": "U+E0E0",
+    "stable_id": "han-8FDC"
+  },
+  {
+    "char": "长",
+    "index": 226,
+    "pua": "U+E0E1",
+    "stable_id": "han-957F"
+  },
+  {
+    "char": "难",
+    "index": 227,
+    "pua": "U+E0E2",
+    "stable_id": "han-96BE"
+  },
+  {
+    "char": "黑",
+    "index": 228,
+    "pua": "U+E0E3",
+    "stable_id": "han-9ED1"
+  },
+  {
+    "char": "对",
+    "index": 229,
+    "pua": "U+E0E4",
+    "stable_id": "han-5BF9"
+  },
+  {
+    "char": "称",
+    "index": 230,
+    "pua": "U+E0E5",
+    "stable_id": "han-79F0"
+  },
+  {
+    "char": "齐",
+    "index": 231,
+    "pua": "U+E0E6",
+    "stable_id": "han-9F50"
+  },
+  {
+    "char": "偏",
+    "index": 232,
+    "pua": "U+E0E7",
+    "stable_id": "han-504F"
+  },
+  {
+    "char": "匀",
+    "index": 233,
+    "pua": "U+E0E8",
+    "stable_id": "han-5300"
+  },
+  {
+    "char": "密",
+    "index": 234,
+    "pua": "U+E0E9",
+    "stable_id": "han-5BC6"
+  },
+  {
+    "char": "疏",
+    "index": 235,
+    "pua": "U+E0EA",
+    "stable_id": "han-758F"
+  },
+  {
+    "char": "繁",
+    "index": 236,
+    "pua": "U+E0EB",
+    "stable_id": "han-7E41"
+  },
+  {
+    "char": "简",
+    "index": 237,
+    "pua": "U+E0EC",
+    "stable_id": "han-7B80"
+  },
+  {
+    "char": "层",
+    "index": 238,
+    "pua": "U+E0ED",
+    "stable_id": "han-5C42"
+  },
+  {
+    "char": "叠",
+    "index": 239,
+    "pua": "U+E0EE",
+    "stable_id": "han-53E0"
+  },
+  {
+    "char": "错",
+    "index": 240,
+    "pua": "U+E0EF",
+    "stable_id": "han-9519"
+  },
+  {
+    "char": "交",
+    "index": 241,
+    "pua": "U+E0F0",
+    "stable_id": "han-4EA4"
+  },
+  {
+    "char": "织",
+    "index": 242,
+    "pua": "U+E0F1",
+    "stable_id": "han-7EC7"
+  },
+  {
+    "char": "动",
+    "index": 243,
+    "pua": "U+E0F2",
+    "stable_id": "han-52A8"
+  },
+  {
+    "char": "静",
+    "index": 244,
+    "pua": "U+E0F3",
+    "stable_id": "han-9759"
+  },
+  {
+    "char": "流",
+    "index": 245,
+    "pua": "U+E0F4",
+    "stable_id": "han-6D41"
+  },
+  {
+    "char": "止",
+    "index": 246,
+    "pua": "U+E0F5",
+    "stable_id": "han-6B62"
+  },
+  {
+    "char": "聚",
+    "index": 247,
+    "pua": "U+E0F6",
+    "stable_id": "han-805A"
+  },
+  {
+    "char": "散",
+    "index": 248,
+    "pua": "U+E0F7",
+    "stable_id": "han-6563"
+  },
+  {
+    "char": "升",
+    "index": 249,
+    "pua": "U+E0F8",
+    "stable_id": "han-5347"
+  },
+  {
+    "char": "降",
+    "index": 250,
+    "pua": "U+E0F9",
+    "stable_id": "han-964D"
+  },
+  {
+    "char": "增",
+    "index": 251,
+    "pua": "U+E0FA",
+    "stable_id": "han-589E"
+  },
+  {
+    "char": "转",
+    "index": 252,
+    "pua": "U+E0FB",
+    "stable_id": "han-8F6C"
+  },
+  {
+    "char": "逆",
+    "index": 253,
+    "pua": "U+E0FC",
+    "stable_id": "han-9006"
+  },
+  {
+    "char": "开",
+    "index": 254,
+    "pua": "U+E0FD",
+    "stable_id": "han-5F00"
+  },
+  {
+    "char": "闭",
+    "index": 255,
+    "pua": "U+E0FE",
+    "stable_id": "han-95ED"
+  },
+  {
+    "char": "化",
+    "index": 256,
+    "pua": "U+E0FF",
+    "stable_id": "han-5316"
+  },
+  {
+    "char": "成",
+    "index": 257,
+    "pua": "U+E100",
+    "stable_id": "han-6210"
+  },
+  {
+    "char": "育",
+    "index": 258,
+    "pua": "U+E101",
+    "stable_id": "han-80B2"
+  },
+  {
+    "char": "蓄",
+    "index": 259,
+    "pua": "U+E102",
+    "stable_id": "han-84C4"
+  },
+  {
+    "char": "耗",
+    "index": 260,
+    "pua": "U+E103",
+    "stable_id": "han-8017"
+  },
+  {
+    "char": "亏",
+    "index": 261,
+    "pua": "U+E104",
+    "stable_id": "han-4E8F"
+  },
+  {
+    "char": "承",
+    "index": 262,
+    "pua": "U+E105",
+    "stable_id": "han-627F"
+  },
+  {
+    "char": "续",
+    "index": 263,
+    "pua": "U+E106",
+    "stable_id": "han-7EED"
+  },
+  {
+    "char": "破",
+    "index": 264,
+    "pua": "U+E107",
+    "stable_id": "han-7834"
+  },
+  {
+    "char": "立",
+    "index": 265,
+    "pua": "U+E108",
+    "stable_id": "han-7ACB"
+  },
+  {
+    "char": "塑",
+    "index": 266,
+    "pua": "U+E109",
+    "stable_id": "han-5851"
+  },
+  {
+    "char": "净",
+    "index": 267,
+    "pua": "U+E10A",
+    "stable_id": "han-51C0"
+  },
+  {
+    "char": "染",
+    "index": 268,
+    "pua": "U+E10B",
+    "stable_id": "han-67D3"
+  },
+  {
+    "char": "予",
+    "index": 269,
+    "pua": "U+E10C",
+    "stable_id": "han-4E88"
+  },
+  {
+    "char": "入",
+    "index": 270,
+    "pua": "U+E10D",
+    "stable_id": "han-5165"
+  },
+  {
+    "char": "出",
+    "index": 271,
+    "pua": "U+E10E",
+    "stable_id": "han-51FA"
+  },
+  {
+    "char": "击",
+    "index": 272,
+    "pua": "U+E10F",
+    "stable_id": "han-51FB"
+  },
+  {
+    "char": "反",
+    "index": 273,
+    "pua": "U+E110",
+    "stable_id": "han-53CD"
+  },
+  {
+    "char": "发",
+    "index": 274,
+    "pua": "U+E111",
+    "stable_id": "han-53D1"
+  },
+  {
+    "char": "取",
+    "index": 275,
+    "pua": "U+E112",
+    "stable_id": "han-53D6"
+  },
+  {
+    "char": "召",
+    "index": 276,
+    "pua": "U+E113",
+    "stable_id": "han-53EC"
+  },
+  {
+    "char": "吸",
+    "index": 277,
+    "pua": "U+E114",
+    "stable_id": "han-5438"
+  },
+  {
+    "char": "夺",
+    "index": 278,
+    "pua": "U+E115",
+    "stable_id": "han-593A"
+  },
+  {
+    "char": "封",
+    "index": 279,
+    "pua": "U+E116",
+    "stable_id": "han-5C01"
+  },
+  {
+    "char": "护",
+    "index": 280,
+    "pua": "U+E117",
+    "stable_id": "han-62A4"
+  },
+  {
+    "char": "移",
+    "index": 281,
+    "pua": "U+E118",
+    "stable_id": "han-79FB"
+  },
+  {
+    "char": "缚",
+    "index": 282,
+    "pua": "U+E119",
+    "stable_id": "han-7F1A"
+  },
+  {
+    "char": "赋",
+    "index": 283,
+    "pua": "U+E11A",
+    "stable_id": "han-8D4B"
+  },
+  {
+    "char": "驱",
+    "index": 284,
+    "pua": "U+E11B",
+    "stable_id": "han-9A71"
+  },
+  {
+    "char": "因",
+    "index": 285,
+    "pua": "U+E11C",
+    "stable_id": "han-56E0"
+  },
+  {
+    "char": "果",
+    "index": 286,
+    "pua": "U+E11D",
+    "stable_id": "han-679C"
+  },
+  {
+    "char": "偶",
+    "index": 287,
+    "pua": "U+E11E",
+    "stable_id": "han-5076"
+  },
+  {
+    "char": "序",
+    "index": 288,
+    "pua": "U+E11F",
+    "stable_id": "han-5E8F"
+  },
+  {
+    "char": "乱",
+    "index": 289,
+    "pua": "U+E120",
+    "stable_id": "han-4E71"
+  },
+  {
+    "char": "律",
+    "index": 290,
+    "pua": "U+E121",
+    "stable_id": "han-5F8B"
+  },
+  {
+    "char": "衡",
+    "index": 291,
+    "pua": "U+E122",
+    "stable_id": "han-8861"
+  },
+  {
+    "char": "同",
+    "index": 292,
+    "pua": "U+E123",
+    "stable_id": "han-540C"
+  },
+  {
+    "char": "异",
+    "index": 293,
+    "pua": "U+E124",
+    "stable_id": "han-5F02"
+  },
+  {
+    "char": "合",
+    "index": 294,
+    "pua": "U+E125",
+    "stable_id": "han-5408"
+  },
+  {
+    "char": "离",
+    "index": 295,
+    "pua": "U+E126",
+    "stable_id": "han-79BB"
+  },
+  {
+    "char": "连",
+    "index": 296,
+    "pua": "U+E127",
+    "stable_id": "han-8FDE"
+  },
+  {
+    "char": "断",
+    "index": 297,
+    "pua": "U+E128",
+    "stable_id": "han-65AD"
+  },
+  {
+    "char": "主",
+    "index": 298,
+    "pua": "U+E129",
+    "stable_id": "han-4E3B"
+  },
+  {
+    "char": "从",
+    "index": 299,
+    "pua": "U+E12A",
+    "stable_id": "han-4ECE"
+  },
+  {
+    "char": "理",
+    "index": 300,
+    "pua": "U+E12B",
+    "stable_id": "han-7406"
+  },
+  {
+    "char": "规",
+    "index": 301,
+    "pua": "U+E12C",
+    "stable_id": "han-89C4"
+  },
+  {
+    "char": "例",
+    "index": 302,
+    "pua": "U+E12D",
+    "stable_id": "han-4F8B"
+  },
+  {
+    "char": "限",
+    "index": 303,
+    "pua": "U+E12E",
+    "stable_id": "han-9650"
+  },
+  {
+    "char": "度",
+    "index": 304,
+    "pua": "U+E12F",
+    "stable_id": "han-5EA6"
+  },
+  {
+    "char": "准",
+    "index": 305,
+    "pua": "U+E130",
+    "stable_id": "han-51C6"
+  },
+  {
+    "char": "依",
+    "index": 306,
+    "pua": "U+E131",
+    "stable_id": "han-4F9D"
+  },
+  {
+    "char": "据",
+    "index": 307,
+    "pua": "U+E132",
+    "stable_id": "han-636E"
+  },
+  {
+    "char": "推",
+    "index": 308,
+    "pua": "U+E133",
+    "stable_id": "han-63A8"
+  },
+  {
+    "char": "演",
+    "index": 309,
+    "pua": "U+E134",
+    "stable_id": "han-6F14"
+  },
+  {
+    "char": "概",
+    "index": 310,
+    "pua": "U+E135",
+    "stable_id": "han-6982"
+  },
+  {
+    "char": "验",
+    "index": 311,
+    "pua": "U+E136",
+    "stable_id": "han-9A8C"
+  },
+  {
+    "char": "误",
+    "index": 312,
+    "pua": "U+E137",
+    "stable_id": "han-8BEF"
+  },
+  {
+    "char": "修",
+    "index": 313,
+    "pua": "U+E138",
+    "stable_id": "han-4FEE"
+  },
+  {
+    "char": "道",
+    "index": 314,
+    "pua": "U+E139",
+    "stable_id": "han-9053"
+  },
+  {
+    "char": "言",
+    "index": 315,
+    "pua": "U+E13A",
+    "stable_id": "han-8A00"
+  },
+  {
+    "char": "名",
+    "index": 316,
+    "pua": "U+E13B",
+    "stable_id": "han-540D"
+  },
+  {
+    "char": "义",
+    "index": 317,
+    "pua": "U+E13C",
+    "stable_id": "han-4E49"
+  },
+  {
+    "char": "象",
+    "index": 318,
+    "pua": "U+E13D",
+    "stable_id": "han-8C61"
+  },
+  {
+    "char": "符",
+    "index": 319,
+    "pua": "U+E13E",
+    "stable_id": "han-7B26"
+  },
+  {
+    "char": "码",
+    "index": 320,
+    "pua": "U+E13F",
+    "stable_id": "han-7801"
+  },
+  {
+    "char": "文",
+    "index": 321,
+    "pua": "U+E140",
+    "stable_id": "han-6587"
+  },
+  {
+    "char": "讯",
+    "index": 322,
+    "pua": "U+E141",
+    "stable_id": "han-8BAF"
+  },
+  {
+    "char": "载",
+    "index": 323,
+    "pua": "U+E142",
+    "stable_id": "han-8F7D"
+  },
+  {
+    "char": "传",
+    "index": 324,
+    "pua": "U+E143",
+    "stable_id": "han-4F20"
+  },
+  {
+    "char": "译",
+    "index": 325,
+    "pua": "U+E144",
+    "stable_id": "han-8BD1"
+  },
+  {
+    "char": "解",
+    "index": 326,
+    "pua": "U+E145",
+    "stable_id": "han-89E3"
+  },
+  {
+    "char": "证",
+    "index": 327,
+    "pua": "U+E146",
+    "stable_id": "han-8BC1"
+  },
+  {
+    "char": "迹",
+    "index": 328,
+    "pua": "U+E147",
+    "stable_id": "han-8FF9"
+  },
+  {
+    "char": "记",
+    "index": 329,
+    "pua": "U+E148",
+    "stable_id": "han-8BB0"
+  },
+  {
+    "char": "删",
+    "index": 330,
+    "pua": "U+E149",
+    "stable_id": "han-5220"
+  },
+  {
+    "char": "写",
+    "index": 331,
+    "pua": "U+E14A",
+    "stable_id": "han-5199"
+  },
+  {
+    "char": "刻",
+    "index": 332,
+    "pua": "U+E14B",
+    "stable_id": "han-523B"
+  },
+  {
+    "char": "答",
+    "index": 333,
+    "pua": "U+E14C",
+    "stable_id": "han-7B54"
+  },
+  {
+    "char": "读",
+    "index": 334,
+    "pua": "U+E14D",
+    "stable_id": "han-8BFB"
+  },
+  {
+    "char": "问",
+    "index": 335,
+    "pua": "U+E14E",
+    "stable_id": "han-95EE"
+  },
+  {
+    "char": "共",
+    "index": 336,
+    "pua": "U+E14F",
+    "stable_id": "han-5171"
+  },
+  {
+    "char": "独",
+    "index": 337,
+    "pua": "U+E150",
+    "stable_id": "han-72EC"
+  },
+  {
+    "char": "亲",
+    "index": 338,
+    "pua": "U+E151",
+    "stable_id": "han-4EB2"
+  },
+  {
+    "char": "陌",
+    "index": 339,
+    "pua": "U+E152",
+    "stable_id": "han-964C"
+  },
+  {
+    "char": "背",
+    "index": 340,
+    "pua": "U+E153",
+    "stable_id": "han-80CC"
+  },
+  {
+    "char": "恩",
+    "index": 341,
+    "pua": "U+E154",
+    "stable_id": "han-6069"
+  },
+  {
+    "char": "允",
+    "index": 342,
+    "pua": "U+E155",
+    "stable_id": "han-5141"
+  },
+  {
+    "char": "禁",
+    "index": 343,
+    "pua": "U+E156",
+    "stable_id": "han-7981"
+  },
+  {
+    "char": "公",
+    "index": 344,
+    "pua": "U+E157",
+    "stable_id": "han-516C"
+  },
+  {
+    "char": "私",
+    "index": 345,
+    "pua": "U+E158",
+    "stable_id": "han-79C1"
+  },
+  {
+    "char": "责",
+    "index": 346,
+    "pua": "U+E159",
+    "stable_id": "han-8D23"
+  },
+  {
+    "char": "偿",
+    "index": 347,
+    "pua": "U+E15A",
+    "stable_id": "han-507F"
+  },
+  {
+    "char": "使",
+    "index": 348,
+    "pua": "U+E15B",
+    "stable_id": "han-4F7F"
+  },
+  {
+    "char": "场",
+    "index": 349,
+    "pua": "U+E15C",
+    "stable_id": "han-573A"
+  },
+  {
+    "char": "媒",
+    "index": 350,
+    "pua": "U+E15D",
+    "stable_id": "han-5A92"
+  },
+  {
+    "char": "已",
+    "index": 351,
+    "pua": "U+E15E",
+    "stable_id": "han-5DF2"
+  },
+  {
+    "char": "并",
+    "index": 352,
+    "pua": "U+E15F",
+    "stable_id": "han-5E76"
+  },
+  {
+    "char": "待",
+    "index": 353,
+    "pua": "U+E160",
+    "stable_id": "han-5F85"
+  },
+  {
+    "char": "术",
+    "index": 354,
+    "pua": "U+E161",
+    "stable_id": "han-672F"
+  },
+  {
+    "char": "源",
+    "index": 355,
+    "pua": "U+E162",
+    "stable_id": "han-6E90"
+  },
+  {
+    "char": "行",
+    "index": 356,
+    "pua": "U+E163",
+    "stable_id": "han-884C"
+  },
+  {
+    "char": "门",
+    "index": 357,
+    "pua": "U+E164",
+    "stable_id": "han-95E8"
+  },
+  {
+    "char": "阵",
+    "index": 358,
+    "pua": "U+E165",
+    "stable_id": "han-9635"
+  },
+  {
+    "char": "可",
+    "index": 359,
+    "pua": "U+E166",
+    "stable_id": "han-53EF"
+  },
+  {
+    "char": "必",
+    "index": 360,
+    "pua": "U+E167",
+    "stable_id": "han-5FC5"
+  },
+  {
+    "char": "或",
+    "index": 361,
+    "pua": "U+E168",
+    "stable_id": "han-6216"
+  },
+  {
+    "char": "否",
+    "index": 362,
+    "pua": "U+E169",
+    "stable_id": "han-5426"
+  },
+  {
+    "char": "则",
+    "index": 363,
+    "pua": "U+E16A",
+    "stable_id": "han-5219"
+  },
+  {
+    "char": "全",
+    "index": 364,
+    "pua": "U+E16B",
+    "stable_id": "han-5168"
+  },
+  {
+    "char": "且",
+    "index": 365,
+    "pua": "U+E16C",
+    "stable_id": "han-4E14"
+  },
+  {
+    "char": "之",
+    "index": 366,
+    "pua": "U+E16D",
+    "stable_id": "han-4E4B"
+  },
+  {
+    "char": "于",
+    "index": 367,
+    "pua": "U+E16E",
+    "stable_id": "han-4E8E"
+  },
+  {
+    "char": "仅",
+    "index": 368,
+    "pua": "U+E16F",
+    "stable_id": "han-4EC5"
+  },
+  {
+    "char": "他",
+    "index": 369,
+    "pua": "U+E170",
+    "stable_id": "han-4ED6"
+  },
+  {
+    "char": "以",
+    "index": 370,
+    "pua": "U+E171",
+    "stable_id": "han-4EE5"
+  },
+  {
+    "char": "任",
+    "index": 371,
+    "pua": "U+E172",
+    "stable_id": "han-4EFB"
+  },
+  {
+    "char": "何",
+    "index": 372,
+    "pua": "U+E173",
+    "stable_id": "han-4F55"
+  },
+  {
+    "char": "向",
+    "index": 373,
+    "pua": "U+E174",
+    "stable_id": "han-5411"
+  },
+  {
+    "char": "属",
+    "index": 374,
+    "pua": "U+E175",
+    "stable_id": "han-5C5E"
+  },
+  {
+    "char": "彼",
+    "index": 375,
+    "pua": "U+E176",
+    "stable_id": "han-5F7C"
+  },
+  {
+    "char": "有",
+    "index": 376,
+    "pua": "U+E177",
+    "stable_id": "han-6709"
+  },
+  {
+    "char": "某",
+    "index": 377,
+    "pua": "U+E178",
+    "stable_id": "han-67D0"
+  },
+  {
+    "char": "此",
+    "index": 378,
+    "pua": "U+E179",
+    "stable_id": "han-6B64"
+  },
+  {
+    "char": "每",
+    "index": 379,
+    "pua": "U+E17A",
+    "stable_id": "han-6BCF"
+  },
+  {
+    "char": "由",
+    "index": 380,
+    "pua": "U+E17B",
+    "stable_id": "han-7531"
+  },
+  {
+    "char": "自",
+    "index": 381,
+    "pua": "U+E17C",
+    "stable_id": "han-81EA"
+  },
+  {
+    "char": "至",
+    "index": 382,
+    "pua": "U+E17D",
+    "stable_id": "han-81F3"
+  },
+  {
+    "char": "若",
+    "index": 383,
+    "pua": "U+E17E",
+    "stable_id": "han-82E5"
+  },
+  {
+    "char": "需",
+    "index": 384,
+    "pua": "U+E17F",
+    "stable_id": "han-9700"
+  }
+]

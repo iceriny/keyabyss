@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Material" path="res://ui/materials/open_button_light.tres" id="1"]
+[ext_resource type="Script" path="res://ui/gold_filaments.gd" id="2"]
+
+[node name="Light" type="ColorRect"]
+mouse_filter = 2
+show_behind_parent = true
+material = ExtResource("1")
+
+[node name="GoldFilaments" type="MeshInstance2D" parent="."]
+script = ExtResource("2")

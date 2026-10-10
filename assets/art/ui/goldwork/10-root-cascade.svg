@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="320" viewBox="0 0 300 320" fill="none">
+  <title>悬根 · Root cascade</title>
+  <defs><linearGradient id="gold" x1="67" y1="22" x2="218" y2="303" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity=".1"/><stop offset=".28" stop-color="#F0DDAE" stop-opacity=".9"/><stop offset=".6" stop-color="#C9AE72" stop-opacity=".65"/><stop offset="1" stop-color="#C9AE72" stop-opacity="0"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round">
+    <path d="M41 17 C97 55 103 87 119 130 C135 173 194 205 185 303" stroke-width="1.6"/>
+    <path d="M101.76 84.73 C79.76 118.73 119.76 155.73 92.76 202.73 C76.76 230.73 86.76 254.73 75.76 286.73 M119 130 C157 145 176 127 204 157 C224 179 227 210 256 232 M152.32 182.08 C137.32 205.08 158.32 240.08 130.32 278.08" stroke-width="1"/>
+    <path d="M98.07 133.57 C70.07 143.57 75.07 175.57 51.07 189.57 M96.76 194.76 C107.76 210.76 100.76 234.76 105.76 242.76 M177.84 139.97 C189.84 116.97 218.84 122.97 232.84 107.97 M225.06 191.46 C247.06 187.46 259.06 200.46 279.06 200.46 M146.2 222 C125.2 228 120.2 242 115.2 250 M184.22 258.25 Q211.22 277.25 208.22 301.25" stroke-width=".65" opacity=".65"/>
+    <path d="M94.86 110.7 C69.86 107.7 52.86 84.7 55.86 64.7 C75.86 76.7 88.86 90.7 94.86 110.7 Z M119 130 C126 106 144 92 164 90 C153 111 140 124 119 130 Z" stroke-width=".8"/>
+  </g>
+</svg>

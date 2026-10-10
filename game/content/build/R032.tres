@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R032:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R032"
+title = "永冻墨池"
+description = "霜场持续增加3秒，半径增加35；无霜场时施法额外生成小型霜场。"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()
+max_stacks = 1

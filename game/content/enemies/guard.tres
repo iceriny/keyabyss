@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"guard"
+speed = 31.5
+long_word = true
+front_armor = true
+experience = 10
+radius = 24.75
+mass = 2.6
+health = 122
+attack_damage = 11
+attack_interval = 3.6

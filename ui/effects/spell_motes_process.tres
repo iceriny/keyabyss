@@ -1,0 +1,29 @@
+[gd_resource type="ParticleProcessMaterial" format=3 uid="uid://be3xomelqwvb0"]
+
+[sub_resource type="Gradient" id="Fade"]
+colors = PackedColorArray(1.4, 1.3, 1.1, 0.8, 0.6, 0.6, 0.6, 0)
+
+[sub_resource type="GradientTexture1D" id="Ramp"]
+gradient = SubResource("Fade")
+
+[sub_resource type="Curve" id="Shrink"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="Scale"]
+texture_mode = 1
+curve = SubResource("Shrink")
+
+[resource]
+resource_local_to_scene = true
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 5.0
+angle_min = -180.0
+angle_max = 180.0
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+damping_min = 12.0
+damping_max = 26.0
+scale_curve = SubResource("Scale")
+color_ramp = SubResource("Ramp")

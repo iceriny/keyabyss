@@ -1,0 +1,3304 @@
+{
+  "font_version": "3.002",
+  "base_runes": 384,
+  "discretionary_ligatures": 50,
+  "styles": {
+    "clean": {
+      "family": "Arcana384 VF",
+      "glyph_count": 436,
+      "cmap_count": 769,
+      "instances": [
+        {
+          "weight": 300,
+          "outline_sha256": "c0c112f341a8bcb37989d1e20446df36ec78767a165fd38d523aa2906d35ebb0"
+        },
+        {
+          "weight": 350,
+          "outline_sha256": "975493c720ace541df77226bb8c1b0b2513be03b0187a1d266311ad298b244ce"
+        },
+        {
+          "weight": 400,
+          "outline_sha256": "24517e4e49d2f1c43d157d7ba99d7f5eb2ffe01177af2f190111f10b79253d19"
+        },
+        {
+          "weight": 450,
+          "outline_sha256": "507bb1ab41e5ae1c725c34fcdbf1d5cfeb7c4980835d1a200dac4ed9217d2d05"
+        },
+        {
+          "weight": 500,
+          "outline_sha256": "ba64391b836af37409e7177acc040417ab17a2c3cef142dee1cfcb1194420eeb"
+        },
+        {
+          "weight": 550,
+          "outline_sha256": "89e0b6fb9d3fa2c536713abc9e54b627ec7f37cf92e811d6ca09510aefa4fce3"
+        },
+        {
+          "weight": 600,
+          "outline_sha256": "c3f05c5f3ae5d27495ec6a422716f90986d0801d2346316e8375849ff4db66ef"
+        },
+        {
+          "weight": 650,
+          "outline_sha256": "527f7164acb732b594d4c55dd6417c9bf9d7dd833aeefdf3717d7dce8e127d80"
+        },
+        {
+          "weight": 700,
+          "outline_sha256": "9103502d470201709516e1d0a76334d1acdaf2cbcd619752f6f18d61197bcf81"
+        },
+        {
+          "weight": 750,
+          "outline_sha256": "ee320964ded3fba2683f11ac16ab477c89c2c91f8adf6bbd8cf8dc3a870cfbf9"
+        }
+      ],
+      "shaping": [
+        {
+          "pair": "时空",
+          "input": "Han",
+          "off": [
+            21,
+            39
+          ],
+          "on": [
+            386
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "时空",
+          "input": "PUA",
+          "off": [
+            21,
+            39
+          ],
+          "on": [
+            386
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "命运",
+          "input": "Han",
+          "off": [
+            12,
+            13
+          ],
+          "on": [
+            387
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "命运",
+          "input": "PUA",
+          "off": [
+            12,
+            13
+          ],
+          "on": [
+            387
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "因果",
+          "input": "Han",
+          "off": [
+            286,
+            287
+          ],
+          "on": [
+            388
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "因果",
+          "input": "PUA",
+          "off": [
+            286,
+            287
+          ],
+          "on": [
+            388
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "昔事",
+          "input": "Han",
+          "off": [
+            22,
+            17
+          ],
+          "on": [
+            389
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "昔事",
+          "input": "PUA",
+          "off": [
+            22,
+            17
+          ],
+          "on": [
+            389
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "生续",
+          "input": "Han",
+          "off": [
+            4,
+            264
+          ],
+          "on": [
+            390
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "生续",
+          "input": "PUA",
+          "off": [
+            4,
+            264
+          ],
+          "on": [
+            390
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恒生",
+          "input": "Han",
+          "off": [
+            25,
+            4
+          ],
+          "on": [
+            391
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恒生",
+          "input": "PUA",
+          "off": [
+            25,
+            4
+          ],
+          "on": [
+            391
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "复生",
+          "input": "Han",
+          "off": [
+            34,
+            4
+          ],
+          "on": [
+            392
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "复生",
+          "input": "PUA",
+          "off": [
+            34,
+            4
+          ],
+          "on": [
+            392
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "记忆",
+          "input": "Han",
+          "off": [
+            330,
+            146
+          ],
+          "on": [
+            393
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "记忆",
+          "input": "PUA",
+          "off": [
+            330,
+            146
+          ],
+          "on": [
+            393
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "事知",
+          "input": "Han",
+          "off": [
+            17,
+            142
+          ],
+          "on": [
+            394
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "事知",
+          "input": "PUA",
+          "off": [
+            17,
+            142
+          ],
+          "on": [
+            394
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自知",
+          "input": "Han",
+          "off": [
+            382,
+            142
+          ],
+          "on": [
+            395
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自知",
+          "input": "PUA",
+          "off": [
+            382,
+            142
+          ],
+          "on": [
+            395
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自主",
+          "input": "Han",
+          "off": [
+            382,
+            299
+          ],
+          "on": [
+            396
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自主",
+          "input": "PUA",
+          "off": [
+            382,
+            299
+          ],
+          "on": [
+            396
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "安心",
+          "input": "Han",
+          "off": [
+            178,
+            159
+          ],
+          "on": [
+            397
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "安心",
+          "input": "PUA",
+          "off": [
+            178,
+            159
+          ],
+          "on": [
+            397
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "思念",
+          "input": "Han",
+          "off": [
+            144,
+            145
+          ],
+          "on": [
+            398
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "思念",
+          "input": "PUA",
+          "off": [
+            144,
+            145
+          ],
+          "on": [
+            398
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "善意",
+          "input": "Han",
+          "off": [
+            185,
+            165
+          ],
+          "on": [
+            399
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "善意",
+          "input": "PUA",
+          "off": [
+            185,
+            165
+          ],
+          "on": [
+            399
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恶意",
+          "input": "Han",
+          "off": [
+            186,
+            165
+          ],
+          "on": [
+            400
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恶意",
+          "input": "PUA",
+          "off": [
+            186,
+            165
+          ],
+          "on": [
+            400
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "心态",
+          "input": "Han",
+          "off": [
+            159,
+            18
+          ],
+          "on": [
+            401
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "心态",
+          "input": "PUA",
+          "off": [
+            159,
+            18
+          ],
+          "on": [
+            401
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "惧梦",
+          "input": "Han",
+          "off": [
+            176,
+            148
+          ],
+          "on": [
+            402
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "惧梦",
+          "input": "PUA",
+          "off": [
+            176,
+            148
+          ],
+          "on": [
+            402
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "愿可",
+          "input": "Han",
+          "off": [
+            161,
+            360
+          ],
+          "on": [
+            403
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "愿可",
+          "input": "PUA",
+          "off": [
+            161,
+            360
+          ],
+          "on": [
+            403
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "亲人",
+          "input": "Han",
+          "off": [
+            339,
+            123
+          ],
+          "on": [
+            404
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "亲人",
+          "input": "PUA",
+          "off": [
+            339,
+            123
+          ],
+          "on": [
+            404
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "共行人",
+          "input": "Han",
+          "off": [
+            337,
+            357,
+            123
+          ],
+          "on": [
+            405
+          ],
+          "advances": [
+            3000,
+            2375
+          ]
+        },
+        {
+          "pair": "共行人",
+          "input": "PUA",
+          "off": [
+            337,
+            357,
+            123
+          ],
+          "on": [
+            405
+          ],
+          "advances": [
+            3000,
+            2375
+          ]
+        },
+        {
+          "pair": "归域",
+          "input": "Han",
+          "off": [
+            54,
+            48
+          ],
+          "on": [
+            406
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "归域",
+          "input": "PUA",
+          "off": [
+            54,
+            48
+          ],
+          "on": [
+            406
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "共行",
+          "input": "Han",
+          "off": [
+            337,
+            357
+          ],
+          "on": [
+            407
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共行",
+          "input": "PUA",
+          "off": [
+            337,
+            357
+          ],
+          "on": [
+            407
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "言契",
+          "input": "Han",
+          "off": [
+            316,
+            171
+          ],
+          "on": [
+            408
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "言契",
+          "input": "PUA",
+          "off": [
+            316,
+            171
+          ],
+          "on": [
+            408
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "信人",
+          "input": "Han",
+          "off": [
+            150,
+            123
+          ],
+          "on": [
+            409
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "信人",
+          "input": "PUA",
+          "off": [
+            150,
+            123
+          ],
+          "on": [
+            409
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "予取",
+          "input": "Han",
+          "off": [
+            270,
+            276
+          ],
+          "on": [
+            410
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "予取",
+          "input": "PUA",
+          "off": [
+            270,
+            276
+          ],
+          "on": [
+            410
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "共亲",
+          "input": "Han",
+          "off": [
+            337,
+            339
+          ],
+          "on": [
+            411
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共亲",
+          "input": "PUA",
+          "off": [
+            337,
+            339
+          ],
+          "on": [
+            411
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "亲集",
+          "input": "Han",
+          "off": [
+            339,
+            95
+          ],
+          "on": [
+            412
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "亲集",
+          "input": "PUA",
+          "off": [
+            339,
+            95
+          ],
+          "on": [
+            412
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共安",
+          "input": "Han",
+          "off": [
+            337,
+            178
+          ],
+          "on": [
+            413
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共安",
+          "input": "PUA",
+          "off": [
+            337,
+            178
+          ],
+          "on": [
+            413
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "言码",
+          "input": "Han",
+          "off": [
+            316,
+            321
+          ],
+          "on": [
+            414
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "言码",
+          "input": "PUA",
+          "off": [
+            316,
+            321
+          ],
+          "on": [
+            414
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "事文",
+          "input": "Han",
+          "off": [
+            17,
+            322
+          ],
+          "on": [
+            415
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "事文",
+          "input": "PUA",
+          "off": [
+            17,
+            322
+          ],
+          "on": [
+            415
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "隐讯",
+          "input": "Han",
+          "off": [
+            187,
+            323
+          ],
+          "on": [
+            416
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "隐讯",
+          "input": "PUA",
+          "off": [
+            187,
+            323
+          ],
+          "on": [
+            416
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "契文",
+          "input": "Han",
+          "off": [
+            171,
+            322
+          ],
+          "on": [
+            417
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "契文",
+          "input": "PUA",
+          "off": [
+            171,
+            322
+          ],
+          "on": [
+            417
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水源",
+          "input": "Han",
+          "off": [
+            113,
+            356
+          ],
+          "on": [
+            418
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水源",
+          "input": "PUA",
+          "off": [
+            113,
+            356
+          ],
+          "on": [
+            418
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "树集",
+          "input": "Han",
+          "off": [
+            126,
+            95
+          ],
+          "on": [
+            419
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "树集",
+          "input": "PUA",
+          "off": [
+            126,
+            95
+          ],
+          "on": [
+            419
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水路",
+          "input": "Han",
+          "off": [
+            113,
+            65
+          ],
+          "on": [
+            420
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水路",
+          "input": "PUA",
+          "off": [
+            113,
+            65
+          ],
+          "on": [
+            420
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "凝水",
+          "input": "Han",
+          "off": [
+            191,
+            113
+          ],
+          "on": [
+            421
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "凝水",
+          "input": "PUA",
+          "off": [
+            191,
+            113
+          ],
+          "on": [
+            421
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "水气",
+          "input": "Han",
+          "off": [
+            113,
+            112
+          ],
+          "on": [
+            422
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "水气",
+          "input": "PUA",
+          "off": [
+            113,
+            112
+          ],
+          "on": [
+            422
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "气水",
+          "input": "Han",
+          "off": [
+            112,
+            113
+          ],
+          "on": [
+            423
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "气水",
+          "input": "PUA",
+          "off": [
+            112,
+            113
+          ],
+          "on": [
+            423
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "护符",
+          "input": "Han",
+          "off": [
+            281,
+            320
+          ],
+          "on": [
+            424
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "护符",
+          "input": "PUA",
+          "off": [
+            281,
+            320
+          ],
+          "on": [
+            424
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "封符",
+          "input": "Han",
+          "off": [
+            280,
+            320
+          ],
+          "on": [
+            425
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "封符",
+          "input": "PUA",
+          "off": [
+            280,
+            320
+          ],
+          "on": [
+            425
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "护界",
+          "input": "Han",
+          "off": [
+            281,
+            46
+          ],
+          "on": [
+            426
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "护界",
+          "input": "PUA",
+          "off": [
+            281,
+            46
+          ],
+          "on": [
+            426
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "远域门",
+          "input": "Han",
+          "off": [
+            226,
+            48,
+            358
+          ],
+          "on": [
+            427
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "远域门",
+          "input": "PUA",
+          "off": [
+            226,
+            48,
+            358
+          ],
+          "on": [
+            427
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "术文",
+          "input": "Han",
+          "off": [
+            355,
+            322
+          ],
+          "on": [
+            428
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "术文",
+          "input": "PUA",
+          "off": [
+            355,
+            322
+          ],
+          "on": [
+            428
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "术能",
+          "input": "Han",
+          "off": [
+            355,
+            102
+          ],
+          "on": [
+            429
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "术能",
+          "input": "PUA",
+          "off": [
+            355,
+            102
+          ],
+          "on": [
+            429
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "蓄能物",
+          "input": "Han",
+          "off": [
+            260,
+            102,
+            19
+          ],
+          "on": [
+            430
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "蓄能物",
+          "input": "PUA",
+          "off": [
+            260,
+            102,
+            19
+          ],
+          "on": [
+            430
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "禁术",
+          "input": "Han",
+          "off": [
+            344,
+            355
+          ],
+          "on": [
+            431
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "禁术",
+          "input": "PUA",
+          "off": [
+            344,
+            355
+          ],
+          "on": [
+            431
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "身灵",
+          "input": "Han",
+          "off": [
+            136,
+            128
+          ],
+          "on": [
+            432
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "身灵",
+          "input": "PUA",
+          "off": [
+            136,
+            128
+          ],
+          "on": [
+            432
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "赋恩",
+          "input": "Han",
+          "off": [
+            284,
+            342
+          ],
+          "on": [
+            433
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "赋恩",
+          "input": "PUA",
+          "off": [
+            284,
+            342
+          ],
+          "on": [
+            433
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "赋亏",
+          "input": "Han",
+          "off": [
+            284,
+            262
+          ],
+          "on": [
+            434
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "赋亏",
+          "input": "PUA",
+          "off": [
+            284,
+            262
+          ],
+          "on": [
+            434
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "规行",
+          "input": "Han",
+          "off": [
+            302,
+            357
+          ],
+          "on": [
+            435
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "规行",
+          "input": "PUA",
+          "off": [
+            302,
+            357
+          ],
+          "on": [
+            435
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        }
+      ],
+      "whole_word_boundary_cases": 2090,
+      "guard_root_class_count": 384,
+      "orthographies": [
+        "Han",
+        "PUA",
+        "mixed"
+      ],
+      "all_ligatures_shaped_at_10_weights_on_and_off": true,
+      "independent_grouping_expectations": 68,
+      "preview_only_control_cases": 5,
+      "retired_sequences_checked": 79
+    },
+    "imprint": {
+      "family": "Arcana384 Imprint VF",
+      "glyph_count": 436,
+      "cmap_count": 769,
+      "instances": [
+        {
+          "weight": 300,
+          "outline_sha256": "8763c14c98382495b784b2d8664ed9e4884aade0495b4d354c4ce4974340fd21"
+        },
+        {
+          "weight": 350,
+          "outline_sha256": "6260e57f9fb425b5715ab754487b9a4a9b070af78de237e556d5caf54545c0c6"
+        },
+        {
+          "weight": 400,
+          "outline_sha256": "acfa51f665850cd9615b6ba576986beb2d903ce6c34580baa1104e551a18803b"
+        },
+        {
+          "weight": 450,
+          "outline_sha256": "b6233676b6497b50c50b14e7e976e62ef3d3418fed0be4cd1824c10e2091cbba"
+        },
+        {
+          "weight": 500,
+          "outline_sha256": "a89b6f80360a488f3de4d447a68be87fdfed6478b90ad3aabecfb46535525aac"
+        },
+        {
+          "weight": 550,
+          "outline_sha256": "d51861762df1c8e3e1fbc1f026bc75cdf6b35af8cef595995f8176c3f3adb816"
+        },
+        {
+          "weight": 600,
+          "outline_sha256": "f9b53b1d7a9f7c05103d498ddfaec8a4090aa44c5d318e8eae47d2c5c0d545ad"
+        },
+        {
+          "weight": 650,
+          "outline_sha256": "1cd8e7a96ec52643ecfff25dded62e6b370f2a8f2369ac2fd384e0246ab55902"
+        },
+        {
+          "weight": 700,
+          "outline_sha256": "c08e264a34b3a85034e380ea45d64ee10f5ca2bf6f7f6da36704c028cc9771ad"
+        },
+        {
+          "weight": 750,
+          "outline_sha256": "3be4dbe7f3bd99cf9c61d8340c04e99bc0f9edde9493ddab1fb48c7c2ee95b00"
+        }
+      ],
+      "shaping": [
+        {
+          "pair": "时空",
+          "input": "Han",
+          "off": [
+            21,
+            39
+          ],
+          "on": [
+            386
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "时空",
+          "input": "PUA",
+          "off": [
+            21,
+            39
+          ],
+          "on": [
+            386
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "命运",
+          "input": "Han",
+          "off": [
+            12,
+            13
+          ],
+          "on": [
+            387
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "命运",
+          "input": "PUA",
+          "off": [
+            12,
+            13
+          ],
+          "on": [
+            387
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "因果",
+          "input": "Han",
+          "off": [
+            286,
+            287
+          ],
+          "on": [
+            388
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "因果",
+          "input": "PUA",
+          "off": [
+            286,
+            287
+          ],
+          "on": [
+            388
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "昔事",
+          "input": "Han",
+          "off": [
+            22,
+            17
+          ],
+          "on": [
+            389
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "昔事",
+          "input": "PUA",
+          "off": [
+            22,
+            17
+          ],
+          "on": [
+            389
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "生续",
+          "input": "Han",
+          "off": [
+            4,
+            264
+          ],
+          "on": [
+            390
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "生续",
+          "input": "PUA",
+          "off": [
+            4,
+            264
+          ],
+          "on": [
+            390
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恒生",
+          "input": "Han",
+          "off": [
+            25,
+            4
+          ],
+          "on": [
+            391
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恒生",
+          "input": "PUA",
+          "off": [
+            25,
+            4
+          ],
+          "on": [
+            391
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "复生",
+          "input": "Han",
+          "off": [
+            34,
+            4
+          ],
+          "on": [
+            392
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "复生",
+          "input": "PUA",
+          "off": [
+            34,
+            4
+          ],
+          "on": [
+            392
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "记忆",
+          "input": "Han",
+          "off": [
+            330,
+            146
+          ],
+          "on": [
+            393
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "记忆",
+          "input": "PUA",
+          "off": [
+            330,
+            146
+          ],
+          "on": [
+            393
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "事知",
+          "input": "Han",
+          "off": [
+            17,
+            142
+          ],
+          "on": [
+            394
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "事知",
+          "input": "PUA",
+          "off": [
+            17,
+            142
+          ],
+          "on": [
+            394
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自知",
+          "input": "Han",
+          "off": [
+            382,
+            142
+          ],
+          "on": [
+            395
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自知",
+          "input": "PUA",
+          "off": [
+            382,
+            142
+          ],
+          "on": [
+            395
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自主",
+          "input": "Han",
+          "off": [
+            382,
+            299
+          ],
+          "on": [
+            396
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "自主",
+          "input": "PUA",
+          "off": [
+            382,
+            299
+          ],
+          "on": [
+            396
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "安心",
+          "input": "Han",
+          "off": [
+            178,
+            159
+          ],
+          "on": [
+            397
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "安心",
+          "input": "PUA",
+          "off": [
+            178,
+            159
+          ],
+          "on": [
+            397
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "思念",
+          "input": "Han",
+          "off": [
+            144,
+            145
+          ],
+          "on": [
+            398
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "思念",
+          "input": "PUA",
+          "off": [
+            144,
+            145
+          ],
+          "on": [
+            398
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "善意",
+          "input": "Han",
+          "off": [
+            185,
+            165
+          ],
+          "on": [
+            399
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "善意",
+          "input": "PUA",
+          "off": [
+            185,
+            165
+          ],
+          "on": [
+            399
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恶意",
+          "input": "Han",
+          "off": [
+            186,
+            165
+          ],
+          "on": [
+            400
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "恶意",
+          "input": "PUA",
+          "off": [
+            186,
+            165
+          ],
+          "on": [
+            400
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "心态",
+          "input": "Han",
+          "off": [
+            159,
+            18
+          ],
+          "on": [
+            401
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "心态",
+          "input": "PUA",
+          "off": [
+            159,
+            18
+          ],
+          "on": [
+            401
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "惧梦",
+          "input": "Han",
+          "off": [
+            176,
+            148
+          ],
+          "on": [
+            402
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "惧梦",
+          "input": "PUA",
+          "off": [
+            176,
+            148
+          ],
+          "on": [
+            402
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "愿可",
+          "input": "Han",
+          "off": [
+            161,
+            360
+          ],
+          "on": [
+            403
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "愿可",
+          "input": "PUA",
+          "off": [
+            161,
+            360
+          ],
+          "on": [
+            403
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "亲人",
+          "input": "Han",
+          "off": [
+            339,
+            123
+          ],
+          "on": [
+            404
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "亲人",
+          "input": "PUA",
+          "off": [
+            339,
+            123
+          ],
+          "on": [
+            404
+          ],
+          "advances": [
+            2000,
+            1625
+          ]
+        },
+        {
+          "pair": "共行人",
+          "input": "Han",
+          "off": [
+            337,
+            357,
+            123
+          ],
+          "on": [
+            405
+          ],
+          "advances": [
+            3000,
+            2375
+          ]
+        },
+        {
+          "pair": "共行人",
+          "input": "PUA",
+          "off": [
+            337,
+            357,
+            123
+          ],
+          "on": [
+            405
+          ],
+          "advances": [
+            3000,
+            2375
+          ]
+        },
+        {
+          "pair": "归域",
+          "input": "Han",
+          "off": [
+            54,
+            48
+          ],
+          "on": [
+            406
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "归域",
+          "input": "PUA",
+          "off": [
+            54,
+            48
+          ],
+          "on": [
+            406
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "共行",
+          "input": "Han",
+          "off": [
+            337,
+            357
+          ],
+          "on": [
+            407
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共行",
+          "input": "PUA",
+          "off": [
+            337,
+            357
+          ],
+          "on": [
+            407
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "言契",
+          "input": "Han",
+          "off": [
+            316,
+            171
+          ],
+          "on": [
+            408
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "言契",
+          "input": "PUA",
+          "off": [
+            316,
+            171
+          ],
+          "on": [
+            408
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "信人",
+          "input": "Han",
+          "off": [
+            150,
+            123
+          ],
+          "on": [
+            409
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "信人",
+          "input": "PUA",
+          "off": [
+            150,
+            123
+          ],
+          "on": [
+            409
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "予取",
+          "input": "Han",
+          "off": [
+            270,
+            276
+          ],
+          "on": [
+            410
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "予取",
+          "input": "PUA",
+          "off": [
+            270,
+            276
+          ],
+          "on": [
+            410
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "共亲",
+          "input": "Han",
+          "off": [
+            337,
+            339
+          ],
+          "on": [
+            411
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共亲",
+          "input": "PUA",
+          "off": [
+            337,
+            339
+          ],
+          "on": [
+            411
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "亲集",
+          "input": "Han",
+          "off": [
+            339,
+            95
+          ],
+          "on": [
+            412
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "亲集",
+          "input": "PUA",
+          "off": [
+            339,
+            95
+          ],
+          "on": [
+            412
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共安",
+          "input": "Han",
+          "off": [
+            337,
+            178
+          ],
+          "on": [
+            413
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "共安",
+          "input": "PUA",
+          "off": [
+            337,
+            178
+          ],
+          "on": [
+            413
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "言码",
+          "input": "Han",
+          "off": [
+            316,
+            321
+          ],
+          "on": [
+            414
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "言码",
+          "input": "PUA",
+          "off": [
+            316,
+            321
+          ],
+          "on": [
+            414
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "事文",
+          "input": "Han",
+          "off": [
+            17,
+            322
+          ],
+          "on": [
+            415
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "事文",
+          "input": "PUA",
+          "off": [
+            17,
+            322
+          ],
+          "on": [
+            415
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "隐讯",
+          "input": "Han",
+          "off": [
+            187,
+            323
+          ],
+          "on": [
+            416
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "隐讯",
+          "input": "PUA",
+          "off": [
+            187,
+            323
+          ],
+          "on": [
+            416
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "契文",
+          "input": "Han",
+          "off": [
+            171,
+            322
+          ],
+          "on": [
+            417
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "契文",
+          "input": "PUA",
+          "off": [
+            171,
+            322
+          ],
+          "on": [
+            417
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水源",
+          "input": "Han",
+          "off": [
+            113,
+            356
+          ],
+          "on": [
+            418
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水源",
+          "input": "PUA",
+          "off": [
+            113,
+            356
+          ],
+          "on": [
+            418
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "树集",
+          "input": "Han",
+          "off": [
+            126,
+            95
+          ],
+          "on": [
+            419
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "树集",
+          "input": "PUA",
+          "off": [
+            126,
+            95
+          ],
+          "on": [
+            419
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水路",
+          "input": "Han",
+          "off": [
+            113,
+            65
+          ],
+          "on": [
+            420
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "水路",
+          "input": "PUA",
+          "off": [
+            113,
+            65
+          ],
+          "on": [
+            420
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "凝水",
+          "input": "Han",
+          "off": [
+            191,
+            113
+          ],
+          "on": [
+            421
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "凝水",
+          "input": "PUA",
+          "off": [
+            191,
+            113
+          ],
+          "on": [
+            421
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "水气",
+          "input": "Han",
+          "off": [
+            113,
+            112
+          ],
+          "on": [
+            422
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "水气",
+          "input": "PUA",
+          "off": [
+            113,
+            112
+          ],
+          "on": [
+            422
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "气水",
+          "input": "Han",
+          "off": [
+            112,
+            113
+          ],
+          "on": [
+            423
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "气水",
+          "input": "PUA",
+          "off": [
+            112,
+            113
+          ],
+          "on": [
+            423
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "护符",
+          "input": "Han",
+          "off": [
+            281,
+            320
+          ],
+          "on": [
+            424
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "护符",
+          "input": "PUA",
+          "off": [
+            281,
+            320
+          ],
+          "on": [
+            424
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "封符",
+          "input": "Han",
+          "off": [
+            280,
+            320
+          ],
+          "on": [
+            425
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "封符",
+          "input": "PUA",
+          "off": [
+            280,
+            320
+          ],
+          "on": [
+            425
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "护界",
+          "input": "Han",
+          "off": [
+            281,
+            46
+          ],
+          "on": [
+            426
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "护界",
+          "input": "PUA",
+          "off": [
+            281,
+            46
+          ],
+          "on": [
+            426
+          ],
+          "advances": [
+            2000,
+            1688
+          ]
+        },
+        {
+          "pair": "远域门",
+          "input": "Han",
+          "off": [
+            226,
+            48,
+            358
+          ],
+          "on": [
+            427
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "远域门",
+          "input": "PUA",
+          "off": [
+            226,
+            48,
+            358
+          ],
+          "on": [
+            427
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "术文",
+          "input": "Han",
+          "off": [
+            355,
+            322
+          ],
+          "on": [
+            428
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "术文",
+          "input": "PUA",
+          "off": [
+            355,
+            322
+          ],
+          "on": [
+            428
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "术能",
+          "input": "Han",
+          "off": [
+            355,
+            102
+          ],
+          "on": [
+            429
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "术能",
+          "input": "PUA",
+          "off": [
+            355,
+            102
+          ],
+          "on": [
+            429
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "蓄能物",
+          "input": "Han",
+          "off": [
+            260,
+            102,
+            19
+          ],
+          "on": [
+            430
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "蓄能物",
+          "input": "PUA",
+          "off": [
+            260,
+            102,
+            19
+          ],
+          "on": [
+            430
+          ],
+          "advances": [
+            3000,
+            2438
+          ]
+        },
+        {
+          "pair": "禁术",
+          "input": "Han",
+          "off": [
+            344,
+            355
+          ],
+          "on": [
+            431
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "禁术",
+          "input": "PUA",
+          "off": [
+            344,
+            355
+          ],
+          "on": [
+            431
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "身灵",
+          "input": "Han",
+          "off": [
+            136,
+            128
+          ],
+          "on": [
+            432
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "身灵",
+          "input": "PUA",
+          "off": [
+            136,
+            128
+          ],
+          "on": [
+            432
+          ],
+          "advances": [
+            2000,
+            1812
+          ]
+        },
+        {
+          "pair": "赋恩",
+          "input": "Han",
+          "off": [
+            284,
+            342
+          ],
+          "on": [
+            433
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "赋恩",
+          "input": "PUA",
+          "off": [
+            284,
+            342
+          ],
+          "on": [
+            433
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "赋亏",
+          "input": "Han",
+          "off": [
+            284,
+            262
+          ],
+          "on": [
+            434
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "赋亏",
+          "input": "PUA",
+          "off": [
+            284,
+            262
+          ],
+          "on": [
+            434
+          ],
+          "advances": [
+            2000,
+            1875
+          ]
+        },
+        {
+          "pair": "规行",
+          "input": "Han",
+          "off": [
+            302,
+            357
+          ],
+          "on": [
+            435
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        },
+        {
+          "pair": "规行",
+          "input": "PUA",
+          "off": [
+            302,
+            357
+          ],
+          "on": [
+            435
+          ],
+          "advances": [
+            2000,
+            1750
+          ]
+        }
+      ],
+      "whole_word_boundary_cases": 2090,
+      "guard_root_class_count": 384,
+      "orthographies": [
+        "Han",
+        "PUA",
+        "mixed"
+      ],
+      "all_ligatures_shaped_at_10_weights_on_and_off": true,
+      "independent_grouping_expectations": 68,
+      "preview_only_control_cases": 5,
+      "retired_sequences_checked": 79
+    }
+  },
+  "source_hashes": {
+    "glyphs.json": "01913d58357a8a7e3ad67d1bc043c9de6237993841e978174fe35ba24b209a3d",
+    "concepts.json": "efe91b0af19f166396898597e85a7bb72585b15094063e28077c5d68bf9c0bb8",
+    "ligature-glyphs.json": "1efb63ce255667f809698ed3b8f7d284ab7a798df5d71adb0a650800cb370f74",
+    "engraved-style.json": "2d734a8536180097374f04495e1d82246b233dbb3082e00492d245e4bbf293a0",
+    "engraved_geometry.py": "11f155696a83bec0326e52c9f19dbdd7c9d5875bdd8f0e8142d3851e8a36a602"
+  },
+  "shared_layout_metrics": "pass",
+  "files": [
+    {
+      "file": "Arcana384-Bold.ttf",
+      "bytes": 386676,
+      "family": "Arcana384",
+      "style": "Bold",
+      "postscript": "Arcana384-Bold",
+      "weight": 700,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Bold.woff2",
+      "bytes": 108220,
+      "family": "Arcana384",
+      "style": "Bold",
+      "postscript": "Arcana384-Bold",
+      "weight": 700,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-Bold.ttf",
+      "bytes": 429784,
+      "family": "Arcana384 Imprint",
+      "style": "Bold",
+      "postscript": "Arcana384Imprint-Bold",
+      "weight": 700,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-Bold.woff2",
+      "bytes": 162436,
+      "family": "Arcana384 Imprint",
+      "style": "Bold",
+      "postscript": "Arcana384Imprint-Bold",
+      "weight": 700,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-Medium.ttf",
+      "bytes": 426240,
+      "family": "Arcana384 Imprint Medium",
+      "style": "Regular",
+      "postscript": "Arcana384Imprint-Medium",
+      "weight": 500,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-Medium.woff2",
+      "bytes": 157036,
+      "family": "Arcana384 Imprint Medium",
+      "style": "Regular",
+      "postscript": "Arcana384Imprint-Medium",
+      "weight": 500,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-Regular.ttf",
+      "bytes": 424808,
+      "family": "Arcana384 Imprint",
+      "style": "Regular",
+      "postscript": "Arcana384Imprint-Regular",
+      "weight": 400,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-Regular.woff2",
+      "bytes": 152428,
+      "family": "Arcana384 Imprint",
+      "style": "Regular",
+      "postscript": "Arcana384Imprint-Regular",
+      "weight": 400,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Imprint-VF.ttf",
+      "bytes": 1061832,
+      "family": "Arcana384 Imprint VF",
+      "style": "Regular",
+      "postscript": "Arcana384ImprintVF-Regular",
+      "weight": 400,
+      "variable": true
+    },
+    {
+      "file": "Arcana384-Imprint-VF.woff2",
+      "bytes": 366776,
+      "family": "Arcana384 Imprint VF",
+      "style": "Regular",
+      "postscript": "Arcana384ImprintVF-Regular",
+      "weight": 400,
+      "variable": true
+    },
+    {
+      "file": "Arcana384-Medium.ttf",
+      "bytes": 378180,
+      "family": "Arcana384 Medium",
+      "style": "Regular",
+      "postscript": "Arcana384-Medium",
+      "weight": 500,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Medium.woff2",
+      "bytes": 105564,
+      "family": "Arcana384 Medium",
+      "style": "Regular",
+      "postscript": "Arcana384-Medium",
+      "weight": 500,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Regular.ttf",
+      "bytes": 372664,
+      "family": "Arcana384",
+      "style": "Regular",
+      "postscript": "Arcana384-Regular",
+      "weight": 400,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-Regular.woff2",
+      "bytes": 103096,
+      "family": "Arcana384",
+      "style": "Regular",
+      "postscript": "Arcana384-Regular",
+      "weight": 400,
+      "variable": false
+    },
+    {
+      "file": "Arcana384-VF.ttf",
+      "bytes": 979540,
+      "family": "Arcana384 VF",
+      "style": "Regular",
+      "postscript": "Arcana384VF-Regular",
+      "weight": 400,
+      "variable": true
+    },
+    {
+      "file": "Arcana384-VF.woff2",
+      "bytes": 271204,
+      "family": "Arcana384 VF",
+      "style": "Regular",
+      "postscript": "Arcana384VF-Regular",
+      "weight": 400,
+      "variable": true
+    }
+  ],
+  "preview_checks": {
+    "embedded_fonts": 2,
+    "external_dependencies": false,
+    "browser_integration": "not_verified",
+    "whole_word_logic": "pass",
+    "registered_meaning_stable_across_dlig": "pass",
+    "bounded_word_insertion": "pass",
+    "invisible_control_cases": 5,
+    "invisible_control_warning_and_forced_off": "pass",
+    "embedded_font_bytes_match_files": true
+  }
+}

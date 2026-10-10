@@ -1,202 +1,186 @@
-# 原生战场验证（2026-09-20）
+# 验证范围与证据
 
-## 发行混淆与关于（2026-09-21）
+检查与改动风险相称。优先最低成本的充分验证；相关小修改在阶段边界统一检查，已有证据足够时停止加验。当前结果见[阶段总结](STAGE-SUMMARY.md)，阶段出口见[迁移方案](migration/PLAN.md)。
 
-- `npm run build`：内容、架构、类型与发行清单校验通过；启动、游戏与战场脚本混淆后计算内容哈希，许可证随包保留。
-- `npm run test:fonts`：混淆产物通过 HTTP 字体下载/解码、失败重试、超时恢复及 `file://` 实际进入战斗检查。
-- `npm run test:scroll-shell`：设置与首次调校等弹层标题、操作固定，正文内部滚动。
-- `python -X utf8 tests/about-browser.py`：版本/许可与包信息一致，1024×640、1280×720、1920×1080 布局无越界；五个链接可用 Tab 到达，许可全文可用 Enter 打开，第三方许可可离线读取，无页面错误。截图在 `docs/test-output-about/`。
+| 改动 | 首选检查 | 扩大条件 |
+| --- | --- | --- |
+| 文档、路径和简单资源配置 | 内容、差异、引用和直接结果 | 出现未解释的缺失引用或配置行为 |
+| GDScript、场景、导入配置 | 最小脚本检查及 Godot 导入 | 核心共享类型、加载或生命周期有疑点 |
+| 战斗、资源与输入 | 对应原生规则案例，覆盖真实回执、原子失败与边界 | 跨系统状态或正式流程接线变化 |
+| UI、材质与输入归属 | 对应原生场景的实际操作和图像 | 共享布局、暂停、窗口、缩放变化 |
+| 存档、交易与内容 | Godot 自身版本、失败恢复、去重、普通／God 隔离 | 正式获取接通或本游戏存档结构变化；不测浏览器账号迁移 |
+| Windows 导出 | 导出依赖、独立启动、无调试桥 | 正式 Release 与干净环境发行 |
+| 收益与难度 | 功能／内容完整后统一场景评估 | 明确的失败或覆盖缺口 |
 
-环境：Windows、Node.js 24.19.0、Python / Playwright、本机无头 Chrome。测试使用独立浏览器配置与测试存档。
+不为简单可逆改动习惯性新建测试，不逐件遗物运行平衡脚本。不因为旧 Node 套件存在而全跑，不用脚本成功替代画面、手感和最高档成长门槛。
 
-## 当前验收范围
+当前范围为 S1–S4。旧 M3／M4 检查命令与证据已[归档](archive/2026-10-08-build-system/TESTING.md)，不是固定门禁。天赋图、377 项目录和 32 事件交易的取消规则不再补证；保留机制可抽取原有案例继续回归。
 
-遵循 [项目核心规则](../AGENT.md)：**不需要兼容小屏（移动端）布局。** UI 验证以桌面为目标，主要使用 1920×1080，按改动需要检查 1280×720 等桌面窗口、滚动、键盘交互和减少动态效果。除非用户明确要求，不新增或维护移动端适配检查，不把手机或平板竖屏布局作为验收条件。下文和现有测试中的窄屏验证属于历史覆盖，不代表当前兼容承诺。
+## 静态诊断与运行日志
 
-## 冲击波方向与传播（最新）
+GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警告按其语义修正，不关闭全局警告、不删除类型标注。整数规则账保留精确的 int64 运算和向零截断；确认有意取整的语句使用局部 `@warning_ignore("integer_division")`，所在模块说明余数分摊、向上取整费用等约定，不改成浮点除法。枚举字段保留枚举类型；公共边界收到整数时再显式转换。
 
-构建、138 项单元检查通过；冲击波 GPU 探针 3 组、弹反原生渲染回归 2 组通过。验证实际合成取样方向、内爆/外扩、中心稳定、连续帧半径、场类型、减少动态效果及文字清晰度。详见 [SHOCKWAVES.md](SHOCKWAVES.md)，截图与结果位于 `test-output-shockwave/`。
+`--debug --check-only --script res://app/main.gd` 可通过锁定版本的 console 输出应用依赖链的解析警告，`--log-file` 使用绝对文件路径。`--check-only` 成功只证明解析通过，不带 `--debug` 的空输出不能证明警告为空。报告分别写清“解析通过”“运行未见错误”“编辑器诊断为空”，不得互相替换。检查对象以本轮修改脚本和相关加载链为限，不默认启动全量套件。M2 的实际反例和改法见 [M2 实施经验](migration/M2-IMPLEMENTATION-LESSONS.md)。
 
-## 弹反与文字稳定性
+测试断言、引擎日志和退出清理分别审阅；通过数不覆盖运行错误或资源在用提示。窗口失焦造成暂停、自动化首个点击不稳定等失败保留原始记录，不拼接不同运行中的通过项，也不为自动化关闭正式产品行为。
 
-构建、136 项单元检查通过；UI 12 组、文本 5 组、原生弹反/文字 2 组、音画反馈 3 组共 22 组浏览器检查通过。验证正文悬停与同段去重、键盘不触发提示、长距离反制与周边无伤控制、时缓恢复、文字固定锚点与覆盖命中、GPU 位移与减少动态效果。证据在 `test-output-counter/`，实现见 [COUNTER-AND-READABILITY.md](COUNTER-AND-READABILITY.md)。
+## 原生工具入口
 
-## 统一文本与术语提示
+战斗算法可用 `pwsh -File tools/godot/compare-combat.ps1` 从优化前提交 `c39c032` 生成隔离参考子类，比较四书事件／状态与 1,152 个闪避选点；`-BenchmarkOnly` 只采样微基准，`-DodgeOnly` 跳过逐步战斗。该上传基线与本地原记录 `9f3539b` 的规则源码相同，仅剔除了转入私有资产库的新增字体。适配器针对该基线的方法与数据声明，未来结构变化需同步审阅，不能作为任意 Git 版本的通用比较器。正常运行前工具自动做锁定依赖的 Debug 编译。生成文件与日志留在 `.temp/`，不进入游戏或导出。
 
-构建、内容、TypeScript 和架构检查通过；132 项单元检查通过。12 组 UI 回归与 5 组文本/Tooltip 浏览器检查通过，覆盖共源说明、最长术语匹配、数值染色、搜索分类、提示移入阅读和关闭、边缘避让、低档/减少动态效果与战斗输入。窄屏验证发现的主菜单遮挡已修复并复核。截图见 `test-output-text/`；说明见 [TEXT-AND-TOOLTIPS.md](TEXT-AND-TOOLTIPS.md)。
-
-## 手动导航、闪避与法阵更新
-
-构建、TypeScript、架构与内容检查通过，129 项单元检查通过。此次更新旧纸灵数量与组合闪避断言，并记录雷鸣/纸灵的新平衡轨迹 `ritual-baseline.json`；寒霜/灰烬旧轨迹保持一致。
-
-32 组浏览器检查通过（UI 12 / 首屏 6 / 防御 7 / 菜单 4 / 本轮综合 3）。新增 `python -X utf8 tests/ritual-browser.py` 检查手动焦点顺序、跳过次要操作、隐藏系统鼠标、自制光标不挡点击、独立音效总线、方向键/Alt 直放与重复抑制、弹反双层位移，以及首屏和菜单粒子。1080P 证据见 `test-output-ritual/`；发行仍为 146 个校验文件，约 53.35MiB。相关检查通过后没有追加无关检查。
-
-## 音效并发历史检查
-
-构建通过。`python -X utf8 tests/audio-polyphony-browser.py` 验证 48 个空间声源和 16 个非空间声源真实同时播放、满额拒绝、优先级替换、空间单类 6 路/命中与打字 8 路限制，以及停止后零活动声源。证据见 `test-output-audio/polyphony.json`。
-
-`npm run test:audio -- --runtime-only` 6 组通过，覆盖真实 HRTF、全部 112 个片段解码、并发与缓存、暂停、静音和释放，报告为 `test-output-audio/runtime-report.json`。切片编辑器依赖本地开发服务器，与本轮播放并发改动无关，未重新验收。声源数与解码并行数是两个独立预算；后者仍为 4。
-
-## 开放式下拉与菜单原生特效历史检查
-
-正式构建、应用与工具 TypeScript、架构边界检查通过。`test:menu` 4 组、`test:startup` 6 组、`test:ui` 12 组真实 Chrome 检查通过，合计 22 组；发行包含 146 个校验文件，约 53.31MiB。
-
-新增检查直接读取原生画布像素，确认着色器确实绘制并随时间变化；检查四法书与 SVG 的离线加载、仅两次菜单绘制调用、下拉模糊与键盘焦点、720P 锚点更新、系统减少动态静止，以及出征/回营共用一个 WebGL 上下文。1080P 主菜单、下拉列表和 720P 截图见 `test-output-menu/`。现有 UI 套件的首屏等待同步为过渡完成后再输入，避免旧检查把过渡中的菜单挂载误判为已经可操作。相关检查通过后未扩大测试。
-
-## 入场、弹反与打字反馈历史检查
-
-`node --test tests/defense.test.cjs tests/audio.test.cjs` 16 项通过；`npm run test:feedback` 3 组、`npm run test:audio` 7 组、`npm run test:startup` 6 组通过。验证 1.6 秒入场及声音、过渡期间菜单输入隔离、连续词令/施法字符音效与短音释放、起手/成功声音区分、同时反射 5 枚弹道只触发一次成功反馈、三级前景特效和减少动态。1080P 截图与报告见 `test-output-feedback/`。音频回归覆盖全部 112 个切片的实际解码与 HRTF 输出。
-
-应用与工具 TypeScript、架构边界检查及正式构建通过，发行包含 142 个校验文件，约 53.30MiB；其中按需音效约 37.95MiB。相关检查通过后未扩大到无关套件。
-
-## Magic UI 音效历史检查
-
-124 项单元检查通过，包含 4 项切片/引用/发布检查；`npm run test:audio` 7 组真实 Chrome 检查通过：离线 UI 预热、战斗按组加载、真实 HRTF 左右 PCM、暂停/静音与并发限制、全部 108 个变体解码、隐藏与释放、编辑器试听和保存。应用及工具 TypeScript 与正式构建通过。输出 138 个校验文件，共约 52.94MiB；音效 108 个文件约 37.59MiB。证据见 `test-output-audio/report.json` 和 `test-output-audio/editor.png`。
-
-下方为此前各轮记录，没有重复执行无关浏览器套件。
-
-## 首屏历史检查
-
-`npm run test:startup` 6 组和加载回归 4 组通过：加载中输入不会排队、提示不是按钮、四角点击、字母 / 数字 / 空格 / Enter / Esc / 方向 / Shift 进入、首次输入不传入首页、真实符印动画、窄屏与减少动态。启动截图与报告位于 `test-output-startup/`。发行构建通过，共 30 个校验文件，约 15.24 MB。
-
-## 本轮防御与界面
-
-120 项单元检查、31 组浏览器检查（防御 7 / UI 12 / 加载 4 / 全屏 8）以及完整构建通过。设计、参数与 68 场规则输入探针见 [DEFENSE-AND-PACING.md](DEFENSE-AND-PACING.md)。新增截图在 `test-output-defense/`；此轮没有重新测量性能，下方性能与未重跑的架构 / 火焰 / 原生完整视觉套件保留为前轮记录。
-
-## 检查结果
-
-| 检查 | 结果 / 入口 |
-| --- | --- |
-| 内容与架构边界 | `validate:content` 通过；dependency-cruiser / SWC 扫描 216 个模块、549 条依赖，无违规 |
-| 构建与 TypeScript | `npm run build` 通过；离线 index.html + 12 本词库脚本及 12 个完整 JSON + 原生渲染脚本 + 四张法书图片，共 30 个校验文件，约 15.23 MB |
-| 玩法、素材、词库与键盘逻辑 | `npm test`，120 项通过 |
-| 内容扩容与资源释放 | `npm run test:architecture`，6 组通过；`test-output-native/architecture-report.json` |
-| 页面与输入回归 | `npm run test:ui`，12 组通过；`test-output-native-ui/report.json` |
-| 原生战场视觉与生命周期 | `npm run test:visual`，11 组通过；`test-output-native/report.json` |
-| 加载取消 / 重试 / 开发模式 | `python -X utf8 tests/loading-browser.py`，4 组通过；`test-output-native/loading-report.json` |
-| 四本插画、音频导入与火焰实战 | `npm run test:flame`，6 组通过；`test-output-flame/report.json` |
-| 全屏边缘、分级效果与完整词库 | `npm run test:fullscreen`，8 组通过；`test-output-fullscreen/report.json` |
-
-当前截图位于 `docs/test-output-native/`、`docs/test-output-native-ui/` 、`docs/test-output-flame/` 和 `docs/test-output-fullscreen/`；带 v2–v6 的旧目录保留为历史记录。
-
-## 本轮架构迁移回归
-
-A–F 完成时曾验证三本法书的 180 帧迁移前轨迹一致。本轮扩大场地并更改选词算法，旧种子的具体轨迹随之改变；现以独立固定词表记录四本法书 240 帧新基线 `defense-baseline.json`（本轮难度重调），前轮 `fullscreen-baseline.json` 和旧 `architecture-baseline.json` 保留为历史证据。新增验证涵盖第四本法书实际施法、组合敌人和任意 ID 精英、四房间两波章节、乱序目录中的分支路线及下一周目、自定义 Boss 阶段与攻击、遗物修饰/触发/能力组合、来源失效、必需任务阻止清房、词条占用回收、独立提示游标、依赖预热及旧存储兼容。详见 `tests/architecture.test.cjs`。
-
-6 组架构浏览器检查验证旧玩法全局对象不存在、43 个外观（27 个内置 + 16 个测试扩展）自动分为两页、第二页角色改变实际 GPU 像素、跨页透明角色保持排序且不改世界数组、图集不重复上传、销毁解除监听与清房回收粒子。UI、原生画面及加载套件也已通过。
-
-## 素材与火焰扩展回归
-
-新增 10 项单元检查覆盖图片 / 音频缓存、失败重试、取消和资源释放，以及火焰弹道的词条占用、灼烧周期与叠层、熔爆、死亡传播深度、闪避火场、专属遗物、觉醒终式与重新开始。四法书采用本轮全屏与索引选词的新轨迹基线。
-
-6 组火焰浏览器检查验证四张原始透明图片在首页、选择卡和图鉴中加载，并逐字节对比 art 与发行文件；使用内存生成的 WAV 验证本地文件导入、浏览器真实解码、用户手势播放和释放停止。火焰实战验证实际弹道命中、灼烧与火场、终式和陨火的 GPU 实例像素、暂停逐像素一致，以及 720P 减少动态时关闭热扭曲。发行物没有新增音乐文件。
-
-## 全屏与词库回归
-
-新增 7 项单元检查覆盖边缘攻击与冲锋禁用、驻地单位进入清晰区、持续激光 / 落点预警 / 延迟来源取消、道具位置、边缘死亡能力、God Mode、5 万词索引抽样及完整源数量。索引构造后禁用整库遍历方法，验证选词在候选耗尽和重复随机值下仍可完成。
-
-新增 8 组浏览器检查通过真实词令激活 God Mode，并出征加载 2,607 词完整四级库；截图差分确认边缘单词受模糊且中心像素不变。三级特效的原生实例数量、位移 / 辉光尺寸、前景层级均检查；动态背景暂停逐像素一致，720P 减少动态禁用扭曲。报告在 `test-output-fullscreen/report.json`，使用与复杂度说明见 [全屏与词库实现](FULLSCREEN-AND-VOCABULARY.md)。
-
-## 视觉与资源证据
-
-- 1920×1080 主场景，960×540 位移与辉光，2048×1024 角色图集；启动页预热 Three.js 战场，完成后点击继续。
-- 直接通过 `file://` 加载发行物，无 HTTP 请求或着色器错误；GPU 实体目标中实际存在非透明像素。
-- 待机、打字聚光、普通命中、引力，以及三本法书的真实终式均有截图。
-- 开关位移图时环境像素变化，独立文字 Canvas 的像素数据完全一致。
-- 17 种敌人和三个 Boss 的图集剪影、纸灵、冰晶和闪电均渲染；运行中纹理数量保持 15（含辉光金字塔与 Quarks 光斑），图集 version 保持 1，无逐帧上传。
-- Quarks 粒子确实发射；暂停反复重绘时 GPU 实体缓冲逐像素一致，寿命结束归零且纹理数量稳定。
-- 暂停停止渲染；WebGL 上下文真正丢失后暂停玩法，恢复后重新预热。
-- 720P 与减少动态可用；DPR 2 / 1080P 下世界仍为 1920×1080，文字画布独立为 3840×2160。
-- 启动页脚本失败后可以重试；加载中取消不会在异步完成后误入战斗，再次出征复用资源。
-- 无 WebGL 2 时显示加载错误、保留重试入口，模拟不会启动。
-- Vite 开发入口可延迟导入同一个渲染器。
-
-## 完成改造后的统一采样
-
-同一浏览器、1920×1080、DPR 1、完整特效。每个场景预运行 350 ms，再采样约 2.2 秒。保留真实模拟和画面更新，不再冻结 `update()` / `updateVisual()`。密集场景以 24 个敌人、96 颗初始子弹开始；多个场景含 6 个环境场。结果为短时回归样本，不是长时稳定性或其他机器帧率结论。
-
-| 场景 | RAF FPS | 帧间隔 P95 | CPU 渲染提交 P95 | 绘制调用 |
-| --- | --- | --- | --- | --- |
-| 真实战斗 | 60.2 | 16.8 ms | 1.1 ms | 18 |
-| 密集弹幕 | 60.2 | 16.8 ms | 1.2 ms | 21 |
-| 多个场效果 | 60.3 | 16.8 ms | 1.2 ms | 19 |
-| 终式 | 60.0 | 16.8 ms | 1.1 ms | 18 |
-
-CPU 提交包括引擎 `render()` 与独立文字层工作，不等于 GPU 执行耗时。样本受浏览器刷新节奏约束，当前没有 GPU timer-query 分项归因。旧 1440×900 冻结 Canvas 样本不作为这次的同条件对比。
-
-## 复现
-
-### 开放式 UI 与稳定布局
-
-`npm run build` 和 `npm run test:open-ui` 通过。浏览器检查覆盖：1 / 20 / 90 连笔的递增字号与数字动画、护盾 30 / 60 的实际进度、悬浮施法文本、遗物三选一底部摘要与真实 Tooltip、选择后继续战斗、透明无外框的失败页，以及 0 / 3 / 58 件遗物记录切换时窗口高度和纵向位置保持不变。长构筑内部滚动，减少动态模式关闭底部入场与法书粒子。截图见 `docs/test-output-open-ui/`，视觉约定见 [开放式 UI](OPEN-UI.md)。
-
-### 八向进攻与远征结算
-
-本轮 `npm test` 144 项通过。新增 6 项覆盖八向刷怪与偷袭分布、实际阶段快照、旧战报读取、重复结算去重、连续周目增量，以及培养策略入口与存储失败。玩法随机序列变化后的四法书 240 帧轨迹已更新至 `ritual-baseline.json`。
-
-`npm run test:results` 已通过，验证真实 Canvas 方向提示、致死战败、战役胜利、下一周目、主动结束、刷新后历史详情、导出与生涯累计。1920×1080 截图见 `docs/test-output-assault-results/`；规则和接口见 [八向进攻与远征记录](ASSAULT-AND-RECORDS.md)。
-
-### 字体启动检查
-
-`npm run test:fonts` 验证 HTTP 下逐套延迟下载、下载完成但解码未结束、失败重试、超时后迟到完成，以及离线 `file://` 启动。两套字体就绪前只允许系统字体的小型等待组件存在，首屏、主菜单和战场均不挂载。通过浏览器实际字形信息确认自定义字体参与渲染，并检查发行包仅含两个完整 WOFF2，不重复包含 TTF/OTF。截图位于 `docs/test-output-fonts/`。
-
-字体替换后已通过 `npm run build`、`npm run test:fonts` 和 `python -X utf8 tests/ritual-menu-browser.py`，覆盖原有入场音效顺序、法书切换与桌面菜单布局。
+局部几何入口为 `test_battle_session.gd -- --geometry`，覆盖连续扫掠、首击顺序、贯穿快照／死亡连锁及接触尾迹；`test_defense_movement.gd` 覆盖御术与时钟。`test_combat_algorithms.gd -- --cold` 单列首次操作、会话准备、封送分配与 GC。数值程序集在各配置均启用优化，需和受影响 GDScript 一起检查；实际命令与结果见[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md)。
 
 ```powershell
-npm ci
-npm run build
-npm test
-npm run test:architecture
-npm run test:ui
-npm run test:visual
-npm run test:flame
-npm run test:fullscreen
-# 如只需重新采样：npm run test:performance
+pwsh -File tools/godot/godot.ps1 import
+pwsh -File tools/godot/godot.ps1 run --headless --quit-after 3
+# 只有工具接入或运行时观察需要时：
+pwsh -File tools/godot/godot.ps1 preview
+node tools/godot/mcp-smoke.mjs
+# 只有导出配置或发行产物变化需要时：
+pwsh -File tools/godot/godot.ps1 export
 ```
 
-加载 / 开发模式检查需先在另一个终端执行 `npm run dev`（默认 4318），再运行 `python -X utf8 tests/loading-browser.py`。浏览器依赖见 `requirements-dev.txt`。旧 `visual-upgrade-browser.py` 与 `performance-browser.py` 入口转向当前原生套件。
+导入可能创建 UID 与导入配置，应审阅这些变化。Headless 运行不能证明 Forward+ 的真实画面；图形运行、截图和运行日志分别提供渲染、结构与错误证据。MCP 联调脚本验证连接和最小场景能力，不测游戏规则；输入、词库、应用和单房战斗检查如下。
 
+视觉验收使用关闭游戏嵌入的独立窗口，并记录游戏分辨率与实际显示区域。编辑器右上角运行也可能启用嵌入；浮动的 Game 窗口仍属于嵌入。若编辑器运行与缓冲区截图的锯齿不同，先对照关闭 `Embed Game on Next Play` 后的同一工程，核对启动参数中的 `--wid`、实际窗口尺寸与缩放；不得仅凭资源文件或缓冲区截图声称用户可见问题已消除。嵌入模式不支持正常的窗口模式切换，不能作为全屏行为验收环境。参见 [Godot 游戏嵌入说明](https://docs.godotengine.org/en/4.7/tutorials/editor/game_embedding.html)。
 
-## 首次调校与宽扇区（2026-09-21）
+## 渲染准备的相关回归
 
-- `npm run build` 通过内容校验、架构检查、TypeScript 与离线打包。
-- `npm test`：145 项通过，覆盖八方向 110° 扇区、冷区词条隐藏和清晰区恢复；路线摘要改动后另行通过 17 项架构与 Session 回归。
-- `npm run test:first-visit`：首次字体等待时全屏按钮有效，字体未解码前不挂载游戏；首次调校显示实时 FPS，画质/声音保存，刷新后两个首次提示均不再出现；路线页血盾和构筑 Tooltip 正常。同步收集页面与控制台错误，验证 GPU 冷区柔化可运行。
-- `npm run test:open-ui`：胜负透明布局、失败构筑 Tooltip、升级摘要、固定高度历史与隐藏滚动条不影响长列表浏览。
-- 首次调校/冷区/路线截图：`docs/test-output-first-visit`。
+`tests/godot/test_render_preparation.gd` 需使用锁定引擎图形运行，不能 headless：
 
+```powershell
+pwsh -File tools/godot/godot.ps1 run --debug --script res://tests/godot/test_render_preparation.gd
+```
 
-## 独立准备页与首次确认（2026-09-21）
+检查正式材质覆盖、四条计算管线复用与实例纹理隔离、准备视口停更、原生粒子参数隔离、正常／减少动态的出征等待与单次完成、奖励绑定、四书场效果／终式及道具粒子回收。使用临时战斗，不读取或写入正式玩家档案；报告在 `.temp/render-preparation/checks.json`。当前固定计数45包含法阵流光及启动柔光，随新增shader同步维护，不代表全部硬件管线变体覆盖。此检查不采样前后性能、不取代实际首屏→欢迎→出征的操作检查；导出还应确认烘焙记录与独立包启动，错误与退出日志单独审阅。
 
-- `npm run build`：启动 HTML 1352 B、JS 3316 B、CSS 1969 B，独立内容哈希文件；React/游戏样式均在用户继续后加载。第三方许可证外置，发行清单校验包含所有构建产物。
-- `npm run test:first-visit`：字体就绪后等待仍显示准备页，未挂载游戏且未请求主游戏资源；全屏不触发继续；完成确认后再次访问不再显示首次按钮。
-- `npm run test:fonts`：下载和解码门槛、失败重试、超时后迟到的下载不得绕过门槛、重用已加载字体，以及离线 `file://` 进入战斗均通过。
-- 截图：`docs/test-output-first-visit/preflight-ready.png`。
+## 保留玩法的检查选择
 
+加载／欢迎柔光局部检查使用`test_feedback_presentation.gd -- --ritual-light`图形运行：正常与减少动态两种模式下验证真实进度投影、点击继续、离场释放，并保存加载／欢迎／转场截图。观察不同光层的清晰度、透明边缘与文字隔离；不能用交互断言通过替代这些视觉判断。
 
-## 弹层内外滚动职责（2026-09-21）
+结果页局部布局可运行锁定引擎的`--script res://tests/godot/test_feedback_presentation.gd -- --result-layout`（图形窗口）。该分支使用隔离档案，经正式出征后构造短局结果，检查归档数据、鼠标展开详情、底部位置与长列表内部滚动，并保存1920×1080截图；不模拟完整远征。默认分支另包含首页、符文规格和图鉴，只有相关改动才使用。截图阶段的同步取图与颜色转换耗时不作为游戏性能采样。
 
-`npm run test:scroll-shell` 在 1440×900 桌面窗口验证调校、设置、图鉴、指南与导入页：将内容滚到末尾后标题/分类/底部操作位置不变，外容器 scrollTop 为 0；选择框操作与连续键盘 Tab 导航不移动外容器。截图在 `docs/test-output-scroll-shell`。构建通过，结算与历史记录沿用 `test:open-ui` 验证。
+- S1：优先复用输入／设置、战斗会话、单房和表现检查；修改旧脚本中与取消规则相关的断言，不直接沿用整套旧 M4 应用流程。
+- 每件保留遗物核对正式获取条件、叠层、触发和实际结果；按机制族复用案例，不用“有伤害”证明该遗物有效。
+- 路线与奖励检查重复提交、支付、满层补给和退出边界。复杂合同／租期不再是当前覆盖要求。
+- S2：覆盖三章九场、Boss、保留遗物升档、最高档继续周目、已用一次机会不刷新、普通重开清空局内遗物、结算不重复赚成长。
+- S3：检查旧 Godot 字符／记录保留、线性成长、普通／God 隔离与不兼容旧局的处理；正式完整内容的收益与最高档门槛按[评估方案](COMBAT-BALANCE-DESIGN.md)统一进行。
+- 人工输入速度、手感和视觉清晰度需要实际游玩；加速固定步或直接注入构筑只说明相应规则结果。
 
+### 收缩后的正式检查
 
-## 桌面窗口与分辨率适配（2026-09-21）
+`test_boss_resources.gd` 专门核对三位 Boss 的五档血量、正式生成及房间不会立即判胜；它不模拟完整 Boss 战。可用 `run --headless --script tests/godot/test_boss_resources.gd` 检查源码资源。导出工具还会用锁定编辑器引擎的 `--headless --main-pack <绝对 PCK 路径> --script <该脚本绝对路径>` 检查成品数据，失败即拒绝交付；源码检查不能替代这一步。
 
-`npm run test:desktop` 验证实际 CSS 视口：1024×640、1280×720、1366×768、1440×900、1536×864、1600×900、1920×1080、2560×1440、3440×1440、3840×2160。四本法书分别验证书名/词令/介绍/出征按钮不重叠且在可视区；设置页操作不出界。前七组另测战斗血盾、章节、连笔、构筑、输入和终式区域的边界与间隔，遗物选择底部摘要和首次调校按钮保持可见。构建与 `test:scroll-shell` 回归通过。截图位于 `docs/test-output-desktop`。
+按改动选择下列入口，不作为每次修改后的全量套件：
 
+```powershell
+pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_s2_rules.gd
+pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_s2_encounters.gd
+pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_s2_run.gd
+# 四书九房，通过正式 Unicode 输入、获取、路线与保存：
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--script', 'tests/godot/test_s2_run.gd', '--', '--formal')
+# 实际 Forward+ 窗口；--ui-only 仅复查页面与自然生成的道具词咒：
+pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_s1_application.gd
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--script', 'tests/godot/test_s1_application.gd', '--', '--ui-only')
+```
 
-## 闪避预测、环向冰锥与遗物 SVG（2026-09-21）
+`test_s2_run.gd` 的默认模式使用明确的合法结果夹具验证保存失败、升档、继承、去重、满层补给与重开；`--formal` 才包含实际打字打赢九房。`--balance` 为分阶段数值取样入口，记录速度、准确率、种子、防御策略与失败，不以预期胜败替代测量。`--cold-only`、`--retained-only --mistakes` 分别测快速冷开与中速继承，`--seed=s3-sample-2` 更换种子，`--book=frost` 等参数只复测受影响法书。`test_profile_save.gd`、`test_talent_progress.gd` 和 `test_reward_ledger.gd` 分别保护迁移原档、五阶自动成长与实际经验去重。
 
-- 自动闪避以 24 个候选落点评估未来 1.4 秒，包含弹道曲率/加速、敌人速度/冲锋、激光与爆炸预警。对靠边与继续外移增加惩罚，危险碰撞优先级高于回中偏好；手动方向键不被改写。
-- 寒墨终式以目标为中心从 264 距离的随机全周方向发射冰锥，伤害、穿透与普通/觉醒间隔保持原值。
-- `npm test` 原 145 项通过；`node --test tests/dodge-icons.test.cjs` 新增 5 项通过：四边回中、无敌结束后的来弹、不修改弹体/确定性、动态敌人与危险区、冰锥四象限，以及 58 件独立 SVG 覆盖。
-- 构建通过；浏览器实测图鉴 58 个不同 SVG、遗物三选一 3 个 SVG，无页面错误。截图：`docs/test-output-relic-icons`。源代码 Extended_Pictographic 扫描无匹配。
+`test_s2_encounters.gd` 的 `--defense` 检查不打字的纯防御边界，`--tail` 检查停笔后有限效果，`--word-cost` 比较三／七字符的六词周期与主术等待。后两项隔离敌人 AI，不代表正式通关。窗口脚本支持 `--ui-only --low --reduce-motion` 复查低画质静态可读性；`--package-check` 将验证文件写到隔离的 `user://verification/`。使用锁定编辑器引擎的 `--main-pack <绝对 PCK 路径> --script <绝对测试脚本路径>` 从独立包目录验证资源，测试脚本本身不随包分发。官方 Release 模板不执行外部 `--script`，正式 EXE 另做独立启动检查；两类结果不能混称为 Release 交互自动化。测试子进程的 `APPDATA` 指向工作区独立目录，保持玩家数据不变。
 
-边缘冷区：敌人完整进入清晰战场前只移动，不造成接触伤害或释放技能，且不能通过点击、Tab 或输入选中。在清晰战场内取得的锁定记录保留到死亡，击退到边缘仍显示词条并保留战斗能力；冷区普通身影加强透明与模糊。回归覆盖见 `tests/cold-zone.test.cjs`。
+体验与存档针对性回归：`test_single_run_save.gd` 覆盖唯一存档、退出保存、房间恢复、重复奖励、重开原子性、God 分账及跨档写入失败重试；`test_s2_encounters.gd --arrival` 核对八向扇区分布与真实单敌批次，`--god` 核对四书普通／God 的致死、闪避和有限终式对象。`test_s1_application.gd --feedback` 在真实窗口完成首房打字、数字领奖、详情隔离、路线、继续／取消重开、暂停构筑／图鉴、隐藏激活和一步结束归档；`test_feedback_effects.gd` 使用受控敌人位置和敌弹，实际完词触发冰面、火场、反制与爆墨并截图，不将布置的战场当作正式玩法通关。
 
+以下 M1／M2 命令是保留底座的定位入口，先核对与本次改动相关的断言，不因文件存在而全部执行。
 
-## v0.6.3 入场跳过与交互收束
+## M1 针对性检查
 
-- 首次完整进入菜单后才保存 `intro-complete`；首次仪式期间重复键鼠输入不会跳过，也不显示额外提示。减少动态设置仍沿用短过渡。
-- 后续进入可再次按键或点击跳过。保留当前透明度与模糊状态，冻结后续仪式波纹/闪光，650 ms 内交叉淡入菜单；取消后续阶段音效定时器，输入不透传。
-- `python -X utf8 tests/startup-skip-browser.py` 覆盖早期、冲击阶段和尾声的连续过渡，首次不可跳过、完成标记持久化、再次进入可跳过、防连按、自然结束、减少动态与全局右键菜单拦截。
-- 框选的防御提示组已移除；词令匹配及键盘焦点改用开放式微光，不再显示环绕矩形。背景与出生位置检查见 `ARCANE-BACKGROUND.md`。
+```powershell
+pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_vocabulary.gd
+pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_input_settings.gd
+# 原生窗口操作、大小／全屏及截图；加 --headless 可只查交互断言。
+pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_application.gd
+pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_presentation.gd
+# 修改输出分辨率、全屏或共用布局时：
+pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_display.gd
+pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_ui_refinement.gd
+```
+
+词库覆盖格式、行号、规范化、去重、过滤与写入恢复；输入覆盖原生事件路由、文本编辑归属、echo、组合键、辅助完成与一次领取；设置覆盖坏主档恢复后再保存、再次损坏仍可恢复的边界。应用检查经过正式 GUI／输入路由，覆盖左右法书直接点击、快速切书声部收束、准备页中央展开、主页 Enter 直接进入战斗且不创建焦点，以及导入、习字、暂停和设置往返，并保存原生窗口截图。测试注入 `.temp/godot-m1/` 下的独立路径，不写玩家设置或词库。
+
+`test_display.gd` 使用 `.temp/display/` 独立设置，在十组代表性输出下检查设置固定头尾与滚动、准备页列宽、战场 HUD、安全区、正文／HDR 输出一致及字体采样。通过原生鼠标事件验证缩放与全屏留边后的命中位置；暂停中改界面缩放不推进战斗、不重置词条测量宽度。另覆盖分辨率保存恢复、窗口手动调整后修改无关设置、全屏往返及恢复默认。实际窗口保存 720p、4K、16:10、4:3 和超宽屏图像；无窗口仅验证断言，不作为图像或显卡性能证据。
+
+`test_ui_refinement.gd` 使用真实输入事件检查种子编辑与词令隔离、难度与设置词令、滑条调整、下拉展开、按键组件及平滑滚动的累积／停稳／拖动接管；实际窗口保存悬浮、准备与设置图像。应用战斗检查等待冷区入场后再输入可见词条；单房规则检查覆盖八向出生间隔、冷区不可选和自然入场。
+
+材质动态复查可为该入口追加 `-- --record-gold`，保存金丝局部连续帧及间隔采样的页面光晕帧。局部流光、分叉强弱、错峰节奏和整页受光分别观察；静态截图不能证明流动，采样过程含截图等待，不能据此评价真实帧率。
+
+## M2 单房规则检查
+
+四书机制优先使用当前专项入口，旧M2默认脚本中关于逐词供能、纸灵世界时间寿命和旧连锁规则的断言不作为当前契约：
+
+```text
+# 使用TOOLCHAIN锁定的Godot可执行文件；下列为引擎参数。
+# 规则、人工投入、状态阈值、有限传播、闪避与终极：
+--headless --path . --script res://tests/godot/test_s2_rules.gd -- --four-books
+# 112组可重复的固定目标场景；不是正式Boss／真人体验：
+--headless --path . --script res://tests/godot/test_s2_encounters.gd -- --four-books-balance
+# 实际Forward+窗口，另可追加 --low --reduce-motion：
+--path . --script res://tests/godot/test_battle_presentation.gd -- --four-books
+```
+
+场景采样固定3／6字符每秒、3／5／7字词、100%准确；普通目标100生命、耐久单体5000生命，停用AI移动／攻击及自动房波，保留击退。适配遗物经过实际获取事务预置；正式获取、真正Boss阶段与升档使用上方 `test_s2_run.gd --formal`。窗口专项以原生Unicode事件输入三词后观察状态、原生闪避与终极，终极人为充满仅用于视觉；输出HDR转sRGB帧需要人工查看。当前证据与限制见阶段总结。
+
+修改光效采样、符阵导入或画布像素吸附时，可运行 `tests/godot/test_effect_sampling.gd`（必须使用图形模式）。它在 720p、1080p、1440p 中输出解析光环、SVG 符阵、原生线条与拖尾，检查实际 MSAA／mipmap 以及 0.35 像素移动是否被吸附。截图用于检查轮廓连续性，断言不替代视觉判断。
+
+追加 `-- --application` 使用正式 `app/main.tscn`、设置和页面创建链路，检查三种分辨率下根视口与场景视口尺寸、实际 MSAA、像素吸附和动态创建的背景符阵过滤，并保存主界面原始帧及窗口／缓冲区尺寸。独立材质样例通过不代表正式页面所有实例均已接入；缓冲区截图也不能替代编辑器嵌入窗口缩放后的实际显示。
+
+```powershell
+pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_battle_session.gd
+```
+
+覆盖人工回执唯一性、四书付费主术、致死后仍执行的效果、残响改投、弹反／定向闪避、终式有限调度及胜败出口。纸灵另覆盖逐词增员与上限、同一实体俯冲返航、额度耗尽后盘旋、满员补给、静默消散与重新召唤；表现时序保存三只协同、返航与消散帧。原生窗口应用检查另以真实键盘事件完成一词并确认命中，保存战斗静态与施法帧。规则检查不证明完整操作手感、所有画质档、连续特效或数值难度。
+
+`tests/godot/test_battle_room.gd` 通过正式应用完成四书三波普通房间，原生事件输入累计共鸣、释放终式、弹反与闪避，并覆盖暂停→设置→继续、胜败、重试和返回。使用独立临时设置与词库，不注入资源或无敌状态；窗口模式保存各波、赚得的终式和结果。Headless 可搭配引擎 `--fixed-fps 60` 快速验证规则流程，不能用其运行速度评价真实手感或性能。
+
+`tests/godot/test_battle_presentation.gd` 在实际 Forward+ 窗口检查四书飞行／命中／终式、防御、暂停缩放与画质应用。防御时序断言真实反射弹仍在飞行、近战弹反立即反击且随后明显退出近身范围，并捕获闪避途中与落点。引擎可执行文件的 `--` 后支持 `--book=flame`、`--low`、`--medium`、`--reduce-motion`；`--audio-only` 不截图，采样默认音量下的实际总线峰值及声部上限。`--movie` 跳过截图暂停，可配合引擎 `--write-movie` 保存连续演出。时序用高生命目标观察后效，其注入的终式仅用于视觉检查，正式共鸣可达性由完整房间检查覆盖。证据生成于 `.temp/godot-m2/`。
+
+表现检查使用 `.temp/legacy-ui-review/presentation-*/` 独立设置，经过真实入场事件验证首访不能跳过、F11 不触发入场、输入不泄漏到首页、音效顺序、再次跳过取消后续 cue、减少动态直接到达可交互状态及准备页背景文字退场；图形模式保存待机、两次折射波、到达书库与准备页的实际帧。图片需与旧版及源码一同检查，不能只凭断言认定效果相同。
+
+动态连续性检查另覆盖悬浮的中间态／清晰终态／移开恢复、主题中间色、快速切书接续、房间法阵锚点不变、专属封印权重交接，以及过渡中打开页面的颜色继承。设置检查覆盖即时预听与防抖保存、仅下拉值不同的默认恢复和缩放后装饰位置。
+
+按需绘制检查要确认场景的主题、悬浮、纹理就绪等刷新源已经收束，再在真实窗口中检查 Viewport 状态；无窗口模式没有实际绘制帧，不能用其状态证明停更。固定等待时长本身不能证明静止；当前本机窗口结果见阶段总结。
+
+MCP 上游键注入缺少 `InputEventKey.unicode`；它适合鼠标、Tab、Esc 和运行时观察，不能作为字符输入证据。应用测试直接分发带 Unicode 的原生按键，不为测试改变正式输入处理。HDR 截图先按高精度像素转 sRGB 再写 PNG，避免线性颜色被误判为画面发黑；生成的预览桥也应用此转换。截图仍需查看，自动布局断言不替代视觉判断。迁移界面必须实际运行旧版对应流程，按[体验映射](migration/EXPERIENCE-MAP.md)核对，不能只检查新页面自己能否运行。
+
+词条时序与冷区改动另由单房规则集覆盖：在途主术持有词条、无关命中不刷新、主目标命中后恢复词条；尚未有效锁定的冷区入场敌人不可新选／受伤／发动攻击，入场渐入。玩家靠边时，远程敌人也必须进入有效战场，不能因提前达到射程而停住，或因自行后退使词咒反复消失。有效战场内的点击、切换、字符锁定由固定步提交，击退至边缘及取消后仍可交战。表现脚本保存普通与强化施法对比、弹反、冷区与低画质帧；按钮悬浮截图包含中心光点及文字光晕。
+
+`test_battle_presentation.gd -- --words-only` 单独检查头顶释义的两行测量与省略、空释义高度、选中层级、设置即时开关、底部提示独立、锁定后边缘可见及完整词咒避让 HUD，并保存开／关与边缘帧。使用实际 Forward+ 窗口；`test_ui_refinement.gd` 另经正式词令 `translation` 检查开关与保存回读。旧版 `WordLabelLayout`、`OverlayRenderer` 和实际锁定／击退画面是表现对照入口。
+
+## 导出包周期卡顿记录
+
+`test_vocabulary.gd`覆盖持久索引读取、未变词库不重建、导入／同步后更新、同尺寸外部编辑失效、84,620词扩展库的字符串记录，以及抽样的逐票覆盖。首字母耗尽、释放、动态词长和短语字符数直接断言；真实战斗会话检查飞行主术保留／换词、死亡输入延续／放弃、道具到期和等待敌人补词，习字场景检查少量首字母与下一批候选。100／10,000词各5000次抽取／释放只测在线成本，排除预处理，不代表整帧性能。新增抽样规则不自动继承之前固定同词夹具的平衡结论。
+
+`test_battle_presentation.gd -- --refresh-cost` 在实际窗口中使用一万词与32个保留目标（含12个死亡目标），采样60次内容未变的UI刷新，检查无效退场不重复发信号、重新测量不瞬移和最终坐标每帧移动上限。生成词条只服务测试，不改变正式选词。它不测整帧、全部输入更新或目标机长时表现。`--book-seals` 单独采四书首页法阵；`--four-books --book=storm` 额外断言并捕获第三击的独立电爆几何。
+
+Debug 包默认运行 `app/debug_log.gd`，每 5 秒输出心跳，超过 50 ms 的帧保留前八帧、页面、战斗阶段／UI／特效／流体提交耗时、视口 CPU／GPU、管线编译计数及资源用量。存档／设置保存单独记录结果与耗时，词库读取超过 10 ms 时单独记录。日志不记录输入内容。Release 默认关闭，可用 `-- --debug-log` 开启；`-- --no-debug-log` 可关闭新增诊断作对照。
+
+普通启动写 `user://diagnostics/session-日期-PID.jsonl`。测试包的“启动并记录.cmd”把会话日志和引擎日志写入同目录 `logs/`，用户可直接回传整个文件夹；引擎日志包含脚本错误／警告。会话日志由单独后台线程序列化、写入并刷新，不在主线程逐秒写磁盘。仅保留八帧上下文，事件队列上限 128，长帧报告限每秒四条；长期低帧率仍在心跳中计数，队列丢弃会明确记录。进程异常退出最多损失尚未写出的末批事件。
+
+记录覆盖入场、菜单与战场，心跳保留帧率上限、垂直同步、载入状态，并每五秒异步提交一个渲染线程探针，记录排队／调度延迟；探针不等待 GPU。阶段耗时是嵌套的包含耗时，不能直接求和；`fluid.prepare_submit` 只测主线程准备与提交，不代表 GPU 求解时间。视口与引擎监视器可能滞后一帧，墙钟间隔包含调度、渲染等待和帧率限制；需结合前后帧及同条件对照定位，不能仅凭一项监视器认定根因。原生场景载入之前的引擎阶段只有启动脚本的 `--verbose --log-file` 记录。两份启动脚本保持相同引擎参数，对照仅关闭新增会话记录。
+
+需要完整逐帧报告时，独立 EXE 使用 `keyabyss.exe -- --frame-profile`，默认持续记录直到正常退出游戏。通过游戏退出或 Alt+F4 关闭时一次写出报告；强制终止进程无法保存内存中的记录。自动化可显式加 `--frame-profile-seconds=60`（5–120 秒，0 表示直到退出）。普通启动不加载这个完整帧分析器，默认 Debug 会话日志仍独立运行。保持复现问题时的原有设置，记录期间先在首页停留，再打开设置或进入战斗。JSON 位于 `%APPDATA%\Keyabyss\performance\`，日志写出时刻不纳入帧统计。
+
+记录含逐帧墙钟间隔、所在页面、物理耗时、主视口和离屏视口 CPU／GPU 耗时，以及开始／结束时的资源计数。汇总排除最初两秒，原始帧保留。`process_ms` 是引擎整帧时间，不能当成纯脚本 CPU 时间；渲染计数可能滞后一帧，GPU 计数不包含显示呈现等待。采样自身有开销，比较时保持相同记录条件，不能只凭总帧率归因。
+
+本机可用 `pwsh -File tools/godot/godot.ps1 run --script tests/godot/profile_frames.gd -- --frame-profile --profile-driver --profile-label=sample` 运行首页→设置→战斗的固定窗口流程，输出 `.temp/frame-review/sample/frames.json`，并断言隐藏首页停绘和返回恢复。使用独立设置与词库，不改变玩家配置；这只能验证本机，不能替代发生卡顿的目标机采样。
+
+## 旧实现的证据用途
+
+旧版工具现在从 `legacy/web` 执行，例如 `node --test tests/resource-ledger.test.cjs`。详细覆盖见[旧验证说明](archive/pre-godot/TESTING.md)。旧测试的失败边界可用于设计原生案例，但不要求相同时间步、轨迹或随机序列。
+
+浏览器自动化只用于明确需要回看旧版时，使用 Python Playwright；Godot 窗口使用 CLI／MCP。统一收益与难度评估必须覆盖正式 Godot 保留内容、获取与连续挑战，旧结果不能替代。
+
+## 证据记录
+
+记录版本与内容状态、命令、范围、通过／失败／未覆盖及日志位置。原始输出放 `.temp/`，必要结论保留在文档。临时产物按规则移入 `.delete/`，不永久删除。
+
+字体和图像实际显示不代表完整 UI 合格，短时窗口启动不代表长时性能，MCP 接口成功不代表全部工具已验证。工程正确性、视觉、交互、平衡、难度分别报告。

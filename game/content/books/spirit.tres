@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="BookPresentation" format=3 uid="uid://dni3h5d7fy86l"]
+
+[ext_resource type="Script" uid="uid://cgwgnrywx2sxt" path="res://game/content/book_presentation.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bo3txfj3to4f0" path="res://assets/art/books/spirit.png" id="2"]
+[ext_resource type="Script" uid="uid://soctqr38u1ie" path="res://ui/effects/fluid_effect_profile.gd" id="2_bgmyy"]
+[ext_resource type="Texture2D" uid="uid://dbm1rdg6etnjp" path="res://assets/art/runes/spirit-seal.svg" id="3"]
+[ext_resource type="Script" uid="uid://cjxk3x7y15tea" path="res://ui/effects/fluid_medium.gd" id="4"]
+[ext_resource type="Resource" uid="uid://bjqi3vjy2uny8" path="res://ui/effects/presets/melee.tres" id="5"]
+
+[sub_resource type="Resource" id="FluidMaterial"]
+script = ExtResource("4")
+color = Color(0.72, 0.59, 0.88, 1)
+density_scale = 0.65
+temperature = 0.08
+
+[resource]
+script = ExtResource("1")
+id = &"spirit"
+title = "纸灵之书"
+color = Color(0.761, 0.627, 1, 1)
+artwork = ExtResource("2")
+seal = ExtResource("3")
+eyebrow = "SPIRIT GRIMOIRE"
+headline = "标记。俯冲。合击。"
+subtitle = "持续落笔唤醒纸灵，标记目标合力追击。"
+description = "标记集火 · 飞刃军团"
+ultimate = "千纸夜行"
+fluid_material = SubResource("FluidMaterial")
+fluid_effects = Dictionary[StringName, ExtResource("2_bgmyy")]({
+&"impact": ExtResource("5")
+})

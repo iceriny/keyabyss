@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BattleEncounter" load_steps=5 format=3]
+[ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="2"]
+[ext_resource type="Resource" path="res://game/content/enemies/ink_colossus.tres" id="3"]
+[ext_resource type="Resource" path="res://game/content/enemies/ram.tres" id="4"]
+[resource]
+script = ExtResource("1")
+room_id = &"lost-library-3"
+display_name = "吞墨巨像"
+wave_count = 1
+room_number = 3
+reinforcement = ExtResource("4")
+enemies = Array[ExtResource("2")]([ExtResource("3")])

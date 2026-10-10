@@ -1,0 +1,17 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=2 format=3]
+
+[ext_resource type="GradientTexture1D" path="res://ui/effects/archive_dust_life.tres" id="1_life"]
+
+[resource]
+resource_local_to_scene = true
+emission_shape = 3
+emission_box_extents = Vector3(640, 400, 0)
+direction = Vector3(0, -1, 0)
+spread = 42.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 1.5
+initial_velocity_max = 5.0
+scale_min = 0.14
+scale_max = 0.4
+color = Color(1, 0.82, 0.54, 0.38)
+color_ramp = ExtResource("1_life")

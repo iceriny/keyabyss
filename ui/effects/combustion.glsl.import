@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://40w41udlvyvm"
+path="res://.godot/imported/combustion.glsl-21ec83b1a1475d2eaedcfa1522651cf3.res"
+
+[deps]
+
+source_file="res://ui/effects/combustion.glsl"
+dest_files=["res://.godot/imported/combustion.glsl-21ec83b1a1475d2eaedcfa1522651cf3.res"]
+
+[params]
+

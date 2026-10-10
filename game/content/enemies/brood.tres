@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"brood"
+behavior = &"brood"
+health = 142
+speed = 27
+radius = 27.72
+mass = 2.5
+experience = 15
+attack_damage = 12
+attack_interval = 5
+spawn_limit = 2

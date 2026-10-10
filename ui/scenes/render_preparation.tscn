@@ -1,0 +1,160 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/render_preparation.gd" id="script"]
+[ext_resource type="PackedScene" path="res://ui/scenes/open_button_light.tscn" id="extra0"]
+[ext_resource type="PackedScene" path="res://ui/scenes/fluid_surface.tscn" id="extra1"]
+[ext_resource type="PackedScene" path="res://ui/scenes/relic_reward_choice.tscn" id="extra2"]
+[ext_resource type="PackedScene" path="res://ui/scenes/frost_impact_light.tscn" id="extra3"]
+[ext_resource type="PackedScene" path="res://ui/scenes/ultimate_ice_light.tscn" id="extra4"]
+[ext_resource type="PackedScene" path="res://ui/scenes/ultimate_indicator.tscn" id="s0"]
+[ext_resource type="PackedScene" path="res://ui/scenes/ultimate_field.tscn" id="s1"]
+[ext_resource type="PackedScene" path="res://ui/scenes/stat_readout.tscn" id="s2"]
+[ext_resource type="PackedScene" path="res://ui/scenes/spell_motes.tscn" id="s3"]
+[ext_resource type="PackedScene" path="res://ui/scenes/spell_field_visual.tscn" id="s4"]
+[ext_resource type="PackedScene" path="res://ui/scenes/practice_page.tscn" id="s5"]
+[ext_resource type="PackedScene" path="res://ui/scenes/popup_crystal.tscn" id="s6"]
+[ext_resource type="PackedScene" path="res://ui/scenes/pause_content.tscn" id="s7"]
+[ext_resource type="PackedScene" path="res://ui/scenes/page_shell.tscn" id="s8"]
+[ext_resource type="PackedScene" path="res://ui/scenes/outcome_atmosphere.tscn" id="s9"]
+[ext_resource type="PackedScene" path="res://ui/scenes/melee_attack_visual.tscn" id="s10"]
+[ext_resource type="PackedScene" path="res://ui/scenes/loading_feedback.tscn" id="s11"]
+[ext_resource type="PackedScene" path="res://ui/scenes/key_hint.tscn" id="s12"]
+[ext_resource type="PackedScene" path="res://ui/scenes/fluid_field_2d.tscn" id="s13"]
+[ext_resource type="PackedScene" path="res://ui/scenes/departure_ritual.tscn" id="s14"]
+[ext_resource type="PackedScene" path="res://ui/scenes/crystal_inlay.tscn" id="s15"]
+[ext_resource type="PackedScene" path="res://ui/scenes/contact_light.tscn" id="s16"]
+[ext_resource type="PackedScene" path="res://ui/scenes/burst_splinters.tscn" id="s17"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_world.tscn" id="s18"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_word.tscn" id="s19"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_stage.tscn" id="s20"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_spirit_visual.tscn" id="s21"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_result.tscn" id="s22"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_projectile_visual.tscn" id="s23"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_page.tscn" id="s24"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_compass.tscn" id="s25"]
+[ext_resource type="PackedScene" path="res://ui/scenes/battle_actor_visual.tscn" id="s26"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_stage.tscn" id="s27"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_home.tscn" id="s28"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_gate.tscn" id="s29"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_effects.tscn" id="s30"]
+[ext_resource type="PackedScene" path="res://ui/scenes/archive_book_visual.tscn" id="s31"]
+[ext_resource type="PackedScene" path="res://ui/effects/archive_dust.tscn" id="s32"]
+[ext_resource type="Material" path="res://ui/effects/archive_dust_process.tres" id="m0"]
+[ext_resource type="Material" path="res://ui/effects/burst_splinter_process.tres" id="m1"]
+[ext_resource type="Material" path="res://ui/effects/spell_motes_process.tres" id="m2"]
+[ext_resource type="Material" path="res://ui/materials/energy_burst.tres" id="m3"]
+[ext_resource type="Material" path="res://ui/materials/flame_burst.tres" id="m4"]
+[ext_resource type="Material" path="res://ui/materials/crystal_reading.tres" id="m5"]
+[ext_resource type="Material" path="res://ui/materials/frost_impact.tres" id="m6"]
+[ext_resource type="Material" path="res://ui/materials/battle_fragment.tres" id="m7"]
+[ext_resource type="Material" path="res://ui/materials/gold_filament.tres" id="m8"]
+[ext_resource type="Material" path="res://ui/materials/burst_splinter.tres" id="m9"]
+[ext_resource type="Material" path="res://ui/materials/field_mote.tres" id="m10"]
+[ext_resource type="Material" path="res://ui/materials/cast_progress.tres" id="m11"]
+[ext_resource type="Material" path="res://ui/materials/combustion.tres" id="m12"]
+[ext_resource type="Material" path="res://ui/effects/fluid_particle_flow.tres" id="m13"]
+[ext_resource type="Material" path="res://ui/effects/field_motes_process.tres" id="m14"]
+[ext_resource type="Material" path="res://ui/effects/fluid_fog.tres" id="m15"]
+[ext_resource type="Material" path="res://ui/materials/item_burst.tres" id="m16"]
+[ext_resource type="Material" path="res://ui/materials/ice_surface.tres" id="m17"]
+[ext_resource type="Material" path="res://ui/materials/gold_inlay.tres" id="m18"]
+[ext_resource type="Material" path="res://ui/materials/lightning_arc.tres" id="m19"]
+[ext_resource type="Material" path="res://ui/materials/open_button_light.tres" id="m20"]
+[ext_resource type="Material" path="res://ui/materials/relic_choice.tres" id="m21"]
+[ext_resource type="Material" path="res://ui/materials/spell_field.tres" id="m22"]
+[ext_resource type="Material" path="res://ui/materials/spell_link.tres" id="m23"]
+[ext_resource type="Material" path="res://ui/materials/corrosion.tres" id="m24"]
+[ext_resource type="Material" path="res://ui/materials/book_seal.tres" id="m25"]
+[ext_resource type="RDShaderFile" path="res://ui/effects/fluid_solver.glsl" id="c0"]
+[ext_resource type="RDShaderFile" path="res://ui/effects/combustion.glsl" id="c1"]
+[ext_resource type="RDShaderFile" path="res://ui/effects/frost_growth.glsl" id="c2"]
+[ext_resource type="RDShaderFile" path="res://ui/effects/frost_surface.glsl" id="c3"]
+[ext_resource type="Texture2D" path="res://ui/effects/field_light.tres" id="light"]
+[ext_resource type="ParticleProcessMaterial" path="res://ui/effects/burst_splinter_process.tres" id="process"]
+
+[sub_resource type="Gradient" id="White"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="Texture"]
+width = 8
+height = 8
+gradient = SubResource("White")
+
+[sub_resource type="QuadMesh" id="Mesh"]
+size = Vector2(96, 96)
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 4
+glow_enabled = true
+
+[node name="RenderPreparation" type="Node"]
+script = ExtResource("script")
+scenes = Array[PackedScene]([ExtResource("s0"), ExtResource("s1"), ExtResource("s2"), ExtResource("s3"), ExtResource("s4"), ExtResource("s5"), ExtResource("s6"), ExtResource("s7"), ExtResource("s8"), ExtResource("s9"), ExtResource("s10"), ExtResource("s11"), ExtResource("s12"), ExtResource("s13"), ExtResource("s14"), ExtResource("s15"), ExtResource("s16"), ExtResource("s17"), ExtResource("s18"), ExtResource("s19"), ExtResource("s20"), ExtResource("s21"), ExtResource("s22"), ExtResource("s23"), ExtResource("s24"), ExtResource("s25"), ExtResource("s26"), ExtResource("s27"), ExtResource("s28"), ExtResource("s29"), ExtResource("s30"), ExtResource("s31"), ExtResource("s32"), ExtResource("extra0"), ExtResource("extra1"), ExtResource("extra2"), ExtResource("extra3"), ExtResource("extra4")])
+materials = Array[Material]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3"), ExtResource("m4"), ExtResource("m5"), ExtResource("m6"), ExtResource("m7"), ExtResource("m8"), ExtResource("m9"), ExtResource("m10"), ExtResource("m11"), ExtResource("m12"), ExtResource("m13"), ExtResource("m14"), ExtResource("m15"), ExtResource("m16"), ExtResource("m17"), ExtResource("m18"), ExtResource("m19"), ExtResource("m20"), ExtResource("m21"), ExtResource("m22"), ExtResource("m23"), ExtResource("m24"), ExtResource("m25")])
+computes = Array[RDShaderFile]([ExtResource("c0"), ExtResource("c1"), ExtResource("c2"), ExtResource("c3")])
+
+[node name="World" type="SubViewport" parent="."]
+size = Vector2i(512, 512)
+own_world_3d = true
+use_hdr_2d = true
+msaa_2d = 2
+gui_disable_input = true
+gui_snap_controls_to_pixels = false
+render_target_update_mode = 0
+
+[node name="Environment" type="WorldEnvironment" parent="World"]
+environment = SubResource("Environment")
+
+[node name="Background" type="ColorRect" parent="World"]
+offset_right = 512.0
+offset_bottom = 512.0
+color = Color(0.03, 0.05, 0.06, 1)
+mouse_filter = 2
+
+[node name="Capture" type="BackBufferCopy" parent="World"]
+copy_mode = 2
+
+[node name="Quad" type="TextureRect" parent="World"]
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 160.0
+offset_bottom = 160.0
+texture = SubResource("Texture")
+expand_mode = 1
+mouse_filter = 2
+
+[node name="Polygon" type="Polygon2D" parent="World"]
+polygon = PackedVector2Array(240, 32, 368, 32, 368, 160, 240, 160)
+uv = PackedVector2Array(0, 0, 8, 0, 8, 8, 0, 8)
+texture = SubResource("Texture")
+
+[node name="Mesh" type="MeshInstance2D" parent="World"]
+position = Vector2(96, 260)
+mesh = SubResource("Mesh")
+texture = SubResource("Texture")
+
+[node name="Line" type="Line2D" parent="World"]
+points = PackedVector2Array(220, 220, 260, 270, 380, 220)
+width = 18.0
+antialiased = true
+texture = SubResource("Texture")
+texture_mode = 1
+
+[node name="Particles" type="GPUParticles2D" parent="World"]
+position = Vector2(256, 400)
+amount = 4
+lifetime = 1.0
+preprocess = 0.1
+visibility_rect = Rect2(-128, -128, 256, 256)
+process_material = ExtResource("process")
+texture = SubResource("Texture")
+
+[node name="ProcessTemplate" type="GPUParticles2D" parent="World"]
+visible = false
+emitting = false
+process_material = ExtResource("process")
+
+[node name="Light" type="PointLight2D" parent="World"]
+position = Vector2(256, 256)
+texture = ExtResource("light")
+texture_scale = 5.0

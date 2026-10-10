@@ -1,0 +1,828 @@
+{
+  "count": 79,
+  "purpose": "确认旧79个独有短语退出活动GSUB，不发生部分捞词；凝水另按新词冰测试。",
+  "cases": [
+    {
+      "old_index": 1,
+      "input_han": "冷水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        202,
+        112
+      ]
+    },
+    {
+      "old_index": 2,
+      "input_han": "热水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        203,
+        112
+      ]
+    },
+    {
+      "old_index": 3,
+      "input_han": "清水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        191,
+        112
+      ]
+    },
+    {
+      "old_index": 4,
+      "input_han": "浊水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        192,
+        112
+      ]
+    },
+    {
+      "old_index": 5,
+      "input_han": "深水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        206,
+        112
+      ]
+    },
+    {
+      "old_index": 6,
+      "input_han": "浅水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        207,
+        112
+      ]
+    },
+    {
+      "old_index": 7,
+      "input_han": "静水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        244,
+        112
+      ]
+    },
+    {
+      "old_index": 8,
+      "input_han": "纯水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        193,
+        112
+      ]
+    },
+    {
+      "old_index": 9,
+      "input_han": "强风",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        200,
+        121
+      ]
+    },
+    {
+      "old_index": 10,
+      "input_han": "弱风",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        201,
+        121
+      ]
+    },
+    {
+      "old_index": 11,
+      "input_han": "冷风",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        202,
+        121
+      ]
+    },
+    {
+      "old_index": 12,
+      "input_han": "热风",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        203,
+        121
+      ]
+    },
+    {
+      "old_index": 13,
+      "input_han": "强光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        200,
+        98
+      ]
+    },
+    {
+      "old_index": 14,
+      "input_han": "弱光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        201,
+        98
+      ]
+    },
+    {
+      "old_index": 15,
+      "input_han": "白光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        219,
+        98
+      ]
+    },
+    {
+      "old_index": 16,
+      "input_han": "红光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        221,
+        98
+      ]
+    },
+    {
+      "old_index": 17,
+      "input_han": "长时",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        226,
+        20
+      ]
+    },
+    {
+      "old_index": 18,
+      "input_han": "短时",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        220,
+        20
+      ]
+    },
+    {
+      "old_index": 19,
+      "input_han": "公物",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        344,
+        18
+      ]
+    },
+    {
+      "old_index": 20,
+      "input_han": "私物",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        345,
+        18
+      ]
+    },
+    {
+      "old_index": 21,
+      "input_han": "生火",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        3,
+        114
+      ]
+    },
+    {
+      "old_index": 22,
+      "input_han": "灭火",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        4,
+        114
+      ]
+    },
+    {
+      "old_index": 23,
+      "input_han": "聚水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        247,
+        112
+      ]
+    },
+    {
+      "old_index": 24,
+      "input_han": "散水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        248,
+        112
+      ]
+    },
+    {
+      "old_index": 25,
+      "input_han": "取水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        275,
+        112
+      ]
+    },
+    {
+      "old_index": 26,
+      "input_han": "蓄水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        259,
+        112
+      ]
+    },
+    {
+      "old_index": 27,
+      "input_han": "聚光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        247,
+        98
+      ]
+    },
+    {
+      "old_index": 28,
+      "input_han": "散光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        248,
+        98
+      ]
+    },
+    {
+      "old_index": 29,
+      "input_han": "发音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        274,
+        102
+      ]
+    },
+    {
+      "old_index": 30,
+      "input_han": "止音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        246,
+        102
+      ]
+    },
+    {
+      "old_index": 31,
+      "input_han": "开门",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        254,
+        357
+      ]
+    },
+    {
+      "old_index": 32,
+      "input_han": "闭门",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        255,
+        357
+      ]
+    },
+    {
+      "old_index": 33,
+      "input_han": "刻石",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        332,
+        116
+      ]
+    },
+    {
+      "old_index": 34,
+      "input_han": "读文",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        334,
+        321
+      ]
+    },
+    {
+      "old_index": 35,
+      "input_han": "写文",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        331,
+        321
+      ]
+    },
+    {
+      "old_index": 36,
+      "input_han": "传讯",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        324,
+        322
+      ]
+    },
+    {
+      "old_index": 37,
+      "input_han": "育人",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        258,
+        122
+      ]
+    },
+    {
+      "old_index": 38,
+      "input_han": "护身",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        280,
+        135
+      ]
+    },
+    {
+      "old_index": 39,
+      "input_han": "破界",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        264,
+        45
+      ]
+    },
+    {
+      "old_index": 40,
+      "input_han": "守界",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        166,
+        45
+      ]
+    },
+    {
+      "old_index": 42,
+      "input_han": "净水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        267,
+        112
+      ]
+    },
+    {
+      "old_index": 43,
+      "input_han": "聚气",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        247,
+        111
+      ]
+    },
+    {
+      "old_index": 44,
+      "input_han": "散气",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        248,
+        111
+      ]
+    },
+    {
+      "old_index": 45,
+      "input_han": "传电",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        324,
+        115
+      ]
+    },
+    {
+      "old_index": 46,
+      "input_han": "止电",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        246,
+        115
+      ]
+    },
+    {
+      "old_index": 47,
+      "input_han": "强音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        200,
+        102
+      ]
+    },
+    {
+      "old_index": 48,
+      "input_han": "弱音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        201,
+        102
+      ]
+    },
+    {
+      "old_index": 49,
+      "input_han": "长音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        226,
+        102
+      ]
+    },
+    {
+      "old_index": 50,
+      "input_han": "短音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        220,
+        102
+      ]
+    },
+    {
+      "old_index": 51,
+      "input_han": "召灵",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        276,
+        127
+      ]
+    },
+    {
+      "old_index": 52,
+      "input_han": "驱灵",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        284,
+        127
+      ]
+    },
+    {
+      "old_index": 53,
+      "input_han": "封门",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        279,
+        357
+      ]
+    },
+    {
+      "old_index": 54,
+      "input_han": "破阵",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        264,
+        358
+      ]
+    },
+    {
+      "old_index": 55,
+      "input_han": "静心",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        244,
+        158
+      ]
+    },
+    {
+      "old_index": 56,
+      "input_han": "守门",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        166,
+        357
+      ]
+    },
+    {
+      "old_index": 57,
+      "input_han": "聚冷水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        247,
+        202,
+        112
+      ]
+    },
+    {
+      "old_index": 58,
+      "input_han": "蓄清水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        259,
+        191,
+        112
+      ]
+    },
+    {
+      "old_index": 59,
+      "input_han": "凝冷水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        190,
+        202,
+        112
+      ]
+    },
+    {
+      "old_index": 60,
+      "input_han": "生强光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        3,
+        200,
+        98
+      ]
+    },
+    {
+      "old_index": 61,
+      "input_han": "生弱光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        3,
+        201,
+        98
+      ]
+    },
+    {
+      "old_index": 62,
+      "input_han": "发长音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        274,
+        226,
+        102
+      ]
+    },
+    {
+      "old_index": 63,
+      "input_han": "发短音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        274,
+        220,
+        102
+      ]
+    },
+    {
+      "old_index": 64,
+      "input_han": "净浊水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        267,
+        192,
+        112
+      ]
+    },
+    {
+      "old_index": 65,
+      "input_han": "水变冷",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        112,
+        28,
+        202
+      ]
+    },
+    {
+      "old_index": 66,
+      "input_han": "水变热",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        112,
+        28,
+        203
+      ]
+    },
+    {
+      "old_index": 67,
+      "input_han": "风变强",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        121,
+        28,
+        200
+      ]
+    },
+    {
+      "old_index": 68,
+      "input_han": "风变弱",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        121,
+        28,
+        201
+      ]
+    },
+    {
+      "old_index": 69,
+      "input_han": "使心静",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        348,
+        158,
+        244
+      ]
+    },
+    {
+      "old_index": 70,
+      "input_han": "使身轻",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        348,
+        135,
+        198
+      ]
+    },
+    {
+      "old_index": 71,
+      "input_han": "果凝水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        286,
+        190,
+        112
+      ]
+    },
+    {
+      "old_index": 72,
+      "input_han": "人守门",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        122,
+        166,
+        357
+      ]
+    },
+    {
+      "old_index": 73,
+      "input_han": "聚清冷水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        247,
+        191,
+        202,
+        112
+      ]
+    },
+    {
+      "old_index": 74,
+      "input_han": "蓄纯冷水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        259,
+        193,
+        202,
+        112
+      ]
+    },
+    {
+      "old_index": 75,
+      "input_han": "生强白光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        3,
+        200,
+        219,
+        98
+      ]
+    },
+    {
+      "old_index": 76,
+      "input_han": "生弱红光",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        3,
+        201,
+        221,
+        98
+      ]
+    },
+    {
+      "old_index": 77,
+      "input_han": "发长弱音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        274,
+        226,
+        201,
+        102
+      ]
+    },
+    {
+      "old_index": 78,
+      "input_han": "发短强音",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        274,
+        220,
+        200,
+        102
+      ]
+    },
+    {
+      "old_index": 79,
+      "input_han": "果水化气",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        286,
+        112,
+        256,
+        111
+      ]
+    },
+    {
+      "old_index": 80,
+      "input_han": "人取冷水",
+      "input_pua": "",
+      "expected_ligature_indices": [],
+      "expected_root_indices": [
+        122,
+        275,
+        202,
+        112
+      ]
+    }
+  ]
+}

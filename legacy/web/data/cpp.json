@@ -1,0 +1,384 @@
+{
+  "id": "cpp",
+  "title": "C++ 关键字 · 标准草案",
+  "sourceLabel": "C++ 工作草案 [lex.key] 表 5 与表 6",
+  "source": "https://eel.is/c++draft/lex.key",
+  "scope": "2026-09-19 检索快照；表 5 关键字和表 6 替代运算符。不是某个已发布 C++ 版本的名单。",
+  "snapshot": "complete",
+  "description": "保留下划线、数字。纯关键字词形，不把 import/module 等上下文相关标记混入表 5。",
+  "retrievedAt": "2026-09-19",
+  "words": [
+    {
+      "word": "alignas",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "constinit",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "extern",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "protected",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "throw",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "alignof",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "const_cast",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "false",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "public",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "true",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "asm",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "continue",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "float",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "register",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "try",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "auto",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "contract_assert",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "for",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "reinterpret_cast",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "typedef",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "bool",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "co_await",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "friend",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "requires",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "typeid",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "break",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "co_return",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "goto",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "return",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "typename",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "case",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "co_yield",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "if",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "short",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "union",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "catch",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "decltype",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "inline",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "signed",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "unsigned",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "char",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "default",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "int",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "sizeof",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "using",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "char8_t",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "delete",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "long",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "static",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "virtual",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "char16_t",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "do",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "mutable",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "static_assert",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "void",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "char32_t",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "double",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "namespace",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "static_cast",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "volatile",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "class",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "dynamic_cast",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "new",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "struct",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "wchar_t",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "concept",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "else",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "noexcept",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "switch",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "while",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "const",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "enum",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "nullptr",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "template",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "consteval",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "explicit",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "operator",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "this",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "constexpr",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "export",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "private",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "thread_local",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "and",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "and_eq",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "bitand",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "bitor",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "compl",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "not",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "not_eq",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "or",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "or_eq",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "xor",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    },
+    {
+      "word": "xor_eq",
+      "meaning": "C++ 工作草案关键字 / 替代运算符"
+    }
+  ]
+}

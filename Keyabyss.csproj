@@ -1,0 +1,15 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <!-- This assembly contains only the numeric kernel; exercise optimized math
+         in editor, tests and exports alike while retaining debug symbols. -->
+    <Optimize>true</Optimize>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <NuGetLockFilePath>packages.$(Configuration).lock.json</NuGetLockFilePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="game/algorithms/*.cs" />
+  </ItemGroup>
+</Project>

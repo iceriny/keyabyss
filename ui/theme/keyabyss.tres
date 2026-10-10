@@ -1,0 +1,244 @@
+[gd_resource type="Theme" format=3 uid="uid://b7yda6e4tr0hn"]
+
+[ext_resource type="FontFile" uid="uid://ialbqqxqqmm5" path="res://assets/fonts/huiwen-ming.ttf" id="1_font"]
+[ext_resource type="FontFile" uid="uid://b2tua330w4cgd" path="res://assets/fonts/jinghua-song.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://bm6ocf0ur75u3" path="res://ui/controls/toggle-off.svg" id="3_off"]
+[ext_resource type="Texture2D" uid="uid://c73sk2yp1hap8" path="res://ui/controls/toggle-on.svg" id="4_on"]
+[ext_resource type="Texture2D" uid="uid://ct7c8exr8rdnn" path="res://ui/controls/chevron-down.svg" id="5_down"]
+[ext_resource type="Texture2D" uid="uid://difi55hwqxx2g" path="res://ui/controls/chevron-up.svg" id="6_up"]
+[ext_resource type="Texture2D" uid="uid://c357e831eb57g" path="res://ui/controls/slider-grabber.svg" id="7_grabber"]
+[ext_resource type="Texture2D" uid="uid://cdpwovrejge26" path="res://ui/controls/scroll-clear.svg" id="8_clear"]
+[ext_resource type="Texture2D" uid="uid://dcn6xqlplk3qq" path="res://ui/controls/option-hover.svg" id="9_option_hover"]
+[ext_resource type="Texture2D" uid="uid://ufbpy7x7j68u" path="res://ui/controls/selection-mark.svg" id="10_selection"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_disabled"]
+content_margin_left = 12.0
+content_margin_top = 7.0
+content_margin_right = 12.0
+content_margin_bottom = 7.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_hover"]
+content_margin_left = 12.0
+content_margin_top = 7.0
+content_margin_right = 12.0
+content_margin_bottom = 7.0
+bg_color = Color(0.57, 0.43, 0.22, 0.004)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_pressed"]
+content_margin_left = 12.0
+content_margin_top = 7.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button"]
+content_margin_left = 12.0
+content_margin_top = 7.0
+content_margin_right = 12.0
+content_margin_bottom = 7.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_scroll_grabber"]
+content_margin_left = 3.0
+content_margin_right = 3.0
+bg_color = Color(0.72, 0.63, 0.46, 0.4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_scroll_hover"]
+content_margin_left = 3.0
+content_margin_right = 3.0
+bg_color = Color(0.92, 0.8, 0.56, 0.75)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_scroll"]
+content_margin_left = 4.0
+content_margin_right = 4.0
+bg_color = Color(0.4, 0.37, 0.27, 0.035)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBox_rule"]
+content_margin_top = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_slider_fill"]
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0.74, 0.59, 0.35, 0.88)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_slider_fill_hover"]
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0.96, 0.82, 0.55, 0.97)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_slider"]
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0.48, 0.47, 0.42, 0.26)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_focus"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_input"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_popup_hover"]
+content_margin_left = 6.0
+content_margin_top = 5.0
+content_margin_right = 6.0
+content_margin_bottom = 5.0
+texture = ExtResource("9_option_hover")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBox_popup"]
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_open"]
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 18
+Archive/colors/accent = Color(0.545, 0.871, 1, 1)
+Button/colors/font_color = Color(0.79, 0.81, 0.81, 1)
+Button/colors/font_disabled_color = Color(0.57, 0.59, 0.59, 0.35)
+Button/colors/font_focus_color = Color(1, 0.94, 0.79, 1)
+Button/colors/font_hover_color = Color(0.96, 0.89, 0.73, 1)
+Button/colors/font_hover_pressed_color = Color(1, 0.95, 0.82, 1)
+Button/colors/font_pressed_color = Color(1, 0.95, 0.82, 1)
+Button/styles/disabled = SubResource("StyleBox_button_disabled")
+Button/styles/focus = SubResource("StyleBox_button_hover")
+Button/styles/hover = SubResource("StyleBox_button_hover")
+Button/styles/hover_pressed = SubResource("StyleBox_button_pressed")
+Button/styles/normal = SubResource("StyleBox_button")
+Button/styles/pressed = SubResource("StyleBox_button_pressed")
+CheckButton/colors/button_checked_color = Color(1, 1, 1, 1)
+CheckButton/colors/button_unchecked_color = Color(1, 1, 1, 1)
+CheckButton/colors/font_color = Color(0.79, 0.81, 0.81, 1)
+CheckButton/colors/font_disabled_color = Color(0.57, 0.59, 0.59, 0.35)
+CheckButton/colors/font_focus_color = Color(1, 0.94, 0.79, 1)
+CheckButton/colors/font_hover_color = Color(0.96, 0.89, 0.73, 1)
+CheckButton/font_sizes/font_size = 16
+CheckButton/fonts/font = ExtResource("2_font")
+CheckButton/icons/checked = ExtResource("4_on")
+CheckButton/icons/checked_disabled = ExtResource("4_on")
+CheckButton/icons/checked_disabled_mirrored = ExtResource("4_on")
+CheckButton/icons/checked_mirrored = ExtResource("4_on")
+CheckButton/icons/unchecked = ExtResource("3_off")
+CheckButton/icons/unchecked_disabled = ExtResource("3_off")
+CheckButton/icons/unchecked_disabled_mirrored = ExtResource("3_off")
+CheckButton/icons/unchecked_mirrored = ExtResource("3_off")
+CheckButton/styles/disabled = SubResource("StyleBox_button_disabled")
+CheckButton/styles/focus = SubResource("StyleBox_button_hover")
+CheckButton/styles/hover = SubResource("StyleBox_button_hover")
+CheckButton/styles/hover_pressed = SubResource("StyleBox_button_pressed")
+CheckButton/styles/normal = SubResource("StyleBox_button")
+CheckButton/styles/pressed = SubResource("StyleBox_button_pressed")
+HScrollBar/icons/decrement = ExtResource("8_clear")
+HScrollBar/icons/decrement_highlight = ExtResource("8_clear")
+HScrollBar/icons/decrement_pressed = ExtResource("8_clear")
+HScrollBar/icons/increment = ExtResource("8_clear")
+HScrollBar/icons/increment_highlight = ExtResource("8_clear")
+HScrollBar/icons/increment_pressed = ExtResource("8_clear")
+HScrollBar/styles/grabber = SubResource("StyleBox_scroll_grabber")
+HScrollBar/styles/grabber_highlight = SubResource("StyleBox_scroll_hover")
+HScrollBar/styles/grabber_pressed = SubResource("StyleBox_scroll_hover")
+HScrollBar/styles/scroll = SubResource("StyleBox_scroll")
+HScrollBar/styles/scroll_focus = SubResource("StyleBox_scroll")
+HSeparator/styles/separator = SubResource("StyleBox_rule")
+HSlider/icons/grabber = ExtResource("7_grabber")
+HSlider/icons/grabber_disabled = ExtResource("7_grabber")
+HSlider/icons/grabber_highlight = ExtResource("7_grabber")
+HSlider/styles/grabber_area = SubResource("StyleBox_slider_fill")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBox_slider_fill_hover")
+HSlider/styles/slider = SubResource("StyleBox_slider")
+Label/colors/font_color = Color(0.91, 0.89, 0.85, 1)
+LineEdit/colors/caret_color = Color(0.98, 0.87, 0.64, 1)
+LineEdit/colors/font_color = Color(0.91, 0.91, 0.87, 1)
+LineEdit/colors/font_placeholder_color = Color(0.54, 0.59, 0.58, 0.78)
+LineEdit/colors/selection_color = Color(0.67, 0.51, 0.27, 0.42)
+LineEdit/font_sizes/font_size = 16
+LineEdit/fonts/font = ExtResource("2_font")
+LineEdit/styles/focus = SubResource("StyleBox_focus")
+LineEdit/styles/normal = SubResource("StyleBox_input")
+LineEdit/styles/read_only = SubResource("StyleBox_button_disabled")
+OptionButton/colors/font_color = Color(0.87, 0.87, 0.82, 1)
+OptionButton/colors/font_disabled_color = Color(0.55, 0.57, 0.57, 0.35)
+OptionButton/colors/font_focus_color = Color(1, 0.94, 0.78, 1)
+OptionButton/colors/font_hover_color = Color(0.98, 0.89, 0.69, 1)
+OptionButton/constants/arrow_margin = 10
+OptionButton/constants/modulate_arrow = 0
+OptionButton/font_sizes/font_size = 16
+OptionButton/fonts/font = ExtResource("2_font")
+OptionButton/icons/arrow = ExtResource("5_down")
+OptionButton/styles/disabled = SubResource("StyleBox_button_disabled")
+OptionButton/styles/focus = SubResource("StyleBox_focus")
+OptionButton/styles/hover = SubResource("StyleBox_focus")
+OptionButton/styles/hover_pressed = SubResource("StyleBox_focus")
+OptionButton/styles/normal = SubResource("StyleBox_input")
+OptionButton/styles/pressed = SubResource("StyleBox_focus")
+PopupMenu/colors/font_color = Color(0.87, 0.9, 0.89, 1)
+PopupMenu/colors/font_disabled_color = Color(0.52, 0.56, 0.56, 0.38)
+PopupMenu/colors/font_hover_color = Color(1, 0.92, 0.73, 1)
+PopupMenu/constants/h_separation = 12
+PopupMenu/constants/item_end_padding = 12
+PopupMenu/constants/item_start_padding = 12
+PopupMenu/constants/v_separation = 14
+PopupMenu/font_sizes/font_size = 16
+PopupMenu/fonts/font = ExtResource("2_font")
+PopupMenu/icons/checked = ExtResource("4_on")
+PopupMenu/icons/radio_checked = ExtResource("10_selection")
+PopupMenu/icons/radio_unchecked = ExtResource("8_clear")
+PopupMenu/icons/unchecked = ExtResource("3_off")
+PopupMenu/styles/hover = SubResource("StyleBox_popup_hover")
+PopupMenu/styles/panel = SubResource("StyleBox_popup")
+PopupMenu/styles/separator = SubResource("StyleBox_button")
+SpinBox/colors/down_hover_icon_modulate = Color(1, 0.9, 0.68, 1)
+SpinBox/colors/down_icon_modulate = Color(0.82, 0.72, 0.51, 1)
+SpinBox/colors/up_hover_icon_modulate = Color(1, 0.9, 0.68, 1)
+SpinBox/colors/up_icon_modulate = Color(0.82, 0.72, 0.51, 1)
+SpinBox/constants/buttons_width = 20
+SpinBox/constants/field_and_buttons_separation = 0
+SpinBox/constants/set_min_buttons_width_from_icons = 0
+SpinBox/icons/down = ExtResource("5_down")
+SpinBox/icons/down_disabled = ExtResource("5_down")
+SpinBox/icons/down_hover = ExtResource("5_down")
+SpinBox/icons/down_pressed = ExtResource("5_down")
+SpinBox/icons/up = ExtResource("6_up")
+SpinBox/icons/up_disabled = ExtResource("6_up")
+SpinBox/icons/up_hover = ExtResource("6_up")
+SpinBox/icons/up_pressed = ExtResource("6_up")
+SpinBox/icons/updown = ExtResource("8_clear")
+SpinBox/styles/down_background = SubResource("StyleBoxEmpty_open")
+SpinBox/styles/down_background_disabled = SubResource("StyleBoxEmpty_open")
+SpinBox/styles/down_background_hovered = SubResource("StyleBox_button_hover")
+SpinBox/styles/down_background_pressed = SubResource("StyleBox_button_pressed")
+SpinBox/styles/field_and_buttons_separator = SubResource("StyleBoxEmpty_open")
+SpinBox/styles/up_background = SubResource("StyleBoxEmpty_open")
+SpinBox/styles/up_background_disabled = SubResource("StyleBoxEmpty_open")
+SpinBox/styles/up_background_hovered = SubResource("StyleBox_button_hover")
+SpinBox/styles/up_background_pressed = SubResource("StyleBox_button_pressed")
+SpinBox/styles/up_down_buttons_separator = SubResource("StyleBoxEmpty_open")
+TextEdit/colors/caret_color = Color(0.98, 0.87, 0.64, 1)
+TextEdit/colors/font_color = Color(0.91, 0.91, 0.87, 1)
+TextEdit/colors/selection_color = Color(0.67, 0.51, 0.27, 0.42)
+TextEdit/font_sizes/font_size = 16
+TextEdit/fonts/font = ExtResource("2_font")
+TextEdit/styles/focus = SubResource("StyleBox_focus")
+TextEdit/styles/normal = SubResource("StyleBox_input")
+VScrollBar/icons/decrement = ExtResource("8_clear")
+VScrollBar/icons/decrement_highlight = ExtResource("8_clear")
+VScrollBar/icons/decrement_pressed = ExtResource("8_clear")
+VScrollBar/icons/increment = ExtResource("8_clear")
+VScrollBar/icons/increment_highlight = ExtResource("8_clear")
+VScrollBar/icons/increment_pressed = ExtResource("8_clear")
+VScrollBar/styles/grabber = SubResource("StyleBox_scroll_grabber")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBox_scroll_hover")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBox_scroll_hover")
+VScrollBar/styles/scroll = SubResource("StyleBox_scroll")
+VScrollBar/styles/scroll_focus = SubResource("StyleBox_scroll")

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BookDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/book_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"flame:rule"
+operation = &"dot"
+phase = &"compile"
+parameters = {
+}
+
+[resource]
+script = ExtResource("1")
+id = &"flame"
+title = "灰烬"
+description = "主书提供主术、基础材料及唯一终式。"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+element = 2
+primary_kind = &"flame_burst"
+cadence = 3

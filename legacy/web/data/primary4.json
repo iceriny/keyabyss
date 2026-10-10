@@ -1,0 +1,682 @@
+{
+  "id": "primary4",
+  "title": "小学四年级 · 全册",
+  "sourceLabel": "Qwerty Learner / RealKai42",
+  "source": "https://github.com/RealKai42/qwerty-learner",
+  "sourceBlob": null,
+  "upstreamFile": "PEPXiaoXue4_1_T.json",
+  "retrievedAt": "2026-09-20T08:28:45.170Z",
+  "snapshot": "complete",
+  "scope": "完整同步 2 个源文件；原始 188 条，过滤 33 条，去重 2 条。",
+  "description": "小学四年级 · 全册；保留源中文释义，完整同步后过滤不支持的短语并去重。",
+  "sourceRecords": 188,
+  "excluded": [
+    "teacher's desk",
+    "maths book",
+    "english book",
+    "chinese book",
+    "so much",
+    "living room",
+    "help yourself",
+    "baby brother",
+    "football player",
+    "first floor",
+    "second floor",
+    "teacher's office",
+    "computer room",
+    "art room",
+    "music room",
+    "next to",
+    "english class",
+    "music class",
+    "pe class",
+    "get up",
+    "go to school",
+    "go home",
+    "go to bed",
+    "hurry up",
+    "come on",
+    "just a minute",
+    "be careful",
+    "new york",
+    "how about...",
+    "green beans",
+    "try on",
+    "of course",
+    "how much"
+  ],
+  "count": 153,
+  "upstreamFiles": [
+    "PEPXiaoXue4_1_T.json",
+    "PEPXiaoXue4_2_T.json"
+  ],
+  "sources": [
+    {
+      "file": "PEPXiaoXue4_1_T.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEPXiaoXue4_1_T.json",
+      "sha256": "1611d3b3078b6c591a8d5455cf21fb07d63428e278c3098c43ee96df399f17e6",
+      "records": 84
+    },
+    {
+      "file": "PEPXiaoXue4_2_T.json",
+      "url": "https://raw.githubusercontent.com/RealKai42/qwerty-learner/master/public/dicts/PEPXiaoXue4_2_T.json",
+      "sha256": "d9173f46149ac28f607893e0c2eb416e050dd1549e7b1fd4ee1ae20bd83956c5",
+      "records": 104
+    }
+  ],
+  "duplicates": 2,
+  "words": [
+    {
+      "word": "classroom",
+      "meaning": "教室"
+    },
+    {
+      "word": "window",
+      "meaning": "窗户"
+    },
+    {
+      "word": "blackboard",
+      "meaning": "黑板"
+    },
+    {
+      "word": "light",
+      "meaning": "电灯"
+    },
+    {
+      "word": "picture",
+      "meaning": "图画"
+    },
+    {
+      "word": "door",
+      "meaning": "门"
+    },
+    {
+      "word": "computer",
+      "meaning": "计算机"
+    },
+    {
+      "word": "fan",
+      "meaning": "风扇"
+    },
+    {
+      "word": "wall",
+      "meaning": "墙壁"
+    },
+    {
+      "word": "floor",
+      "meaning": "地板"
+    },
+    {
+      "word": "really",
+      "meaning": "真的"
+    },
+    {
+      "word": "near",
+      "meaning": "距离近"
+    },
+    {
+      "word": "tv",
+      "meaning": "电视"
+    },
+    {
+      "word": "clean",
+      "meaning": "打扫"
+    },
+    {
+      "word": "help",
+      "meaning": "帮助"
+    },
+    {
+      "word": "schoolbag",
+      "meaning": "书包"
+    },
+    {
+      "word": "storybook",
+      "meaning": "故事书"
+    },
+    {
+      "word": "candy",
+      "meaning": "糖果"
+    },
+    {
+      "word": "notebook",
+      "meaning": "笔记本"
+    },
+    {
+      "word": "toy",
+      "meaning": "玩具"
+    },
+    {
+      "word": "key",
+      "meaning": "钥匙"
+    },
+    {
+      "word": "wow",
+      "meaning": "呀"
+    },
+    {
+      "word": "lost",
+      "meaning": "丢失"
+    },
+    {
+      "word": "cute",
+      "meaning": "可爱的"
+    },
+    {
+      "word": "strong",
+      "meaning": "强壮的"
+    },
+    {
+      "word": "friendly",
+      "meaning": "友好的"
+    },
+    {
+      "word": "quiet",
+      "meaning": "安静的"
+    },
+    {
+      "word": "hair",
+      "meaning": "头发"
+    },
+    {
+      "word": "shoe",
+      "meaning": "鞋"
+    },
+    {
+      "word": "glasses",
+      "meaning": "眼镜"
+    },
+    {
+      "word": "his",
+      "meaning": "他的"
+    },
+    {
+      "word": "or",
+      "meaning": "或者"
+    },
+    {
+      "word": "right",
+      "meaning": "对的"
+    },
+    {
+      "word": "hat",
+      "meaning": "帽子"
+    },
+    {
+      "word": "her",
+      "meaning": "她的"
+    },
+    {
+      "word": "bedroom",
+      "meaning": "卧室"
+    },
+    {
+      "word": "study",
+      "meaning": "书房"
+    },
+    {
+      "word": "kitchen",
+      "meaning": "厨房"
+    },
+    {
+      "word": "bathroom",
+      "meaning": "浴室"
+    },
+    {
+      "word": "bed",
+      "meaning": "床"
+    },
+    {
+      "word": "phone",
+      "meaning": "电话"
+    },
+    {
+      "word": "table",
+      "meaning": "桌子"
+    },
+    {
+      "word": "sofa",
+      "meaning": "长沙发"
+    },
+    {
+      "word": "fridge",
+      "meaning": "冰箱"
+    },
+    {
+      "word": "find",
+      "meaning": "找到"
+    },
+    {
+      "word": "them",
+      "meaning": "他们"
+    },
+    {
+      "word": "beef",
+      "meaning": "牛肉"
+    },
+    {
+      "word": "chicken",
+      "meaning": "鸡肉"
+    },
+    {
+      "word": "noodles",
+      "meaning": "面条"
+    },
+    {
+      "word": "soup",
+      "meaning": "汤"
+    },
+    {
+      "word": "vegetable",
+      "meaning": "蔬菜"
+    },
+    {
+      "word": "chopsticks",
+      "meaning": "筷子"
+    },
+    {
+      "word": "bowl",
+      "meaning": "碗"
+    },
+    {
+      "word": "fork",
+      "meaning": "餐叉"
+    },
+    {
+      "word": "knife",
+      "meaning": "刀"
+    },
+    {
+      "word": "spoon",
+      "meaning": "匙,勺子"
+    },
+    {
+      "word": "dinner",
+      "meaning": "正餐"
+    },
+    {
+      "word": "ready",
+      "meaning": "准备好"
+    },
+    {
+      "word": "pass",
+      "meaning": "给"
+    },
+    {
+      "word": "try",
+      "meaning": "试"
+    },
+    {
+      "word": "parents",
+      "meaning": "父母"
+    },
+    {
+      "word": "cousin",
+      "meaning": "同辈表亲"
+    },
+    {
+      "word": "uncle",
+      "meaning": "叔叔"
+    },
+    {
+      "word": "aunt",
+      "meaning": "阿姨"
+    },
+    {
+      "word": "doctor",
+      "meaning": "医生"
+    },
+    {
+      "word": "cook",
+      "meaning": "厨师"
+    },
+    {
+      "word": "driver",
+      "meaning": "司机"
+    },
+    {
+      "word": "farmer",
+      "meaning": "农民"
+    },
+    {
+      "word": "nurse",
+      "meaning": "护士"
+    },
+    {
+      "word": "people",
+      "meaning": "人们"
+    },
+    {
+      "word": "but",
+      "meaning": "但是"
+    },
+    {
+      "word": "little",
+      "meaning": "小的"
+    },
+    {
+      "word": "puppy",
+      "meaning": "小狗"
+    },
+    {
+      "word": "job",
+      "meaning": "工作"
+    },
+    {
+      "word": "basketball",
+      "meaning": "篮球"
+    },
+    {
+      "word": "library",
+      "meaning": "图书馆"
+    },
+    {
+      "word": "playground",
+      "meaning": "操场"
+    },
+    {
+      "word": "homework",
+      "meaning": "作业"
+    },
+    {
+      "word": "class",
+      "meaning": "班级"
+    },
+    {
+      "word": "forty",
+      "meaning": "四十"
+    },
+    {
+      "word": "way",
+      "meaning": "方向"
+    },
+    {
+      "word": "breakfast",
+      "meaning": "早餐"
+    },
+    {
+      "word": "lunch",
+      "meaning": "午饭"
+    },
+    {
+      "word": "over",
+      "meaning": "结束"
+    },
+    {
+      "word": "now",
+      "meaning": "现在"
+    },
+    {
+      "word": "o'clock",
+      "meaning": "⋯⋯点钟"
+    },
+    {
+      "word": "kid",
+      "meaning": "小孩"
+    },
+    {
+      "word": "thirty",
+      "meaning": "三十"
+    },
+    {
+      "word": "cold",
+      "meaning": "冷的"
+    },
+    {
+      "word": "cool",
+      "meaning": "凉的"
+    },
+    {
+      "word": "warm",
+      "meaning": "温暖的"
+    },
+    {
+      "word": "hot",
+      "meaning": "热的"
+    },
+    {
+      "word": "sunny",
+      "meaning": "阳光充足的"
+    },
+    {
+      "word": "windy",
+      "meaning": "多风的"
+    },
+    {
+      "word": "cloudy",
+      "meaning": "多云的"
+    },
+    {
+      "word": "snowy",
+      "meaning": "下雪的"
+    },
+    {
+      "word": "rainy",
+      "meaning": "阴雨的"
+    },
+    {
+      "word": "outside",
+      "meaning": "在户外"
+    },
+    {
+      "word": "weather",
+      "meaning": "天气"
+    },
+    {
+      "word": "degree",
+      "meaning": "度"
+    },
+    {
+      "word": "world",
+      "meaning": "世界"
+    },
+    {
+      "word": "london",
+      "meaning": "伦敦"
+    },
+    {
+      "word": "moscow",
+      "meaning": "莫斯科"
+    },
+    {
+      "word": "singapore",
+      "meaning": "新加坡城"
+    },
+    {
+      "word": "sydney",
+      "meaning": "悉尼"
+    },
+    {
+      "word": "fly",
+      "meaning": "放（风筝）"
+    },
+    {
+      "word": "love",
+      "meaning": "爱你的"
+    },
+    {
+      "word": "tomato",
+      "meaning": "西红柿"
+    },
+    {
+      "word": "potato",
+      "meaning": "马铃薯"
+    },
+    {
+      "word": "carrot",
+      "meaning": "胡萝卜"
+    },
+    {
+      "word": "horse",
+      "meaning": "马"
+    },
+    {
+      "word": "cow",
+      "meaning": "牛"
+    },
+    {
+      "word": "sheep",
+      "meaning": "绵羊"
+    },
+    {
+      "word": "hen",
+      "meaning": "母鸡"
+    },
+    {
+      "word": "these",
+      "meaning": "这些"
+    },
+    {
+      "word": "yum",
+      "meaning": "味道好"
+    },
+    {
+      "word": "animal",
+      "meaning": "动物"
+    },
+    {
+      "word": "those",
+      "meaning": "那些"
+    },
+    {
+      "word": "garden",
+      "meaning": "花园"
+    },
+    {
+      "word": "farm",
+      "meaning": "农场"
+    },
+    {
+      "word": "goat",
+      "meaning": "山羊"
+    },
+    {
+      "word": "eat",
+      "meaning": "吃"
+    },
+    {
+      "word": "clothes",
+      "meaning": "服装"
+    },
+    {
+      "word": "pants",
+      "meaning": "裤子"
+    },
+    {
+      "word": "dress",
+      "meaning": "连衣裙"
+    },
+    {
+      "word": "skirt",
+      "meaning": "女裙"
+    },
+    {
+      "word": "coat",
+      "meaning": "大衣"
+    },
+    {
+      "word": "sweater",
+      "meaning": "毛衣"
+    },
+    {
+      "word": "sock",
+      "meaning": "短袜"
+    },
+    {
+      "word": "shorts",
+      "meaning": "短裤"
+    },
+    {
+      "word": "jacket",
+      "meaning": "夹克衫"
+    },
+    {
+      "word": "shirt",
+      "meaning": "衬衫"
+    },
+    {
+      "word": "yours",
+      "meaning": "你的"
+    },
+    {
+      "word": "whose",
+      "meaning": "谁的"
+    },
+    {
+      "word": "mine",
+      "meaning": "我的"
+    },
+    {
+      "word": "pack",
+      "meaning": "收拾"
+    },
+    {
+      "word": "wait",
+      "meaning": "等待"
+    },
+    {
+      "word": "glove",
+      "meaning": "手套"
+    },
+    {
+      "word": "scarf",
+      "meaning": "围巾"
+    },
+    {
+      "word": "umbrella",
+      "meaning": "伞"
+    },
+    {
+      "word": "sunglasses",
+      "meaning": "太阳镜"
+    },
+    {
+      "word": "pretty",
+      "meaning": "美丽的"
+    },
+    {
+      "word": "expensive",
+      "meaning": "贵的"
+    },
+    {
+      "word": "cheap",
+      "meaning": "便宜的"
+    },
+    {
+      "word": "nice",
+      "meaning": "好的"
+    },
+    {
+      "word": "size",
+      "meaning": "尺码"
+    },
+    {
+      "word": "too",
+      "meaning": "太"
+    },
+    {
+      "word": "just",
+      "meaning": "正好"
+    },
+    {
+      "word": "eighty",
+      "meaning": "八十"
+    },
+    {
+      "word": "dollar",
+      "meaning": "元"
+    },
+    {
+      "word": "sale",
+      "meaning": "特价销售"
+    },
+    {
+      "word": "more",
+      "meaning": "更多的"
+    },
+    {
+      "word": "us",
+      "meaning": "我们"
+    }
+  ]
+}

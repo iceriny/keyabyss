@@ -1,0 +1,40 @@
+import { baseValues } from "../content/combat-values.ts";
+import { NATIVE_RULES } from '../content/build/native.ts';
+import { BUILD_EVENTS } from '../content/build-events.ts';
+import { TALENT_NODES } from '../content/talents.ts';
+import { spiritFlight } from "../content/books/spirit/flight.ts";
+import { manifest } from "../content/manifest.ts";
+import { Registry } from "../content-sdk/Registry.ts";
+import { bossBehaviors } from "../content/boss-behaviors.ts";
+import { enemyActions } from "../content/shared/enemy-actions.ts";
+import {
+  BOOKS,
+  MODES,
+  TYPES,
+  ELITES,
+  RELICS,
+  chapterRegistry,
+  ROUTES,
+} from "../content/catalog.ts";
+import { bookBehaviors } from "../content/book-behaviors.ts";
+import type { SimulationContent } from "../contracts/SimulationContent.ts";
+export const builtinContent: SimulationContent = Object.freeze({
+  buildRules: NATIVE_RULES,
+  buildEvents: BUILD_EVENTS,
+  talents: TALENT_NODES,
+  spiritFlight,
+  values: baseValues,
+  audio: manifest.audio,
+  appearances: manifest.appearances,
+  bosses: new Registry("bosses", manifest.bosses).record(),
+  bossBehaviors,
+  enemyActions,
+  books: BOOKS,
+  modes: MODES,
+  enemies: TYPES,
+  elites: ELITES,
+  relics: RELICS,
+  chapters: chapterRegistry.list(),
+  routes: ROUTES,
+  bookBehaviors,
+});

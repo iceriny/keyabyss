@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://ui/materials/book_orbit.gdshader" id="1"]
+[ext_resource type="Shader" path="res://ui/materials/archive_book.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="Material_aura"]
+resource_local_to_scene = true
+shader = ExtResource("1")
+
+[sub_resource type="ShaderMaterial" id="Material_artwork"]
+resource_local_to_scene = true
+shader = ExtResource("2")
+
+[node name="ArchiveBookVisual" type="Control"]
+mouse_filter = 2
+
+[node name="Aura" type="ColorRect" parent="."]
+material = SubResource("Material_aura")
+mouse_filter = 2
+
+[node name="Pattern" type="TextureRect" parent="."]
+texture_filter = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Artwork" type="TextureRect" parent="."]
+texture_filter = 4
+material = SubResource("Material_artwork")
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5

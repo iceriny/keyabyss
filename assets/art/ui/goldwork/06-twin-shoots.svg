@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="120" viewBox="0 0 560 120" fill="none">
+  <title>对生 · Twin shoots</title>
+  <defs><linearGradient id="gold" x1="12" y1="60" x2="548" y2="60" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".26" stop-color="#C9AE72" stop-opacity=".65"/><stop offset=".5" stop-color="#F0DDAE"/><stop offset=".74" stop-color="#C9AE72" stop-opacity=".65"/><stop offset="1" stop-color="#C9AE72" stop-opacity="0"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 76 C108 74 175 85 218 71 C235 67 246 64 252 61 Q274 53 280 38 Q286 53 308 61 C324 67 333 69 342 71 C385 83 454 73 548 76" stroke-width="1.4"/>
+    <path d="M83 83 Q192 94 255 65 M305 65 Q368 94 477 83" stroke-width=".55" opacity=".4"/>
+    <path d="M218 71 C207 49 191 40 169 40 C181 60 197 68 218 71 Z M252 61 C253 40 242 24 229 18 C227 37 238 54 252 61 Z M342 71 C353 49 369 40 391 40 C379 60 363 68 342 71 Z M308 61 C307 40 318 24 331 18 C333 37 322 54 308 61 Z" stroke-width=".9"/>
+    <path d="M218 71 Q190 56 169 40 M252 61 Q235 35 229 18 M342 71 Q370 56 391 40 M308 61 Q325 35 331 18" stroke-width=".5"/>
+    <path d="M268 76 Q280 100 292 76 Q280 82 268 76 Z" stroke-width=".8"/>
+  </g>
+</svg>

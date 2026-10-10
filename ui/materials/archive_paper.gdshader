@@ -1,0 +1,99 @@
+shader_type canvas_item;
+// Flowing paper and seals. Continuous noise comes from a native NoiseTexture2D.
+
+
+uniform vec2 worldSpan = vec2(1920.,1080.);
+uniform vec2 worldOrigin = vec2(0.);
+uniform vec2 player = vec2(960.,540.);
+uniform vec3 school : source_color = vec3(0.545,0.871,1.);
+uniform float clock = 0.;
+uniform float activity = 0.;
+uniform float detail = 1.;
+uniform float presence = 1.;
+uniform sampler2D paper_noise : filter_linear_mipmap, repeat_enable;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  return texture(paper_noise, p * .125 + .5).r;
+}
+float stroke(float v,float width){return 1.-smoothstep(width,width+max(fwidth(v),.0006),abs(v));}
+float contour(float phase,float softness){
+  float d=abs(sin(phase));
+  return 1.-smoothstep(.03,.045+max(fwidth(d),.008)*softness,d);
+}
+// One filtered atlas lookup replaces dozens of per-fragment line distances.
+uniform sampler2D rune_atlas : filter_linear_mipmap, repeat_disable;
+float rune(vec2 p,float id){
+  vec2 local=p/20.+.5;
+  if(any(lessThan(local,vec2(0.))) || any(greaterThan(local,vec2(1.)))) return 0.;
+  vec2 tile=vec2(mod(id,8.),floor(id/8.));
+  return texture(rune_atlas,(tile+local)/vec2(8.,4.)).a;
+}
+float seal(vec2 p,float radius,float phase){
+  float r=length(p),a=atan(p.y,p.x)+phase;
+  float cuts=smoothstep(-.35,.12,sin(a*3.+.8));
+  float rings=(stroke(r-radius,.0009)+stroke(r-radius*.87,.0006)*.5)*cuts;
+  rings+=stroke(r-radius*.69,.0008)*smoothstep(-.3,.2,sin(a*4.-1.));
+  float ticks=stroke(sin(a*48.),.10)*(1.-smoothstep(.008,.022,abs(r-radius*1.025)));
+  float runes=0.;
+  if(abs(r-radius*.936)<.014){
+    float pitch=6.2831853/38.;
+    float slot=floor((a+3.14159265)/pitch);
+    float sector=mod(a+3.14159265,pitch)-pitch*.5;
+    vec2 glyph=vec2(sector*r,(r-radius*.936))*850.;
+    if(mod(slot,11.)!=9. && mod(slot,13.)!=10.)
+      runes=rune(glyph,floor(hash(vec2(slot,radius*100.))*12.));
+  }
+  float polygonRadius=radius*.65*cos(3.14159265/7.)/cos(mod(a,6.2831853/7.)-3.14159265/7.);
+  float polygon=stroke(r-polygonRadius,.0005);
+  return rings*.65+ticks*.32+runes*.9+polygon*.22;
+}
+void fragment(){
+  vec2 uv=UV;
+  vec2 w=worldOrigin+uv*worldSpan;
+  float shortSide=min(worldSpan.x,worldSpan.y);
+  vec2 aspect=worldSpan/shortSide;
+  vec2 p=(uv-.5)*aspect;
+  float t=clock;
+  float breath=.82+.18*sin(t*.38);
+  float edge=smoothstep(.54,1.15,length((uv-.5)/vec2(.52,.58)));
+  float ink=noise(p*3.2);
+  float stain=noise(p*8.3);
+  vec3 col=mix(vec3(.055,.077,.087),vec3(.080,.112,.119),ink);
+  col*=.92+.08*presence;
+  col+=vec3(.009,.013,.012)*(stain-.4)*presence;
+  // Two equally weighted, warped directions: neither vertical bands nor a grid.
+  vec2 q=p+vec2(sin(p.y*4.7+t*.09),sin(p.x*4.1-t*.075))*.12;
+  float f=q.x*51.+q.y*19.+sin(q.y*9.2)*2.1;
+  float h=q.y*49.-q.x*22.+sin(q.x*8.1)*2.3;
+  // The reading field is soft and low-contrast, never empty: waves need texture.
+  float softness=mix(2.5,1.,edge);
+  float textureWeight=mix(.30,1.,edge);
+  float weave=contour(f,softness)+contour(h,softness)*.70;
+  float relief=.52+.48*noise(p*5.7);
+  col+=mix(vec3(.049,.074,.072),vec3(.079,.070,.050),stain)
+    *weave*relief*textureWeight*breath*.60*presence;
+  if(detail>.8){
+    float islands=noise(p*4.8);
+    col+=vec3(.019,.027,.025)*contour(islands*66.,softness)*textureWeight*breath*.25*presence;
+  }
+  // Stationary paper tooth avoids temporal grain shimmer.
+  vec2 grain=floor(p*950.);
+  col+=(hash(grain)-.5)*.0015;
+  float fibers=step(.94,hash(floor(p*vec2(460.,920.))));
+  col+=vec3(.006,.008,.007)*fibers*detail*textureWeight*presence;
+  float etch=seal(p-vec2(-aspect.x*.52,-aspect.y*.28),.46,t*.013);
+  etch+=seal(p-vec2(aspect.x*.54,aspect.y*.34),.42,-t*.011+.7);
+  col+=vec3(.105,.097,.071)*etch*(.7+.3*breath)*presence;
+  // Linear light in the battle target; encode only on direct menu output.
+  // Original paper palette is sRGB; HDR 2D receives linear light.
+  col=pow(max(col,vec3(0.)),vec3(2.2));
+  float castLight=exp(-length(w-player)/175.)*activity;
+  col+=school*castLight*(.025+ink*.045);
+  col*=1.-.24*smoothstep(.25,.73,length(uv-.5));
+  COLOR=vec4(col,1.);
+
+}
+
+void light() {
+  LIGHT = vec4(LIGHT_COLOR.rgb * LIGHT_ENERGY * (COLOR.rgb + vec3(.014)), LIGHT_COLOR.a);
+}

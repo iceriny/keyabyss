@@ -1,0 +1,753 @@
+{
+  "version": 1,
+  "base_roots": "all384 objects unchanged",
+  "base_art_sha256": "01913d58357a8a7e3ad67d1bc043c9de6237993841e978174fe35ba24b209a3d",
+  "old_count": 80,
+  "new_count": 50,
+  "old_only_count": 79,
+  "overlapping_sequences": [
+    {
+      "chars": "凝水",
+      "old_name": "凝水",
+      "old_meaning": "使指定液态水凝固的操作",
+      "new_name": "冰",
+      "new_meaning": "水凝固后形成的固态水。",
+      "action_spelling": "凝(水)"
+    }
+  ],
+  "old_entries": [
+    {
+      "index": 1,
+      "chars": "冷水",
+      "meaning": "低温的液态水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 2,
+      "chars": "热水",
+      "meaning": "高温的液态水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 3,
+      "chars": "清水",
+      "meaning": "干扰或混浊较少的水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 4,
+      "chars": "浊水",
+      "meaning": "含有可辨混浊干扰的水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 5,
+      "chars": "深水",
+      "meaning": "相对于给定表面的深度较大的水域",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 6,
+      "chars": "浅水",
+      "meaning": "相对于给定表面的深度较小的水域",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 7,
+      "chars": "静水",
+      "meaning": "在给定参照内没有持续流动扰动的水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 8,
+      "chars": "纯水",
+      "meaning": "只含指定水成分的水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 9,
+      "chars": "强风",
+      "meaning": "作用程度较强的风",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 10,
+      "chars": "弱风",
+      "meaning": "作用程度较弱的风",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 11,
+      "chars": "冷风",
+      "meaning": "温度较低的风",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 12,
+      "chars": "热风",
+      "meaning": "温度较高的风",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 13,
+      "chars": "强光",
+      "meaning": "作用程度较强的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 14,
+      "chars": "弱光",
+      "meaning": "作用程度较弱的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 15,
+      "chars": "白光",
+      "meaning": "呈现白色的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 16,
+      "chars": "红光",
+      "meaning": "呈现红色的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 17,
+      "chars": "长时",
+      "meaning": "持续长度较大的时间范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 18,
+      "chars": "短时",
+      "meaning": "持续长度较小的时间范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 19,
+      "chars": "公物",
+      "meaning": "允许相关群体共同接近与使用的对象",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 20,
+      "chars": "私物",
+      "meaning": "只对指定主体或关系开放的对象",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 21,
+      "chars": "生火",
+      "meaning": "使指定范围内出现火",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 22,
+      "chars": "灭火",
+      "meaning": "使指定范围内的火消亡",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 23,
+      "chars": "聚水",
+      "meaning": "使范围内的水向指定目标集中",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 24,
+      "chars": "散水",
+      "meaning": "使范围内的水向指定范围分散",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 25,
+      "chars": "取水",
+      "meaning": "从指定来源取得水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 26,
+      "chars": "蓄水",
+      "meaning": "把水积存于指定承载范围供以后使用",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 27,
+      "chars": "聚光",
+      "meaning": "使给定范围内的光向指定目标集中",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 28,
+      "chars": "散光",
+      "meaning": "使给定范围内的光向指定范围分散",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 29,
+      "chars": "发音",
+      "meaning": "从指定来源发出声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 30,
+      "chars": "止音",
+      "meaning": "使指定范围内正在进行的声音停止",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 31,
+      "chars": "开门",
+      "meaning": "使指定通道口开始允许进入或离开",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 32,
+      "chars": "闭门",
+      "meaning": "使指定通道口停止允许进入或离开",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 33,
+      "chars": "刻石",
+      "meaning": "在指定石材表面留下持久刻记",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 34,
+      "chars": "读文",
+      "meaning": "从指定文本记录取得内容",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 35,
+      "chars": "写文",
+      "meaning": "把指定文本内容写入承载记录",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 36,
+      "chars": "传讯",
+      "meaning": "把指定信息从来源传向接收方",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 37,
+      "chars": "育人",
+      "meaning": "持续支持指定主体的身体或学习能力发展",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 38,
+      "chars": "护身",
+      "meaning": "保护指定主体的躯体免受声明的侵害",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 39,
+      "chars": "破界",
+      "meaning": "使指定边界失去原有连续性",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 40,
+      "chars": "守界",
+      "meaning": "持续维持指定边界的成立",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 41,
+      "chars": "凝水",
+      "meaning": "使指定液态水凝固的操作",
+      "status": "redefined_as_lexical_word"
+    },
+    {
+      "index": 42,
+      "chars": "净水",
+      "meaning": "移除水中指定的干扰或污染成分，同时保留水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 43,
+      "chars": "聚气",
+      "meaning": "使指定气态介质向一个给定范围聚集",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 44,
+      "chars": "散气",
+      "meaning": "使指定气态介质从集中处向外分散",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 45,
+      "chars": "传电",
+      "meaning": "把指定电性作用从来源经媒介传至接收范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 46,
+      "chars": "止电",
+      "meaning": "终止指定范围中正在进行的电性作用",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 47,
+      "chars": "强音",
+      "meaning": "在给定声学尺度上作用较强的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 48,
+      "chars": "弱音",
+      "meaning": "在同一给定声学尺度上作用较弱的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 49,
+      "chars": "长音",
+      "meaning": "持续长度相对参照较长的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 50,
+      "chars": "短音",
+      "meaning": "持续长度相对参照较短的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 51,
+      "chars": "召灵",
+      "meaning": "使指定虚构非实体主体来到给定范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 52,
+      "chars": "驱灵",
+      "meaning": "使指定虚构非实体主体离开给定范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 53,
+      "chars": "封门",
+      "meaning": "关闭指定通道口与外界的选定交换通路",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 54,
+      "chars": "破阵",
+      "meaning": "破坏指定布置式的既有连续组织",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 55,
+      "chars": "静心",
+      "meaning": "在指定参照下没有持续内在扰动的心智主体",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 56,
+      "chars": "守门",
+      "meaning": "维持指定通道口已经约定的状态或守护条件",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 57,
+      "chars": "聚冷水",
+      "meaning": "使已处于低温的液态水聚入指定范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 58,
+      "chars": "蓄清水",
+      "meaning": "把干扰较少的指定水暂留积蓄以供之后使用",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 59,
+      "chars": "凝冷水",
+      "meaning": "使指定低温液态水在已声明条件下凝固",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 60,
+      "chars": "生强光",
+      "meaning": "使指定范围内出现作用较强的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 61,
+      "chars": "生弱光",
+      "meaning": "使指定范围内出现作用较弱的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 62,
+      "chars": "发长音",
+      "meaning": "从指定来源发出持续较长的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 63,
+      "chars": "发短音",
+      "meaning": "从指定来源发出持续较短的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 64,
+      "chars": "净浊水",
+      "meaning": "从存在混杂干扰的水中移除已经指定的污染成分",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 65,
+      "chars": "水变冷",
+      "meaning": "指定液态水进入相对低温状态",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 66,
+      "chars": "水变热",
+      "meaning": "指定液态水进入相对高温状态",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 67,
+      "chars": "风变强",
+      "meaning": "指定风在同一作用尺度下变得较强",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 68,
+      "chars": "风变弱",
+      "meaning": "指定风在同一作用尺度下变得较弱",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 69,
+      "chars": "使心静",
+      "meaning": "使指定心智主体进入静定的内部状态",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 70,
+      "chars": "使身轻",
+      "meaning": "使指定躯体达到相对较轻的质量状态",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 71,
+      "chars": "果凝水",
+      "meaning": "指定液态水经凝固过程产生的固态水结果",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 72,
+      "chars": "人守门",
+      "meaning": "已指明的人维持指定通道口已经约定的状态或守护条件",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 73,
+      "chars": "聚清冷水",
+      "meaning": "使干扰较少且处于低温的液态水聚入指定范围",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 74,
+      "chars": "蓄纯冷水",
+      "meaning": "把组成满足指定单一原则且处于低温的水暂留积蓄",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 75,
+      "chars": "生强白光",
+      "meaning": "使指定范围内出现作用较强且呈白色的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 76,
+      "chars": "生弱红光",
+      "meaning": "使指定范围内出现作用较弱且呈红色的光",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 77,
+      "chars": "发长弱音",
+      "meaning": "发出持续较长但作用较弱的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 78,
+      "chars": "发短强音",
+      "meaning": "发出持续较短而作用较强的声音",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 79,
+      "chars": "果水化气",
+      "meaning": "水在保留物质身份的条件下转为气态后所得的气态水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    },
+    {
+      "index": 80,
+      "chars": "人取冷水",
+      "meaning": "已指明的人从既有来源取得指定低温液态水",
+      "status": "removed_from_active_ligatures_plain_roots_still_available"
+    }
+  ],
+  "new_entries": [
+    {
+      "index": 1,
+      "chars": "时空",
+      "name": "时空"
+    },
+    {
+      "index": 2,
+      "chars": "命运",
+      "name": "命运"
+    },
+    {
+      "index": 3,
+      "chars": "因果",
+      "name": "因果关系"
+    },
+    {
+      "index": 4,
+      "chars": "昔事",
+      "name": "往事"
+    },
+    {
+      "index": 5,
+      "chars": "生续",
+      "name": "生命"
+    },
+    {
+      "index": 6,
+      "chars": "恒生",
+      "name": "永生"
+    },
+    {
+      "index": 7,
+      "chars": "复生",
+      "name": "复生"
+    },
+    {
+      "index": 8,
+      "chars": "记忆",
+      "name": "记忆内容"
+    },
+    {
+      "index": 9,
+      "chars": "事知",
+      "name": "经验"
+    },
+    {
+      "index": 10,
+      "chars": "自知",
+      "name": "自我认识"
+    },
+    {
+      "index": 11,
+      "chars": "自主",
+      "name": "自主"
+    },
+    {
+      "index": 12,
+      "chars": "安心",
+      "name": "安心"
+    },
+    {
+      "index": 13,
+      "chars": "思念",
+      "name": "思念"
+    },
+    {
+      "index": 14,
+      "chars": "善意",
+      "name": "善意"
+    },
+    {
+      "index": 15,
+      "chars": "恶意",
+      "name": "恶意"
+    },
+    {
+      "index": 16,
+      "chars": "心态",
+      "name": "心态"
+    },
+    {
+      "index": 17,
+      "chars": "惧梦",
+      "name": "噩梦"
+    },
+    {
+      "index": 18,
+      "chars": "愿可",
+      "name": "希望"
+    },
+    {
+      "index": 19,
+      "chars": "亲人",
+      "name": "亲友"
+    },
+    {
+      "index": 20,
+      "chars": "共行人",
+      "name": "同伴"
+    },
+    {
+      "index": 21,
+      "chars": "归域",
+      "name": "家园"
+    },
+    {
+      "index": 22,
+      "chars": "共行",
+      "name": "合作"
+    },
+    {
+      "index": 23,
+      "chars": "言契",
+      "name": "承诺"
+    },
+    {
+      "index": 24,
+      "chars": "信人",
+      "name": "信任"
+    },
+    {
+      "index": 25,
+      "chars": "予取",
+      "name": "交换"
+    },
+    {
+      "index": 26,
+      "chars": "共亲",
+      "name": "友谊"
+    },
+    {
+      "index": 27,
+      "chars": "亲集",
+      "name": "家庭"
+    },
+    {
+      "index": 28,
+      "chars": "共安",
+      "name": "和平"
+    },
+    {
+      "index": 29,
+      "chars": "言码",
+      "name": "语言系统"
+    },
+    {
+      "index": 30,
+      "chars": "事文",
+      "name": "故事"
+    },
+    {
+      "index": 31,
+      "chars": "隐讯",
+      "name": "秘密"
+    },
+    {
+      "index": 32,
+      "chars": "契文",
+      "name": "契约文本"
+    },
+    {
+      "index": 33,
+      "chars": "水源",
+      "name": "水源"
+    },
+    {
+      "index": 34,
+      "chars": "树集",
+      "name": "树林"
+    },
+    {
+      "index": 35,
+      "chars": "水路",
+      "name": "水道"
+    },
+    {
+      "index": 36,
+      "chars": "凝水",
+      "name": "冰"
+    },
+    {
+      "index": 37,
+      "chars": "水气",
+      "name": "水汽"
+    },
+    {
+      "index": 38,
+      "chars": "气水",
+      "name": "雾"
+    },
+    {
+      "index": 39,
+      "chars": "护符",
+      "name": "护符"
+    },
+    {
+      "index": 40,
+      "chars": "封符",
+      "name": "封印"
+    },
+    {
+      "index": 41,
+      "chars": "护界",
+      "name": "结界"
+    },
+    {
+      "index": 42,
+      "chars": "远域门",
+      "name": "传送门"
+    },
+    {
+      "index": 43,
+      "chars": "术文",
+      "name": "术式文本"
+    },
+    {
+      "index": 44,
+      "chars": "术能",
+      "name": "魔能"
+    },
+    {
+      "index": 45,
+      "chars": "蓄能物",
+      "name": "储能器"
+    },
+    {
+      "index": 46,
+      "chars": "禁术",
+      "name": "禁术"
+    },
+    {
+      "index": 47,
+      "chars": "身灵",
+      "name": "灵魂"
+    },
+    {
+      "index": 48,
+      "chars": "赋恩",
+      "name": "祝福"
+    },
+    {
+      "index": 49,
+      "chars": "赋亏",
+      "name": "诅咒"
+    },
+    {
+      "index": 50,
+      "chars": "规行",
+      "name": "仪式"
+    }
+  ],
+  "note": "旧80仅存档；未入新表的表达仍可用基础根书写。凝水的登记词义改为冰，操作以凝(水)明确。"
+}

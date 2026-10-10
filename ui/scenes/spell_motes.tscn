@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ParticleProcessMaterial" path="res://ui/effects/spell_motes_process.tres" id="1"]
+
+[sub_resource type="CanvasItemMaterial" id="Additive"]
+blend_mode = 1
+
+[node name="SpellMotes" type="GPUParticles2D"]
+emitting = false
+one_shot = true
+explosiveness = 1.0
+process_material = ExtResource("1")
+material = SubResource("Additive")
+

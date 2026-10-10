@@ -1,0 +1,28 @@
+import type { BuildEventDefinition } from '../contracts/build-events.ts';
+
+export const BUILD_EVENTS: readonly BuildEventDefinition[] = [
+  { id: 'revision-binding', name: '装订师的改页', description: '重新决定护页与交付的先后。', kind: 'revision', family: 'binding', scope: 'run', grants: { guardNewest: 1 }, needs: ['carrier'], maxHealthCost: 5, evolve: true },
+  { id: 'revision-crystal', name: '晶匠校形', description: '把晶体从武器改为可保存法术的容器。', kind: 'revision', family: 'crystal', scope: 'run', grants: { crystalStorage: 1 }, needs: ['cold'], maxHealthCost: 5, evolve: true },
+  { id: 'revision-conduction', name: '孤弧定向', description: '改变有限电性片段的交付结构。', kind: 'revision', family: 'conduction', scope: 'run', grants: { concentrate: 1 }, needs: ['conduction'], maxHealthCost: 5, evolve: true },
+  { id: 'loan-echo', name: '借阅终章', description: '借来的遗响让终结变成出口。', kind: 'loan', scope: 'chapter', grants: { carrierRelease: 1, carrierCapacity: -1 }, needs: ['carrier'], maxHealthCost: 0, talentStats: ['carrierGuard', 'thermalRelease'] },
+  { id: 'loan-shell', name: '借阅冰匣', description: '以更长等待借得承载和晶壳加工。', kind: 'loan', scope: 'chapter', grants: { crystalStorage: 1, carrierCapacity: 2, carrierDelay: .5 }, maxHealthCost: 4 },
+  { id: 'loan-relay', name: '借阅旁路', description: '下一房让载体充当电性中继。', kind: 'loan', scope: 'room', grants: { carrierRelay: 1, chainReach: 90, chainShare: -.04 }, needs: ['carrier'], maxHealthCost: 0 },
+  { id: 'bridge-thermal', name: '热缝接页', description: '为已有载体接入热加工出口。', kind: 'bridge', scope: 'run', grants: { thermalRelease: 1 }, needs: ['carrier', 'heat'], maxHealthCost: 0, pressure: .12 },
+  { id: 'bridge-copy', name: '同文接续', description: '让复写页继承天赋已经开放的加工。', kind: 'bridge', scope: 'run', grants: { copyInheritance: 1, copyEfficiency: -.035 }, needs: ['carrier'], talentStats: ['crystalPayload', 'conductionPayload', 'heatPayload'], maxHealthCost: 4 },
+  { id: 'bridge-return', name: '余载入匣', description: '载体剩余与回收规则获得共同入口。', kind: 'bridge', scope: 'run', grants: { paperRecovery: 1, missRecovery: 1 }, needs: ['recovery'], maxHealthCost: 0, pressure: .1 },
+  { id: 'smelt-thermal', name: '炉心退火', description: '把已有热零件改作封装材料。', kind: 'smelt', family: 'thermal', scope: 'run', grants: { carrierLifetime: 1 }, needs: ['heat'], maxHealthCost: 5, evolve: true },
+  { id: 'smelt-fragment', name: '百屑淬炼', description: '让碎片在载体受热时提前交付。', kind: 'smelt', family: 'fragments', scope: 'run', grants: { fragmentShare: .025 }, needs: ['cold'], maxHealthCost: 5, evolve: true },
+  { id: 'smelt-focus', name: '定本易形', description: '交换即时威力与后续加工能力。', kind: 'smelt', family: 'focus', scope: 'run', grants: { materialConserve: .04 }, maxHealthCost: 5, evolve: true },
+  { id: 'archive-reserve', name: '余量入藏', description: '把本局储备封存到之后的房间。', kind: 'archive', family: 'reserve', scope: 'run', grants: { heatCapacity: 10 }, needs: ['recovery'], maxHealthCost: 4, evolve: true },
+  { id: 'archive-copy', name: '覆文归档', description: '放弃一次后续普通奖励，换取当前复写的结构改造。', kind: 'archive', family: 'copy', scope: 'run', grants: { copyInheritance: 1 }, maxHealthCost: 0, rewardDebt: 1, evolve: true },
+  { id: 'archive-transport', name: '回航归档', description: '给已拥有的运输结构增加回收出口。', kind: 'archive', family: 'transport', scope: 'run', grants: { heatCapacity: 10 }, needs: ['carrier'], maxHealthCost: 5, evolve: true },
+  { id: 'proofread-letters', name: '词形重订', description: '改变散字集中、分发与承载的关系。', kind: 'proofread', family: 'letters', scope: 'run', grants: { carrierCapacity: 1 }, maxHealthCost: 4, evolve: true },
+  { id: 'proofread-gather', name: '聚字校勘', description: '已兑现的标记部分改作载荷，不额外替玩家完成输入。', kind: 'proofread', scope: 'chapter', grants: { markCarrier: 1, copyEfficiency: -.02 }, talentStats: ['letterScatter', 'copyPages'], maxHealthCost: 3 },
+  { id: 'proofread-scatter', name: '分字校勘', description: '把散字分向更多词条，降低单目标集中。', kind: 'proofread', scope: 'chapter', grants: { letterScatter: 1, markSpread: 1, spellPower: -.03 }, maxHealthCost: 0 },
+  { id: 'contract-defense', name: '护文契约', description: '牺牲部分承压余地改造防御出口。', kind: 'contract', family: 'defense', scope: 'run', grants: { carrierLifetime: .5 }, needs: ['carrier'], maxHealthCost: 6, evolve: true },
+  { id: 'contract-geometry', name: '长廊契约', description: '以更高后续压力换来远距交付路线。', kind: 'contract', family: 'geometry', scope: 'run', grants: { chainReach: 25 }, maxHealthCost: 0, pressure: .14, evolve: true },
+  { id: 'contract-reserve', name: '细匣契约', description: '增加回收效率，缩小容量并提高下一房压力。', kind: 'contract', scope: 'run', grants: { recoveryEfficiency: .12, heatCapacity: -12 }, needs: ['recovery'], maxHealthCost: 0, pressure: .1 },
+  { id: 'trial-merge', name: '归并试炼', description: '先承受下一房更高压力，清房后获得聚合规则。', kind: 'trial', scope: 'run', grants: { mergePayload: 1, carrierCapacity: 1, carrierDelay: .25 }, needs: ['carrier'], maxHealthCost: 0, pressure: .18 },
+  { id: 'trial-supply', name: '燃字试炼', description: '先完成压力房间，再取得更稳定的材料供给。', kind: 'trial', scope: 'run', grants: { materialRate: .12, heatCapacity: 12 }, maxHealthCost: 0, pressure: .18 },
+  { id: 'trial-return', name: '遗页试炼', description: '完成压力房间后，解锁剩余载荷回收。', kind: 'trial', scope: 'run', grants: { paperRecovery: 1, missRecovery: 1 }, needs: ['carrier'], maxHealthCost: 0, pressure: .18 },
+];

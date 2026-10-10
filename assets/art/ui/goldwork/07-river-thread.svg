@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="100" viewBox="0 0 600 100" fill="none">
+  <title>流脉 · River thread</title>
+  <defs><linearGradient id="gold" x1="10" y1="0" x2="590" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#C9AE72" stop-opacity="0"/><stop offset=".25" stop-color="#C9AE72" stop-opacity=".6"/><stop offset=".6" stop-color="#F0DDAE" stop-opacity=".9"/><stop offset=".85" stop-color="#C9AE72" stop-opacity=".4"/><stop offset="1" stop-color="#C9AE72" stop-opacity="0"/></linearGradient></defs>
+  <g stroke="url(#gold)" stroke-linecap="round">
+    <path d="M10 63 C115 69 136 35 227 43 C318 51 372 69 449 44 C500 27 538 38 590 34" stroke-width="1.4"/>
+    <path d="M10 63 C115 69 136 35 227 43 C318 51 372 69 449 44 C500 27 538 38 590 34" stroke-width=".65" opacity=".45"/>
+    <path d="M148.6 46.89 C167.6 42.89 179.6 36.89 189.6 32.89 Q210.6 17.89 230.6 18.89 M303.15 51.79 C343.15 51.79 369.15 30.79 397.15 27.79 M415.9 52.49 C431.9 53.49 440.9 58.49 450.9 60.49 C474.9 71.49 489.9 72.49 505.9 70.49" stroke-width=".8"/>
+    <path d="M189.21 33.05 Q206.21 14.05 230.21 19.05 Q213.21 32.05 189.21 33.05 Z" stroke-width=".65"/>
+  </g>
+</svg>

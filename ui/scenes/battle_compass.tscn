@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/battle_compass.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="2"]
+
+[node name="BattleCompass" type="Control"]
+mouse_filter = 2
+physics_interpolation_mode = 2
+script = ExtResource("1")
+
+[node name="Direction" type="Label" parent="."]
+offset_left = -65.0
+offset_top = 94.0
+offset_right = 65.0
+offset_bottom = 116.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.78, 0.72, 0.57, 1)
+theme_override_colors/font_shadow_color = Color(0.02, 0.035, 0.04, 0.9)
+theme_override_constants/shadow_offset_y = 1
+horizontal_alignment = 1

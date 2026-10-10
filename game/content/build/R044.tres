@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rule_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule"]
+script = ExtResource("2")
+id = &"R044:rule"
+operation = &"stats"
+phase = &"compile"
+parameters = {
+
+}
+
+[resource]
+script = ExtResource("1")
+id = &"R044"
+title = "雪崩圣典"
+description = "冻裂击杀向四周射出6枚冰针，冰枪额外穿透2次；连锁冰针不再自我复制。"
+stage = &"M3"
+supported = true
+rules = Array[ExtResource("2")]([SubResource("Rule")])
+permits = PackedStringArray()
+max_stacks = 1
+allowed_books = PackedStringArray("frost")
+requires_all = PackedStringArray("R004", "R032")

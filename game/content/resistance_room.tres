@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BattleEncounter" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/element_trait.gd" id="2"]
+
+[sub_resource type="Resource" id="Ice"]
+script = ExtResource("2")
+enemy_kind = &"nib"
+resistance = 1
+weakness = 2
+
+[sub_resource type="Resource" id="Fire"]
+script = ExtResource("2")
+enemy_kind = &"quill"
+resistance = 2
+weakness = 3
+
+[sub_resource type="Resource" id="Lightning"]
+script = ExtResource("2")
+enemy_kind = &"guard"
+resistance = 3
+weakness = 4
+
+[resource]
+script = ExtResource("1")
+element_traits = Array[ExtResource("2")]([SubResource("Ice"), SubResource("Fire"), SubResource("Lightning")])
