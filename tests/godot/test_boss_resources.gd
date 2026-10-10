@@ -1,6 +1,7 @@
 extends SceneTree
 ## Run against source and with --main-pack <PCK>, using the editor executable
-## and this script's absolute path. Verifies the actual exported resource data.
+## and this script's absolute path. Verifies packed resources with the editor's
+## current Debug assembly; this does not exercise the published assembly.
 
 var failures := 0
 

@@ -34,6 +34,7 @@ var typing := TypingSession.new()
 var ledger := SpellResourceLedger.new()
 var book_id: StringName = &"frost"
 var enemies: Array[BattleEnemy] = []
+var _enemies_by_id: Dictionary[StringName, BattleEnemy] = {}
 var effects: Array[BattleEffect] = []
 var ultimates: Array[BattleUltimate] = []
 var ultimate_time := 0.0
@@ -136,6 +137,18 @@ var has_input_interruption: bool = false
 var has_same_root_lots: bool = false
 var _enemy_definitions: Dictionary[StringName, EnemyCombatDefinition] = {}
 var _progression_dirty: bool = false
+static var _dodge_prepared := false
+var _dodge_scorer: RefCounted = preload("res://game/algorithms/DodgeScorer.cs").new()
+var _dodge_points := PackedVector2Array()
+var _dodge_starts := PackedInt32Array()
+var _dodge_segments := PackedInt32Array()
+var _dodge_radii := PackedFloat64Array()
+var _dodge_directions := PackedVector2Array()
+var _dodge_candidates := PackedVector2Array()
+var _dodge_travel := PackedVector2Array()
+var _dodge_scores := PackedFloat64Array()
+var _dodge_fixed := PackedFloat64Array()
+var _dodge_tails := PackedFloat64Array()
 
 
 static func arena_clarity(at: Vector2, radius: float = 0.0) -> float:
@@ -158,6 +171,17 @@ static func clamp_player(at: Vector2) -> Vector2:
 
 
 func _init() -> void:
+	for index in 24: _dodge_directions.append(Vector2.from_angle(-PI * 0.5 + index * TAU / 24.0))
+	_dodge_candidates.resize(24)
+	_dodge_travel.resize(96)
+	_dodge_scores.resize(24)
+	_dodge_fixed.resize(24)
+	if not _dodge_prepared:
+		# Prepare both array marshaling and numeric JIT before the first input.
+		# Synthetic data invokes the numeric methods without combat state/events.
+		_dodge_tails.resize(48)
+		_dodge_scorer.Choose(PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT]), PackedInt32Array([0]), PackedInt32Array([2]), PackedFloat64Array([33.0]), 1, _dodge_candidates, _dodge_travel, _dodge_scores, _dodge_fixed, _dodge_tails, 2)
+		_dodge_prepared = true
 	typing.changed.connect(_remember_lock)
 	typing.word_completed.connect(func(fact: WordCompletion) -> void: _completed.append(fact))
 	typing.abandoned.connect(func(abandoned_id: String) -> void: _abandoned.append(abandoned_id))
@@ -276,6 +300,7 @@ func _start_room(selected_book: StringName, entries: Array[VocabularyEntry], sel
 	ledger = SpellResourceLedger.new()
 	typing.drain_receipts()
 	enemies.clear()
+	_enemies_by_id.clear()
 	_enemy_definitions.clear()
 	reward_facts.clear()
 	has_created_redeemable_mark = false
@@ -415,6 +440,7 @@ func _spawn_enemy(definition: EnemyCombatDefinition, at: Vector2, _index: int = 
 		enemy.position = _arrival_position(enemy.approach_direction)
 	enemy.previous_position = enemy.position
 	enemies.append(enemy)
+	_enemies_by_id[enemy.id] = enemy
 	return enemy
 
 
@@ -541,7 +567,7 @@ func step(delta: float) -> void:
 				break
 	if player_hp_q <= 0:
 		_end(false)
-	elif _living().is_empty() and effects.is_empty() and projectiles.is_empty() and _spawned >= ceili(float(_room_quota * wave) / encounter.wave_count):
+	elif not _has_living() and effects.is_empty() and projectiles.is_empty() and _spawned >= ceili(float(_room_quota * wave) / encounter.wave_count):
 		if wave == encounter.wave_count:
 			_end(true)
 		elif intermission < 0.0:
@@ -563,18 +589,26 @@ func _advance_encounter(delta: float) -> void:
 	var progress := clampf(_room_world_time / 55.0, 0.0, 1.0)
 	_enemy_cap = mini(24, MODE_CAP[_difficulty_rank] - 2 + floori(depth * 0.65) + floori(progress * 2.0))
 	var wave_limit := ceili(float(_room_quota * wave) / encounter.wave_count)
-	if _living().is_empty() and _room_world_time > 4.0: _spawn_clock = minf(_spawn_clock, 0.8)
-	if _spawn_clock > 0.0 or _spawned >= wave_limit or _living().size() >= _enemy_cap: return
+	var alive_count := 0
+	for enemy in enemies:
+		if enemy.alive(): alive_count += 1
+	if alive_count == 0 and _room_world_time > 4.0: _spawn_clock = minf(_spawn_clock, 0.8)
+	if _spawn_clock > 0.0 or _spawned >= wave_limit or alive_count >= _enemy_cap: return
+	var kind_counts: Dictionary[StringName, int] = {}
+	for enemy in enemies:
+		if enemy.alive(): kind_counts[enemy.kind] = kind_counts.get(enemy.kind, 0) + 1
 	var batch := 1 + (1 if _difficulty_rank >= 2 and wave >= 2 else 0) + (1 if _physical_chapter() >= 2 and _difficulty_rank >= 1 else 0) + (1 if _physical_chapter() >= 3 and _difficulty_rank >= 3 else 0) + (1 if wave == encounter.wave_count and _difficulty_rank >= 3 else 0)
 	for index in mini(batch, wave_limit - _spawned):
-		if _living().size() >= _enemy_cap: break
+		if alive_count >= _enemy_cap: break
 		var allowed: Array[EnemyCombatDefinition] = []
 		for definition in encounter.enemies:
-			if _living().filter(func(enemy: BattleEnemy) -> bool: return enemy.kind == definition.kind).size() < definition.spawn_limit:
+			if kind_counts.get(definition.kind, 0) < definition.spawn_limit:
 				allowed.append(definition)
 		if allowed.is_empty(): break
 		var definition := allowed[_rng.randi_range(0, allowed.size() - 1)]
 		_spawn_enemy(definition, _arrival_position(arrival_direction), index)
+		alive_count += 1
+		kind_counts[definition.kind] = kind_counts.get(definition.kind, 0) + 1
 		_spawned += 1
 	var opening := 1.0 + 0.3 * maxf(0.0, 1.0 - depth / 3.0) * (1.0 - progress)
 	_spawn_clock = maxf(0.55, MODE_SPAWN[_difficulty_rank] * opening / (1.0 + depth * (0.025 + _difficulty_rank * 0.004) + progress * 0.12))
@@ -587,10 +621,7 @@ func _publish_progression() -> void:
 
 
 func enemy_by_id(id: StringName) -> BattleEnemy:
-	for enemy in enemies:
-		if enemy.id == id:
-			return enemy
-	return null
+	return _enemies_by_id.get(id)
 
 
 func spirit_blade_count() -> int:
@@ -702,8 +733,7 @@ func _advance_effects(delta: float) -> void:
 				runtime.retire(effect)
 				continue
 			if effect.kind == &"storm_arc" and effect.arc_index > 0:
-				var candidates := runtime.arc_targets(effect, effect.origin)
-				target = candidates[0] if not candidates.is_empty() else null
+				target = runtime.arc_target(effect, effect.origin)
 			else:
 				target = _nearest_living(effect.origin, effect.visited)
 		if target == null:
@@ -746,15 +776,28 @@ func _advance_projectiles(delta: float) -> void:
 		if projectile.trail.size() > 9:
 			projectile.trail.remove_at(0)
 		var contacts: Array[Dictionary] = []
+		var single_hit := projectile.remaining_hits == 1
+		var first_enemy: BattleEnemy = null
+		var first_time := INF
+		var sweep_from := projectile.previous_position * ARENA_SIZE
+		var sweep_to := projectile.position * ARENA_SIZE
 		for enemy in enemies:
 			if not enemy.alive() or not enemy_in_combat(enemy) or str(enemy.id) in projectile.hit_ids:
 				continue
-			var time := CombatGeometry.sweep_discs(projectile.previous_position * ARENA_SIZE, projectile.position * ARENA_SIZE, enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, projectile.radius + enemy.radius)
+			var time := CombatGeometry.sweep_discs(sweep_from, sweep_to, enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, projectile.radius + enemy.radius)
 			if time != INF:
-				contacts.append({"enemy": enemy, "time": time})
-		contacts.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-			return a.time < b.time if a.time != b.time else str(a.enemy.id) < str(b.enemy.id)
-		)
+				if single_hit:
+					if first_enemy == null or time < first_time or (time == first_time and str(enemy.id) < str(first_enemy.id)):
+						first_enemy = enemy
+						first_time = time
+				else:
+					contacts.append({"enemy": enemy, "time": time})
+		if single_hit:
+			if first_enemy != null: contacts.append({"enemy": first_enemy, "time": first_time})
+		else:
+			contacts.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+				return a.time < b.time if a.time != b.time else str(a.enemy.id) < str(b.enemy.id)
+			)
 		for contact in contacts:
 			var enemy: BattleEnemy = contact.enemy
 			var primary := projectile.hit_ids.is_empty()
@@ -884,8 +927,8 @@ func _summon_spirit() -> void:
 func spirit_target(origin: Vector2) -> BattleEnemy:
 	var chosen: BattleEnemy
 	var score := INF
-	for enemy in _living():
-		if not enemy_in_combat(enemy): continue
+	for enemy in enemies:
+		if not enemy.alive() or not enemy_in_combat(enemy): continue
 		var candidate := ((enemy.position - origin) * ARENA_SIZE).length() / (1.0 + enemy.vulnerability / 32.0)
 		if candidate < score:
 			score = candidate
@@ -957,8 +1000,8 @@ func _advance_enemy_motion(delta: float) -> void:
 		desired *= enemy.cold_move_scale()
 		if enemy.local_slow_time > 0.0: desired *= 0.75
 		if compiled_build.asset_stacks(&"R018") > 0 and typing.target_id == enemy.id: desired *= 0.82
-		for source in _living():
-			if source != enemy and source.aura == &"haste" and enemy_in_combat(source) and ((source.position - enemy.position) * ARENA_SIZE).length() <= source.aura_radius:
+		for source in enemies:
+			if source.alive() and source != enemy and source.aura == &"haste" and enemy_in_combat(source) and ((source.position - enemy.position) * ARENA_SIZE).length() <= source.aura_radius:
 				desired *= 1.18
 				break
 		if enemy.frozen_time > 0.0:
@@ -1022,7 +1065,7 @@ func _advance_enemies(delta: float) -> void:
 					_spawn_enemy(load("res://game/content/enemies/tower.tres"), Vector2(0.72, 0.28))
 				event_committed.emit({"kind": &"boss_phase", "enemy": enemy.id, "phase": phase, "at": enemy.position})
 		if enemy.boss:
-			enemy.shielded = _living().any(func(other: BattleEnemy) -> bool: return other.kind == &"tower" and enemy_in_combat(other))
+			enemy.shielded = _has_combat_tower()
 		if _enemy_definitions[enemy.id].mirror:
 			enemy.mirror_clock -= delta
 			if enemy.mirror_clock <= 0.0:
@@ -1365,8 +1408,8 @@ func _advance_threats(delta: float) -> void:
 		if threat.reflected:
 			var hit: BattleEnemy
 			var closest := INF
-			for enemy in _living():
-				if not enemy_in_combat(enemy):
+			for enemy in enemies:
+				if not enemy.alive() or not enemy_in_combat(enemy):
 					continue
 				var time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, enemy.radius + threat.radius)
 				if time < closest:
@@ -1699,24 +1742,33 @@ func _safe_direction() -> Vector2:
 			duration = minf(duration, (((enemy.aimed_position - enemy.position) * ARENA_SIZE).length() + enemy.radius + 42.0) / enemy.charge_speed)
 		var endpoint := (origin + velocity * duration + enemy.impulse * 0.12).clamp(Vector2(48.0, 43.2), ARENA_SIZE * Vector2(0.975, 0.94))
 		enemy_paths.append({"enemy": enemy, "origin": origin, "endpoint": endpoint, "travel_end": origin + velocity * 0.17})
-	var weights: Array[float] = []
 	var travel_factors: Array[Vector2] = []
 	for tick in 14:
 		var time := tick * PREDICTION_STEP
-		weights.append(0.25 if time < 0.7 else (0.6 if time < 1.0 else 1.0))
 		if time < 0.17:
 			travel_factors.append(Vector2(1.0 - pow(1.0 - time / 0.17, 3.0), 1.0 - pow(1.0 - minf(0.17, time + PREDICTION_STEP) / 0.17, 3.0)))
-	var trajectories: Array[Dictionary] = []
+	_dodge_points.resize(threats.size() * 15)
+	_dodge_starts.resize(threats.size())
+	_dodge_segments.resize(threats.size())
+	_dodge_radii.resize(threats.size())
+	var point_count := 0
+	var trajectory_count := 0
 	for threat in threats:
 		if threat.reflected: continue
-		var points: Array[Vector2] = [threat.position * ARENA_SIZE]
+		var segments := mini(14, ceili(threat.life / PREDICTION_STEP))
+		_dodge_starts[trajectory_count] = point_count
+		_dodge_segments[trajectory_count] = segments
+		_dodge_radii[trajectory_count] = threat.radius + 21.0 + 12.0
+		_dodge_points[point_count] = threat.position * ARENA_SIZE
+		point_count += 1
 		var velocity := threat.velocity
-		for tick in mini(14, ceili(threat.life / PREDICTION_STEP)):
-			var at := points[-1]
-			velocity = velocity.rotated(threat.curvature * PREDICTION_STEP) * exp(threat.acceleration * PREDICTION_STEP)
-			var pace := 1.0
-			points.append(at + velocity * PREDICTION_STEP * pace)
-		trajectories.append({"points": points, "radius": threat.radius + 21.0 + 12.0})
+		var rotation := threat.curvature * PREDICTION_STEP
+		var acceleration := exp(threat.acceleration * PREDICTION_STEP)
+		for tick in segments:
+			velocity = velocity.rotated(rotation) * acceleration
+			_dodge_points[point_count] = _dodge_points[point_count - 1] + velocity * PREDICTION_STEP
+			point_count += 1
+		trajectory_count += 1
 	var from := player_position * ARENA_SIZE
 	var center := ARENA_SIZE * 0.5
 	var from_center_distance := from.distance_to(center)
@@ -1724,28 +1776,26 @@ func _safe_direction() -> Vector2:
 	for hazard in hazards:
 		if hazard.warning_remaining <= HORIZON and hazard.warning_remaining + hazard.active_remaining > 0.17:
 			relevant_hazards.append(hazard)
-	var best := Vector2.UP
-	var best_score := INF
+	var tail_stride := relevant_hazards.size() + 2
+	_dodge_tails.resize(24 * tail_stride)
+	_dodge_tails.fill(0.0)
 	for index in 24:
-		var direction := Vector2.from_angle(-PI * 0.5 + index * TAU / 24.0)
+		var direction := _dodge_directions[index]
 		var at := clamp_player(player_position + direction * 240.0 / ARENA_SIZE)
 		var point := at * ARENA_SIZE
 		var edge_clearance := minf(minf(point.x, ARENA_SIZE.x - point.x), minf(point.y, ARENA_SIZE.y - point.y))
 		var edge_penalty := pow(maxf(0.0, EDGE_WIDTH + 60.0 - edge_clearance), 2.0) * 0.08
 		var center_distance := point.distance_to(center)
 		var center_penalty := center_distance * 0.12 + maxf(0.0, center_distance - from_center_distance) * 0.7
-		var hazard_penalties: Array[float] = []
+		var tail_count := 0
 		var fixed_penalty := edge_penalty + center_penalty
 		for hazard in relevant_hazards:
 			if hazard.clearance(at) < 20.0:
 				var penalty := 1900.0 if hazard.kind == &"blast" else 1800.0
-				hazard_penalties.append(penalty)
+				_dodge_tails[index * tail_stride + tail_count] = penalty
+				tail_count += 1
 				fixed_penalty += penalty
-		# Fixed terms are a lower bound, but are still added in the original order.
-		# Slack only weakens pruning and preserves ties under floating-point rounding.
-		var score_ceiling := best_score - fixed_penalty + maxf(0.000001, best_score * 0.000000001)
 		var score := maxf(0.0, 210.0 - from.distance_to(point)) * 5.0
-		if score >= score_ceiling: continue
 		for path in enemy_paths:
 			var enemy: BattleEnemy = path.enemy
 			var origin: Vector2 = path.origin
@@ -1758,36 +1808,17 @@ func _safe_direction() -> Vector2:
 			if enemy.behavior == &"melee" and (enemy.aiming or enemy.melee_strike > 0.0):
 				if CombatGeometry.disc_in_sector((at - enemy.melee_origin) * ARENA_SIZE, 21.0, enemy.melee_direction, BattleEnemy.MELEE_REACH, BattleEnemy.MELEE_HALF_ANGLE):
 					score += 500.0
-			if score >= score_ceiling: break
-		# Remaining penalties are nonnegative; ties keep the earlier candidate.
-		if score >= score_ceiling: continue
-		var travel_starts: Array[Vector2] = []
-		var travel_ends: Array[Vector2] = []
-		for factors in travel_factors:
-			travel_starts.append(from.lerp(point, factors.x))
-			travel_ends.append(from.lerp(point, factors.y))
-		for trajectory in trajectories:
-			var points: Array[Vector2] = trajectory.points
-			var radius: float = trajectory.radius
-			var risk := 0.0
-			for tick in range(points.size() - 1):
-				var nearest := Geometry2D.get_closest_point_to_segment(point, points[tick], points[tick + 1])
-				var clearance := point.distance_to(nearest) - radius
-				risk = maxf(risk, weights[tick] * (1600.0 if clearance < 0.0 else 120.0 / maxf(10.0, clearance)))
-				if tick < travel_starts.size():
-					if CombatGeometry.sweep_discs(travel_starts[tick], travel_ends[tick], points[tick], points[tick + 1], radius) != INF:
-						risk = maxf(risk, 100.0)
-				if risk == 1600.0 or score + risk >= score_ceiling: break
-			score += risk
-			if score >= score_ceiling: break
-		if score >= score_ceiling: continue
-		for penalty in hazard_penalties: score += penalty
-		score += edge_penalty
-		score += center_penalty
-		if score < best_score:
-			best_score = score
-			best = direction
-	return best
+		_dodge_candidates[index] = point
+		_dodge_scores[index] = score
+		_dodge_fixed[index] = fixed_penalty
+		_dodge_tails[index * tail_stride + tail_count] = edge_penalty
+		_dodge_tails[index * tail_stride + tail_count + 1] = center_penalty
+		for tick in travel_factors.size():
+			var factors := travel_factors[tick]
+			_dodge_travel[index * 4 + tick * 2] = from.lerp(point, factors.x)
+			_dodge_travel[index * 4 + tick * 2 + 1] = from.lerp(point, factors.y)
+	var chosen: int = _dodge_scorer.Choose(_dodge_points, _dodge_starts, _dodge_segments, _dodge_radii, trajectory_count, _dodge_candidates, _dodge_travel, _dodge_scores, _dodge_fixed, _dodge_tails, tail_stride)
+	return _dodge_directions[chosen]
 
 
 func _commit_ultimate() -> void:
@@ -1875,7 +1906,7 @@ func commit_damage(enemy: BattleEnemy, damage_q: int, raw_q: int, source: String
 	enemy.combat_locked = true
 	damage_q = roundi(damage_q * (1.0 + 2.0 * enemy.vulnerability / 127.0))
 	if enemy.boss:
-		enemy.shielded = _living().any(func(other: BattleEnemy) -> bool: return other.kind == &"tower" and enemy_in_combat(other))
+		enemy.shielded = _has_combat_tower()
 		if enemy.shielded: damage_q = roundi(damage_q * 0.45)
 		if enemy.phase_lock > 0.0: damage_q = roundi(damage_q * 0.12)
 		var floor_ratio := 0.665 if enemy.phase == 1 else (0.335 if enemy.phase == 2 else 0.0)
@@ -1923,6 +1954,18 @@ func commit_damage(enemy: BattleEnemy, damage_q: int, raw_q: int, source: String
 		_progression_dirty = true
 		_retire_word(enemy.id)
 		event_committed.emit({"kind": &"death", "at": enemy.position, "enemy": enemy.id})
+
+
+func _has_living() -> bool:
+	for enemy in enemies:
+		if enemy.alive(): return true
+	return false
+
+
+func _has_combat_tower() -> bool:
+	for enemy in enemies:
+		if enemy.kind == &"tower" and enemy.alive() and enemy_in_combat(enemy): return true
+	return false
 
 
 func _living() -> Array[BattleEnemy]:

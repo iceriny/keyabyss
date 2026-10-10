@@ -87,6 +87,7 @@ func _session(book: StringName, assets: Dictionary = {}) -> BattleSession:
 	sessions.append(session)
 	session.start(request)
 	session.enemies.clear()
+	session._enemies_by_id.clear()
 	for index in 2:
 		var enemy := BattleEnemy.new()
 		enemy.id = StringName("target-%d" % index)
@@ -98,6 +99,7 @@ func _session(book: StringName, assets: Dictionary = {}) -> BattleSession:
 		enemy.attack_interval = 1000.0
 		enemy.attack_clock = 1000.0
 		session.enemies.append(enemy)
+		session._enemies_by_id[enemy.id] = enemy
 		session._enemy_definitions[enemy.id] = session._enemy_definitions.values()[0]
 	return session
 

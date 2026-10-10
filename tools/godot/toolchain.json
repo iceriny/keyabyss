@@ -9,6 +9,7 @@
   "mcpCommit": "fcbc29e03297900b9a1fcc6c7cbae116fe9d532a",
   "mcpVersion": "3.1.0",
   "nodeMinimumMajor": 22,
+  "dotnetSdkVersion": "9.0.201",
   "runtimeDirectories": ["app", "assets", "audio", "ui", "game", "development"],
-  "runtimeFiles": ["project.godot"]
+  "runtimeFiles": ["project.godot", "Keyabyss.sln", "Keyabyss.csproj", "global.json", "packages.Debug.lock.json", "packages.ExportDebug.lock.json", "packages.ExportRelease.lock.json"]
 }

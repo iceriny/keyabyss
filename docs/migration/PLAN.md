@@ -133,14 +133,14 @@ S1 不必先完成 58 件才进入第一章试玩，但恢复清单不能遗漏�
 
 2026-10-10：先在 GDScript 内减少历史对象扫描、重复集合构造和不必要的排序；自动闪避作为独立热点，按实测决定是否引入 .NET 纯计算核。空间索引留到低成本优化后评估，不整体重写战斗系统。
 
-本节为碰撞、索敌、命中、范围查询及自动闪避的 CPU 优化方案，尚未接入正式实现。视觉效果、资源、渲染质量、固定步频率及玩法参数保持现状。不修改 `ui/`、shader、粒子、流体／冰火求解、尾迹采样或词咒布局；规则输出仍提供相同的轨迹、事件、接触位置和时钟。
+本节规定碰撞、索敌、命中、范围查询及自动闪避的 CPU 优化边界；实际取舍和验证见[实施记录](COMBAT-ALGORITHM-IMPLEMENTATION.md)。视觉效果、资源、渲染质量、固定步频率及玩法参数保持现状。不修改 `ui/`、shader、粒子、流体／冰火求解、尾迹采样或词咒布局；规则输出仍提供相同的轨迹、事件、接触位置和时钟。
 
 ### 判断依据
 
 - `BattleSession.step()` 是规则推进的唯一入口；状态与法术、敌人移动及实体分离、己方弹道及纸灵、敌人攻击及敌弹按现有顺序执行。优化不能把不同阶段的状态合成一份整步不变的快照。
 - `CombatGeometry.sweep_discs()` 已使用相对运动的连续圆扫掠和数值稳定的首次接触解，不以端点重叠检测替换。投射物按接触时刻、再按目标 ID 决定命中次序。
 - 正式遭遇的常规刷怪上限最多为 24，但这不是全局硬上限：Boss 增援、孵化和死亡分裂通过 `_spawn_enemy()` 直接追加；`enemies` 还保留整房死亡对象。因此必须分别测量存活数 N 与整房累计数 M，不能把所有扫描都当成最多 24 次。
-- 自动闪避已有预测预计算与非负评分剪枝，历史本机 256 弹选点中位 18.74ms、最大 21.73ms，32／128 弹分别为 1.51／9.00ms。原始记录为 [2026-10-09 研究](../../.temp/feedback-20261009/dodge-optimization-review.md)及[原始样本](../../.temp/feedback-20261009/dodge-optimization-raw.log)：Ryzen 7 3800X、headless、每组预热 5 次／采样 10 次、3 敌人和 3 危险区，另有 288 例选点一致性对照。本轮只读取证据；不能据此报告当前 p95／p99 或固定步总成本。历史版本含冰场速度查询，当前 `_safe_direction()` 与 `_advance_threats()` 的 `pace` 都是 1.0，实施基准必须取开工时的源码，不能恢复历史预测规则。
+- 自动闪避已有预测预计算与非负评分剪枝，历史本机 256 弹选点中位 18.74ms、最大 21.73ms，32／128 弹分别为 1.51／9.00ms。原始记录为 [2026-10-09 研究](../../.temp/feedback-20261009/dodge-optimization-review.md)及[原始样本](../../.temp/feedback-20261009/dodge-optimization-raw.log)：Ryzen 7 3800X、headless、每组预热 5 次／采样 10 次、3 敌人和 3 危险区，另有 288 例选点一致性对照。这些只作为研究证据，不能据此报告当前 p95／p99 或固定步总成本；正式实施已重新采样。历史版本含冰场速度查询，当前 `_safe_direction()` 与 `_advance_threats()` 的 `pace` 都是 1.0，实施基准取开工时的源码，不恢复历史预测规则。
 
 源码入口：[会话与推进](../../game/session/battle_session.gd)、[法术运行](../../game/spells/spell_runtime.gd)、[连续碰撞](../../game/combat/combat_geometry.gd)、[场范围](../../game/spells/spell_field.gd)、[危险区](../../game/combat/battle_hazard.gd)。下述复杂度分析来自静态代码，不是已测瓶颈占比。记 P 为己方弹数、R 为反射弹数、T 为敌弹数、F 为场数；普通敌弹主要对玩家及拦截物检测，并非全部执行 T×N 敌人配对。
 
@@ -215,11 +215,11 @@ S1 不必先完成 58 件才进入第一章试玩，但恢复清单不能遗漏�
 
 ### .NET 的引入条件与边界
 
-当前建议为**有条件试验自动闪避核，暂不迁移伤害、实体状态或逐对碰撞**。工程已锁定 Godot 4.7.2 mono，工具链记录 SDK 9.0.201，但活动工程没有 `.cs`／`.csproj`，也没有验证过 C# 交付链。不要把已使用 mono 引擎等同于零接入成本。
+采用范围为**自动闪避批量评分核，不迁移伤害、实体状态或逐对碰撞**。工程锁定 Godot 4.7.2 mono、SDK 9.0.201，`Keyabyss.csproj` 只编译 `game/algorithms/*.cs`。采用依据、剩余操作开销和交付链验证分别记在[实施记录](COMBAT-ALGORITHM-IMPLEMENTATION.md)，不能把 mono 引擎或一次编译通过等同于零接入成本。
 
 Godot 官方说明 C# 操作 `Godot.Collections` 会经过互操作，集合转换也有逐元素封送／复制成本；PackedArray 在 C# 对应受支持的 `System.Array`。因此采用“GDScript 读取对象并打包 → 一次调用 → 托管数组纯运算 → 返回候选索引”，而不是把循环搬入 C# 后继续逐个 `Get()`／`Call()` 访问 GDScript 对象。依据：[C# 集合](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_collections.html)。
 
-拟定窄接口为 `ChooseDodge(...) -> int`，首先只迁移敌弹轨迹评分。GDScript 按原表达式生成预测轨迹、24 个候选及前两段玩家运动轨迹，并生成敌人评分和危险区／边缘／中心尾项；按原顺序打包为 PackedVector2Array、PackedFloat64Array 和 PackedInt32Array，一次传入 C#。C# 执行候选×敌弹×轨迹段的纯数组循环，按原顺序累加并剪枝；返回 0～23，由 GDScript 使用原方向表继续提交闪避和事件。内循环不调用 Geometry2D 服务，不传 BattleSession、BattleEnemy、SpellField 或回调。
+窄接口为 `DodgeScorer.Choose(...) -> int`，只迁移敌弹轨迹评分。GDScript 按原表达式生成预测轨迹、24 个候选及前两段玩家运动轨迹，并生成敌人评分和危险区／边缘／中心尾项；按原顺序打包为 PackedVector2Array、PackedFloat64Array 和 PackedInt32Array，一次传入 C#。C# 执行候选×敌弹×轨迹段的纯数组循环，按原顺序累加并剪枝；返回 0～23，由 GDScript 使用原方向表继续提交闪避和事件。内循环不调用 Geometry2D 服务，不传 BattleSession、BattleEnemy、SpellField 或回调。
 
 首个接口保留原预测积分及三角函数的语言环境，减少数值对照范围。必须分别测量预测打包、跨语言调用和评分：如果预测打包仍使总成本超预算，才考虑把轨迹积分一起迁移。敌人／危险区部分不能预先合并为一个总分后改变原加法顺序；单独保存原来在敌弹评分之后累加的尾项。无需维持两套常驻战斗状态，也不扩展为跨语言战斗框架。
 
@@ -229,7 +229,7 @@ Godot 官方说明 C# 操作 `Godot.Collections` 会经过互操作，集合转�
 
 采用门槛是以下工程目标，而非已测结论：在相同目标 CPU 上，对照第一轮优化后的 GDScript，128／256 弹端到端 p95 至少降低 30% 且节省至少 1ms；0～32 弹的 p95 增量不超过 `max(0.1ms, 基线5%)`；一致性样本零选点差异，首次调用及 GC 不引入新的显著长帧。目标为 256 弹同步选点 p95 ≤4ms、p99 ≤6ms；若实际达不到，如实报告残余开销，不改候选或画面来通过。若 GDScript 已满足预算且 C# 增益不足，不引入 .NET。
 
-接入还必须完成：与锁定引擎匹配的 `Godot.NET.Sdk`／目标框架、SDK 锁与可重复构建；`tools/godot/toolchain.json` 的预览复制清单当前只复制根 `project.godot`，需纳入必要项目文件并在预览副本构建，不能只复制 `.cs`；Windows Debug／Release 的托管依赖、导出和无开发 SDK 环境独立启动。Godot 允许 GDScript 实例化已编译的 C# Godot 对象，但类名、基类和项目编译必须正确，见[跨语言调用](https://docs.godotengine.org/en/stable/tutorials/scripting/cross_language_scripting.html#instantiating-c-nodes-from-gdscript)与[C# 构建前提](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_basics.html#prerequisites)。这些通用文档不代替锁定 4.7.2 的实际兼容检查；编译通过不等于预览和导出链已经完成。
+接入交付包含与锁定引擎匹配的 `Godot.NET.Sdk`／目标框架、SDK 锁与可重复构建；`tools/godot/toolchain.json` 的预览复制清单已纳入 `.sln`、`.csproj`、`global.json` 和分配置依赖锁，并在预览副本构建；Windows Debug／Release 同时携带托管依赖。独立启动与受限 SDK 搜索环境的实测边界见实施记录。Godot 允许 GDScript 实例化已编译的 C# Godot 对象，但类名、基类和项目编译必须正确，见[跨语言调用](https://docs.godotengine.org/en/stable/tutorials/scripting/cross_language_scripting.html#instantiating-c-nodes-from-gdscript)与[C# 构建前提](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_basics.html#prerequisites)。这些通用文档不代替锁定 4.7.2 的实际兼容检查；编译通过不等于预览和导出链已经完成。
 
 ### 实施次序与验收出口
 

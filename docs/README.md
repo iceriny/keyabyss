@@ -28,7 +28,7 @@
 | [UI 实践](migration/UI-IMPLEMENTATION-LESSONS.md)、[M2 实施经验](migration/M2-IMPLEMENTATION-LESSONS.md) | 已遇到的问题、原生取舍和历史证据边界 |
 | [流体工具](FLUID-EFFECTS.md) | 当前原生流体、预设、照明和质量成本 |
 | [渲染准备方案](migration/PLAN.md#渲染准备与原生资源实施方案) | 首屏反馈、原生场景／材质、计算管线复用、Shader Baker 与必要验收 |
-| [战斗算法优化](migration/PLAN.md#战斗算法优化) | 碰撞、索敌、命中与自动闪避的等价优化、空间索引及 .NET 采用条件；保持视觉不变，尚未实施 |
+| [战斗算法优化](migration/PLAN.md#战斗算法优化)、[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md) | 查询、首击选择与 .NET 闪避评分核；保留碰撞／视觉语义，记录性能取舍及验证 |
 | [音频索引](audio/README.md) | 原件、切片和实际事件接线 |
 | [Git 与资产方案](GIT-AND-ASSETS.md) | 独立的仓库、LFS 与跨设备协作工作 |
 

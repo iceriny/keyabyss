@@ -16,6 +16,18 @@ func _run() -> void:
 	_check(is_equal_approx(CombatGeometry.sweep_discs(Vector2.ZERO, Vector2(100, 0), Vector2(50, -50), Vector2(50, 50), 10), (50.0 - 10.0 / sqrt(2.0)) / 100.0), "relative sweep catches a target crossing the flight between endpoints")
 	_check(CombatGeometry.sweep_discs(Vector2.ZERO, Vector2(100, 0), Vector2(50, 20), Vector2(50, 20), 10) == INF, "a near miss does not become a hit")
 	_check(CombatGeometry.sweep_discs(Vector2.ZERO, Vector2.ZERO, Vector2(5, 0), Vector2(5, 0), 10) == 0.0 and CombatGeometry.sweep_discs(Vector2.ZERO, Vector2.ZERO, Vector2(20, 0), Vector2(20, 0), 10) == INF, "stationary overlapping and separated sweeps are well defined")
+	_check(is_equal_approx(CombatGeometry.sweep_discs(Vector2.ZERO, Vector2(100, 0), Vector2(50, 10), Vector2(50, 10), 10), 0.5), "a tangent sweep retains exact surface contact")
+	if "--geometry" in OS.get_cmdline_user_args():
+		var geometry_words: Array[VocabularyEntry] = [VocabularyEntry.new("abc", "测试")]
+		var geometry_sessions: Array[BattleSession] = []
+		_check_projectile_geometry(geometry_words, geometry_sessions)
+		_check_piercing_geometry(geometry_words, geometry_sessions)
+		_check_equal_time_hit(geometry_words, geometry_sessions)
+		_check_piercing_death_order(geometry_words, geometry_sessions)
+		for session in geometry_sessions:
+			session.free()
+		call_deferred("_finish")
+		return
 	var ledger := SpellResourceLedger.new()
 	var receipt := ManualInputReceipt.new()
 	receipt.id = "physical-1"
@@ -48,47 +60,7 @@ func _run() -> void:
 	for enemy in arrival.enemies:
 		entered = entered or BattleSession.in_combat(enemy.position, enemy.radius)
 	_check(entered, "approaching enemies enter the clear battlefield")
-	var geometry := BattleSession.new()
-	sessions.append(geometry)
-	geometry.start_baseline(&"flame", words)
-	geometry.enemies[0].position = Vector2(1020, 540) / BattleSession.ARENA_SIZE
-	geometry.enemies[0].radius = 5.0
-	geometry.enemies[1].position = Vector2(1060, 540) / BattleSession.ARENA_SIZE
-	geometry.enemies[1].radius = 60.0
-	geometry.enemies[2].position = Vector2(1100, 800) / BattleSession.ARENA_SIZE
-	for enemy in geometry.enemies:
-		enemy.previous_position = enemy.position
-	var paid := Fixture.effect(geometry, &"flame_splash", geometry.enemies[0].id, 4 * SpellResourceLedger.Q, 0, Vector2(800, 540) / BattleSession.ARENA_SIZE)
-	var shot := BattleProjectile.new(paid)
-	shot.homing = false
-	shot.velocity = Vector2(1080, 0)
-	geometry.projectiles.append(shot)
-	geometry._advance_projectiles(0.3)
-	_check(geometry.enemies[1].hp_q < geometry.enemies[1].max_hp_q and geometry.enemies[0].hp_q == geometry.enemies[0].max_hp_q, "blocking projectile chooses the earliest surface even when its center is farther away")
-	_check(is_equal_approx(shot.position.x * BattleSession.ARENA_SIZE.x, 994.0) and shot.trail[-1] == shot.position, "spent projectile and retiring trail stop at actual contact")
-	var fast_body := geometry.enemies[0]
-	var heavy_body := geometry.enemies[1]
-	fast_body.radius = 28.0
-	heavy_body.radius = 32.0
-	fast_body.mass = 1.0
-	heavy_body.mass = 3.0
-	fast_body.previous_position = Vector2(900, 540) / BattleSession.ARENA_SIZE
-	fast_body.position = Vector2(1140, 540) / BattleSession.ARENA_SIZE
-	heavy_body.previous_position = Vector2(1040, 540) / BattleSession.ARENA_SIZE
-	heavy_body.position = heavy_body.previous_position
-	fast_body.velocity = Vector2.ZERO
-	heavy_body.velocity = Vector2.ZERO
-	fast_body.impulse = Vector2(2400, 0)
-	heavy_body.impulse = Vector2.ZERO
-	geometry._resolve_bodies()
-	_check(fast_body.position.x < heavy_body.position.x and ((heavy_body.position - fast_body.position) * BattleSession.ARENA_SIZE).length() >= 63.8, "fast pushed bodies cannot exchange sides through tunneling")
-	_check(is_equal_approx(fast_body.impulse.x * fast_body.mass + heavy_body.impulse.x * heavy_body.mass, 2400.0), "contact impulse transfers momentum without creating it")
-	fast_body.previous_position = Vector2(976.1, 540) / BattleSession.ARENA_SIZE
-	fast_body.position = Vector2(1140, 540) / BattleSession.ARENA_SIZE
-	heavy_body.previous_position = Vector2(1040, 540) / BattleSession.ARENA_SIZE
-	heavy_body.position = heavy_body.previous_position
-	geometry._resolve_bodies()
-	_check(fast_body.position.x < heavy_body.position.x, "bodies already inside contact slop cannot tunnel on the next push")
+	_check_projectile_geometry(words, sessions)
 	var renewal := BattleSession.new()
 	sessions.append(renewal)
 	renewal.start_baseline(&"frost", words)
@@ -156,20 +128,7 @@ func _run() -> void:
 		if book == &"spirit":
 			_check(session.spirit_blade_count() > 0 or session.enemies[0].hp_q < hp_before - 4 * SpellResourceLedger.Q, "spirit blade draws from finite paid work")
 
-	var line := BattleSession.new()
-	sessions.append(line)
-	line.start_baseline(&"frost", words)
-	_place_enemies_in_combat(line)
-	line.enemies[0].position = Vector2(0.65, 0.5)
-	line.enemies[1].position = Vector2(0.78, 0.5)
-	line.enemies[2].position = Vector2(0.65, 0.75)
-	for enemy in line.enemies:
-		enemy.attack_clock = 100.0
-	for letter in "abc":
-		line.typing.feed(letter)
-	for frame in 90:
-		line.step(1.0 / 60.0)
-	_check(line.enemies[0].hp_q < line.enemies[0].max_hp_q and line.enemies[1].hp_q < line.enemies[1].max_hp_q and line.enemies[2].hp_q == line.enemies[2].max_hp_q, "frost pierces enemies on its flight path without hitting an unrelated off-axis target")
+	_check_piercing_geometry(words, sessions)
 
 	var flame := BattleSession.new()
 	sessions.append(flame)
@@ -434,6 +393,146 @@ func _run() -> void:
 		session.free()
 
 	call_deferred("_finish")
+
+
+func _check_projectile_geometry(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:
+	var geometry := BattleSession.new()
+	sessions.append(geometry)
+	geometry.start_baseline(&"flame", words)
+	geometry.enemies[0].position = Vector2(1020, 540) / BattleSession.ARENA_SIZE
+	geometry.enemies[0].radius = 5.0
+	geometry.enemies[1].position = Vector2(1060, 540) / BattleSession.ARENA_SIZE
+	geometry.enemies[1].radius = 60.0
+	geometry.enemies[2].position = Vector2(1100, 800) / BattleSession.ARENA_SIZE
+	for enemy in geometry.enemies:
+		enemy.previous_position = enemy.position
+	var paid := Fixture.effect(geometry, &"flame_splash", geometry.enemies[0].id, 4 * SpellResourceLedger.Q, 0, Vector2(800, 540) / BattleSession.ARENA_SIZE)
+	var shot := BattleProjectile.new(paid)
+	shot.homing = false
+	shot.velocity = Vector2(1080, 0)
+	geometry.projectiles.append(shot)
+	geometry._advance_projectiles(0.3)
+	_check(geometry.enemies[1].hp_q < geometry.enemies[1].max_hp_q and geometry.enemies[0].hp_q == geometry.enemies[0].max_hp_q, "blocking projectile chooses the earliest surface even when its center is farther away")
+	_check(is_equal_approx(shot.position.x * BattleSession.ARENA_SIZE.x, 994.0) and shot.trail[-1] == shot.position, "spent projectile and retiring trail stop at actual contact")
+	var fast_body := geometry.enemies[0]
+	var heavy_body := geometry.enemies[1]
+	fast_body.radius = 28.0
+	heavy_body.radius = 32.0
+	fast_body.mass = 1.0
+	heavy_body.mass = 3.0
+	fast_body.previous_position = Vector2(900, 540) / BattleSession.ARENA_SIZE
+	fast_body.position = Vector2(1140, 540) / BattleSession.ARENA_SIZE
+	heavy_body.previous_position = Vector2(1040, 540) / BattleSession.ARENA_SIZE
+	heavy_body.position = heavy_body.previous_position
+	fast_body.velocity = Vector2.ZERO
+	heavy_body.velocity = Vector2.ZERO
+	fast_body.impulse = Vector2(2400, 0)
+	heavy_body.impulse = Vector2.ZERO
+	# Isolate contact transfer from collision damage's additional hit impulse.
+	fast_body.counter_push_time = 1.0
+	geometry._resolve_bodies()
+	_check(fast_body.position.x < heavy_body.position.x and ((heavy_body.position - fast_body.position) * BattleSession.ARENA_SIZE).length() >= 63.8, "fast pushed bodies cannot exchange sides through tunneling")
+	_check(is_equal_approx(fast_body.impulse.x * fast_body.mass + heavy_body.impulse.x * heavy_body.mass, 2400.0), "contact impulse transfers momentum without creating it")
+	fast_body.previous_position = Vector2(976.1, 540) / BattleSession.ARENA_SIZE
+	fast_body.position = Vector2(1140, 540) / BattleSession.ARENA_SIZE
+	heavy_body.previous_position = Vector2(1040, 540) / BattleSession.ARENA_SIZE
+	heavy_body.position = heavy_body.previous_position
+	geometry._resolve_bodies()
+	_check(fast_body.position.x < heavy_body.position.x, "bodies already inside contact slop cannot tunnel on the next push")
+
+
+func _check_piercing_geometry(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:
+	var line := BattleSession.new()
+	sessions.append(line)
+	line.start_baseline(&"frost", words)
+	_place_enemies_in_combat(line)
+	line.enemies[0].position = Vector2(0.65, 0.5)
+	line.enemies[1].position = Vector2(0.78, 0.5)
+	line.enemies[2].position = Vector2(0.65, 0.75)
+	for enemy in line.enemies:
+		enemy.attack_clock = 100.0
+	for letter in "abc":
+		line.typing.feed(letter)
+	for frame in 90:
+		line.step(1.0 / 60.0)
+	_check(line.enemies[0].hp_q < line.enemies[0].max_hp_q and line.enemies[1].hp_q < line.enemies[1].max_hp_q and line.enemies[2].hp_q == line.enemies[2].max_hp_q, "frost pierces enemies on its flight path without hitting an unrelated off-axis target")
+
+
+func _check_equal_time_hit(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:
+	var battle := BattleSession.new()
+	sessions.append(battle)
+	battle.start_baseline(&"flame", words)
+	var first := battle.enemies[0]
+	var second := battle.enemies[1]
+	var third := battle.enemies[2]
+	var first_definition: EnemyCombatDefinition = battle._enemy_definitions[first.id]
+	var second_definition: EnemyCombatDefinition = battle._enemy_definitions[second.id]
+	var third_definition: EnemyCombatDefinition = battle._enemy_definitions[third.id]
+	battle._enemy_definitions.erase(first.id)
+	battle._enemy_definitions.erase(second.id)
+	battle._enemy_definitions.erase(third.id)
+	battle._enemies_by_id.erase(first.id)
+	battle._enemies_by_id.erase(second.id)
+	battle._enemies_by_id.erase(third.id)
+	first.id = &"enemy_2"
+	second.id = &"enemy_10"
+	third.id = &"off_axis"
+	battle._enemies_by_id[first.id] = first
+	battle._enemies_by_id[second.id] = second
+	battle._enemies_by_id[third.id] = third
+	battle._enemy_definitions[first.id] = first_definition
+	battle._enemy_definitions[second.id] = second_definition
+	battle._enemy_definitions[third.id] = third_definition
+	first.position = Vector2(1020, 540) / BattleSession.ARENA_SIZE
+	second.position = first.position
+	first.radius = 20.0
+	second.radius = 20.0
+	battle.enemies[2].position = Vector2(1100, 800) / BattleSession.ARENA_SIZE
+	for enemy in battle.enemies:
+		enemy.previous_position = enemy.position
+	var paid := Fixture.effect(battle, &"flame_splash", first.id, 4 * SpellResourceLedger.Q, 0, Vector2(800, 540) / BattleSession.ARENA_SIZE)
+	var shot := BattleProjectile.new(paid)
+	shot.homing = false
+	shot.velocity = Vector2(1080, 0)
+	battle.projectiles.append(shot)
+	battle._advance_projectiles(0.3)
+	_check(second.hp_q < second.max_hp_q and first.hp_q == first.max_hp_q, "equal-time first hit uses string IDs: enemy_10 precedes enemy_2 despite array and numeric order")
+
+
+func _check_piercing_death_order(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:
+	for kind: StringName in [&"tower", &"split"]:
+		var battle := BattleSession.new()
+		sessions.append(battle)
+		battle.start_baseline(&"frost", words)
+		var first := battle.enemies[0]
+		var second := battle.enemies[1]
+		first.kind = kind
+		battle._enemy_definitions[first.id] = load("res://game/content/enemies/%s.tres" % kind)
+		first.hp_q = BattleSession.Q
+		first.position = Vector2(960, 540) / BattleSession.ARENA_SIZE
+		second.position = Vector2(1060, 540) / BattleSession.ARENA_SIZE
+		second.boss = kind == &"tower"
+		second.phase = 3
+		second.hp_q = 100 * BattleSession.Q
+		second.max_hp_q = second.hp_q
+		second.shielded = second.boss
+		battle.enemies[2].position = Vector2(1100, 800) / BattleSession.ARENA_SIZE
+		for enemy in battle.enemies:
+			enemy.previous_position = enemy.position
+		var paid := Fixture.effect(battle, &"frost_spear", first.id, 8 * SpellResourceLedger.Q, 0, Vector2(800, 540) / BattleSession.ARENA_SIZE)
+		paid.applications = 2
+		paid.primary_share_q = 2 * SpellResourceLedger.Q
+		var shot := BattleProjectile.new(paid)
+		shot.homing = false
+		shot.velocity = Vector2(1080, 0)
+		battle.projectiles.append(shot)
+		battle._advance_projectiles(0.3)
+		_check(not first.alive() and second.hp_q < second.max_hp_q and shot.hit_ids == PackedStringArray([str(first.id), str(second.id)]), "%s piercing commits the first death before the existing second hit" % kind)
+		_check(shot.remaining_hits == 0 and shot.trail[-1] == shot.position, "%s piercing retirement preserves its last contact and tail" % kind)
+		if kind == &"tower":
+			_check(not second.shielded, "a tower dying on the first piercing hit removes protection before the boss hit")
+		else:
+			_check(battle.enemies.size() == 5 and battle.enemies[3].hp_q == battle.enemies[3].max_hp_q and battle.enemies[4].hp_q == battle.enemies[4].max_hp_q, "death split children are generated synchronously but excluded from this projectile's original contact snapshot")
 
 
 func _finish() -> void:

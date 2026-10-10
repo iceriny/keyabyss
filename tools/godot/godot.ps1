@@ -23,6 +23,28 @@ if ($LASTEXITCODE -ne 0 -or $version -ne $lock.engineVersion) {
     throw "Engine mismatch: expected $($lock.engineVersion), got $version"
 }
 
+function Assert-DotNetSdk([string]$Root) {
+    Push-Location -LiteralPath $Root
+    try {
+        $sdkVersion = (& dotnet --version | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or $sdkVersion -ne $lock.dotnetSdkVersion) {
+            throw ".NET SDK mismatch: expected $($lock.dotnetSdkVersion), got $sdkVersion"
+        }
+    } finally { Pop-Location }
+    return $sdkVersion
+}
+
+function Build-ManagedDebug([string]$Root) {
+    Push-Location -LiteralPath $Root
+    try {
+        & dotnet build Keyabyss.csproj --configuration Debug -p:RestoreLockedMode=true --nologo
+        if ($LASTEXITCODE -ne 0) { throw 'Managed Debug build failed; inspect the dotnet output.' }
+    } finally { Pop-Location }
+}
+
+$sdkVersion = Assert-DotNetSdk $projectRoot
+if ($Task -in @('import', 'run', 'editor')) { Build-ManagedDebug $projectRoot }
+
 switch ($Task) {
     'doctor' {
         $hash = (Get-FileHash -LiteralPath $godotPath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -30,6 +52,7 @@ switch ($Task) {
         Write-Output "Godot: $version"
         Write-Output "Executable: $godotPath"
         Write-Output "Project: $projectRoot"
+        Write-Output ".NET SDK: $sdkVersion"
         Write-Output "MCP built: $(Test-Path -LiteralPath (Join-Path $projectRoot '.tools/godot-mcp/build/index.js'))"
         Write-Output "Windows templates: $(Test-Path -LiteralPath (Join-Path $env:APPDATA 'Godot/export_templates/4.7.2.stable.mono/windows_release_x86_64.exe'))"
         return
@@ -80,10 +103,11 @@ switch ($Task) {
             $settings = $settings.Replace('[autoload]', "[autoload]`n$bridgeEntry")
         } else { $settings += "`n[autoload]`n$bridgeEntry`n" }
         [IO.File]::WriteAllText($projectFile, $settings, [Text.UTF8Encoding]::new($false))
+        Build-ManagedDebug $preview
         $output = & $godotPath --headless --path $preview --editor --import 2>&1
         $engineExitCode = $LASTEXITCODE
         $output | ForEach-Object { Write-Output $_ }
-        if ($engineExitCode -ne 0 -or ($output | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) { throw 'Preview import failed; inspect the Godot output.' }
+        if ($engineExitCode -ne 0 -or ($output | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) { throw "Preview import failed (exit code $engineExitCode); inspect the Godot output." }
         Write-Output "MCP projectPath: $preview"
         return
     }
@@ -91,6 +115,13 @@ switch ($Task) {
     'run' { $arguments = @('--path', $projectRoot) }
     'editor' { $arguments = @('--path', $projectRoot, '--editor') }
     { $_ -in @('export', 'export-release') } {
+        $managedConfiguration = if ($Task -eq 'export-release') { 'ExportRelease' } else { 'ExportDebug' }
+        Push-Location -LiteralPath $projectRoot
+        try {
+            # Check the actual Godot SDK configuration without compiling twice.
+            & dotnet restore Keyabyss.csproj --locked-mode -p:Configuration=$managedConfiguration --runtime win-x64 --nologo
+            if ($LASTEXITCODE -ne 0) { throw "Managed $managedConfiguration locked restore failed; inspect the dotnet output." }
+        } finally { Pop-Location }
         if (Select-String -LiteralPath (Join-Path $projectRoot 'project.godot') -Pattern 'McpInteractionServer|mcp_interaction_server' -Quiet) {
             throw 'A development bridge is present in the source project. Restore the clean source configuration before exporting.'
         }
@@ -110,26 +141,70 @@ switch ($Task) {
         }
         $exportFlag = if ($Task -eq 'export-release') { '--export-release' } else { '--export-debug' }
         # Shader Baker requires the real RenderingDevice; headless silently skips it.
-        $arguments = @('--path', $projectRoot, $exportFlag, 'Windows Desktop', (Join-Path $outputDirectory 'keyabyss.exe'))
+        $arguments = @('--path', $projectRoot, '--screen', '0', $exportFlag, 'Windows Desktop', (Join-Path $outputDirectory 'keyabyss.exe'))
     }
 }
 if ($Task -in @('import', 'export', 'export-release')) {
-    $output = & $godotPath @arguments @EngineArguments 2>&1
-    $engineExitCode = $LASTEXITCODE
+    # Godot exports invoke dotnet publish with ExportDebug / ExportRelease.
+    # Pass locked restore to that child process, retaining the caller's environment.
+    $previousLockedMode = $env:RestoreLockedMode
+    try {
+        $env:RestoreLockedMode = 'true'
+        Push-Location -LiteralPath $projectRoot
+        try {
+            $output = & $godotPath @arguments @EngineArguments 2>&1
+            $engineExitCode = $LASTEXITCODE
+        } finally { Pop-Location }
+    } finally { $env:RestoreLockedMode = $previousLockedMode }
     $output | ForEach-Object { Write-Output $_ }
     if ($engineExitCode -ne 0) { exit $engineExitCode }
     if ($output | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:') { throw 'Godot reported errors; inspect the output.' }
     if ($Task -in @('export', 'export-release')) {
-        $bossCheck = & $godotPath --headless --main-pack (Join-Path $outputDirectory 'keyabyss.pck') --script (Join-Path $projectRoot 'tests/godot/test_boss_resources.gd') 2>&1
+        $publishedAssembly = Join-Path $outputDirectory 'data_Keyabyss_windows_x86_64/Keyabyss.dll'
+        if (-not (Test-Path -LiteralPath $publishedAssembly -PathType Leaf)) {
+            throw "Managed $managedConfiguration export assembly missing: $publishedAssembly"
+        }
+        # This checks packed resources with the current editor Debug assembly.
+        # Official export templates do not support --script or --main-pack.
+        Build-ManagedDebug $projectRoot
+        $bossCheck = & $godotPath --headless --path $projectRoot --main-pack (Join-Path $outputDirectory 'keyabyss.pck') --script (Join-Path $projectRoot 'tests/godot/test_boss_resources.gd') 2>&1
         $bossExitCode = $LASTEXITCODE
         $bossCheck | ForEach-Object { Write-Output $_ }
         if ($bossExitCode -ne 0 -or ($bossCheck | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
             throw 'Exported Boss resource check failed; this package is not ready to publish.'
         }
+        $consoleWrapper = Join-Path $outputDirectory 'keyabyss.console.exe'
+        if (-not (Test-Path -LiteralPath $consoleWrapper -PathType Leaf)) {
+            throw "Export smoke check requires the console wrapper: $consoleWrapper"
+        }
+        $smokeDirectory = Join-Path $projectRoot ('.temp/export-smoke/' + [Guid]::NewGuid().ToString('N'))
+        $smokeAppData = Join-Path $smokeDirectory 'appdata'
+        $smokeLog = Join-Path $smokeDirectory 'engine.log'
+        New-Item -ItemType Directory -Path $smokeAppData -Force | Out-Null
+        $previousAppData = $env:APPDATA
+        try {
+            $env:APPDATA = $smokeAppData
+            Push-Location -LiteralPath $outputDirectory
+            try {
+                # The console wrapper captures output and waits for the game.
+                $smokeOutput = & $consoleWrapper --quit-after 240 --max-fps 60 --headless --log-file $smokeLog 2>&1
+                $smokeExitCode = $LASTEXITCODE
+            } finally { Pop-Location }
+        } finally { $env:APPDATA = $previousAppData }
+        $smokeOutput | ForEach-Object { Write-Output $_ }
+        if ($smokeExitCode -ne 0 -or -not (Test-Path -LiteralPath $smokeLog -PathType Leaf)) {
+            throw "Export smoke check failed (exit code $smokeExitCode); inspect $smokeDirectory"
+        }
+        $smokeLogContents = Get-Content -LiteralPath $smokeLog -Raw -Encoding utf8
+        if ($smokeLogContents -notmatch 'Keyabyss ready \|' -or $smokeLogContents -match 'SCRIPT ERROR:|(?m)^ERROR:' -or
+            ($smokeOutput | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
+            throw "Export smoke check did not reach a clean startup; inspect $smokeLog"
+        }
+        Write-Output "Export smoke log: $smokeLog"
         Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE'), (Join-Path $projectRoot 'THIRD_PARTY_NOTICES.md') -Destination $outputDirectory
         $licenseDirectory = Join-Path $outputDirectory 'licenses'
         New-Item -ItemType Directory -Path $licenseDirectory -Force | Out-Null
-        foreach ($relative in @('licenses/GODOT_LICENSE.txt', 'licenses/GODOT_COPYRIGHT.txt', 'legacy/web/licenses/CMUdict-LICENSE.txt', 'legacy/web/licenses/Qwerty-Learner-GPL-3.0.txt')) {
+        foreach ($relative in @('licenses/GODOT_LICENSE.txt', 'licenses/GODOT_COPYRIGHT.txt', 'licenses/DOTNET_RUNTIME_LICENSE.txt', 'licenses/DOTNET_RUNTIME_NOTICES.txt', 'legacy/web/licenses/CMUdict-LICENSE.txt', 'legacy/web/licenses/Qwerty-Learner-GPL-3.0.txt')) {
             Copy-Item -LiteralPath (Join-Path $projectRoot $relative) -Destination $licenseDirectory
         }
         Copy-Item -LiteralPath (Join-Path $projectRoot 'assets/vocabulary/sources.json') -Destination (Join-Path $licenseDirectory 'vocabulary-sources.json')

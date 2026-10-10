@@ -10,7 +10,7 @@
 | 引擎目录 | `F:\Program Files\Godot\Godot_v4.7.2-stable_mono_win64` | 原位置使用，未复制或覆盖引擎 |
 | Windows 模板 | `%APPDATA%\Godot\export_templates\4.7.2.stable.mono` | 已安装 x86_64 Debug、Release、console wrappers、version.txt 和 ICU；不安装其他平台 |
 | Node.js | `v24.19.0` | 只用于 MCP 与保留的资产工具 |
-| .NET SDK | `9.0.201` | 当前仅记录，无 C# 项目、不执行无意义的 dotnet build |
+| .NET SDK | `9.0.201` | `global.json` 精确锁定；`Keyabyss.sln` 提供 `Debug`／`ExportDebug`／`ExportRelease` 配置；`Keyabyss.csproj` 使用 `Godot.NET.Sdk/4.7.2`、`net8.0`，只编译 `game/algorithms/*.cs` |
 | 主 MCP | `@tugcantopaloglu/godot-mcp` 3.1.0 | 提交 `fcbc29e03297900b9a1fcc6c7cbae116fe9d532a`，本地 `.tools/godot-mcp/` |
 | Codex 配置 | `.codex/config.toml` | 项目配置已被 CLI 识别；保持其他全局服务器原样 |
 | 项目 Skill | `.agents/skills/` | 原生开发、视觉与工具三类；未批量引入第三方架构偏好 |
@@ -29,13 +29,17 @@ pwsh -NoProfile -File tools/godot/godot.ps1 export
 pwsh -NoProfile -File tools/godot/godot.ps1 export-release
 ```
 
-`doctor` 验证精确引擎版本和 console.exe 哈希，并报告 MCP 和模板是否就绪。其他任务也拒绝版本不符。导入／导出除了退出码还检查显式引擎错误。`export` 生成 `builds/windows/` 下的 Debug 包；`export-release` 使用官方 Release 模板生成 `builds/windows-release/` 下的 EXE 与 PCK。两者同时复制项目声明、引擎及词库许可。导出不表示玩法、目标机器或素材许可已经验收，当前实际证据见阶段总结。
+`doctor` 验证精确引擎版本、console.exe 哈希和根工程实际解析的 .NET SDK，并报告 MCP 和模板是否就绪。其他任务也拒绝引擎或 SDK 版本不符。`import`／`editor`／`run` 先以 `Debug` 配置增量编译 C#，恢复依赖使用 locked mode；编译失败立即停止。依赖按 `packages.Debug.lock.json`、`packages.ExportDebug.lock.json`、`packages.ExportRelease.lock.json` 分配置锁定，不能用普通 `Release` 替代 Godot 的导出配置。
 
-Windows 预设已启用 Shader Baker。`export`／`export-release` 使用真实 RenderingDevice，不能追加 `--headless`；官方烘焙步骤需要图形设备。日志应包含 `baking_shaders` 完成及 `res://.godot/shader_cache/` 入包记录，独立启动仍需创建硬件相关管线。资源导入和成品 Boss 检查继续使用 headless。原理与资源入口见[渲染准备方案](PLAN.md#渲染准备与原生资源实施方案)。
+导入／导出除了退出码还检查显式引擎错误。`export` 生成 `builds/windows/` 下的 Debug 包；`export-release` 使用官方 Release 模板生成 `builds/windows-release/` 下的 EXE、PCK 和 `data_Keyabyss_windows_x86_64/` 托管运行目录。导出前验证对应 `ExportDebug`／`ExportRelease` 的 `win-x64` locked restore，随后由 Godot 自身执行该配置的 `dotnet publish`，不提前重复编译；子进程继续使用 `RestoreLockedMode=true`。两者同时复制项目声明、引擎及词库许可。导出不表示玩法、目标机器或素材许可已经验收，当前实际证据见阶段总结。
 
-独立导出 EXE 从包含同名 PCK 的目录启动，不传 `--path`；锁定的官方模板不支持路径覆盖，会在创建日志前退出。`--path` 留给编辑器引擎命令使用。
+Windows 预设已启用 Shader Baker。`export`／`export-release` 使用真实 RenderingDevice，不能追加 `--headless`；官方烘焙步骤需要图形设备。非交互导出显式传 `--screen 0`，避免复用编辑器记忆中已不存在的显示器编号。日志应包含 `baking_shaders` 完成及 `res://.godot/shader_cache/` 入包记录，独立启动仍需创建硬件相关管线。资源导入和成品 Boss 检查继续使用 headless。原理与资源入口见[渲染准备方案](PLAN.md#渲染准备与原生资源实施方案)。
 
-导出前把 `.godot/exported/` 的转换缓存移入 `.delete/godot-export-cache/<唯一目录>/`，重新生成二进制资源；导入与 shader 缓存保留。锁定引擎曾将 `PackedInt32Array = []` 的导出属性漏掉，修正声明后旧转换缓存仍会保留坏数据。导出后用编辑器引擎加载成品 PCK，核对三个 Boss 的五档生成和血量；该检查失败时不将产物视为可分发包。Debug 包附带“启动并记录.cmd”和“无诊断对照.cmd”，可回收目标设备日志。
+独立导出 EXE 从包含同名 PCK 的目录启动；锁定的官方模板不支持 `--script`、`--main-pack` 或 `--path`，这些参数留给编辑器引擎命令。成品验证使用 `keyabyss.console.exe` 捕获输出并等待退出，不以 GUI EXE 调用测试脚本。
+
+导出前把 `.godot/exported/` 的转换缓存移入 `.delete/godot-export-cache/<唯一目录>/`，重新生成二进制资源；导入与 shader 缓存保留。锁定引擎曾将 `PackedInt32Array = []` 的导出属性漏掉，修正声明后旧转换缓存仍会保留坏数据。导出后确认托管目录中的 `Keyabyss.dll` 存在，增量编译当前 `Debug`，再用编辑器引擎加载成品 PCK 执行 Boss 检查脚本，核对三个 Boss 的五档生成和血量。该检查验证打包资源及当前 Debug 程序集，不执行成品发布程序集。
+
+成品另用 `keyabyss.console.exe --quit-after 240 --max-fps 60 --headless --log-file <绝对日志路径>` 做启动烟测，给异步准备留出时间；Debug 和 Release 均生成控制台包装器。APPDATA 暂时隔离到 `.temp/export-smoke/<唯一目录>/appdata`，结束后恢复环境变量。检查退出码、输出和日志，要求出现 `Keyabyss ready` 且没有显式引擎错误；日志保留在该证据目录。短时启动通过不等于发布 C# 算法已经执行，仍需相应成品玩法验证。任一检查失败时不将产物视为可分发包。Debug 包附带“启动并记录.cmd”和“无诊断对照.cmd”，可回收目标设备日志。
 
 官方 CLI 始终可直接使用。例如 `& $env:GODOT_PATH --headless --path . --editor --import`。便利脚本不承担游戏运行逻辑。原生 CLI 与导出能力参见 [Godot CLI 文档](https://docs.godotengine.org/en/4.7/tutorials/editor/command_line_tutorial.html)。
 
@@ -48,7 +52,7 @@ pwsh -NoProfile -File tools/godot/godot.ps1 preview
 node tools/godot/mcp-smoke.mjs
 ```
 
-`preview` 复制版本锁列出的活动资源目录和根工程配置到 `.temp/godot-mcp/project`，预置桥接并导入资源，同时把用户目录改为 `Keyabyss-M1-Preview`，与正式玩家设置和词库隔离。上游检测到现有桥接后不执行删除。刷新副本前检查 9090 监听；上次副本移入 `.delete/godot-preview/<唯一目录>/`。根工程不注入 Autoload，不把调试桥列入导出。
+`preview` 复制版本锁列出的活动资源目录、`project.godot`、`Keyabyss.sln`、`Keyabyss.csproj`、`global.json` 和三个配置依赖锁到 `.temp/godot-mcp/project`，在副本增量编译 `Debug`，预置桥接并导入资源，同时把用户目录改为 `Keyabyss-M1-Preview`，与正式玩家设置和词库隔离。预览程序集生成在副本自己的 `.godot/mono/temp/bin/Debug/`，不复制根工程编译缓存。上游检测到现有桥接后不执行删除。刷新副本前检查 9090 监听；上次副本移入 `.delete/godot-preview/<唯一目录>/`。根工程不注入 Autoload，不把调试桥列入导出。
 
 在 MCP 中始终传：
 
@@ -72,7 +76,7 @@ projectPath = F:/Workshop/game/keyabyss/.temp/godot-mcp/project
 
 ## 在另一机器恢复
 
-1. 安装同版 Godot .NET，复制 `tools/godot/local.paths.example.json` 为 `local.paths.json`，填写 console.exe 的绝对路径，或设置 `GODOT_PATH`。核对 `doctor`。
+1. 安装同版 Godot .NET 和精确 `.NET SDK 9.0.201`，复制 `tools/godot/local.paths.example.json` 为 `local.paths.json`，填写 console.exe 的绝对路径，或设置 `GODOT_PATH`。核对 `doctor`。首次构建按对应配置依赖锁恢复 NuGet 包，不改用浮动 SDK 或重生成锁文件。
 2. 需要 MCP 时，安装 Node 22 或更高版本，按固定提交构建：
 
 ```powershell

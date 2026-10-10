@@ -404,6 +404,7 @@ func _run_four_books_balance() -> void:
 				# Explicit controlled geometry. Spawn pressure, loot and enemy attacks are
 				# excluded here; the separate formal run covers those real interactions.
 				battle.enemies.clear()
+				battle._enemies_by_id.clear()
 				battle.typing.set_targets({})
 				battle._enemy_definitions.clear()
 				battle._room_quota = 999

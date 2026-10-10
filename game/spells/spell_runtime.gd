@@ -470,36 +470,44 @@ func obscures(enemy: BattleEnemy) -> bool:
 	return false
 
 
-func arc_targets(effect: BattleEffect, origin: Vector2) -> Array[BattleEnemy]:
-	var candidates: Array[BattleEnemy] = []
-	for next in _nearby(origin, 3000.0):
+func arc_target(effect: BattleEffect, origin: Vector2) -> BattleEnemy:
+	var best: BattleEnemy = null
+	var best_distance := INF
+	var extension := 100.0 * effect.build.asset_stacks(&"R023")
+	for next in world.enemies:
+		if not next.alive() or next.id == &"" or not BattleSession.enemy_in_combat(next): continue
 		if str(next.id) in effect.visited: continue
-		var reach := (530.0 if next.shock > 30 else 265.0) + 100.0 * effect.build.asset_stacks(&"R023")
-		if next.shock <= 60 and ((next.position - origin) * BattleSession.ARENA_SIZE).length() > reach: continue
-		candidates.append(next)
-	return candidates
+		var offset := (next.position - origin) * BattleSession.ARENA_SIZE
+		var distance := offset.length_squared()
+		if not distance <= 3000.0 * 3000.0: continue
+		var reach := (530.0 if next.shock > 30 else 265.0) + extension
+		if next.shock <= 60 and offset.length() > reach: continue
+		if best == null or distance < best_distance or (distance == best_distance and str(next.id) < str(best.id)):
+			best = next
+			best_distance = distance
+	return best
 
 
 func _continue_arc(effect: BattleEffect, target: BattleEnemy) -> void:
 	if effect.jumps <= 0: return
-	for next in arc_targets(effect, target.position):
-		var floor_ratio := 0.35 if effect.build.asset_stacks(&"R033") > 0 else 0.2
-		var ratio := maxf(floor_ratio, 1.0 - (1.0 - floor_ratio) * (effect.arc_index + 1) / maxi(1, effect.arc_base_hits - 1))
-		var retained := roundi(effect.base_power_q * ratio)
-		var lot := ledger.earn(effect.lot.root_id, StringName(_tx("chain")), effect.build.identity(), SpellLot.Kind.POWER, retained, &"chain", DamagePacket.Element.LIGHTNING)
-		var arc := _effect(lot, &"storm_arc", next.id, target.position, effect.build)
-		arc.shaped = true
-		arc.jumps = effect.jumps - 1
-		arc.visited = effect.visited.duplicate()
-		arc.delay = 0.08
-		arc.depth = 1
-		arc.manual_count = effect.manual_count
-		arc.base_power_q = effect.base_power_q
-		arc.arc_base_hits = effect.arc_base_hits
-		arc.arc_index = effect.arc_index + 1
-		arc.arc_charge = effect.arc_charge
-		world.effects.append(arc)
-		return
+	var next := arc_target(effect, target.position)
+	if next == null: return
+	var floor_ratio := 0.35 if effect.build.asset_stacks(&"R033") > 0 else 0.2
+	var ratio := maxf(floor_ratio, 1.0 - (1.0 - floor_ratio) * (effect.arc_index + 1) / maxi(1, effect.arc_base_hits - 1))
+	var retained := roundi(effect.base_power_q * ratio)
+	var lot := ledger.earn(effect.lot.root_id, StringName(_tx("chain")), effect.build.identity(), SpellLot.Kind.POWER, retained, &"chain", DamagePacket.Element.LIGHTNING)
+	var arc := _effect(lot, &"storm_arc", next.id, target.position, effect.build)
+	arc.shaped = true
+	arc.jumps = effect.jumps - 1
+	arc.visited = effect.visited.duplicate()
+	arc.delay = 0.08
+	arc.depth = 1
+	arc.manual_count = effect.manual_count
+	arc.base_power_q = effect.base_power_q
+	arc.arc_base_hits = effect.arc_base_hits
+	arc.arc_index = effect.arc_index + 1
+	arc.arc_charge = effect.arc_charge
+	world.effects.append(arc)
 
 
 
@@ -513,9 +521,16 @@ func _continue_arc(effect: BattleEffect, target: BattleEnemy) -> void:
 
 
 func _periodic_copy(template: BattleEffect) -> void:
-	var targets := _nearby(template.origin, 3000.0, template.target_id)
-	if targets.is_empty(): return
-	var target := targets[0]
+	var target: BattleEnemy = null
+	var best_distance := INF
+	for candidate in world.enemies:
+		if not candidate.alive() or candidate.id == template.target_id or not BattleSession.enemy_in_combat(candidate): continue
+		var distance := ((candidate.position - template.origin) * BattleSession.ARENA_SIZE).length_squared()
+		if not distance <= 3000.0 * 3000.0: continue
+		if target == null or distance < best_distance or (distance == best_distance and str(candidate.id) < str(target.id)):
+			target = candidate
+			best_distance = distance
+	if target == null: return
 	# Truncate to whole fixed-point units without converting the ledger to float.
 	@warning_ignore("integer_division")
 	var output := ledger.earn(template.lot.root_id, &"R006", template.build.identity(), SpellLot.Kind.POWER, template.damage_q * 665 / Q, &"copy", ELEMENTS[template.build.book()])
@@ -569,8 +584,9 @@ func _commit_damage(target: BattleEnemy, packet: DamagePacket, kind: StringName,
 
 func _nearby(origin: Vector2, radius: float, excluded: StringName = &"") -> Array[BattleEnemy]:
 	var targets: Array[BattleEnemy] = []
-	for target in world._living():
-		if target.id != excluded and BattleSession.enemy_in_combat(target) and ((target.position - origin) * BattleSession.ARENA_SIZE).length_squared() <= radius * radius: targets.append(target)
+	var radius_squared := radius * radius
+	for target in world.enemies:
+		if target.alive() and target.id != excluded and BattleSession.enemy_in_combat(target) and ((target.position - origin) * BattleSession.ARENA_SIZE).length_squared() <= radius_squared: targets.append(target)
 	targets.sort_custom(func(a: BattleEnemy, b: BattleEnemy) -> bool:
 		var ad := ((a.position - origin) * BattleSession.ARENA_SIZE).length_squared()
 		var bd := ((b.position - origin) * BattleSession.ARENA_SIZE).length_squared()
@@ -672,8 +688,13 @@ func add_shield(amount: int) -> void:
 
 
 func clear_radius(at: Vector2, radius: float) -> void:
-	for threat in world.threats.duplicate():
-		if not threat.reflected and ((threat.position - at) * BattleSession.ARENA_SIZE).length() <= radius: world.threats.erase(threat)
+	var write_index := 0
+	for read_index in world.threats.size():
+		var threat := world.threats[read_index]
+		if not threat.reflected and ((threat.position - at) * BattleSession.ARENA_SIZE).length() <= radius: continue
+		world.threats[write_index] = threat
+		write_index += 1
+	world.threats.resize(write_index)
 
 
 func _deal(target: BattleEnemy, amount: int, source: StringName, at: Vector2, depth: int = 0, root: String = "") -> void:
@@ -777,12 +798,18 @@ func _status(target: BattleEnemy, kind: StringName, added_stacks: int, spread_de
 func _chain(target: BattleEnemy, amount: int, count: int) -> void:
 	var seen: Dictionary[StringName, bool] = {target.id: true}
 	var origin := target.position
+	var radius := 265.0 + 100.0 * build.asset_stacks(&"R023")
+	var radius_squared := radius * radius
 	for index in count:
-		var next: BattleEnemy
-		for candidate in _nearby(origin, 265.0 + 100.0 * build.asset_stacks(&"R023")):
-			if not seen.has(candidate.id):
+		var next: BattleEnemy = null
+		var best_distance := INF
+		for candidate in world.enemies:
+			if not candidate.alive() or candidate.id == &"" or seen.has(candidate.id) or not BattleSession.enemy_in_combat(candidate): continue
+			var distance := ((candidate.position - origin) * BattleSession.ARENA_SIZE).length_squared()
+			if not distance <= radius_squared: continue
+			if next == null or distance < best_distance or (distance == best_distance and str(candidate.id) < str(next.id)):
 				next = candidate
-				break
+				best_distance = distance
 		if next == null: break
 		seen[next.id] = true
 		var lot := ledger.earn(_tx("extra-chain"), &"R002", build.identity(), SpellLot.Kind.POWER, amount, &"chain", DamagePacket.Element.LIGHTNING)
@@ -947,6 +974,13 @@ func body_contact(a: BattleEnemy, b: BattleEnemy) -> void:
 
 
 func retarget(_effect_value: BattleEffect, origin: Vector2, excluded: PackedStringArray) -> BattleEnemy:
-	for candidate in _nearby(origin, 1200.0):
-		if str(candidate.id) not in excluded: return candidate
-	return null
+	var best: BattleEnemy = null
+	var best_distance := INF
+	for candidate in world.enemies:
+		if not candidate.alive() or candidate.id == &"" or str(candidate.id) in excluded or not BattleSession.enemy_in_combat(candidate): continue
+		var distance := ((candidate.position - origin) * BattleSession.ARENA_SIZE).length_squared()
+		if not distance <= 1200.0 * 1200.0: continue
+		if best == null or distance < best_distance or (distance == best_distance and str(candidate.id) < str(best.id)):
+			best = candidate
+			best_distance = distance
+	return best

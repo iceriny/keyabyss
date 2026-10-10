@@ -5,6 +5,7 @@
 ## Godot 与开发工具
 
 - Godot 4.7.2 .NET：Godot Engine 的 MIT 许可及其第三方依赖信息见[官方许可](https://godotengine.org/license/)和[版权清单](https://github.com/godotengine/godot/blob/4.7.2-stable/COPYRIGHT.txt)。该版本原文保存在 `licenses/GODOT_LICENSE.txt`、`licenses/GODOT_COPYRIGHT.txt`，导出脚本随包复制到 `licenses/`。
+- .NET 8.0.14 Windows x64 runtime：随 `DodgeScorer` 数值程序集自包含发布，用户无需安装开发 SDK。原始 MIT 许可及第三方声明取自实际发布依赖 `Microsoft.NETCore.App.Runtime.win-x64/8.0.14`，保存为 `licenses/DOTNET_RUNTIME_LICENSE.txt`、`licenses/DOTNET_RUNTIME_NOTICES.txt` 并随包复制；来源为 [dotnet/runtime](https://github.com/dotnet/runtime/tree/v8.0.14)。
 - tugcantopaloglu/godot-mcp 3.1.0：MIT，固定提交 `fcbc29e03297900b9a1fcc6c7cbae116fe9d532a`，来源及本地安装见[工具链](docs/migration/TOOLCHAIN.md)。只在开发预览中运行，不随游戏导出。
 - Node.js、PowerShell、Codex 与项目 Skills 是开发工具；Godot GDScript 游戏不依赖 Node 或 MCP 运行。
 

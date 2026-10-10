@@ -9,6 +9,8 @@ static func effect(session: BattleSession, kind: StringName, target: StringName,
 	var lot := session.ledger.earn("fixture:%s" % serial, &"fixture", session.compiled_build.identity(), SpellLot.Kind.POWER, amount, &"fixture")
 	var paid := session.runtime._effect(lot, kind, target, origin, session.compiled_build)
 	paid.delay = delay
+	# Keep the fixture's two-thirds share in whole fixed-point units.
+	@warning_ignore("integer_division")
 	paid.primary_share_q = amount * 2 / 3
 	return paid
 

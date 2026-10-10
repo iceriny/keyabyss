@@ -128,6 +128,7 @@ func _run() -> void:
 		enemy.boss = index == 3
 		enemy.phase = 3
 		counter_item.enemies.append(enemy)
+		counter_item._enemies_by_id[enemy.id] = enemy
 		counter_item._enemy_definitions[enemy.id] = counter_item._enemy_definitions.values()[0]
 	var rune := BattlePickup.new()
 	rune.kind = &"rune"
@@ -262,6 +263,7 @@ func _four_target(session: BattleSession, index: int, position: Vector2) -> Batt
 	enemy.attack_interval = 1000.0
 	enemy.attack_clock = 1000.0
 	session.enemies.append(enemy)
+	session._enemies_by_id[enemy.id] = enemy
 	session._enemy_definitions[enemy.id] = session._enemy_definitions.values()[0]
 	return enemy
 

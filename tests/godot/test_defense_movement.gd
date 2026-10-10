@@ -47,6 +47,7 @@ func _run() -> void:
 		outside_enemy.hp_q = 100 * BattleSession.Q
 		outside_enemy.position = pulse.player_position + Vector2(161, 0) / BattleSession.ARENA_SIZE
 		pulse.enemies.append(outside_enemy)
+		pulse._enemies_by_id[outside_enemy.id] = outside_enemy
 		pulse._commit_action(&"parry")
 		_check(attacker.impulse.is_zero_approx() and neighbor.impulse.is_zero_approx(), "activation alone never pushes enemies")
 		pulse.parry_window = 0.15 if grade == &"success" else 0.25
