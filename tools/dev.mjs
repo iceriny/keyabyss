@@ -58,10 +58,8 @@ async function main() {
   if (git(repo, ['rev-parse', 'HEAD']) !== assetMain)
     throw new Error('Asset main has unpublished commits. Finish that asset change before publishing the workspace.');
   await capture(root, repo);
-  if (git(repo, ['status', '--porcelain'])) {
-    run('git', ['add', '--all'], repo);
-    run('git', ['commit', '-m', message], repo);
-  }
+  run('git', ['add', '--all'], repo);
+  if (git(repo, ['diff', '--cached', '--name-only'])) run('git', ['commit', '-m', message], repo);
   // Git LFS's pre-push hook uploads binaries before the Git reference advances.
   run('git', ['lfs', 'push', 'origin', 'main'], repo);
   run('git', ['push', 'origin', 'main'], repo);
