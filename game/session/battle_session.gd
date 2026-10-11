@@ -1252,6 +1252,25 @@ func _emit_pattern(enemy: BattleEnemy, pattern: StringName, curve: float = 0.0, 
 		_emit_enemy_threat(enemy, angle, enemy.attack_serial * 100 + threats.size(), (83.0 + (_physical_chapter() - 1) * 12.0) * 1.5 * _enemy_speed_scale * speed_scale, 6.0)
 		threats[-1].curvature = curve
 		threats[-1].acceleration = 0.12 if pattern == &"single" and curve != 0.0 else 0.0
+		if curve != 0.0 and pattern != &"ring":
+			var threat := threats[-1]
+			var target_offset := (enemy.aimed_position - enemy.position) * ARENA_SIZE
+			var arrival := threat.aim_curve(target_offset)
+			var arena := Rect2(Vector2.ZERO, ARENA_SIZE)
+			var bounds := threat.flight_bounds(arrival)
+			bounds.position += enemy.position * ARENA_SIZE
+			if not arena.encloses(bounds):
+				# Prefer the inward bend; narrow it only when both sides lack room.
+				threat.curvature = -threat.curvature
+				arrival = threat.aim_curve(target_offset)
+				bounds = threat.flight_bounds(arrival)
+				bounds.position += enemy.position * ARENA_SIZE
+				while not arena.encloses(bounds):
+					threat.curvature *= 0.5
+					arrival = threat.aim_curve(target_offset)
+					bounds = threat.flight_bounds(arrival)
+					bounds.position += enemy.position * ARENA_SIZE
+			threats[-1].velocity = threats[-1].velocity.rotated(angle - aim)
 		threats[-1].heavy = enemy.kind == &"ink-colossus" and enemy.phase == 3 and pattern == &"ring"
 		threats[-1].radius = 10.5 if threats[-1].heavy else 6.75
 		threats[-1].damage_q = roundi((16 if threats[-1].heavy else 11) * _pressure * Q)
@@ -1404,14 +1423,17 @@ func _advance_threats(delta: float) -> void:
 	for index in range(threats.size() - 1, -1, -1):
 		var threat := threats[index]
 		threat.previous_position = threat.position
-		if not threat.reflected:
-			threat.velocity = threat.velocity.rotated(threat.curvature * delta) * exp(threat.acceleration * delta)
-		var pace := 1.0
-		threat.position += threat.velocity * delta * pace / ARENA_SIZE
+		threat.position += BattleThreat.flight_displacement(threat.velocity, threat.curvature, threat.acceleration, delta) / ARENA_SIZE
+		threat.velocity = BattleThreat.flight_velocity(threat.velocity, threat.curvature, threat.acceleration, delta)
 		threat.life -= delta
 		if ((threat.position - player_position) * ARENA_SIZE).length() <= 75.0 and dodge_window > 0.0: runtime.graze(threat)
-		threat.trail.append(threat.position)
-		if threat.trail.size() > 12:
+		if threat.curvature != 0.0:
+			if threat.trail.is_empty(): threat.trail.append(threat.previous_position)
+			if ((threat.position - threat.trail[-1]) * ARENA_SIZE).length() >= 6.0:
+				threat.trail.append(threat.position)
+		else:
+			threat.trail.append(threat.position)
+		if threat.trail.size() > (32 if threat.curvature != 0.0 else 12):
 			threat.trail.remove_at(0)
 		if threat.reflected:
 			var hit: BattleEnemy
@@ -1419,7 +1441,7 @@ func _advance_threats(delta: float) -> void:
 			for enemy in enemies:
 				if not enemy.alive() or not enemy_in_combat(enemy):
 					continue
-				var time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, enemy.radius + threat.radius)
+				var time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, threat.radius + enemy.radius)
 				if time < closest:
 					hit = enemy
 					closest = time
@@ -1447,7 +1469,7 @@ func _advance_threats(delta: float) -> void:
 			if intercepted:
 				threats.remove_at(index)
 				continue
-		var contact_time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, previous_player_position * ARENA_SIZE, player_position * ARENA_SIZE, 21.0 + threat.radius)
+		var contact_time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, previous_player_position * ARENA_SIZE, player_position * ARENA_SIZE, threat.radius + 21.0)
 		var predicted_contact := parry_window > 0.0 and _threat_will_hit_player(threat, minf(DEFENSE_PREDICTION, parry_window))
 		if (contact_time != INF or predicted_contact) and (parry_window > 0.0 or (dodge_window <= 0.0 and hurt_window <= 0.0)):
 			if contact_time != INF:
@@ -1557,10 +1579,10 @@ func _threat_will_hit_player(threat: BattleThreat, horizon: float) -> bool:
 	var player_at := player_position * ARENA_SIZE
 	var step_time := horizon / 3.0
 	for index in 3:
-		velocity = velocity.rotated(threat.curvature * step_time) * exp(threat.acceleration * step_time)
-		var next := at + velocity * step_time * (0.63 if in_frost_field(at / ARENA_SIZE) else 1.0)
+		var next := at + BattleThreat.flight_displacement(velocity, threat.curvature, threat.acceleration, step_time)
+		velocity = BattleThreat.flight_velocity(velocity, threat.curvature, threat.acceleration, step_time)
 		var player_next := clamp_player(player_position + player_impulse * step_time * (index + 1) / ARENA_SIZE) * ARENA_SIZE
-		if CombatGeometry.sweep_discs(at, next, player_at, player_next, 21.0 + threat.radius) != INF:
+		if CombatGeometry.sweep_discs(at, next, player_at, player_next, threat.radius + 21.0) != INF:
 			return true
 		at = next
 		player_at = player_next
@@ -1813,11 +1835,9 @@ func _safe_direction() -> Vector2:
 		_dodge_points[point_count] = threat.position * ARENA_SIZE
 		point_count += 1
 		var velocity := threat.velocity
-		var rotation := threat.curvature * PREDICTION_STEP
-		var acceleration := exp(threat.acceleration * PREDICTION_STEP)
 		for tick in segments:
-			velocity = velocity.rotated(rotation) * acceleration
-			_dodge_points[point_count] = _dodge_points[point_count - 1] + velocity * PREDICTION_STEP
+			_dodge_points[point_count] = _dodge_points[point_count - 1] + BattleThreat.flight_displacement(velocity, threat.curvature, threat.acceleration, PREDICTION_STEP)
+			velocity = BattleThreat.flight_velocity(velocity, threat.curvature, threat.acceleration, PREDICTION_STEP)
 			point_count += 1
 		trajectory_count += 1
 	var from := player_position * ARENA_SIZE

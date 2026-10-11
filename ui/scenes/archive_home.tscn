@@ -398,6 +398,13 @@ theme_override_font_sizes/font_size = 17
 text = "离开    quit"
 script = ExtResource("3")
 
+[node name="Tutorial" type="Button" parent="Menu"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "教学练习    tutorial"
+script = ExtResource("3")
+
 [node name="PrepareButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 830.0

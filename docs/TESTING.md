@@ -26,6 +26,8 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 ## 原生工具入口
 
+水晶阅读层专项：`godot.ps1 run --debug --script res://tests/godot/test_ui_refinement.gd -- --crystal-sheets`。使用隔离设置与档案，检查正文区避让、流光时钟、几何与布局稳定、减少动态切换及暂停返回，输出设置静态／动态、关于、图鉴和暂停实拍。截图用于审美检查，不用于性能结论。
+
 ### 遗物与阅读系统
 
 按实际修改选择入口。目录检查覆盖196件定义、每书106件的独立可达性、前置／互斥、偏好和单次报价编译；机制检查按效果族通过正式取得、编译、人工输入与真实命中验证，不逐件建立测试。`test_s2_run.gd`默认分支包含旧构筑拒绝恢复时保留原档、失效奖励免费重建、保存失败与重试及事务去重。
@@ -39,6 +41,8 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 ```
 
 阅读窗口分支检查全部遗物首层／满层数字插值，并以原生鼠标／Alt事件检查术语悬浮、详情切换、固定操作位置和实际取得；另核对四书觉醒、减少动态、图鉴、指南与记录。保存的HDR转sRGB画面需人工审阅，不以断言或截图转换期间的帧率替代视觉／性能结论。
+
+`test_ui_refinement.gd -- --menu-layout`使用同样的隔离窗口，覆盖书库／准备、设置分类、滑条与原生下拉、三选一、独立详情、稠密持有列表、图鉴检索、暂停往返和首次校准。检查方向／确认／数字与词令调用同一动作，输入框／词令前缀／弹层阻断误触，真实列表词令不被短编号提前提交，并保存各页布局。原生弹出窗口的按键事件携带该窗口ID；视口截图之后回到下一处理帧再继续操作。Windows可追加`--screen-capture`，将测试窗口置顶、等待0.8秒后仅截取客户区，使用显示输出颜色而不重复进行HDR转换；此参数只影响验证窗口。输入规则的较低成本回归仍用`test_input_settings.gd`。画面应单独审阅，功能断言不代替视觉检查。
 
 效果检查的`--balance`分支用于内容收束后的统一组合采样，`--storm-ablation`用于定位雷鸣叠加来源；它们使用有限目标、固定3／6／9字符每秒及真实支付，不代表正式房波或真人通关。弹体同步微基准沿用`test_battle_presentation.gd -- --projectile-sync-cost`，仅测表现同步CPU开销。实际结果与限制见[阶段总结](STAGE-SUMMARY.md)和[收益评估](COMBAT-BALANCE-DESIGN.md)。
 
@@ -68,7 +72,7 @@ pwsh -File tools/godot/godot.ps1 export
 pwsh -File tools/godot/godot.ps1 run --debug --script res://tests/godot/test_render_preparation.gd
 ```
 
-检查正式材质覆盖、四条计算管线复用与实例纹理隔离、准备视口停更、原生粒子参数隔离、正常／减少动态的出征等待与单次完成、奖励绑定、四书场效果／终式及道具粒子回收。使用临时战斗，不读取或写入正式玩家档案；报告在 `.temp/render-preparation/checks.json`。当前固定计数45包含法阵流光及启动柔光，随新增shader同步维护，不代表全部硬件管线变体覆盖。此检查不采样前后性能、不取代实际首屏→欢迎→出征的操作检查；导出还应确认烘焙记录与独立包启动，错误与退出日志单独审阅。
+检查正式材质覆盖、四条计算管线复用与实例纹理隔离、准备视口停更、原生粒子参数隔离、正常／减少动态的出征等待与单次完成、奖励绑定、四书场效果／终式及道具粒子回收。使用临时战斗，不读取或写入正式玩家档案；报告在 `.temp/render-preparation/checks.json`。当前固定计数50包含侧边晶片、法阵流光及启动柔光，随新增shader同步维护，不代表全部硬件管线变体覆盖。此检查不采样前后性能、不取代实际首屏→欢迎→出征的操作检查；导出还应确认烘焙记录与独立包启动，错误与退出日志单独审阅。
 
 ## 保留玩法的检查选择
 
@@ -141,6 +145,8 @@ pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_ui_refinement.gd
 --headless --path . --script res://tests/godot/test_s2_rules.gd -- --four-books --book=storm
 # 灰烬／寒墨当前参数、灼烧尾段与完词／落点清弹事件：
 --headless --path . --script res://tests/godot/test_s2_rules.gd -- --combat-feedback
+# 寒气1秒保留期、刷新／跨期分步、6点衰减、遗物、实际三次间隔施法冻结及冰雾：
+--headless --path . --script res://tests/godot/test_s2_rules.gd -- --frost-control
 # 冲锋普通防御互弹、完美闪避共鸣与无敌／慢时间，以及原有防御和世界时钟：
 --headless --path . --script res://tests/godot/test_defense_movement.gd
 # 实际窗口的HUD死角、连续30帧词咒稳定、固定表现时刻的清弹四阶段和三类敌人冻结起止、设置切换／暂停续播、完美闪避及真实大招无额外冲击波；可追加 --low --reduce-motion：
@@ -185,6 +191,10 @@ MCP 上游键注入缺少 `InputEventKey.unicode`；它适合鼠标、Tab、Esc 
 
 本轮设置与AOE反馈使用 `test_defense_movement.gd`、`test_input_settings.gd` 的最小规则集。前者覆盖圆圈、横竖激光、过早／不相交及反冲轨迹的完美闪避，并确认普通／完美御术均不防御AOE；后者覆盖FPS与首访完成标记的默认值和保存回读。
 
+设置回归每次生成一个尚不存在的中文父目录，验证首次保存、校准完成标记回读和后续有效备份，避免已有目录掩盖初始化缺陷；创建／替换失败须在提示中指出环节。文件阻挡父目录的故意失败案例会输出引擎 `Could not create directory`，该项以失败返回值与提示断言为判据。
+
+目标机同时出现用户shader缓存、词库索引目录与设置保存失败时，将 `检查保存目录.cmd` 与 `check-save-directory.ps1` 放在游戏EXE旁，保持报错游戏运行，普通双击CMD，输出 `logs/save-directory-*.log`。脚本记录目录／EXE的ACL、下载标记、签名与兼容性、账户及进程权限、安全软件配置和相关拦截事件；用独立临时文件验证创建／写入／重命名／回读，不修改现有设置或权限。验证必须包含Windows PowerShell 5.1默认CMD入口，不能仅用显式日志路径代替。PowerShell探针成功不证明游戏EXE未被单独拦截，失败则按实际HRESULT定位，不能据文件夹“只读”、EXE未签名或下载标记单独判断原因。
+
 实际窗口运行 `test_ui_refinement.gd -- --setup-feedback`：原生入场、首访配置、鼠标调整音量与中文释义、三档画质和流体关闭／最高／低档配置、24秒压力循环回收、保存和再次入场、FPS开关、关于页返回，以及暂停中独立运行的试映。画质／流体选项通过真实控件信号提交，不能称为完整鼠标下拉操作验收。高低画面与关于截图需人工审阅。追加 `--cleanup-route=calibration` 或 `--cleanup-route=battle` 分别经过实际退出入口检查仍活跃的页面；战斗分支还核对暂停→设置→校准→返回时首页继续隐藏。
 
 同一窗口入口还检查设置应用清除固定软件帧率上限并启用垂直同步，切换画质后策略保留；记录当前显示器刷新率及首页的一秒实际帧数。背景全屏柔焦、压暗与前景清晰度使用高低画面实拍审阅。60Hz显示器上的封顶检查不能代替120／144Hz或跨显示器切换的实际性能验收；截图阻塞及遭遇时序不同，不能直接把两帧FPS作为画质档位收益对照。
@@ -214,6 +224,12 @@ Debug 包默认运行 `app/debug_log.gd`，每 5 秒输出心跳，超过 50 ms 
 记录含逐帧墙钟间隔、所在页面、物理耗时、主视口和离屏视口 CPU／GPU 耗时，以及开始／结束时的资源计数。汇总排除最初两秒，原始帧保留。`process_ms`来自引擎按约一秒周期更新的最大处理时间，不能当成当前帧CPU耗时；渲染计数可能滞后，GPU计数不直接测显示呈现等待。采样自身有开销，比较时保持相同记录条件，不能只凭总帧率归因。
 
 本机可用 `pwsh -File tools/godot/godot.ps1 run --script tests/godot/profile_frames.gd -- --frame-profile --profile-driver --profile-label=sample` 运行首页→设置→战斗的固定窗口流程，输出 `.temp/frame-review/sample/frames.json`，并断言隐藏首页停绘和返回恢复。使用独立设置与词库，不改变玩家配置；这只能验证本机，不能替代发生卡顿的目标机采样。
+
+教学修改使用 `tests/godot/test_tutorial_lesson.gd`，覆盖五课的真实人工回执、付费施法和机制效果：冻裂超时后重试、火弹前排阻挡及停笔灼烧、感电实际充能、空雾与错线雷径不能达成、纸灵休眠再唤醒、纸鹤真实拦截反伤和四书终式。目标达成仅解锁继续，计时不会换步；`advance()`才切步／完成，重试及档案保持隔离。实际窗口专项为 `test_ui_refinement.gd -- --tutorial-mechanics --screen-capture`，覆盖23步全文排版和词咒避让、五课暂停／重试／退出、术语原生鼠标提示、普通／减少动态入场、灰烬完整原生输入与下一步／完成按钮。排版专项中的步骤直设只检验表现，不能替代规则推进证据。原`--tutorial-arc`入口保留教学导航、灰烬输入和弧形飞行的组合检查。弹道的敌人起点、左右弯曲、远距离命中、场地边缘、分步一致性、扇形中央弹道、移动躲开、完美御术／闪避与无伤害尾迹纳入现有 `test_defense_movement.gd`。
+
+仅修正弧形弹道时可运行实际窗口 `test_ui_refinement.gd -- --curved-trajectory --screen-capture`：正式敌人发射器产生来弹，关闭自动固定步后以受控步长推进实际威胁碰撞，捕获起点、途中、接近、低画质／减少动态及真实命中帧。通过 `godot.ps1` 调用时使用 `-EngineArguments @('--debug', '--script', 'res://tests/godot/test_ui_refinement.gd', '--', '--curved-trajectory', '--screen-capture')` 保留脚本参数。这些专项不替代连续真人体验与目标机性能。
+
+切换目标与寒气教学文案使用 `test_ui_refinement.gd -- --teaching-copy --screen-capture`，检查指南原生排版、五课首步长正文与进度／操作／战斗页脚的间隔，并捕获基础教学、指南和寒墨特色说明。教程引导高度随正文自动扩展。Tab前缀轮换规则沿用 `test_input_settings.gd`，不因文案更新改动输入规则。
 
 ## 旧实现的证据用途
 

@@ -80,7 +80,7 @@ func _run() -> void:
 	app._relics_page()
 	await create_timer(.8).timeout
 	await _capture("codex")
-	_check(app.commands.has("relic58"), "all codex entries remain reachable after deferred construction")
+	_check(app.commands.has("relic058"), "all codex entries remain reachable after deferred construction")
 	await _review_result()
 
 

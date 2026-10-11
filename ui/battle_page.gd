@@ -35,6 +35,7 @@ var warnings: BattleThreatOverlay
 var cadence_label: Label
 var defense_label: Label
 var enemy_words: Dictionary[StringName, BattleWord] = {}
+var word_exclusions: Array[Rect2] = []
 var _camera_offset := Vector2.ZERO
 var _feedback_labels: Array[Label] = []
 var _damage_feedback: Dictionary[String, Dictionary] = {}
@@ -80,6 +81,8 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	visuals.fluid_effects = book.fluid_effects
 	warnings = $BattleThreats
 	warnings.session = session
+	warnings.quality = settings.quality
+	warnings.reduced_motion = settings.reduce_motion
 	$BattleCompass.session = session
 	$BattleCompass.reduced_motion = settings.reduce_motion
 	audio = $BattleAudio
@@ -187,6 +190,8 @@ func _ready() -> void:
 
 
 func apply_options() -> void:
+	warnings.quality = settings.quality
+	warnings.reduced_motion = settings.reduce_motion
 	audio.enabled = settings.sound
 	audio.effects_volume = settings.effects_volume
 	stage.set_quality(settings.quality)
@@ -302,7 +307,7 @@ func _process(delta: float) -> void:
 
 
 func _place_targets(delta: float = 0.0) -> void:
-	var occupied: Array[Rect2] = []
+	var occupied: Array[Rect2] = word_exclusions.duplicate()
 	var arena_scale := BattleStage.arena_scale(size)
 	# HUD global coordinates include the UI scale; words use this page's coordinates.
 	var page_transform := get_global_transform().affine_inverse()

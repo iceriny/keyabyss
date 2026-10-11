@@ -21,41 +21,28 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	z_index = 120
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_bubble = PanelContainer.new()
-	_bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.035, 0.07, 0.085, 0.96)
-	style.set_corner_radius_all(9)
-	style.content_margin_left = 20
-	style.content_margin_right = 20
-	style.content_margin_top = 16
-	style.content_margin_bottom = 18
-	style.shadow_color = Color(0, 0, 0, 0.2)
-	style.shadow_size = 10
-	_bubble.add_theme_stylebox_override("panel", style)
+	_bubble = preload("res://ui/scenes/term_tooltip.tscn").instantiate() as PanelContainer
 	add_child(_bubble)
-	var column := VBoxContainer.new()
-	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_theme_constant_override("separation", 9)
-	_bubble.add_child(column)
-	_title = Label.new()
-	_title.add_theme_font_size_override("font_size", 22)
-	_title.add_theme_color_override("font_color", Color("e4c990"))
-	_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_child(_title)
-	_body = Label.new()
-	_body.custom_minimum_size.x = 350
-	_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_body.add_theme_font_override("font", PageShell.SMALL_FONT)
-	_body.add_theme_font_size_override("font_size", 18)
-	_body.add_theme_color_override("font_color", Color("e8e4d8"))
-	_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_child(_body)
+	_title = _bubble.get_node("Reading/Title") as Label
+	_body = _bubble.get_node("Reading/Body") as Label
+	ProseDecoration.attach(_body, false)
+	_bubble.resized.connect(_layout_surface)
 	_bubble.hide()
+
+
+func _layout_surface() -> void:
+	var surface := _bubble.get_node("Backdrop/Depth") as ColorRect
+	surface.size = _bubble.size
+	(surface.material as ShaderMaterial).set_shader_parameter("canvas_size", surface.size)
 
 
 func register(label: Label) -> void:
 	if is_ancestor_of(label): return
+	var ancestor := label.get_parent()
+	while ancestor != null:
+		if ancestor is BaseButton: return
+		ancestor = ancestor.get_parent()
+	ProseDecoration.attach(label)
 	_labels[label.get_instance_id()] = weakref(label)
 	label.tree_exiting.connect(func() -> void:
 		_labels.erase(label.get_instance_id())

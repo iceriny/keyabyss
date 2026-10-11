@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://ui/page_shell.gd" id="1"]
 [ext_resource type="Material" path="res://ui/materials/crystal_reading.tres" id="2"]
@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/goldwork/07-river-thread.svg" id="8_filigree"]
 [ext_resource type="Material" path="res://ui/materials/gold_inlay.tres" id="9_gold"]
 [ext_resource type="Script" path="res://ui/crystal_inlay.gd" id="10_crystal"]
+[ext_resource type="Script" path="res://ui/crystal_sheets.gd" id="11_sheets"]
+[ext_resource type="Material" path="res://ui/materials/crystal_sheet.tres" id="12_sheets"]
 
 [node name="PageShell" type="Control"]
 layout_mode = 3
@@ -34,6 +36,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="CrystalSheets" type="MeshInstance2D" parent="."]
+material = ExtResource("12_sheets")
+script = ExtResource("11_sheets")
 
 [node name="ContentLayer" type="Control" parent="."]
 layout_mode = 0
@@ -86,6 +92,12 @@ theme_override_constants/separation = 18
 
 [node name="Header" type="HBoxContainer" parent="ContentLayer/Panel/Layout"]
 layout_mode = 2
+
+[node name="Balance" type="Control" parent="ContentLayer/Panel/Layout/Header"]
+visible = false
+custom_minimum_size = Vector2(38, 0)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="Heading" type="Label" parent="ContentLayer/Panel/Layout/Header"]
 layout_mode = 2
@@ -151,6 +163,7 @@ layout_mode = 2
 [node name="Footer" type="HBoxContainer" parent="ContentLayer/Panel/Layout"]
 layout_mode = 2
 theme_override_constants/separation = 26
+alignment = 1
 
 [node name="CommandHint" type="Label" parent="ContentLayer/Panel/Layout"]
 layout_mode = 2

@@ -58,7 +58,7 @@ func _input(event: InputEvent) -> void:
 	var focus := get_viewport().gui_get_focus_owner()
 	# Sliders become keyboard-editable only after their explicit word command.
 	if focus is Slider:
-		if key.pressed and key.keycode in [KEY_ESCAPE, KEY_ENTER, KEY_KP_ENTER]:
+		if key.pressed and key.keycode in [KEY_ESCAPE, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
 			focus.release_focus()
 			get_viewport().set_input_as_handled()
 			return
@@ -127,23 +127,33 @@ func _input(event: InputEvent) -> void:
 		return
 	if key.ctrl_pressed or key.alt_pressed or key.meta_pressed:
 		return
-	if key.keycode in [KEY_LEFT, KEY_RIGHT, KEY_ENTER, KEY_KP_ENTER]:
+	if key.keycode in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
 		if buffer.is_empty():
 			match key.keycode:
 				KEY_LEFT: action_requested.emit(&"menu_previous")
 				KEY_RIGHT: action_requested.emit(&"menu_next")
+				KEY_UP: action_requested.emit(&"menu_up")
+				KEY_DOWN: action_requested.emit(&"menu_down")
 				_: action_requested.emit(&"menu_confirm")
-		get_viewport().set_input_as_handled()
-		return
-	if key.keycode in [KEY_SPACE, KEY_UP, KEY_DOWN]:
 		get_viewport().set_input_as_handled()
 		return
 	if key.keycode == KEY_BACKSPACE:
 		buffer = buffer.left(maxi(0, buffer.length() - 1))
 		command_progress.emit(buffer)
 		get_viewport().set_input_as_handled()
-	elif key.unicode > 0:
-		var character := String.chr(key.unicode).to_lower()
+	else:
+		var character := String.chr(key.unicode).to_lower() if key.unicode > 0 else ""
+		if character.is_empty():
+			var physical := key.physical_keycode if key.physical_keycode != KEY_NONE else key.keycode
+			if physical >= KEY_0 and physical <= KEY_9:
+				character = str(physical - KEY_0)
+			else:
+				var keypad := [KEY_KP_0, KEY_KP_1, KEY_KP_2, KEY_KP_3, KEY_KP_4, KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8, KEY_KP_9]
+				var digit := keypad.find(physical)
+				if digit >= 0:
+					character = str(digit)
+		if character.is_empty():
+			return
 		if not character in "abcdefghijklmnopqrstuvwxyz0123456789-":
 			return
 		get_viewport().set_input_as_handled()

@@ -12,7 +12,9 @@
 | --- | --- | --- |
 | `gold_inlay.tres` / `gold_inlay.gdshader` | 晶面折射、透射光和装饰 SVG 的嵌入效果 | 使用 `crystal_inlay.tscn`；控件通过 `CrystalInlay.decorate()` 接入 |
 | `gold_filaments.gd` / `gold_filament.gdshader` | 控件的程序化分枝金丝与沿路径传播的亮点 | `CrystalInlay` 和 `OpenButton` 共用曲线生成器；无需纹理 |
-| `crystal_reading.tres` / `open_wash.gdshader` | 全屏阅读遮罩，柔焦、压暗与轻微折射 | 遮罩之前放一次 `BackBufferCopy`，其后绘制金丝、正文与控件 |
+| `crystal_reading.tres` / `open_wash.gdshader` | 全屏阅读遮罩，柔焦与压暗 | 遮罩之前放一次 `BackBufferCopy`，其后绘制晶片、金丝、正文与控件 |
+| `crystal_sheets.gd` / `crystal_sheet.tres` | 阅读区外侧的交错薄晶片、局部金丝流光与折射 | `page_shell.tscn` 共用；六片合并为一个网格，复用阅读遮罩之前的捕获；正式场景引用由渲染准备自动收集 |
+| `popup_depth.tres` / `popup_depth.gdshader` | 下拉与术语提示的灰青透光、消隐边缘及底部弧形金丝 | `popup_crystal.tscn` 与 `term_tooltip.tscn` 共用；PopupMenu 继承主视口 HDR，材质由既有 popup 渲染准备入口收集 |
 | `open_button_light.gdshader` | 操作响应的柔光与文字背光 | 由 `OpenButton` 管理边距、文字中心和活动强度；金丝由独立网格绘制 |
 
 金丝保留 SVG 的颜色、透明度与抗锯齿覆盖，作为晶面内的纹样采样。弯曲晶面的坡度同时驱动背景折射和金丝位移；埋入较深的部分降低对比并柔化，局部掠光照亮路径，冷色表面反光与暖色透射光分别合成。这是适合 2D UI 的光学近似，不是三维光线追踪。
@@ -25,9 +27,11 @@
 
 `backdrop_gain` 指定折射景物的透过比例：共用阅读页使用 0.06，与其压暗背景匹配；书库控件使用 0.45。局部晶面使用同一已捕获场景，不逐控件创建屏幕副本。文字在材质之后绘制，不参与背景采样和折射。原 SVG 保留在标题、页脚和出征两翼；交互控件没有重复铺设底纹 SVG。
 
-阅读遮罩的 `shade` 是外围场景透过比例，`transmission` 是阅读中心透过比例；`blur_lod` 控制屏幕柔焦层级，`refraction_pixels` 以输出像素控制折射，`field_center` / `field_scale` 定义连续的透光区域。HDR 屏幕样本为线性空间，染色参数标注 `source_color`。遮罩用于全屏页面，不直接作为小矩形底板：其外侧压暗也属于整页构图。
+阅读遮罩的 `shade` 是外围场景透过比例，`transmission` 是阅读中心透过比例；`blur_lod` 控制屏幕柔焦层级，`field_center` / `field_scale` 定义连续的透光区域。HDR 屏幕样本为线性空间，染色参数标注 `source_color`。遮罩用于全屏页面，不直接作为小矩形底板：其外侧压暗也属于整页构图。
 
-`reading_rect` 将阅读晶面的开放曲面绑定到实际布局。两侧光晕采用不同速度与相位的移动受光，冷色折面反光与暖色透射光分别衰减，曲面同时改变背景采样位置；亮度沿高度消隐，不形成连续边框。鼠标影响局部受光强度，`facet_strength` 控制阅读晶面的反光，`surface_light` 控制局部镶嵌晶面的反光。控件晶面的柔光同样错开相位，并在未悬停时保留缓慢流转。
+`CrystalSheets.arrange()` 根据实际阅读区生成六片错开的收尖曲面；短弹层减小弯曲幅度，宽页面按侧边余量收窄。只在布局变化时重建一个 ArrayMesh。Curve2D 按烘焙弧长取样，UV.x 储存设计像素距离，流光以14像素／秒前进；UV.y 横跨两个折面，逐三角面几何法线编码进顶点色。形状与法线基底固定，只有小幅法线倾斜、非对称光头与反射随时钟变化。`strength` 调反光，`refraction_pixels` / `dispersion_pixels` 分别控制折射与微弱色散，并按画布缩放换算到输出像素；减少动态固定时钟。预乘透明合成保留下层反光，不递归折射其他晶片；正文在最后绘制。`surface_light` 仍控制控件局部镶嵌晶面的反光。
+
+设计参考用户提供的 `F:/Workshop/game/crystal-flow-kit`（`docs/ALGORITHMS.md`、`shared/crystal_math.glsl`）：保留稳定晶面、弧长流光与局部反射思路，按项目布局重建原生网格，不依赖 Demo 的图集、字体或运行时。引擎行为参考 [Curve2D](https://docs.godotengine.org/en/stable/classes/class_curve2d.html) 与 [屏幕采样](https://docs.godotengine.org/en/stable/tutorials/shaders/screen-reading_shaders.html)。
 
 `OpenButton.filament_extension` 控制金丝主脉在文字组两侧的延伸，不改变按钮的输入区域。准备出征使用每侧 44 像素的延伸。
 

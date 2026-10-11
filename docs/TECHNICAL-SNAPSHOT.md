@@ -1,5 +1,7 @@
 # 当前实现快照
 
+阅读页面的侧边晶面由 `PageShell` 的 `CrystalSheets` 原生网格承载：六片收尖曲面合并绘制，按真实面法线控制局部冷光、金丝、折射与色散，弧长坐标驱动流光。柔焦压暗仍由 `open_wash` 负责，共用一次背景捕获；正文后绘制。几何只随版面改变，短弹层和侧边余量影响曲率与宽度；减少动态固定时钟。材质与调参说明见 `ui/materials/README.md`。
+
 战斗查询由 `BattleSession` 的房间 ID 索引和 `SpellRuntime` 的单目标线性择优处理，范围伤害仍保留排序快照。单命中投射物选最早连续接触，贯穿与实体分离维持原顺序。自动闪避保留 GDScript 预测，以一次 `DodgeScorer.Choose` 调用在 .NET 内完成批量评分；状态与视觉事件仍归 GDScript。窄程序集、构建／预览和代价见[工具链](migration/TOOLCHAIN.md)与[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md)。
 
 词库抽样由`VocabularyIndex`与`VocabularySampler`共用：前者持有26个按可输入词长排序的索引桶及26×25累计计数，后者只持有按目标ID管理的占用和26位掩码。按合法总词数抽一个整数，再定位桶内词条；在线抽词最多扫描固定26桶，释放按ID常数时间，不遍历词库或全体敌人。战斗与习字均使用它，渐进范围和长词偏好在当前范围上查询，不重新分桶。
@@ -51,15 +53,22 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `ui/scenes/departure_ritual.tscn` | 出征遮幕与战场交接；场景发出 covered／completed，应用在揭幕后才开放输入和固定步 |
 | `ui/scenes/pause_content.tscn`、`battle_result.tscn`、`stat_readout.tscn` | 原生暂停、实际等级与状态、构筑／图鉴／指南／设置入口；主动结束一步归档返回，复用 PageShell 固定头尾 |
 | `game/spells/battle_ultimate.gd`、`ui/scenes/ultimate_field.tscn`、`ultimate_indicator.tscn` | 已付终式的固定步持续状态、领域光效与蓄能／持续时间指示；视觉读取规则，不驱动伤害 |
-| `ui/scenes/popup_crystal.tscn`、`ui/popup_crystal.gd` | 原生 PopupMenu 背后阅读材质、金丝及高度限制，保留原生条目选择与滚动 |
+| `ui/scenes/popup_crystal.tscn`、`ui/popup_crystal.gd` | 原生 PopupMenu 的 HDR 阅读材质、弧形金丝及宽高约束，保留原生条目选择与滚动 |
+| `ui/scenes/term_tooltip.tscn`、`ui/term_tooltips.gd` | 按原生字形命中术语；提示与下拉共用 `popup_depth.tres` 的灰青消隐材质，正文独立清晰绘制，提示不截获输入 |
+| `ui/prose_decoration.gd` | 原Label保留排版尺寸与字形命中，原生RichText子层突出数值；可悬浮术语按跨行字形范围绘制虚线下划线，按钮词令不进入正文标记 |
+| `game/combat/battle_threat.gd`、`ui/battle_threat_overlay.gd` | 补偿发射切线，弧形飞行经过发射时瞄准的PC位置，调整远距离曲率／寿命与靠边弯曲方向；解析位移供固定步与御术／闪避预测使用，前端圆形扫掠负责命中及拦截，真实历史位置绘制细暖金尾迹，保留反弹与低画质／减少动态 |
+| `game/session/tutorial_lesson.gd`、`ui/tutorial_menu.gd`、`ui/tutorial_overlay.gd` | 基础与四书五课，共23步；通过真实输入和提交效果解锁下一步，玩家明确点击继续以保留阅读时间。覆盖贯穿／冻结／冻裂／冰雾、阻挡／焰印／余火／火雾、电链／充能／雷径、易伤／纸灵休眠／交叉斩／纸鹤反伤及各书终式；正文术语可悬浮，避让范围随文本更新，练习不连接远征存档和成长 |
+| `ui/practice_entrance.gd`、`ui/scenes/practice_entrance.tscn` | 教学和习字共用简短入场，默认0.7秒、减少动态0.2秒；完全遮盖后交接场景，揭示完毕才恢复输入和教学固定步，材质沿用现有金丝并纳入渲染准备 |
 | `ui/scenes/page_shell.tscn`、`practice_page.tscn` | 共用浮层的固定头尾、滚动正文和柔焦层；习字采用继承场景，词库列表与练习词条仍动态填充 |
 | `ui/scenes/battle_page.tscn`、`battle_world.tscn`、`battle_word.tscn` | 战场组合、HUD 锚点／偏移、危险层、世界折射层与无底板词条；词条以字形细衬保证辨识，实时值和防重叠布局由脚本更新 |
 | `ui/scenes/battle_actor_visual.tscn`、`battle_projectile_visual.tscn`、`battle_spirit_visual.tscn` | 角色、投射物与纸灵的 Sprite、形状、尾迹、粒子和材质模板；各实例独立更新受击与施法状态，轨迹服从固定步规则 |
-| `game/input/` | InputRouter 上下文归属、TypingSession 词进度、唯一 ManualInputReceipt；下个固定步 drain 一次领取 |
+| `game/input/` | InputRouter 上下文归属、TypingSession 词进度、唯一 ManualInputReceipt；下个固定步 drain 一次领取。Tab／Shift+Tab按已有输入前缀正向／反向轮换，空前缀匹配全部，指南及五课首步明确说明取消后换不同开头 |
+| `game/combat/battle_enemy.gd`、`game/spells/spell_runtime.gd` | 敌人`cold_grace`随世界时间递减；每次有效寒气施加刷新1秒保留期，跨过期步长仅对过期部分按基础6点／秒及遗物流失倍率扣减，小数余量保留 |
 | `game/vocabulary/` | 具名词条与导入报告、五类外部格式解析、严格选词、用户词表原子保存 |
 | `game/persistence/app_settings.gd` | ConfigFile 设置与备份恢复，分辨率预设、自动输出、窗口／全屏及音量应用 |
 | `ui/game_display.gd` | 1920×1080 设计坐标与实际输出分离，统一游戏像素预算、独立界面缩放和高分辨率字体采样 |
 | `ui/page_shell.gd`、`open_button.gd` | 固定标题／操作、内部滚动、开放按钮柔光、词令使用辅助字体；普通控件无默认焦点或默认Tooltip，正文术语由专用系统解释 |
+| `ui/menu_navigation.gd`、`game/input/input_router.gd` | 按可见控件几何位置选择、具名主要操作、方向／确认／数字快捷键；复用真实控件动作，词令前缀、编辑、滑条与弹层隔离，无原生按钮焦点链 |
 | `ui/command_tag.gd`、`ui/key_hint.gd`、`ui/scenes/key_hint.tscn` | 可见词令标签与具名按键标记；词令操作调用同一个真实控件，文本编辑和滑条调整有独立输入归属 |
 | `ui/smooth_scroll.gd` | 桌面滚轮连续目标与浮点收敛；滚动条拖动立即接管，减少动态直接定位 |
 | `ui/viewport_output.gd` | 编辑器与运行时都按输出节点的相对路径取得 HDR 视口纹理，避免嵌套场景的局部纹理路径失效 |
@@ -72,7 +81,7 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `RunSession.suspend_battle`、`restart`、`isolate_to_god` | 单份活动存档、窗口关闭保存、房间级恢复、重开原子归档；隐藏 God 接管先保护普通档锁，再写隔离档，失败可重试且不重复成长 |
 | `ui/journey_emblem.gd`、`app/main.gd` 的行间／留痕／记录 | 原生线绘路线选择、五阶成长进度、固定列表及历史构筑详情；构筑与记录统计正式遗物实例 |
 | `ui/game_text.gd`、`content_description.gd`、`game_terms.gd`、`term_tooltips.gd` | 动态数值、层数比较、前置／互斥及全局正文悬浮解释；奖励、196件图鉴、指南与记录共用 |
-| `ui/relic_reward_choice.gd`、`ui/materials/relic_choice.gdshader` | 三卡固定布局、稀有度色彩、四书觉醒光纹、按住Alt详情、内部滚动、正式获取事务 |
+| `ui/relic_reward_choice.gd`、`ui/materials/relic_choice.gdshader` | 居中三列与局部不规则切面水晶、稀有度色彩及四书觉醒光纹；Alt借用图案占位显示详情，固定取得操作，长正文内部滚动 |
 | `game/session/battle_session.gd`、`game/session/run_combat_state.gd`、`game/spells/spell_runtime.gd` | 唯一固定步、四书独立产出、接触与有限派生、遗物周期、道具词咒、防御、一次结果与跨房交接 |
 | `game/combat/damage_packet.gd`、`game/content/element_trait.gd` | 五类伤害组成、确定分割与实际抗性结算 |
 | `development/build_lab.tscn`、`build_lab.gd`、`build_lab_scenarios.gd` | 完整目录、编译诊断、十类遭遇、正式输入及战斗链、有效结果与来源检查、安全更新；独立开发配置 |
@@ -123,7 +132,7 @@ MCP 运行在 `.temp/godot-mcp/project` 生成副本；根工程是唯一活动�
 
 按钮以 `caption_alignment` 保存场景对齐意图，其缓存同样使用 `HorizontalAlignment` 类型，词令与标题作为一组测量。文字按钮、开关、下拉和词令输入框共用 `GoldFilaments`：按词令的稳定种子生成贝塞尔主脉与短淡分枝，以共同根部弧长驱动 `gold_filament.gdshader` 的柔和亮带；相同尺寸与种子不重复生成网格。各控件流光速度与相位错开，悬停与操作增强局部受光而不重置传播节奏，减少动态关闭流动。`CrystalInlay` 在曲线之上绘制晶面，使用同一主脉控制点决定坡度，晶面柔光也按独立相位缓慢流转；控件不采样重复 SVG，Theme 不绘制硬直底边。页面装饰继续使用“流柳”“流脉”“羽脉”“回蔓”原图。页面 `open_wash.gdshader` 根据实际阅读区域生成开放曲面，保留压暗和柔焦，两侧独立移动的受光驱动局部折射与透光；正文独立清晰。资源预设按实例复制后写入状态，使用约定见 [UI 材质](../ui/materials/README.md)。施法区使用独立细线进度材质与按键提示，已输入字符用暖橙强调。
 
-正式设置写入 `user://settings.cfg`（备份 `.bak`），自定义库写入 `user://vocabulary/`。普通／God档案分别保存在 `user://profiles/normal/profile.json` 和 `user://profiles/god/profile.json`，包含四书配置、有效人工字符、结算回执、记录与本局检查点；原子保存使用临时文件验证和有效备份。房间之间恢复同一报价，房内异常退出按最后已保存事实结束本局。预览目录名为 `Keyabyss-M1-Preview`；检查为设置、词库和档案注入独立证据路径。新游戏不接旧浏览器存档。
+正式设置写入 `user://settings.cfg`（备份 `.bak`），保存前创建父目录；失败提示指出目录创建、临时写入／读取、备份或替换环节。自定义库写入 `user://vocabulary/`。普通／God档案分别保存在 `user://profiles/normal/profile.json` 和 `user://profiles/god/profile.json`，包含四书配置、有效人工字符、结算回执、记录与本局检查点；原子保存使用临时文件验证和有效备份。房间之间恢复同一报价，房内异常退出按最后已保存事实结束本局。预览目录名为 `Keyabyss-M1-Preview`；检查为设置、词库和档案注入独立证据路径。新游戏不接旧浏览器存档。
 
 设置提供自动及 17 个桌面分辨率预设，覆盖 720p、1366×768、1080p、1440p、4K、16:10、4:3、5:4、21:9 和 32:9。窗口模式按所选尺寸调整客户区，超过当前显示器可用区域时等比缩小；自动模式跟随实际窗口或全屏尺寸。全屏模式用所选分辨率渲染整幅画面，保持比例居中，不修改操作系统显示模式。窗口手动调整后，修改声音等无关选项不重置窗口大小；往返全屏恢复原窗口尺寸。
 

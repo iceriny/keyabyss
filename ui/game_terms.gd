@@ -15,7 +15,7 @@ const TEXT := {
 	"闪避": "方向键朝指定方向闪避，Alt自动选择落点。消耗一次充能，获得1秒无敌。",
 	"完美闪避": "攻击即将命中时闪避，额外获得共鸣，并让慢时间持续到本次无敌结束。",
 	"护盾": "先于生命承受伤害。治疗不会补充护盾。",
-	"寒气": "减慢敌人的移动与攻击；超过90点时，消耗60点触发冻结。最多127点。",
+	"寒气": "减慢敌人的移动与攻击；超过90点时，消耗60点触发冻结。最多127点。新加寒气后1秒不自然流失，此后基础每秒减少6点；再次施加会重新计时。",
 	"冻结": "暂停敌人的动作；解冻后继续原动作。普通敌人再次冻结至少间隔1秒，首领为3秒。",
 	"冻裂": "被冻结的敌人死亡时，引爆周围敌人并施加寒气；连锁最多三代。",
 	"冰雾": "寒墨闪避留下的区域，会积累寒气并遮挡远处敌人的视线。",
@@ -58,7 +58,7 @@ static func explanation(term: String, build: CompiledBuild = null) -> String:
 	match term:
 		"护盾": result += "\n当前上限：%d。" % RelicParameters.shield_capacity(build)
 		"御术": result += "\n当前冷却：%s秒。" % GameText.number(RelicParameters.parry_cooldown(build))
-		"寒气": result += "\n当前寒气增幅：%s%%。" % GameText.number(build.modifier(&"cold_pct"))
+		"寒气": result += "\n当前寒气增幅：%s%%；自然流失：每秒%s点。" % [GameText.number(build.modifier(&"cold_pct")), GameText.number(SpellRuntime.COLD_DECAY * (1.0 - build.modifier(&"cold_decay_pct") / 100.0))]
 		"冻结": result += "\n当前普通／首领时长：%s／%s秒。" % [GameText.number(RelicParameters.freeze_duration(build)), GameText.number(RelicParameters.freeze_duration(build, true))]
 		"纸灵": result += "\n停笔后可维持：%s秒。" % GameText.number(RelicParameters.spirit_duration(build))
 		"灼烧": result += "\n每%s秒结算一跳。" % GameText.number(SpellRuntime.BURN_INTERVAL)

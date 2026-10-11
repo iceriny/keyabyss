@@ -29,7 +29,7 @@ func _run() -> void:
 	for material in preparation._catalog:
 		if material is ShaderMaterial:
 			shader_paths[(material as ShaderMaterial).shader.resource_path] = true
-	_check(shader_paths.size() == 47 and shader_paths.has("res://ui/materials/battle_slow_lens.gdshader") and shader_paths.has("res://ui/materials/book_seal.gdshader") and shader_paths.has("res://ui/materials/ritual_light.gdshader") and shader_paths.has("res://ui/materials/ritual_atmosphere.gdshader") and shader_paths.has("res://ui/materials/engraved_gold.gdshader"), "all 47 authored canvas and particle shaders, including startup gold and atmosphere, are covered")
+	_check(shader_paths.size() == 50 and shader_paths.has("res://ui/materials/crystal_sheet.gdshader") and shader_paths.has("res://ui/materials/battle_slow_lens.gdshader") and shader_paths.has("res://ui/materials/book_seal.gdshader") and shader_paths.has("res://ui/materials/ritual_light.gdshader") and shader_paths.has("res://ui/materials/ritual_atmosphere.gdshader") and shader_paths.has("res://ui/materials/engraved_gold.gdshader"), "all 50 authored canvas and particle shaders, including crystal sheets, are covered (actual: %d)" % shader_paths.size())
 	RenderingServer.call_on_render_thread(_check_compute)
 	await compute_checked
 	_check(_compute_shared, "ice instances reuse retained shader and pipeline")

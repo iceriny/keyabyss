@@ -7,12 +7,12 @@
 [ext_resource type="Script" path="res://ui/smooth_scroll.gd" id="5"]
 
 [node name="RelicChoice" type="MarginContainer"]
-custom_minimum_size = Vector2(0, 498)
+custom_minimum_size = Vector2(0, 350)
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
 script = ExtResource("1")
 
 [node name="Wash" type="ColorRect" parent="."]
@@ -25,34 +25,6 @@ material = ExtResource("2")
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Shortcut" type="Label" parent="Content"]
-layout_mode = 2
-mouse_filter = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("4")
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.847059, 0.768627, 0.607843, 1)
-autowrap_mode = 3
-
-[node name="Pedestal" type="CenterContainer" parent="Content"]
-layout_mode = 2
-
-[node name="Glyph" type="Control" parent="Content/Pedestal"]
-custom_minimum_size = Vector2(108, 108)
-layout_mode = 2
-script = ExtResource("3")
-tint = Color(0.85098, 0.752941, 0.545098, 1)
-
-[node name="Category" type="Label" parent="Content"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-theme_override_fonts/font = ExtResource("4")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.568627, 0.662745, 0.647059, 1)
-horizontal_alignment = 1
-autowrap_mode = 3
-
 [node name="Title" type="Label" parent="Content"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -62,22 +34,50 @@ theme_override_colors/font_color = Color(0.913725, 0.835294, 0.643137, 1)
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Stack" type="Label" parent="Content"]
+[node name="Meta" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Category" type="Label" parent="Content/Meta"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.568627, 0.662745, 0.647059, 1)
+
+[node name="Stack" type="Label" parent="Content/Meta"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.6, 0.68, 0.65, 1)
-horizontal_alignment = 1
+horizontal_alignment = 2
 
-[node name="Reading" type="ScrollContainer" parent="Content"]
-custom_minimum_size = Vector2(0, 178)
+[node name="ReadingArea" type="VBoxContainer" parent="Content"]
+custom_minimum_size = Vector2(0, 218)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Pedestal" type="CenterContainer" parent="Content/ReadingArea"]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+
+[node name="Glyph" type="Control" parent="Content/ReadingArea/Pedestal"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+script = ExtResource("3")
+tint = Color(0.85098, 0.752941, 0.545098, 1)
+
+[node name="Reading" type="ScrollContainer" parent="Content/ReadingArea"]
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 script = ExtResource("5")
 
-[node name="Description" type="Label" parent="Content/Reading"]
+[node name="Description" type="Label" parent="Content/ReadingArea/Reading"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
@@ -85,3 +85,4 @@ theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 19
 theme_override_colors/font_color = Color(0.796078, 0.831373, 0.807843, 1)
 autowrap_mode = 3
+horizontal_alignment = 1

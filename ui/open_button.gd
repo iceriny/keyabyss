@@ -5,7 +5,13 @@ const SMALL_FONT: FontFile = preload("res://assets/fonts/jinghua-song.ttf")
 const MUTED := Color("81918b")
 const LIGHT_PADDING := 48.0
 const CONTENT_PADDING := 12.0
-@export var caption_alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT
+@export var caption_alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT:
+	set(value):
+		caption_alignment = value
+		_caption_alignment = value
+		if is_node_ready():
+			alignment = value if _command_badge == null else HORIZONTAL_ALIGNMENT_LEFT
+			_layout_badge()
 @export var filament_extension: float = 0.0
 var defer_decoration := false
 static var _decoration_frame := -1
@@ -14,6 +20,7 @@ const DECORATION_BUDGET_USEC := 2000
 
 var motion_reduced: bool = false
 var selected_visual: bool = false
+var keyboard_selected: bool = false
 var _command_word: String = ""
 var _command_prefix: String = ""
 var _command_badge: HBoxContainer
@@ -117,6 +124,11 @@ func set_selected_visual(value: bool) -> void:
 	_refresh_state()
 
 
+func set_keyboard_selected(value: bool) -> void:
+	keyboard_selected = value
+	_refresh_state()
+
+
 func set_caption(value: String) -> void:
 	text = value
 	if _command_badge != null:
@@ -193,10 +205,13 @@ func _layout_badge() -> void:
 	if icon != null:
 		icon_width = icon.get_width() + get_theme_constant("h_separation")
 	var group_width := icon_width + caption_width + 20.0 + badge_size.x
-	custom_minimum_size.x = maxf(_base_minimum_width, group_width + CONTENT_PADDING * 2.0)
+	var required_width := group_width
+	if _caption_alignment == HORIZONTAL_ALIGNMENT_CENTER:
+		required_width += 20.0 + badge_size.x
+	custom_minimum_size.x = maxf(_base_minimum_width, required_width + CONTENT_PADDING * 2.0)
 	var content_left := CONTENT_PADDING
 	if _caption_alignment == HORIZONTAL_ALIGNMENT_CENTER:
-		content_left = maxf(CONTENT_PADDING, (size.x - group_width) * 0.5)
+		content_left = maxf(CONTENT_PADDING, (size.x - icon_width - caption_width) * 0.5)
 	elif _caption_alignment == HORIZONTAL_ALIGNMENT_RIGHT:
 		content_left = maxf(CONTENT_PADDING, size.x - group_width - CONTENT_PADDING)
 	for state: String in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
@@ -206,7 +221,7 @@ func _layout_badge() -> void:
 
 
 func _is_active() -> bool:
-	return not disabled and (selected_visual or is_hovered() or _held or (not _command_prefix.is_empty() and _command_word.begins_with(_command_prefix)))
+	return not disabled and (selected_visual or keyboard_selected or is_hovered() or _held or (not _command_prefix.is_empty() and _command_word.begins_with(_command_prefix)))
 
 
 func _refresh_state() -> void:
@@ -253,7 +268,7 @@ func _sync_light_state() -> void:
 	if _light_material == null:
 		return
 	_light_material.set_shader_parameter("activity", _line_progress)
-	_light_material.set_shader_parameter("selection", 1.0 if selected_visual else 0.0)
+	_light_material.set_shader_parameter("selection", 1.0 if selected_visual or keyboard_selected else 0.0)
 	_light_material.set_shader_parameter("press", _press_flash)
 	_gold.ribbon.set_shader_parameter("activity", _line_progress)
 	_gold.ribbon.set_shader_parameter("pulse", _press_flash)
@@ -283,7 +298,7 @@ func _sync_light_text() -> void:
 	elif alignment == HORIZONTAL_ALIGNMENT_RIGHT:
 		text_left = maxf(content_left, content_right - text_width)
 	var text_right := text_left + text_width
-	if _command_badge != null:
+	if _command_badge != null and _caption_alignment != HORIZONTAL_ALIGNMENT_CENTER:
 		text_right = maxf(text_right, _command_badge.position.x + _command_badge.get_combined_minimum_size().x)
 	_light_material.set_shader_parameter("text_center_x", LIGHT_PADDING + (text_left + text_right) * 0.5)
 	_light_material.set_shader_parameter("text_half_width", maxf(12.0, (text_right - text_left) * 0.5))

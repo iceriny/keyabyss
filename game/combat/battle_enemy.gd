@@ -35,6 +35,7 @@ var stagger_time: float = 0.0
 var vulnerability: int = 0
 var burn: int = 0
 var cold: int = 0
+var cold_grace: float = 0.0
 var shock: int = 0
 var cold_remainder: float = 0.0
 var cold_gain_remainder: float = 0.0

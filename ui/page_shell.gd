@@ -89,8 +89,8 @@ func _process(delta: float) -> void:
 	# The annotation fades into place; the title and action baseline never move.
 	content_layer.position.y = 0.0
 	wash.modulate.a = progress
-	(wash.material as ShaderMaterial).set_shader_parameter("light_center", get_local_mouse_position() / size)
-	(wash.material as ShaderMaterial).set_shader_parameter("clock", 0.0 if reduced_motion else arrival)
+	($CrystalSheets.material as ShaderMaterial).set_shader_parameter("arrival", progress)
+	($CrystalSheets.material as ShaderMaterial).set_shader_parameter("clock", 0.0 if reduced_motion else arrival)
 
 
 func dismiss() -> void:
@@ -101,6 +101,7 @@ func dismiss() -> void:
 	var tween := create_tween().set_parallel(true)
 	tween.tween_property(content_layer,"modulate:a",0.,.01 if reduced_motion else .18)
 	tween.tween_property(wash,"modulate:a",0.,.01 if reduced_motion else .18)
+	tween.tween_property($CrystalSheets.material,"shader_parameter/arrival",0.,.01 if reduced_motion else .18)
 	tween.chain().tween_callback(queue_free)
 
 
@@ -121,6 +122,15 @@ func set_width(value: float) -> void:
 	_layout_panel()
 
 
+func center_heading() -> void:
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	command_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	$ContentLayer/Panel/Layout/Header/Balance.visible = close_button.visible
+	$ContentLayer/GoldBranch.hide()
+
+
 func _layout_panel() -> void:
 	var width := minf(panel_width, size.x - 128)
 	var height := minf(compact_height, size.y-110) if compact_height > 0.0 else size.y-110
@@ -131,7 +141,7 @@ func _layout_panel() -> void:
 	$ContentLayer/GoldBranch.size = Vector2(380, 142.5)
 	$ContentLayer/GoldDivider.position = panel.position + Vector2(10, panel.size.y - 158)
 	$ContentLayer/GoldDivider.size = Vector2(width - 20, 100)
-	(wash.material as ShaderMaterial).set_shader_parameter("reading_rect", Vector4(panel.position.x/size.x, panel.position.y/size.y, width/size.x, panel.size.y/size.y))
+	$CrystalSheets.arrange(Rect2(panel.position, panel.size))
 
 
 static func label(parent: Node, text_value: String, font_size: int = 18, color: Color = Color("e8e4d8")) -> Label:

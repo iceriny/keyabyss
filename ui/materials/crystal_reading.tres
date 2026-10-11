@@ -7,5 +7,3 @@ shader = ExtResource("1")
 shader_parameter/transmission = 0.06
 shader_parameter/shade = 0.025
 shader_parameter/blur_lod = 2.4
-shader_parameter/refraction_pixels = 1.4
-shader_parameter/facet_strength = 0.65

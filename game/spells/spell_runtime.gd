@@ -6,6 +6,8 @@ extends RefCounted
 const Q := SpellResourceLedger.Q
 const STORM_HEAD_SCALE := 0.6
 const BURN_INTERVAL := 0.15
+const COLD_GRACE := 1.0
+const COLD_DECAY := 6.0
 const ELEMENTS := {&"frost": DamagePacket.Element.ICE, &"flame": DamagePacket.Element.FIRE, &"storm": DamagePacket.Element.LIGHTNING, &"spirit": DamagePacket.Element.PAPER}
 const KINDS := {&"frost": &"frost_spear", &"flame": &"flame_burst", &"storm": &"storm_arc", &"spirit": &"spirit_mark"}
 var ledger: SpellResourceLedger
@@ -420,6 +422,7 @@ func _pulse_status(status: OngoingSpell) -> void:
 func _apply_cold(target: BattleEnemy, amount: int, snapshot: CompiledBuild) -> void:
 	if not target.alive() or amount <= 0: return
 	target.cold = mini(127, target.cold + roundi(float(amount) / Q * (1.0 + float(snapshot.value(&"cold_efficiency_q")) / Q) * RelicParameters.ratio(snapshot, &"cold_pct")))
+	target.cold_grace = COLD_GRACE
 	_try_freeze(target, snapshot)
 
 
@@ -470,7 +473,9 @@ func _advance_states(delta: float) -> void:
 			enemy.freeze_cooldown = 3.0 if enemy.boss else 1.0
 		elif frozen_before <= 0.0:
 			enemy.freeze_cooldown = maxf(0.0, enemy.freeze_cooldown - delta)
-		enemy.cold_remainder += delta * 12.0 * (1.0 - build.modifier(&"cold_decay_pct") / 100.0)
+		var cold_decay := maxf(0.0, delta - enemy.cold_grace)
+		enemy.cold_grace = maxf(0.0, enemy.cold_grace - delta)
+		enemy.cold_remainder += cold_decay * COLD_DECAY * (1.0 - build.modifier(&"cold_decay_pct") / 100.0)
 		var cold_loss := floori(enemy.cold_remainder)
 		enemy.cold_remainder -= cold_loss
 		enemy.cold = maxi(0, enemy.cold - cold_loss)

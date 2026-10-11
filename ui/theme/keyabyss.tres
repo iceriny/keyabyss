@@ -94,10 +94,10 @@ content_margin_bottom = 5.0
 texture = ExtResource("9_option_hover")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBox_popup"]
-content_margin_left = 18.0
-content_margin_top = 18.0
-content_margin_right = 18.0
-content_margin_bottom = 24.0
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 28.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_open"]
 
@@ -182,14 +182,14 @@ OptionButton/styles/hover = SubResource("StyleBox_focus")
 OptionButton/styles/hover_pressed = SubResource("StyleBox_focus")
 OptionButton/styles/normal = SubResource("StyleBox_input")
 OptionButton/styles/pressed = SubResource("StyleBox_focus")
-PopupMenu/colors/font_color = Color(0.87, 0.9, 0.89, 1)
-PopupMenu/colors/font_disabled_color = Color(0.52, 0.56, 0.56, 0.38)
-PopupMenu/colors/font_hover_color = Color(1, 0.92, 0.73, 1)
+PopupMenu/colors/font_color = Color(0.91, 0.894, 0.847, 1)
+PopupMenu/colors/font_disabled_color = Color(0.58, 0.64, 0.67, 0.7)
+PopupMenu/colors/font_hover_color = Color(0.941, 0.867, 0.682, 1)
 PopupMenu/constants/h_separation = 12
 PopupMenu/constants/item_end_padding = 12
 PopupMenu/constants/item_start_padding = 12
-PopupMenu/constants/v_separation = 14
-PopupMenu/font_sizes/font_size = 16
+PopupMenu/constants/v_separation = 16
+PopupMenu/font_sizes/font_size = 18
 PopupMenu/fonts/font = ExtResource("2_font")
 PopupMenu/icons/checked = ExtResource("4_on")
 PopupMenu/icons/radio_checked = ExtResource("10_selection")

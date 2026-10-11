@@ -103,8 +103,8 @@ func _ready() -> void:
 	home_keys.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	home_keys.add_theme_constant_override("separation", 24)
 	bottom_hint.add_child(home_keys)
-	home_keys.add_child(KeyHint.create("← / →", "切换法书"))
-	home_keys.add_child(KeyHint.create("Enter", "准备出征"))
+	home_keys.add_child(KeyHint.create("← / → · 1–4", "选书"))
+	home_keys.add_child(KeyHint.create("Enter / Space", "准备"))
 	hint.text = ""
 	for button: Button in book_hits.get_children():
 		cards.append(button)
@@ -323,6 +323,10 @@ func set_prepared(value: bool, audible: bool = true) -> void:
 	stage.request_render()
 	back_button.visible = value
 	prepare_button.set_caption("进入咒典" if value else "准备出征  →")
+	var key_row := bottom_hint.get_child(0)
+	(key_row.get_child(0) as KeyHint).key_text = "← / → · 1–5" if value else "← / → · 1–4"
+	(key_row.get_child(0) as KeyHint).description = "难度" if value else "选书"
+	(key_row.get_child(1) as KeyHint).description = "出征" if value else "准备"
 	prepare_button.disabled = not interactive
 	navigate.emit("prepared" if value else "archive")
 	_apply_interaction()
@@ -441,8 +445,8 @@ func _layout() -> void:
 	back_button.position = Vector2(safe_left + safe_width * .05, 85)
 	left_wing.size.x = minf(390, safe_width * .26)
 	right_wing.size.x = minf(390, safe_width * .26)
-	bottom_hint.position = Vector2(safe_left + safe_width * .95 - 350, size.y - 44)
-	bottom_hint.size = Vector2(350, 32)
+	bottom_hint.position = Vector2(safe_left + safe_width * .95 - 470, size.y - 44)
+	bottom_hint.size = Vector2(470, 32)
 	command_label.position = Vector2(safe_left + safe_width*.05, size.y - 44)
 	command_label.size = Vector2(650, 38)
 	book_command.hide()
@@ -533,7 +537,7 @@ func _layout_motion() -> void:
 	caption.position = Vector2(size.x * .5 - caption.size.x * .5,size.y-64-clampf(size.y*.14,100,170)-128+8+5*(1.-arrival))
 	caption_layer.modulate.a = arrival*(1.-deployment)
 	var safe_left := _safe_left()
-	for control: Control in [menu,title_group,archive_label,bottom_hint]:
+	for control: Control in [menu,title_group,archive_label]:
 		control.modulate.a = 1.-deployment
 	left_wing.position = Vector2(lerpf(size.x*.5-left_wing.size.x, safe_left + safe_width*.05, deployment), (size.y-64)*.23).round()
 	right_wing.position = Vector2(lerpf(size.x*.5, safe_left + safe_width*.95-right_wing.size.x, deployment),(size.y-64)*.23).round()

@@ -56,6 +56,15 @@ func _ready() -> void:
 	fluid_select = body.get_node("Fluid/Select")
 	confirm_button = footer.get_node("Finish")
 	controls = {"volume": volume_slider, "show_meaning": meaning_toggle, "quality": quality_select, "fluid_quality": fluid_select}
+	for entry: Array in [[body.get_node("Volume/Heading/Title"), "volume"], [meaning_toggle, "translation"], [body.get_node("Quality/Title"), "effects"], [body.get_node("Fluid/Title"), "fluid"]]:
+		var caption: Control = entry[0]
+		var tag := CommandTag.create(entry[1])
+		caption.add_child(tag)
+		tag.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT)
+		tag.offset_left = -110
+		tag.offset_right = -20
+		tag.offset_top = -9
+		tag.offset_bottom = 9
 	for control in body.find_children("*", "Control", true, false):
 		if control is Label or control is BaseButton:
 			(control as Control).add_theme_font_override("font", PageShell.SMALL_FONT)

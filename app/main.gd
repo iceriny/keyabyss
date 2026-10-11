@@ -1,7 +1,15 @@
 class_name KeyabyssApp
 extends Node
 ## Owns page navigation and services, while word progress belongs to TypingSession.
-const REWARD_HINT := "按住 Alt 查看详情     ·     1 / 2 / 3 取得遗物"
+const MENU_HINT := "方向键选择 · Enter / Space 确认 · Esc 返回 · 输入词令可直接操作"
+const REWARD_HINT := "← / → 选择 · Enter / Space 取得 · 1–3 直选 · 按住 Alt 查看详情"
+const PRIMARY_ACTIONS := {
+	"reward": "take1", "route": "rest", "pause": "resume", "resume_run": "continue",
+	"result": "home", "settings": "back", "words": "use", "guide": "back",
+	"profile": "back", "history": "back", "about": "back", "import": "preview",
+	"settlement": "retry", "room_error": "retry", "calibration": "ready",
+	"relics": "relic001", "build": "relic001",
+}
 
 @onready var root: GameDisplay = $Interface/Root
 @onready var router: InputRouter = $InputRouter
@@ -12,6 +20,7 @@ var page: PageShell
 var practice: PracticePage
 var battle: BattlePage
 var departure: DepartureRitual
+var practice_entrance: PracticeEntrance
 var route: String = "home":
 	set(value):
 		route = value
@@ -20,6 +29,7 @@ var route: String = "home":
 var paused_route: String = ""
 var settings_return: String = "home"
 var commands: Dictionary[String, Callable] = {}
+var menu_navigation := MenuNavigation.new()
 @onready var archive: ArchiveHome = $Interface/Root/ArchiveHome
 @onready var sound: ArchiveAudio = $ArchiveAudio
 @onready var cursor: ArchiveCursor = $Interface/Root/Cursor
@@ -59,6 +69,8 @@ var fps_display: FpsDisplay
 var term_tooltips: TermTooltips
 var _calibration_return := "home"
 var _calibration_archive_visible := true
+var tutorial: TutorialLesson
+var tutorial_overlay: TutorialOverlay
 
 
 func _enter_tree() -> void:
@@ -102,6 +114,8 @@ func _ready() -> void:
 	router.command_character.connect(func() -> void: sound.play_cue("ui.type"))
 	router.command_rejected.connect(func() -> void: sound.play_cue("ui.invalid"))
 	router.command_progress.connect(func(value: String) -> void:
+		if not value.is_empty() and not (is_instance_valid(page) and page.has_node("RewardDetail")):
+			menu_navigation.clear_selection()
 		get_tree().call_group("open_motion_controls", "set_command_prefix", value)
 		get_tree().call_group("word_command_tags", "set_command_prefix", value)
 		for i in archive.cards.size():
@@ -113,8 +127,9 @@ func _ready() -> void:
 			elif route == "reward" and value.is_empty():
 				page.command_hint.text = REWARD_HINT
 			else:
-				page.command_hint.text = "词令  %s▏" % value if not value.is_empty() else "点击或输入词令"
+				page.command_hint.text = "词令  %s▏" % value if not value.is_empty() else MENU_HINT
 	)
+	menu_navigation.selection_changed.connect(_menu_selection_changed)
 	router.back_requested.connect(_back)
 	router.action_requested.connect(func(action: StringName) -> void:
 		if action == &"fullscreen":
@@ -125,14 +140,8 @@ func _ready() -> void:
 				(settings_controls["fullscreen"] as CheckButton).set_pressed_no_signal(settings.fullscreen)
 				(settings_controls["fullscreen"] as CheckButton).text = "开启" if settings.fullscreen else "关闭"
 			return
-		if route == "home":
-			match action:
-				&"menu_previous": archive.select_book(archive.selected - 1)
-				&"menu_next": archive.select_book(archive.selected + 1)
-				&"menu_confirm": archive.set_prepared(true)
-			return
-		if route == "prepare" and action == &"menu_confirm":
-			_launch_prepared()
+		if str(action).begins_with("menu_"):
+			_menu_action(action)
 			return
 		if route == "battle" and is_instance_valid(battle):
 			battle.session.queue_action(action)
@@ -206,6 +215,7 @@ func _archive_navigate(destination: String) -> void:
 	match destination:
 		"vocab": _vocabulary_page()
 		"help": _guide()
+		"tutorial": _tutorial_menu()
 		"settings": _settings_page(route)
 		"quit": _quit_game()
 		"battle": _launch_prepared()
@@ -223,30 +233,78 @@ func _archive_navigate(destination: String) -> void:
 
 func _configure_archive_commands() -> void:
 	commands.clear()
+	menu_navigation.reset("start")
 	commands["back"] = func() -> void: archive.set_prepared(false)
 	commands["vocab"] = _vocabulary_page
 	commands["words"] = _vocabulary_page
 	commands["help"] = _guide
 	commands["guide"] = _guide
+	commands["tutorial"] = _tutorial_menu
 	commands["settings"] = func() -> void: _settings_page(route)
 	commands["quit"] = _quit_game
 	commands["profile"] = _profile_page
 	commands["relics"] = _relics_page
 	commands["history"] = _run_records
 	if run != null and run.has_pending_run(): commands["continue"] = _resume_run
+	menu_navigation.register(archive.prepare_button, "start")
+	menu_navigation.register(archive.back_button, "back")
+	for button: OpenButton in archive.menu.get_children():
+		menu_navigation.register(button, button._command_word)
 	if route == "home":
 		commands["start"] = func() -> void: archive.set_prepared(true)
 		for i in ArchiveHome.BOOKS.size():
-			commands[str(ArchiveHome.BOOKS[i].id)] = func() -> void: archive.select_book(i)
-			commands[str(i + 1)] = func() -> void: archive.select_book(i)
+			commands[str(ArchiveHome.BOOKS[i].id)] = _select_archive_book.bind(i)
+			commands[str(i + 1)] = _select_archive_book.bind(i)
 	elif route == "prepare":
 		commands["start"] = _launch_prepared
 		for i in ArchiveHome.MODE_IDS.size():
 			_bind_control_command(archive.difficulty_buttons[i], ArchiveHome.MODE_IDS[i])
+			commands[str(i + 1)] = _select_difficulty.bind(i)
 		_bind_control_command(archive.seed_edit, "seed")
 		_bind_control_command(archive.vocabulary_select, "library")
 		_bind_control_command(archive.get_node("LeftWingLayer/LeftWing/Progressive"), "progress")
+		menu_navigation.register(archive.get_node("LeftWingLayer/LeftWing/ManageVocabulary"), "vocab")
 	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+	_select_primary.call_deferred()
+
+
+func _select_archive_book(index: int) -> void:
+	archive.select_book(index)
+	menu_navigation.select_word("start")
+
+
+func _select_difficulty(index: int) -> void:
+	archive._difficulty(clampi(index, 0, ArchiveHome.MODE_IDS.size() - 1))
+	menu_navigation.select_word("start")
+
+
+func _select_primary() -> void:
+	menu_navigation.select_word(menu_navigation.primary_word)
+
+
+func _menu_action(action: StringName) -> void:
+	if is_instance_valid(page) and page.has_node("RewardDetail"):
+		if action == &"menu_confirm": _close_reward_detail()
+		return
+	var selected_word := menu_navigation.selected_word()
+	if route in ["home", "prepare"] and (selected_word in ["", "start"] or selected_word in ArchiveHome.MODE_IDS) and action in [&"menu_previous", &"menu_next"]:
+		var direction := -1 if action == &"menu_previous" else 1
+		if route == "home": _select_archive_book(archive.selected + direction)
+		else: _select_difficulty(ArchiveHome.MODE_IDS.find(settings.difficulty) + direction)
+		return
+	var command := menu_navigation.handle(action)
+	if not command.is_empty():
+		_command(command)
+	elif menu_navigation.selected_word() != selected_word:
+		sound.play_cue("ui.focus")
+
+
+func _menu_selection_changed(control: Control) -> void:
+	if route != "reward" or not is_instance_valid(page): return
+	var choices := page.body.get_node_or_null("RewardChoices")
+	if choices == null: return
+	for choice: RelicRewardChoice in choices.get_children():
+		choice.set_keyboard_selected(control != null and choice.is_ancestor_of(control))
 
 
 func _return_archive() -> void:
@@ -268,6 +326,7 @@ func _open(next_route: String, title: String, subtitle: String, audible: bool = 
 		if page != practice:
 			page.queue_free()
 	commands.clear()
+	menu_navigation.reset(PRIMARY_ACTIONS.get(next_route, ""))
 	route = next_route
 	page = shell if shell != null else PageShell.create(title, subtitle)
 	page.theme = _archive_theme
@@ -278,11 +337,18 @@ func _open(next_route: String, title: String, subtitle: String, audible: bool = 
 	root.add_child(page)
 	archive.set_interactive(false)
 	page.close_button.pressed.connect(_back)
+	_bind_control_command(page.close_button, "back")
 	if next_route in ["words", "import", "guide"]:
 		page.set_width(1160)
 	if audible:
 		sound.play_cue("ui.open")
-	router.configure(InputRouter.Context.MENU)
+	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+	_select_primary.call_deferred()
+
+
+static func _numbered_word(prefix: String, index: int, total: int) -> String:
+	# Equal-width words cannot auto-submit an earlier row while typing a later one.
+	return prefix + str(index).pad_zeros(maxi(3, str(total).length()))
 
 
 func _button(parent: Node, caption: String, command: String, callback: Callable, cue: String = "") -> OpenButton:
@@ -299,6 +365,10 @@ func _button(parent: Node, caption: String, command: String, callback: Callable,
 
 func _bind_control_command(control: Control, word: String) -> void:
 	control.set_meta("word_command", word)
+	if control is OpenButton:
+		menu_navigation.register(control, word)
+		if word == menu_navigation.primary_word and menu_navigation.selected_word().is_empty():
+			_select_primary.call_deferred()
 	if control is OptionButton and not control.has_meta("audio_bound"):
 		control.set_meta("audio_bound", true)
 		control.set_meta("audio_selected", control.selected)
@@ -356,7 +426,8 @@ func _configure_new_control(node: Node) -> void:
 func _apply_control_policy(node_id: int) -> void:
 	# A page can close before this deferred node-added callback is delivered.
 	var control := instance_from_id(node_id) as Control
-	if control == null:
+	# Native popups own another Viewport and their internal keyboard focus.
+	if control == null or control.get_viewport() != get_viewport():
 		return
 	control.focus_mode = Control.FOCUS_CLICK if control is LineEdit or control is TextEdit else Control.FOCUS_NONE
 	control.tooltip_text = ""
@@ -365,6 +436,7 @@ func _apply_control_policy(node_id: int) -> void:
 
 
 func _reading_build() -> CompiledBuild:
+	if is_instance_valid(tutorial): return tutorial.session.compiled_build
 	# Records describe stored layers; their glossary must not borrow the live run.
 	if route == "history": return null
 	if run != null and (run.phase != "RESULT" or route == "build"):
@@ -375,6 +447,7 @@ func _reading_build() -> CompiledBuild:
 
 
 func _reading_scope() -> Node:
+	if route == "practice_entry": return null
 	if is_instance_valid(page) and page.visible:
 		var detail := page.get_node_or_null("RewardDetail")
 		return detail if detail != null else page
@@ -405,6 +478,7 @@ func _command(command: String) -> void:
 
 
 func _home(audible: bool = true) -> void:
+	_clear_tutorial()
 	var returning := route != "home"
 	_persist_audio_settings()
 	get_tree().paused = false
@@ -462,6 +536,7 @@ func _guide() -> void:
 	_catalog_button(page.footer, "返回", "back", _return_archive)
 	if not get_tree().paused:
 		commands["practice"] = _start_practice
+		_button(page.footer, "教学练习", "tutorial", _tutorial_menu)
 	# Example commands remain available while their sections are being built.
 	var requested_example := {"command": ""}
 	for index in GuideContent.EXAMPLES.size():
@@ -544,7 +619,7 @@ func _vocabulary_page() -> void:
 		if str(book.id) == "extension":
 			word_command = "lexicon"
 		elif str(book.id).begins_with("custom-"):
-			word_command = "custom%d" % (index + 1)
+			word_command = _numbered_word("custom", index + 1, catalog.size())
 		var choice := _button(list, str(book.title), word_command, func() -> void:
 			if selected_id != str(book.id):
 				_show_vocabulary(str(book.id))
@@ -563,7 +638,7 @@ func _vocabulary_page() -> void:
 
 
 func _show_vocabulary(id: String) -> void:
-	commands.erase("sync")
+	commands.erase("refresh")
 	selected_id = id
 	selected_entries = vocabulary.load_entries(id)
 	for child in vocab_detail.get_children():
@@ -581,7 +656,7 @@ func _show_vocabulary(id: String) -> void:
 	var source := vocabulary.sync_source(id)
 	if not source.is_empty():
 		var source_id := str(source.id)
-		var sync_button := _button(vocab_detail, "同步中…" if _syncing_source == source_id else "同步源词表", "sync", func() -> void: _sync_vocabulary(source_id), "ui.select")
+		var sync_button := _button(vocab_detail, "同步中…" if _syncing_source == source_id else "同步源词表", "refresh", func() -> void: _sync_vocabulary(source_id), "ui.select")
 		sync_button.name = "Sync"
 		sync_button.disabled = not _syncing_source.is_empty()
 		PageShell.label(vocab_detail, "仅点击同步时联网；失败时继续使用已有词库。", 13, Color("82918c"))
@@ -857,7 +932,9 @@ func _settings_page(return_to: String) -> void:
 	layout.move_child(tabs, 2)
 	for entry: Array in [["display", "显示"], ["visuals", "效果"], ["audio", "声音"], ["gameplay", "玩法"]]:
 		var id: String = entry[0]
-		var tab := _button(tabs, entry[1], id, _select_settings_tab.bind(id))
+		var number := str(_settings_tabs.size() + 1)
+		var tab := _button(tabs, number + " · " + entry[1], id, _select_settings_tab.bind(id))
+		commands[number] = _activate_control.bind(tab)
 		tab.toggle_mode = true
 		_settings_tabs[id] = tab
 		var group := VBoxContainer.new()
@@ -939,6 +1016,7 @@ func _select_settings_tab(id: String, audible: bool = true) -> void:
 		_settings_groups[key].visible = key == id
 		_settings_tabs[key].set_pressed_no_signal(key == id)
 		_settings_tabs[key].set_selected_visual(key == id)
+	if audible: menu_navigation.select_word(id)
 	page.scroll.scroll_vertical = 0
 	var focused := get_viewport().gui_get_focus_owner()
 	if focused != null and not focused.is_visible_in_tree():
@@ -1108,10 +1186,15 @@ func _first_setup_page(return_to: String = "home") -> void:
 	_open("calibration", "画面校准", "", true, setup)
 	if return_to == "settings":
 		setup.close_button.show()
-		setup.confirm_button.text = "保存并返回"
+		(setup.confirm_button as OpenButton).set_caption("保存并返回")
+	setup.center_heading()
 	archive.hide()
 	setup.settings_changed.connect(_apply_calibration_settings)
 	setup.completed.connect(_complete_first_setup)
+	for key in setup.controls:
+		_bind_control_command(setup.controls[key], {"volume": "volume", "show_meaning": "translation", "quality": "effects", "fluid_quality": "fluid"}[key])
+	_bind_control_command(setup.confirm_button, "ready")
+	menu_navigation.register(setup.confirm_button, "ready")
 	commands["ready"] = _complete_first_setup
 	commands["back"] = _complete_first_setup
 	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
@@ -1138,12 +1221,120 @@ func _complete_first_setup() -> void:
 		_home(false)
 
 
+func _clear_tutorial() -> void:
+	if is_instance_valid(tutorial):
+		tutorial.session.set_physics_process(false)
+		tutorial.queue_free()
+	tutorial = null
+	tutorial_overlay = null
+
+
+func _tutorial_menu() -> void:
+	get_tree().paused = false
+	_clear_tutorial()
+	if is_instance_valid(battle): battle.queue_free()
+	battle = null
+	router.typing = null
+	archive.show()
+	var menu := TutorialMenu.create_menu(settings.reduce_motion)
+	_open("tutorial", "", "", true, menu)
+	menu.lesson_requested.connect(_start_tutorial)
+	for id in menu.lesson_buttons:
+		_bind_control_command(menu.lesson_buttons[id], str(id))
+	_button(page.footer, "返回书库", "back", _home)
+	menu_navigation.select_word("basics")
+
+
+func _start_tutorial(id: StringName) -> void:
+	var title := "落笔入门" if id == &"basics" else ""
+	for book: BookPresentation in ArchiveHome.BOOKS:
+		if book.id == id: title = book.title + " · 习术"
+	_begin_practice_entrance(&"frost" if id == &"basics" else id, title, _enter_tutorial.bind(id))
+
+
+func _begin_practice_entrance(book_id: StringName, title: String, enter: Callable) -> void:
+	if is_instance_valid(practice_entrance): return
+	get_tree().paused = false
+	if is_instance_valid(battle): battle.session.set_physics_process(false)
+	commands.clear()
+	route = "practice_entry"
+	router.typing = null
+	router.configure(InputRouter.Context.MODAL)
+	term_tooltips.dismiss()
+	practice_entrance = PracticeEntrance.create_entrance(book_id, title, settings.reduce_motion)
+	practice_entrance.covered.connect(func() -> void:
+		enter.call()
+		if is_instance_valid(tutorial): tutorial.session.set_physics_process(false)
+		route = "practice_entry"
+		router.typing = null
+		router.configure(InputRouter.Context.MODAL)
+		practice_entrance.release())
+	practice_entrance.completed.connect(func() -> void:
+		practice_entrance = null
+		if is_instance_valid(tutorial):
+			route = "battle"
+			tutorial.session.set_physics_process(true)
+			router.typing = tutorial.session.typing
+		else:
+			route = "practice"
+			router.typing = practice.typing
+		router.configure(InputRouter.Context.TYPING))
+	practice_entrance.completed.connect(func() -> void:
+		if DisplayServer.get_name() != "headless" and not get_window().has_focus(): _pause())
+	root.add_child(practice_entrance)
+
+
+func _enter_tutorial(id: StringName) -> void:
+	get_tree().paused = false
+	_clear_tutorial()
+	if is_instance_valid(page): page.queue_free()
+	page = null
+	if is_instance_valid(battle): battle.queue_free()
+	commands.clear()
+	tutorial = TutorialLesson.create_lesson(id)
+	add_child(tutorial)
+	var book: BookPresentation
+	for candidate: BookPresentation in ArchiveHome.BOOKS:
+		if candidate.id == tutorial.book_id: book = candidate
+	battle = BattlePage.create(tutorial.session, settings, book)
+	battle.theme = _archive_theme
+	root.add_child(battle)
+	tutorial_overlay = TutorialOverlay.create_overlay(book, settings.reduce_motion)
+	battle.add_child(tutorial_overlay)
+	tutorial_overlay._content.resized.connect(func() -> void:
+		battle.word_exclusions.assign([tutorial_overlay.get_reserved_rect()]))
+	tutorial.step_changed.connect(tutorial_overlay.show_step)
+	tutorial.goal_changed.connect(tutorial_overlay.set_goal_ready)
+	tutorial_overlay.next_requested.connect(tutorial.advance)
+	tutorial.step_changed.connect(func(_index: int, _total: int, _title: String, _instruction: String, _progress: String, _complete: bool) -> void:
+		battle.word_exclusions.assign([tutorial_overlay.get_reserved_rect()]))
+	tutorial_overlay.exit_requested.connect(_tutorial_menu)
+	tutorial_overlay.retry_requested.connect(_start_tutorial.bind(id))
+	tutorial.session.finished.connect(func(_victory: bool) -> void:
+		tutorial_overlay.show_step(tutorial.step_index, tutorial.step_count(), "重新落笔", "点击重新练习，再试一次。", "生命耗尽", false))
+	battle.pause_requested.connect(_pause)
+	battle.chapter_label.text = "基础教学" if id == &"basics" else "法书教学"
+	battle.bottom_label.text = "独立练习 · 不计入远征与成长"
+	archive.hide()
+	archive.set_interactive(false)
+	route = "battle"
+	router.typing = tutorial.session.typing
+	router.configure(InputRouter.Context.TYPING)
+	tutorial.refresh()
+	var focus := get_viewport().gui_get_focus_owner()
+	if focus != null: focus.release_focus()
+
+
 func _start_practice() -> void:
 	var entries := vocabulary.select_entries(PackedStringArray([settings.vocabulary_id]), settings.min_length, settings.max_length)
 	if entries.is_empty():
 		_vocabulary_page()
 		page.status.text = "当前词库或词长范围不可用，请重新选择。"
 		return
+	_begin_practice_entrance(StringName(settings.book_id), "习字练习", _enter_practice.bind(entries))
+
+
+func _enter_practice(entries: Array[VocabularyEntry]) -> void:
 	if is_instance_valid(page):
 		page.queue_free()
 	commands.clear()
@@ -1317,7 +1508,7 @@ func _enter_battle(entries: Array[VocabularyEntry]) -> void:
 	if request == null:
 		session.free()
 		_open("room_error", "未能进入书页", run.last_error)
-		page.add_action("重试进入").pressed.connect(_start_battle)
+		_button(page.footer, "重试进入", "retry", _start_battle)
 		if is_instance_valid(departure):
 			departure.release()
 		return
@@ -1370,7 +1561,7 @@ func _battle_finished(victory: bool) -> void:
 	_open("result", "墨迹 · 此页已明" if victory else ("归卷 · 重返书库" if session.abandoned_run else "墨尽 · 未完待续"), "", not gained_level)
 	page.compact_height = 740.0
 	page.set_width(960)
-	page.heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	page.center_heading()
 	page.heading.add_theme_color_override("font_color", Color("dfc58b") if victory else (Color("9bb8c8") if session.abandoned_run else Color("d58f83")))
 	page.pattern.hide()
 	page.get_node("ContentLayer/GoldBranch").hide()
@@ -1386,6 +1577,7 @@ func _battle_finished(victory: bool) -> void:
 	for detail in [{"title": "战斗详情", "command": "stats"}, {"title": "此行构筑", "command": "build"}, {"title": "错词回顾", "command": "words"}]:
 		var detail_index := report.detail_buttons.size()
 		report.detail_buttons.append(_button(report.get_node("DetailTabs"), detail.title, detail.command, report.show_detail.bind(detail_index), "ui.select"))
+		commands[str(detail_index + 1)] = _activate_control.bind(report.detail_buttons[-1])
 	var atmosphere := preload("res://ui/scenes/outcome_atmosphere.tscn").instantiate() as OutcomeAtmosphere
 	atmosphere.victory = victory
 	atmosphere.reduced_motion = settings.reduce_motion or session.abandoned_run
@@ -1413,6 +1605,7 @@ func _export_battle_report(report: Dictionary) -> void:
 	dialog.filters = PackedStringArray(["*.json ; 战报"])
 	dialog.current_file = "keyabyss-report-%s.json" % Time.get_date_string_from_system()
 	add_child(dialog)
+	router.configure(InputRouter.Context.MODAL)
 	dialog.file_selected.connect(func(path: String) -> void:
 		var file := FileAccess.open(path, FileAccess.WRITE)
 		if file == null:
@@ -1420,8 +1613,11 @@ func _export_battle_report(report: Dictionary) -> void:
 			page.status.show()
 		else:
 			file.store_string(JSON.stringify(report, "\t"))
-		dialog.queue_free())
-	dialog.canceled.connect(dialog.queue_free)
+		dialog.queue_free()
+		router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys())))
+	dialog.canceled.connect(func() -> void:
+		dialog.queue_free()
+		router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys())))
 	dialog.popup_centered_ratio(0.7)
 
 
@@ -1537,15 +1733,27 @@ func _show_run_stage(audible: bool = true) -> void:
 		return
 	if run.phase in ["REWARD", "BATTLE_REWARD"]:
 		_open("reward", "选择遗物", "还可领取 %d 件" % run.rewards.available(), audible)
-		page.set_width(1320.0)
-		page.compact_height = 960
+		page.compact_height = 710
+		page.set_width(1280.0)
 		page.scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 		page.command_hint.text = REWARD_HINT
-		page.close_button.disabled = true
+		page.command_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		page.close_button.hide()
+		page.center_heading()
+		page.pattern.hide()
+		page.get_node("ContentLayer/GoldBranch").hide()
+		page.get_node("ContentLayer/Panel/Layout/Separator").hide()
+		page.status.hide()
+		page.status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		page.get_node("ContentLayer/Panel/Layout").add_theme_constant_override("separation", 12)
+		page.get_node("ContentLayer/Panel/Layout/BodyRegion").add_theme_constant_override("margin_top", 4)
+		page.body.get_parent().add_theme_constant_override("margin_right", 0)
+		page.body.get_parent().add_theme_constant_override("margin_bottom", 0)
+		page.body.add_theme_constant_override("separation", 24)
 		var reading_build := run.compiler.compile(run.selection).build
 		var choices := HBoxContainer.new()
 		choices.name = "RewardChoices"
-		choices.add_theme_constant_override("separation", 26)
+		choices.add_theme_constant_override("separation", 28)
 		page.body.add_child(choices)
 		for id: String in run.offer.candidates:
 			var definition := run.compiler.catalog.get_definition(StringName(id))
@@ -1566,13 +1774,21 @@ func _show_run_stage(audible: bool = true) -> void:
 						parent.add_item(_instance_caption(instance))
 						parent.set_item_metadata(parent.item_count - 1, instance.instance_id)
 				column.add_child(parent)
-			var take := _button(column, "取得", "take" + str(run.offer.candidates.find(id) + 1), _choose_reward.bind(StringName(id), str(run.offer.id), parent))
-			commands[str(run.offer.candidates.find(id) + 1)] = take.pressed.emit
+				_field_command(parent, "source" + choice.shortcut)
+			var action_center := CenterContainer.new()
+			column.add_child(action_center)
+			var take_word := "take" + choice.shortcut
+			var take := _button(action_center, "取得", take_word, _choose_reward.bind(StringName(id), str(run.offer.id), parent))
+			take.caption_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			commands[choice.shortcut] = _activate_control.bind(take)
 			take.add_theme_font_size_override("font_size", 21)
 			choice.picked.connect(take.pressed.emit)
+			choice.mouse_entered.connect(func() -> void: menu_navigation.select_word(take_word))
 		_reward_companion()
-		_button(page.footer, "查看遗物", "relics", _relics_page)
+		_button(page.footer, "已有遗物", "relics", _relics_page.bind(true))
 		if run.offer.candidates.is_empty():
+			choices.hide()
+			menu_navigation.primary_word = "supply"
 			PageShell.label(page.body, "当前可用遗物已满层。领取补给：恢复 25 点生命，补充一次闪避。", 22)
 			_button(page.footer, "领取补给", "supply", func() -> void:
 				var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
@@ -1581,6 +1797,7 @@ func _show_run_stage(audible: bool = true) -> void:
 					sound.play_cue("ui.supply")
 					_resume_reward_or_stage(false)
 				else:
+					page.status.show()
 					page.status.text = run.last_error
 					sound.play_cue("ui.invalid"))
 		var reroll := _button(page.footer, "重抽 · 剩余 %d 次" % int(run.facts.get("rerolls", 0)), "reroll", func() -> void:
@@ -1589,6 +1806,7 @@ func _show_run_stage(audible: bool = true) -> void:
 				sound.play_cue("ui.reroll")
 				_show_run_stage(false)
 			else:
+				page.status.show()
 				page.status.text = run.last_error
 				sound.play_cue("ui.invalid"))
 		reroll.disabled = int(run.facts.get("rerolls", 0)) <= 0 or run.offer.candidates.is_empty()
@@ -1598,12 +1816,14 @@ func _show_run_stage(audible: bool = true) -> void:
 				sound.play_cue("ui.close")
 				_resume_reward_or_stage(false)
 			else:
+				page.status.show()
 				page.status.text = run.last_error
 				sound.play_cue("ui.invalid"))
 	else:
 		_open("route", "行间", "下一页，选择如何继续。", audible)
 		page.set_width(1080)
 		page.compact_height = 840
+		page.center_heading()
 		var path := HBoxContainer.new()
 		path.add_theme_constant_override("separation", 14)
 		page.body.add_child(path)
@@ -1669,7 +1889,7 @@ func _show_reward_detail(definition: CombatContentDefinition) -> void:
 	detail.command_hint.text = "Esc 返回"
 	PageShell.label(detail.body, ContentDescription.text(definition, run.compiler.catalog, _reading_build(), true), 21)
 	detail.close_button.pressed.connect(_close_reward_detail)
-	PageShell.button(detail.footer, "关闭详情", _close_reward_detail)
+	PageShell.button(detail.footer, "关闭详情    back", _close_reward_detail).set_meta("word_command", "back")
 	sound.play_cue("ui.open")
 
 
@@ -1685,19 +1905,22 @@ func _reward_companion() -> void:
 	var build := _reading_build()
 	var companion := HBoxContainer.new()
 	companion.name = "CurrentBuild"
-	companion.add_theme_constant_override("separation", 24)
-	companion.custom_minimum_size.y = 92
+	companion.alignment = BoxContainer.ALIGNMENT_CENTER
+	companion.add_theme_constant_override("separation", 22)
+	companion.custom_minimum_size.y = 74
+	companion.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	page.body.add_child(companion)
 	var art := TextureRect.new()
 	art.texture = load("res://assets/art/books/%s.png" % run.selection.book_id)
-	art.custom_minimum_size = Vector2(70, 86)
+	art.custom_minimum_size = Vector2(54, 66)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	art.modulate = Color(0.8, 0.9, 0.9, 0.8)
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	companion.add_child(art)
 	var vitals := VBoxContainer.new()
-	vitals.custom_minimum_size.x = 234
+	vitals.custom_minimum_size.x = 250
+	vitals.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	vitals.add_theme_constant_override("separation", 5)
 	companion.add_child(vitals)
 	PageShell.label(vitals, ContentDescription.BOOKS[str(run.selection.book_id)], 19, Color("bdc4b5"))
@@ -1713,19 +1936,21 @@ func _reward_companion() -> void:
 	health.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vitals.add_child(health)
 	var owned := VBoxContainer.new()
-	owned.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	owned.custom_minimum_size.x = 380
+	owned.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	owned.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	owned.add_theme_constant_override("separation", 6)
 	companion.add_child(owned)
 	var relic_count := 0
 	for id in build.assets(): relic_count += build.asset_stacks(id)
-	PageShell.label(owned, "已持有 %d 件遗物" % relic_count, 16, Color("94a59e"))
-	var owned_scroll := SmoothScroll.new()
-	owned_scroll.custom_minimum_size.y = 54
-	owned_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	owned.add_child(owned_scroll)
+	PageShell.label(owned, "%d 件遗物" % relic_count, 16, Color("94a59e"))
 	var names: PackedStringArray = []
 	for id in build.assets():
 		names.append(run.compiler.catalog.get_definition(id).title + (" ×%d" % build.asset_stacks(id) if build.asset_stacks(id) > 1 else ""))
-	PageShell.label(owned_scroll, "、".join(names) if not names.is_empty() else "尚未取得遗物", 17, Color("a8bab1"))
+	var names_label := PageShell.label(owned, "、".join(names) if not names.is_empty() else "此行尚未取得遗物", 17, Color("a8bab1"))
+	names_label.max_lines_visible = 2
+	names_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	owned.visible = not names.is_empty()
 
 
 func _choose_route(choice: String) -> void:
@@ -1750,7 +1975,13 @@ func _relics_page(owned_only: bool = false) -> void:
 	var search := LineEdit.new()
 	search.placeholder_text = "搜索名称或效果"
 	search.focus_mode = Control.FOCUS_CLICK
-	page.body.add_child(search)
+	var search_row := HBoxContainer.new()
+	search_row.add_theme_constant_override("separation", 16)
+	page.body.add_child(search_row)
+	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	search_row.add_child(search)
+	search_row.add_child(CommandTag.create("search"))
+	_bind_control_command(search, "search")
 	var workspace := HBoxContainer.new()
 	workspace.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	workspace.add_theme_constant_override("separation", 40)
@@ -1815,17 +2046,20 @@ func _relics_page(owned_only: bool = false) -> void:
 	if run != null:
 		for instance in run.selection.instances:
 			owned[instance.content_id] = owned.get(instance.content_id, 0) + 1
-	for id: String in catalog.relic_ids():
+	var relic_ids := catalog.relic_ids()
+	for id: String in relic_ids:
 		if owned_only and owned.get(StringName(id), 0) <= 0: continue
 		if first_id == &"": first_id = StringName(id)
 		listed.append(StringName(id))
 		# Commands select details immediately, including rows not instantiated yet.
-		commands["relic" + str(listed.size())] = select.bind(StringName(id))
+		commands[_numbered_word("relic", listed.size(), relic_ids.size())] = select.bind(StringName(id))
 	search.text_changed.connect(func(query: String) -> void:
 		for button in buttons:
 			button.visible = query.is_empty() or str(button.get_meta("relic_search")).contains(query))
 	if first_id != &"": select.call(first_id)
-	else: PageShell.label(detail, "尚未取得遗物。击败敌人积累经验，获得三选一机会。", 18, Color("acbab2"))
+	else:
+		PageShell.label(detail, "尚未取得遗物。击败敌人积累经验，获得三选一机会。", 18, Color("acbab2"))
+		menu_navigation.primary_word = "back"
 	_catalog_button(page.footer, "返回", "back", _back)
 	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
 	var opened_page := page
@@ -1833,7 +2067,7 @@ func _relics_page(owned_only: bool = false) -> void:
 	for index in listed.size():
 		var definition := catalog.get_definition(listed[index])
 		var caption := definition.title + (" ×%d" % owned.get(listed[index], 0) if owned_only else "")
-		var button := _catalog_button(list, caption, "relic" + str(index + 1), select.bind(listed[index]))
+		var button := _catalog_button(list, caption, _numbered_word("relic", index + 1, listed.size()), select.bind(listed[index]))
 		var search_text: String = definition.title + ContentDescription.summary(definition) + ContentDescription.RARITIES[str((definition as RelicDefinition).rarity)]
 		button.set_meta("relic_search", search_text)
 		button.visible = search.text.is_empty() or search_text.contains(search.text)
@@ -1866,6 +2100,7 @@ func _choose_reward(id: StringName, offer_id: String, parent: OptionButton) -> v
 	var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
 	var parent_id := str(parent.get_selected_metadata()) if parent != null else ""
 	if not run.take_reward(id, offer_id, parent_id, session):
+		page.status.show()
 		page.status.text = run.last_error
 		sound.play_cue("ui.invalid")
 		return
@@ -1931,7 +2166,7 @@ func _run_records() -> void:
 	for record in records:
 		record_index += 1
 		var book_title := BuildCatalog.new().get_definition(StringName(record.book)).title
-		var action := _button(list, "%02d · %s" % [records.size() - record_index + 1, book_title], "entry%d" % record_index, _record_detail.bind(record))
+		var action := _button(list, "%02d · %s" % [records.size() - record_index + 1, book_title], _numbered_word("entry", record_index, records.size()), _record_detail.bind(record))
 		action.add_theme_font_size_override("font_size", 18)
 		PageShell.label(list, "%s · %d 页" % [_result_name(record), int(record.rooms)], 14, Color("92a69f"))
 	if not records.is_empty(): _record_detail(records[0], false)
@@ -2002,7 +2237,7 @@ func _notification(what: int) -> void:
 
 
 func _quit_game() -> void:
-	if run != null and is_instance_valid(battle) and battle.session.result == 0:
+	if not is_instance_valid(tutorial) and run != null and is_instance_valid(battle) and battle.session.result == 0:
 		if not profile.run_checkpoint.get("facts", {}).has("god_transfer") and not run.suspend_battle(battle.session):
 			if is_instance_valid(page):
 				page.status.text = run.last_error
@@ -2021,7 +2256,13 @@ func _pause() -> void:
 		battle.audio.stop_all()
 	get_tree().paused = true
 	_open("pause", "已暂停", "")
-	page.compact_height = 570.0
+	if is_instance_valid(tutorial):
+		page.compact_height = 330.0
+		PageShell.label(page.body, "教学进度已暂停，继续后可接着练习。", 21)
+		_button(page.footer, "返回教学", "quit", _tutorial_menu)
+		_button(page.footer, "继续练习", "resume", _resume)
+		return
+	page.compact_height = 570.0 if paused_route == "battle" else 400.0
 	page.set_width(760)
 	page.status.hide()
 	var content := preload("res://ui/scenes/pause_content.tscn").instantiate()
@@ -2045,7 +2286,8 @@ func _pause() -> void:
 		button.pressed.connect(actions[node_name])
 		button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
 		_bind_control_command(button, button._command_word)
-	page.footer.alignment = BoxContainer.ALIGNMENT_END
+	page.center_heading()
+	page.footer.alignment = BoxContainer.ALIGNMENT_CENTER
 	_button(page.footer, "结束并返回书库", "quit", _end_current_run)
 	_button(page.footer, "继续战斗" if paused_route == "battle" else "继续习字", "resume", _resume)
 
@@ -2067,7 +2309,7 @@ func _end_current_run() -> void:
 
 
 func _resume() -> void:
-	if profile.run_checkpoint.get("facts", {}).has("god_transfer"):
+	if not is_instance_valid(tutorial) and profile.run_checkpoint.get("facts", {}).has("god_transfer"):
 		page.status.show()
 		page.status.text = "档案接管尚未完成，请重新输入激活词令重试。"
 		sound.play_cue("ui.invalid")

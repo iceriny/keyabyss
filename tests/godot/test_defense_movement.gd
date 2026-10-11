@@ -9,6 +9,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_check_curved_trajectory()
 	for grade: StringName in [&"success", &"perfect"]:
 		var session := _session()
 		var events: Array[Dictionary] = []
@@ -185,6 +186,90 @@ func _run() -> void:
 	for session in sessions: session.free()
 	print("Defense and movement: %s failure(s)" % failures)
 	quit(1 if failures else 0)
+
+
+func _check_curved_trajectory() -> void:
+	for turn in [-0.32, 0.32]:
+		for offset in [Vector2(280, 0), Vector2(-380, 140), Vector2(900, 0)]:
+			var aimed := _session()
+			var enemy := aimed.enemies[0]
+			enemy.position = aimed.player_position + offset / BattleSession.ARENA_SIZE
+			enemy.previous_position = enemy.position
+			enemy.aimed_position = aimed.player_position
+			aimed._emit_pattern(enemy, &"single", turn)
+			var shot := aimed.threats[-1]
+			_check(shot.position == enemy.position and shot.curvature != 0.0, "curved shot launches from its enemy with nonzero turning")
+			_check(absf(shot.velocity.normalized().cross(-offset.normalized())) > 0.05, "launch tangent compensates for the bend instead of pointing straight at PC")
+			var aimed_hp := aimed.player_hp_q
+			for tick in 600:
+				aimed._advance_threats(1.0 / 60.0)
+				if aimed.player_hp_q < aimed_hp or aimed.threats.is_empty(): break
+			_check(aimed.player_hp_q < aimed_hp, "the actual curved flight crosses and damages stationary PC: %s/%s" % [turn, offset])
+	for growth in [0.0, 0.12]:
+		var shot := BattleThreat.new()
+		shot.velocity = Vector2.RIGHT * 125.0
+		shot.curvature = -0.32
+		shot.acceleration = growth
+		var target := Vector2(-1500, 300)
+		var arrival := shot.aim_curve(target)
+		var end := BattleThreat.flight_displacement(shot.velocity, shot.curvature, growth, arrival)
+		_check(end.distance_to(target) < 0.002 and shot.life > arrival, "far target remains reachable before expiry, with or without acceleration")
+		var half := BattleThreat.flight_displacement(shot.velocity, shot.curvature, growth, arrival * 0.5)
+		_check(absf(half.cross(target.normalized())) > 50.0, "the trajectory has a visible bend rather than a straight projectile")
+		var first := BattleThreat.flight_displacement(shot.velocity, shot.curvature, growth, arrival * 0.37)
+		var velocity := BattleThreat.flight_velocity(shot.velocity, shot.curvature, growth, arrival * 0.37)
+		var rest := BattleThreat.flight_displacement(velocity, shot.curvature, growth, arrival * 0.63)
+		_check((first + rest).distance_to(end) < 0.002, "fixed-step flight and longer prediction partitions share the same path")
+	var moved := _session()
+	var boundary := _session()
+	boundary.player_position = Vector2(0.85, 0.065)
+	boundary.previous_player_position = boundary.player_position
+	boundary.enemies[0].position = Vector2(0.12, 0.065)
+	boundary.enemies[0].aimed_position = boundary.player_position
+	boundary._emit_pattern(boundary.enemies[0], &"single", 0.32)
+	var boundary_hp := boundary.player_hp_q
+	for tick in 900:
+		boundary._advance_threats(1.0 / 60.0)
+		if boundary.player_hp_q < boundary_hp or boundary.threats.is_empty(): break
+	_check(boundary.player_hp_q < boundary_hp, "aimed curve near the arena boundary does not vanish before reaching PC")
+	var source := moved.enemies[0]
+	source.position = moved.player_position + Vector2(500, 0) / BattleSession.ARENA_SIZE
+	source.aimed_position = moved.player_position
+	moved._emit_pattern(source, &"single", 0.32)
+	moved.player_position += Vector2(0, -160) / BattleSession.ARENA_SIZE
+	moved.previous_player_position = moved.player_position
+	var hp := moved.player_hp_q
+	for tick in 360: moved._advance_threats(1.0 / 60.0)
+	_check(moved.player_hp_q == hp, "PC can leave the launch-time aim; curved flight does not home")
+	var fan := _session()
+	source = fan.enemies[0]
+	source.position = fan.player_position + Vector2(450, -120) / BattleSession.ARENA_SIZE
+	source.aimed_position = fan.player_position
+	fan._emit_pattern(source, &"fan", -0.22)
+	hp = fan.player_hp_q
+	for tick in 360: fan._advance_threats(1.0 / 60.0)
+	_check(fan.player_hp_q < hp, "the central curved fan lane crosses its aimed PC")
+	for action: StringName in [&"parry", &"dodge_down"]:
+		var defense := _session()
+		var shot := _threat(defense, Vector2(40, 0), Vector2.LEFT * 200.0, "curved-" + str(action))
+		shot.curvature = 0.32
+		shot.acceleration = 0.12
+		shot.aim_curve(Vector2(-40, 0))
+		if action == &"parry":
+			defense._advance_threats(0.01)
+			defense._commit_action(action)
+			defense._advance_threats(0.01)
+			_check(shot.reflected and shot.curvature == 0.0, "perfect defense predicts the curved head and sends it back to the source")
+		else:
+			defense._commit_action(action)
+			_check(defense.perfect_dodge_remaining == 1.0, "perfect dodge predicts the curved head using the same flight integral")
+	var tail := _session()
+	var distant := _threat(tail, Vector2(300, 0), Vector2.RIGHT * 125.0, "curved-tail")
+	distant.curvature = 0.32
+	distant.trail.append(tail.player_position)
+	tail._advance_threats(1.0 / 60.0)
+	_check(tail.player_hp_q == tail.player_max_hp_q, "decorative history crossing PC never deals damage")
+	print("Curved trajectory: origin, both turns, distant aim, partitions, fan, evasion, defense and harmless trail checked")
 
 
 func _check_perfect_dodge() -> void:

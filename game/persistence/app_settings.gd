@@ -106,21 +106,32 @@ func _save_settings() -> bool:
 	config.set_value("presentation", "first_setup_complete", first_setup_complete)
 	for property: String in ["book_id", "difficulty", "run_seed"]:
 		config.set_value("preparation", property, get(property))
-	var error := config.save(path + ".tmp")
+	var error := DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	if error != OK:
+		return _save_error("创建设置目录", error)
+	error = config.save(path + ".tmp")
+	if error != OK:
+		return _save_error("写入临时设置", error)
 	var verify := ConfigFile.new()
-	if error == OK:
-		error = verify.load(path + ".tmp")
-	if error == OK and FileAccess.file_exists(path):
+	error = verify.load(path + ".tmp")
+	if error != OK:
+		return _save_error("读取临时设置", error)
+	if FileAccess.file_exists(path):
 		# A corrupt primary must not overwrite the valid backup used for recovery.
 		var previous := ConfigFile.new()
 		if previous.load(path) == OK and int(previous.get_value("meta", "schema_version", 0)) == 1:
 			error = DirAccess.copy_absolute(path, path + ".bak")
-	if error == OK:
-		error = DirAccess.rename_absolute(path + ".tmp", path)
+			if error != OK:
+				return _save_error("备份设置", error)
+	error = DirAccess.rename_absolute(path + ".tmp", path)
 	if error != OK:
-		last_error = "设置未保存，请检查用户目录的可写权限（%s）。" % error_string(error)
-		return false
+		return _save_error("替换设置文件", error)
 	return true
+
+
+func _save_error(action: String, error: Error) -> bool:
+	last_error = "设置未保存：%s失败（%s）。" % [action, error_string(error)]
+	return false
 
 
 func apply(window: Window) -> void:

@@ -38,21 +38,25 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "当前构筑    bag"
 script = ExtResource("2")
+caption_alignment = 1
 
 [node name="Codex" type="Button" parent="Menu"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "咒典图鉴    codex"
 script = ExtResource("2")
+caption_alignment = 1
 
 [node name="Guide" type="Button" parent="Menu"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "施法指南    help"
 script = ExtResource("2")
+caption_alignment = 1
 
 [node name="Settings" type="Button" parent="Menu"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "设置    settings"
 script = ExtResource("2")
+caption_alignment = 1

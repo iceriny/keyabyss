@@ -12,6 +12,9 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	if "--screen-capture" in OS.get_cmdline_user_args():
+		root.always_on_top = true
+		root.grab_focus()
 	evidence = "res://.temp/ui-refinement/run-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
@@ -24,6 +27,29 @@ func _run() -> void:
 	app.presentation_enabled = "--setup-feedback" in OS.get_cmdline_user_args()
 	root.add_child(app)
 	await _settle()
+	if "--tutorial-mechanics" in OS.get_cmdline_user_args():
+		await _review_tutorial_mechanics()
+		return
+	if "--teaching-copy" in OS.get_cmdline_user_args():
+		await _review_teaching_copy()
+		return
+	if "--curved-trajectory" in OS.get_cmdline_user_args():
+		await _review_curved_frames()
+		var output := FileAccess.open(evidence.path_join("curved-trajectory-checks.json"), FileAccess.WRITE)
+		output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+		output.close()
+		print("Curved trajectory UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+		quit(1 if failures else 0)
+		return
+	if "--tutorial-arc" in OS.get_cmdline_user_args():
+		await _review_tutorial_arc()
+		return
+	if "--crystal-sheets" in OS.get_cmdline_user_args():
+		await _review_crystal_sheets()
+		return
+	if "--menu-layout" in OS.get_cmdline_user_args():
+		await _review_menu_layout()
+		return
 	if "--relic-upgrade" in OS.get_cmdline_user_args():
 		await _review_relic_upgrade()
 		return
@@ -37,7 +63,7 @@ func _run() -> void:
 	if "--vsync-only" in OS.get_cmdline_user_args():
 		await _review_vsync()
 		return
-	if "--m2-pages-only" in OS.get_cmdline_user_args():
+	if "--m2-pages-only" in OS.get_cmdline_user_args() or "--popup-style" in OS.get_cmdline_user_args():
 		await _review_m2_pages()
 		return
 
@@ -136,6 +162,206 @@ func _run() -> void:
 	quit(0 if failures == 0 else 1)
 
 
+func _review_crystal_sheets() -> void:
+	await _type("settings")
+	await create_timer(0.5).timeout
+	var sheets := app.page.get_node("CrystalSheets") as MeshInstance2D
+	var optical := sheets.material as ShaderMaterial
+	var original_mesh := sheets.mesh
+	var heading_position := app.page.heading.global_position
+	var arrays := sheets.mesh.surface_get_arrays(0)
+	var outside_reading := true
+	for vertex: Vector3 in arrays[Mesh.ARRAY_VERTEX]:
+		if Rect2(app.page.panel.position, app.page.panel.size).has_point(Vector2(vertex.x, vertex.y)):
+			outside_reading = false
+	_check(outside_reading, "crystal geometry stays outside the reading and control area")
+	_check(is_zero_approx(float(optical.get_shader_parameter("clock"))), "reduced motion retains stationary crystal faces")
+	await _capture("crystal-settings-still")
+	app.settings.reduce_motion = false
+	app._apply_visual_settings()
+	await create_timer(1.0).timeout
+	var first_clock := float(optical.get_shader_parameter("clock"))
+	await _capture("crystal-settings-flow-a")
+	await create_timer(3.0).timeout
+	_check(float(optical.get_shader_parameter("clock")) > first_clock, "flow clock advances on the live settings page")
+	_check(sheets.mesh == original_mesh and app.page.heading.global_position == heading_position, "flow leaves geometry and page layout stationary")
+	await _capture("crystal-settings-flow-b")
+	app.settings.reduce_motion = true
+	app._apply_visual_settings()
+	await _settle()
+	_check(is_zero_approx(float(optical.get_shader_parameter("clock"))), "changing reduce motion stops the existing material")
+	await _type("about")
+	await create_timer(0.5).timeout
+	await _capture("crystal-about")
+	app._relics_page()
+	await create_timer(0.5).timeout
+	await _capture("crystal-codex")
+	app._home(false)
+	app._start_practice()
+	await _settle()
+	await _key(KEY_ESCAPE)
+	_check(app.route == "pause" and paused, "compact paused page remains interactive with crystal decoration")
+	await _capture("crystal-pause")
+	await _key(KEY_ESCAPE)
+	_check(app.route == "practice" and not paused, "decorated pause page closes and resumes normally")
+	app._home(false)
+	var report := FileAccess.open(evidence.path_join("crystal-results.json"), FileAccess.WRITE)
+	report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	report.close()
+	print("Crystal sheet checks: %d passed, %d failed | %s" % [checks.size() - failures, failures, evidence])
+	app.queue_free()
+	await _settle()
+	quit(0 if failures == 0 else 1)
+
+
+func _review_menu_layout() -> void:
+	await create_timer(0.4).timeout
+	var selected_book := app.archive.selected
+	await _key(KEY_RIGHT)
+	_check(app.archive.selected == posmod(selected_book + 1, 4), "home arrow changes book")
+	await _key(KEY_1)
+	_check(app.archive.selected == 0, "physical number selects home book through its word action")
+	await _capture("menu-home")
+	await _key(KEY_SPACE)
+	_check(app.route == "prepare", "Space opens preparation")
+	await _key(KEY_RIGHT)
+	_check(app.settings.difficulty == "hard", "preparation arrow changes difficulty")
+	await _key(KEY_2)
+	_check(app.settings.difficulty == "normal", "preparation number selects difficulty")
+	await _type("seed")
+	await _key(KEY_SPACE, 32)
+	await _key(KEY_3, 51)
+	await _key(KEY_ENTER)
+	_check(app.route == "prepare" and app.archive.seed_edit.text == " 3" and app.settings.difficulty == "normal", "editing owns space, number and Enter")
+	await _key(KEY_ESCAPE)
+	await _capture("menu-preparation")
+	await _type("settings")
+	await _key(KEY_3)
+	_check(app.settings_tab == "audio", "settings number opens its named section")
+	await _type("volume")
+	await _key(KEY_SPACE)
+	_check(app.route == "settings" and root.gui_get_focus_owner() == null, "Space leaves slider editing without confirming the page")
+	await _type("effects")
+	var popup := (app.settings_controls["quality"] as OptionButton).get_popup()
+	_check(popup.visible, "word opens native options")
+	await _key(KEY_DOWN, 0, popup.get_window_id())
+	await _key(KEY_ENTER, 0, popup.get_window_id())
+	_check(not popup.visible and app.route == "settings", "native popup arrows and confirmation never reach page navigation")
+	await _capture("menu-settings")
+	app._home(false)
+	app.run = RunSession.new(app.saves, app.profile)
+	_check(app.run.begin(&"flame", app.settings), "isolated shortcut run starts")
+	app.run.phase = "REWARD"
+	app.run.rewards.earned = 5
+	app.run.offer = {"id": "ui-menu-reward", "candidates": ["G001", "G002", "R012"]}
+	app._show_run_stage(false)
+	await _settle()
+	var choices := app.page.body.get_node("RewardChoices")
+	var first := choices.get_child(0) as RelicRewardChoice
+	_check(app.menu_navigation.selected_word() == "take1" and first.keyboard_selected, "reward starts with a visible first choice")
+	_check(not app.page.scroll.get_v_scroll_bar().visible, "reward page has no outer scrolling")
+	for choice: RelicRewardChoice in choices.get_children():
+		var take := choice.find_child("Take*", true, false) as OpenButton
+		var title := choice.get_node("Content/Title") as Label
+		_check(absf(take.get_global_rect().get_center().x - title.get_global_rect().get_center().x) < 1.0, "relic title and take action share their center")
+		var caption_width := take.get_theme_font("font").get_string_size(take.text, HORIZONTAL_ALIGNMENT_LEFT, -1, take.get_theme_font_size("font_size")).x
+		var caption_center := take.global_position.x + take.get_theme_stylebox("normal").get_content_margin(SIDE_LEFT) + caption_width * 0.5
+		_check(absf(caption_center - title.get_global_rect().get_center().x) < 1.0, "take caption is centered independently of its word command")
+		_check(not (choice.get_node("Content/ReadingArea/Reading") as ScrollContainer).get_v_scroll_bar().visible, "ordinary relic summary fits without scrolling")
+	var footer_children := app.page.footer.get_children()
+	var footer_center := ((footer_children[0] as Control).get_global_rect().position.x + (footer_children[-1] as Control).get_global_rect().end.x) * 0.5
+	_check(absf(footer_center - app.page.heading.get_global_rect().get_center().x) < 1.0, "reward heading and footer actions share the page center")
+	var companion := app.page.body.get_node("CurrentBuild") as Control
+	_check(companion.size.x >= choices.size.x - 1.0 and companion.size.y < 90.0, "build status uses a compact full-width row")
+	await _capture("reward-centered")
+	await _key(KEY_RIGHT)
+	_check(app.menu_navigation.selected_word() == "take2" and (choices.get_child(1) as RelicRewardChoice).keyboard_selected and not first.keyboard_selected, "reward arrow moves the entire card highlight")
+	await _type("ta")
+	await _key(KEY_SPACE)
+	_check(app.run.rewards.spent == 0 and app.router.buffer == "ta", "partial word blocks shortcut confirmation")
+	await _key(KEY_ESCAPE)
+	await _key(KEY_RIGHT)
+	var take_rect := (choices.get_child(1).find_child("Take*", true, false) as Control).get_global_rect()
+	await _alt(true)
+	_check((choices.get_child(1).find_child("Take*", true, false) as Control).get_global_rect() == take_rect, "Alt detail keeps take positions fixed")
+	await create_timer(0.3).timeout
+	await _capture("reward-centered-alt")
+	await _alt(false)
+	app._show_reward_detail(app.run.compiler.catalog.get_definition(&"G001"))
+	await _key(KEY_1)
+	_check(app.run.rewards.spent == 0, "detail modal blocks underlying numeric reward")
+	await _key(KEY_ENTER)
+	_check(not app.page.has_node("RewardDetail") and app.run.rewards.spent == 0, "Enter closes details without taking a relic")
+	await _key(KEY_ENTER)
+	_check(app.run.rewards.spent == 1 and app.run.compiler.compile(app.run.selection).build.asset_stacks(&"G002") == 1, "Enter commits the selected reward once")
+	var next_id := StringName(app.run.offer.candidates[0])
+	var previous_count := app.run.compiler.compile(app.run.selection).build.asset_stacks(next_id)
+	await _key(KEY_KP_1)
+	_check(app.run.rewards.spent == 2 and app.run.compiler.compile(app.run.selection).build.asset_stacks(next_id) == previous_count + 1, "keypad number commits the same reward transaction")
+	app.run.offer = {"id": "ui-layout-long", "candidates": ["F026", "F007", "G027"]}
+	app.run.selection.instances.clear()
+	app.run.selection.book_id = &"frost"
+	app.run.selection.assets = {&"F003": 1, &"F007": 1}
+	app._show_run_stage(false)
+	await _settle()
+	await _alt(true)
+	await create_timer(0.3).timeout
+	await _capture("reward-detailed-awakening")
+	await _alt(false)
+	# A dense inventory stays bounded; its full contents are one named action away.
+	for id in app.run.compiler.catalog.relic_ids():
+		var definition := app.run.compiler.catalog.get_definition(StringName(id)) as RelicDefinition
+		if definition.allowed_books.is_empty() and definition.requires_all.is_empty() and definition.required_stacks.is_empty() and definition.requires_capabilities.is_empty() and definition.exclusive_group == &"":
+			app.run.selection.assets[StringName(id)] = 1
+	app._show_run_stage(false)
+	await _settle()
+	_check((app.page.body.get_node("CurrentBuild") as Control).size.y < 90.0, "large relic inventory does not stretch the page or add its own scrolling")
+	await _capture("reward-many-owned")
+	app._relics_page()
+	await create_timer(0.6).timeout
+	await _type("relic010")
+	var selected_glyph := app.page.body.find_children("*", "RelicGlyph", true, false)[0] as RelicGlyph
+	_check(app.router.buffer.is_empty() and selected_glyph.definition.id == StringName(app.run.compiler.catalog.relic_ids()[9]), "long-list word reaches its exact entry without early prefix submission")
+	await _type("search")
+	var search := root.gui_get_focus_owner() as LineEdit
+	_check(search != null, "codex search has its own word command")
+	search.text = "练字"
+	search.text_changed.emit(search.text)
+	await _key(KEY_ESCAPE)
+	await _key(KEY_DOWN)
+	_check(not app.menu_navigation.selected_word().is_empty() and app.menu_navigation.selected.is_visible_in_tree(), "filtered catalog navigation selects a visible target")
+	await _capture("menu-codex")
+	app.run = null
+	app.profile.run_checkpoint.clear()
+	app._home(false)
+	app._start_practice()
+	await _settle()
+	await _key(KEY_ESCAPE)
+	_check(app.route == "pause" and paused, "practice Escape opens paused menu")
+	await _capture("menu-pause")
+	await _type("help")
+	await create_timer(0.5, true).timeout
+	_check(app.route == "guide" and app.menu_navigation.selected_word() == "back", "paused asynchronous guide selects a usable return action")
+	await _key(KEY_ENTER)
+	_check(app.route == "pause", "guide confirmation returns to the paused page")
+	await _key(KEY_SPACE)
+	_check(app.route == "practice" and not paused and app.router.context == InputRouter.Context.TYPING, "Space resumes and restores combat key ownership")
+	app._home(false)
+	app._first_setup_page()
+	await create_timer(0.5).timeout
+	_check(app.commands.has("translation") and app.commands.has("effects") and app.commands.has("volume"), "calibration controls retain their own commands")
+	await _capture("menu-calibration")
+	await _key(KEY_SPACE)
+	_check(app.route == "home" and app.settings.first_setup_complete, "calibration primary confirms through the same save action")
+	var report := FileAccess.open(evidence.path_join("menu-results.json"), FileAccess.WRITE)
+	report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	report.close()
+	print("Menu layout checks: %d passed, %d failed | %s" % [checks.size() - failures, failures, evidence])
+	app.queue_free()
+	await process_frame
+	quit(0 if failures == 0 else 1)
+
+
 func _review_relic_upgrade() -> void:
 	await create_timer(0.4).timeout
 	await _capture("relic-home")
@@ -163,17 +389,17 @@ func _review_relic_upgrade() -> void:
 	_check(first._surface.get_shader_parameter("rarity_color") != third._surface.get_shader_parameter("rarity_color"), "rarities visibly use different colors")
 	_check(bool(third._surface.get_shader_parameter("awakening")), "awakening enables the book effect")
 	var original_rect := first.get_global_rect()
-	var button := first.content.get_child(first.content.get_child_count() - 1) as Button
+	var button := first.find_child("Take*", true, false) as Button
 	var button_rect := button.get_global_rect()
 	await _capture("relic-summary")
 	await _alt(true)
 	_check(first.detail_mode and second.detail_mode and third.detail_mode, "physical Alt opens all card details")
-	_check((second.get_node("Content/Reading/Description") as Label).text.contains("取得后 · 2层"), "owned relic preview shows actual next layer")
+	_check((second.get_node("Content/ReadingArea/Reading/Description") as Label).text.contains("取得后 · 2层"), "owned relic preview shows actual next layer")
 	_check(first.get_global_rect() == original_rect and button.get_global_rect() == button_rect, "Alt keeps card and action positions fixed")
 	await _capture("relic-alt")
 	await _alt(false)
 	_check(not first.detail_mode and not third.detail_mode, "releasing Alt restores summaries")
-	var prose := second.get_node("Content/Reading/Description") as Label
+	var prose := second.get_node("Content/ReadingArea/Reading/Description") as Label
 	var found := GameTerms.matches(prose.text)
 	_check(not found.is_empty(), "reward effect contains a registered term")
 	if not found.is_empty():
@@ -214,7 +440,7 @@ func _review_relic_upgrade() -> void:
 	app._show_run_stage(false)
 	await _settle()
 	first = app.page.body.get_node("RewardChoices").get_child(0)
-	await _click(first.content.get_child(first.content.get_child_count() - 1))
+	await _click(first.find_child("Take*", true, false))
 	_check(app.run.compiler.compile(app.run.selection).build.asset_stacks(&"G001") == 1, "real reward button commits the selected relic")
 	_check(app.run.rewards.spent == 1 and app.run.offer.id != "ui-relic", "reward transaction spends once and advances offer")
 	app._relics_page()
@@ -282,7 +508,15 @@ func _review_m2_pages() -> void:
 	var menu := (app.settings_controls["resolution"] as OptionButton).get_popup()
 	_check(menu.visible and menu.size.y <= 420, "long resolution menu stays bounded (visible=%s size=%s min=%s max=%s scale=%s)" % [menu.visible, menu.size, menu.min_size, menu.max_size, menu.content_scale_factor])
 	await _capture("resolution-options")
+	if "--popup-style" in OS.get_cmdline_user_args():
+		for index in menu.item_count - 1:
+			await _key(KEY_DOWN)
+		_check(menu.get_focused_item() == menu.item_count - 1, "long native menu reaches its final entry")
+		await _capture("resolution-options-end")
 	await _key(KEY_ESCAPE)
+	if "--popup-style" in OS.get_cmdline_user_args():
+		await _review_popup_style()
+		return
 	if "--popup-only" in OS.get_cmdline_user_args():
 		print("Popup review: %d failed | %s" % [failures, evidence])
 		app.queue_free()
@@ -319,6 +553,61 @@ func _review_m2_pages() -> void:
 	await create_timer(2.5).timeout
 	_check(app.battle == null and app.departure == null and app.route == "home", "leaving the ritual cancels its pending battle handover")
 	print("M2 pages: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
+	app.queue_free()
+	await process_frame
+	quit(0 if failures == 0 else 1)
+
+
+func _review_popup_style() -> void:
+	await _type("visuals")
+	await _settle()
+	await _type("effects")
+	await create_timer(0.25).timeout
+	var menu := (app.settings_controls["quality"] as OptionButton).get_popup()
+	_check(menu.visible, "short native menu opens")
+	_check(menu.use_hdr_2d == root.use_hdr_2d, "popup and glossary use the same color space")
+	await _capture("quality-options")
+	var hover := InputEventMouseMotion.new()
+	var row_height := menu.get_theme_font("font").get_height(menu.get_theme_font_size("font_size")) + menu.get_theme_constant("v_separation")
+	hover.position = Vector2(menu.position) + Vector2(menu.size.x * 0.6, menu.get_theme_stylebox("panel").get_margin(SIDE_TOP) + row_height * 1.5)
+	# PopupMenu ignores synthetic stationary motion, unlike ordinary Controls.
+	hover.relative = Vector2(2, 2)
+	hover.velocity = Vector2(120, 120)
+	Input.parse_input_event(hover)
+	await _settle()
+	_check(menu.get_focused_item() == 1, "pointer highlights the native middle row")
+	await _capture("quality-hover")
+	await _key(KEY_ENTER)
+	_check(not menu.visible and app.settings.quality == 1, "native selection commits and closes")
+	app._guide()
+	await _settle()
+	app.commands["note-04"].call()
+	await _settle()
+	app.page.scroll.scroll_vertical = 0
+	await _settle()
+	var prose: Label
+	for label: Label in app.page.body.find_children("*", "Label", true, false):
+		if label.text.contains("起手迎击"):
+			prose = label
+			break
+	_check(prose != null, "guide supplies a real glossary term")
+	if prose != null:
+		var bounds := prose.get_character_bounds(prose.text.find("完美御术"))
+		var motion := InputEventMouseMotion.new()
+		motion.position = root.get_screen_transform() * prose.get_global_transform() * bounds.get_center()
+		Input.parse_input_event(motion)
+		await create_timer(0.4).timeout
+		var bubble := app.term_tooltips._bubble
+		_check(bubble.visible and app.term_tooltips._title.text == "完美御术", "pointer opens the styled glossary")
+		_check(bubble.mouse_filter == Control.MOUSE_FILTER_IGNORE, "glossary does not intercept input")
+		_check(Rect2(Vector2.ZERO, app.term_tooltips.size).encloses(bubble.get_rect()), "glossary stays within the reading viewport")
+		await _capture("term-tooltip")
+		await _move_to(app.page.heading)
+		_check(not bubble.visible, "leaving the term dismisses the glossary")
+	var report := FileAccess.open(evidence.path_join("popup-results.json"), FileAccess.WRITE)
+	report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	report.close()
+	print("Popup style review: %d passed, %d failed | %s" % [checks.size() - failures, failures, evidence])
 	app.queue_free()
 	await process_frame
 	quit(0 if failures == 0 else 1)
@@ -542,6 +831,240 @@ func _test_scroll() -> void:
 	scroll.queue_free()
 
 
+func _review_tutorial_arc() -> void:
+	var saved_characters := app.profile.manual_characters
+	var saved_checkpoint := app.profile.run_checkpoint.duplicate(true)
+	await _click(app.archive.menu.get_node("Tutorial"))
+	_check(app.route == "tutorial" and app.page is TutorialMenu, "home tutorial button opens five lessons")
+	var menu := app.page as TutorialMenu
+	_check(menu.lesson_buttons.size() == 5, "basic and four book lessons have visible entrances")
+	await _capture("tutorial-menu")
+	await _click(menu.lesson_buttons[&"basics"])
+	_check(app.route == "battle" and app.tutorial != null and not app.tutorial.session.god_mode, "native lesson button starts a real isolated combat session")
+	_check(app.router.typing == app.tutorial.session.typing and app.battle.word_exclusions.size() == 1, "lesson uses combat input and reserves its guidance area")
+	await _capture("tutorial-basics")
+	await _click(app.battle.pause_button)
+	_check(paused and app.route == "pause" and app.page.footer.get_child_count() == 2, "tutorial pause offers resume and return without expedition settlement")
+	await _type("resume")
+	_check(not paused and app.route == "battle", "resume restores tutorial input")
+	var old_session := app.tutorial.session
+	await _click(app.tutorial_overlay.retry_button)
+	_check(app.tutorial.session != old_session and app.tutorial.step_index == 0, "retry creates fresh tutorial state")
+	await _click(app.tutorial_overlay.exit_button)
+	_check(app.route == "tutorial" and app.tutorial == null, "exit returns to lesson selection")
+	for id: StringName in [&"frost", &"flame", &"storm", &"spirit"]:
+		menu = app.page as TutorialMenu
+		await _click(menu.lesson_buttons[id])
+		_check(app.tutorial.book_id == id and app.battle.school_color == app.tutorial_overlay._accent, "book lesson uses its real rules and matching appearance: %s" % id)
+		await _capture("tutorial-" + str(id))
+		if id == &"flame":
+			await _exercise_flame_mechanisms()
+		await _click(app.tutorial_overlay.exit_button)
+	_check(app.profile.manual_characters == saved_characters and app.profile.run_checkpoint == saved_checkpoint, "tutorial navigation never changes profile growth or expedition checkpoint")
+	app._relics_page()
+	await create_timer(0.3).timeout
+	var sample := PageShell.label(app.page.body, "寒气增加 25%，冻结持续 1.25 秒。", 21)
+	await _settle()
+	var decorated := sample.get_node("ProseDecoration") as ProseDecoration
+	_check(decorated._rich.visible and decorated._rich.get_parsed_text() == sample.text, "number coloring preserves the original plain text")
+	_check(decorated._rich.get_line_count() == sample.get_line_count(), "color spans preserve label wrapping")
+	_check(decorated._terms.size() == 2 and sample.self_modulate.a == 0.0, "hoverable terms carry dashed markings and only one text layer draws")
+	app.page.scroll.scroll_vertical = int(app.page.scroll.get_v_scroll_bar().max_value)
+	await _settle()
+	var term_rect := sample.get_character_bounds(0)
+	var motion := InputEventMouseMotion.new()
+	motion.position = root.get_screen_transform() * sample.get_global_transform() * term_rect.get_center()
+	Input.parse_input_event(motion)
+	await _settle()
+	await create_timer(0.4).timeout
+	_check(app.term_tooltips._bubble.visible and app.term_tooltips._title.text == "寒气", "dashed term still opens its explanation using shaped glyph bounds")
+	await _capture("prose-values-and-terms")
+	await _review_curved_frames()
+	app._home(false)
+	await _settle()
+	var output := FileAccess.open(evidence.path_join("tutorial-arc-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Tutorial/arc UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+	quit(1 if failures else 0)
+
+
+func _review_tutorial_mechanics() -> void:
+	var saved := app.profile.to_dict()
+	app._tutorial_menu()
+	await _settle()
+	await _capture("mechanism-menu")
+	# Observe the actual short handover, with game input held until reveal.
+	app.settings.reduce_motion = false
+	app._start_tutorial(&"spirit")
+	var entrance := app.practice_entrance
+	_check(app.route == "practice_entry" and app.router.typing == null, "entrance holds typing before room handover")
+	await entrance.covered
+	await RenderingServer.frame_post_draw
+	var rect := Rect2i(DisplayServer.window_get_position(), DisplayServer.window_get_size())
+	DisplayServer.screen_get_image_rect(rect).save_png(evidence.path_join("practice-covered.png"))
+	_check(is_instance_valid(app.tutorial) and not app.tutorial.session.is_physics_processing(), "covered room remains paused until reveal")
+	await entrance.completed
+	await _settle()
+	_check(app.route == "battle" and app.router.typing == app.tutorial.session.typing, "short reveal restores combat input")
+	app._tutorial_menu()
+	app.settings.reduce_motion = true
+	for id: StringName in TutorialLesson.LESSON_IDS:
+		app._start_tutorial(id)
+		await _settle()
+		app.tutorial.session.set_physics_process(false)
+		for index in app.tutorial.step_count():
+			# Layout/wording review only. Actual progression is separately covered by rule tests.
+			app.tutorial.step_index = index
+			app.tutorial.refresh()
+			await _settle()
+			var overlay := app.tutorial_overlay
+			var text := overlay._instruction
+			_check(text.position.y + text.get_minimum_size().y < overlay._progress.position.y and overlay._progress.get_rect().end.y < overlay.get_node("Content/Actions").position.y, "%s/%s copy stays clear of goal and controls" % [id, app.tutorial.current_step()])
+			_check(overlay.get_reserved_rect().end.y < app.battle.size.y - 130 and app.battle.word_exclusions[0] == overlay.get_reserved_rect(), "%s/%s reserves the full current guidance and stays above footer" % [id, app.tutorial.current_step()])
+			_check("悬浮虚线术语" in text.text, "%s/%s explicitly offers hover details" % [id, app.tutorial.current_step()])
+			if (id == &"frost" and app.tutorial.current_step() == &"freeze") or (id == &"flame" and app.tutorial.current_step() == &"burn") or (id == &"storm" and app.tutorial.current_step() == &"charge") or (id == &"spirit" and app.tutorial.current_step() == &"crane"):
+				await _capture("mechanism-" + str(id))
+			if id == &"spirit" and app.tutorial.current_step() == &"crane":
+				var offset := text.text.find("符文纸鹤")
+				var motion := InputEventMouseMotion.new()
+				motion.position = root.get_screen_transform() * text.get_global_transform() * text.get_character_bounds(offset).get_center()
+				Input.parse_input_event(motion)
+				await create_timer(0.4).timeout
+				_check(app.term_tooltips._bubble.visible and app.term_tooltips._title.text == "符文纸鹤", "native pointer opens paper crane details directly in the lesson")
+				await _capture("mechanism-crane-tooltip")
+		await _click(app.tutorial_overlay.retry_button)
+		_check(app.tutorial.step_index == 0 and app.route == "battle", "%s retry passes through short entrance into fresh exercise" % id)
+		await _click(app.battle.pause_button)
+		await _type("resume")
+		_check(app.route == "battle" and not paused, "%s pause and resume restore lesson input" % id)
+		await _click(app.tutorial_overlay.exit_button)
+		_check(app.route == "tutorial" and app.tutorial == null, "%s exits without expedition settlement" % id)
+	app._start_tutorial(&"flame")
+	await _settle()
+	await _exercise_flame_mechanisms()
+	await _click(app.tutorial_overlay.exit_button)
+	app._home(false)
+	app._start_practice()
+	await _settle()
+	_check(app.route == "practice" and app.router.typing == app.practice.typing, "ordinary typing practice also uses the reduced entrance")
+	_check(app.profile.to_dict() == saved, "lesson review, retry and typing practice leave the profile unchanged")
+	var output := FileAccess.open(evidence.path_join("tutorial-mechanics-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Tutorial mechanics UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+	quit(1 if failures else 0)
+
+
+func _wait_tutorial_goal() -> void:
+	var deadline := Time.get_ticks_msec() + 6000
+	while not app.tutorial.ready_to_advance and Time.get_ticks_msec() < deadline:
+		await process_frame
+	_check(app.tutorial.ready_to_advance and not app.tutorial_overlay.next_button.disabled, "actual %s effect enables the next-step control" % app.tutorial.current_step())
+
+
+func _exercise_flame_mechanisms() -> void:
+	for cast in 3:
+		await create_timer(0.7).timeout
+		await _click(app.battle.enemy_words[app.tutorial.session.enemies[0].id])
+		await _type(app.tutorial.session.typing.word)
+	await _wait_tutorial_goal()
+	_check(app.tutorial.current_step() == &"intro", "achieved empowerment preserves its explanation until explicit Next")
+	await _click(app.tutorial_overlay.next_button)
+	_check(app.tutorial.current_step() == &"block", "native Next opens the blocking exercise")
+	await _click(app.battle.enemy_words[app.tutorial.session.enemies[2].id])
+	await _type(app.tutorial.session.typing.word)
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	await _wait_tutorial_goal()
+	await _capture("mechanism-burn-achieved")
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_LEFT)
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_SHIFT)
+	await _wait_tutorial_goal()
+	_check(not app.tutorial.completed and app.tutorial_overlay.next_button.text == "完成练习", "real ultimate results wait for the native finish control")
+	await _click(app.tutorial_overlay.next_button)
+	_check(app.tutorial.completed and app.tutorial_overlay._counter.text == "练习完成", "native finish completes the actual book tutorial")
+	await _capture("mechanism-flame-complete")
+
+
+func _review_teaching_copy() -> void:
+	await app._guide()
+	await _settle()
+	var grid := app.page.body.get_child(0) as GridContainer
+	var target_body := grid.get_child(5).get_child(0).get_child(3) as Label
+	_check(target_body.get_line_count() > 3 and target_body.get_minimum_size().y <= target_body.size.y, "detailed target guide wraps within its native article")
+	app.page.scroll.scroll_vertical = maxi(0, int(grid.get_child(5).position.y) - 120)
+	await _settle()
+	await _capture("target-switch-guide")
+	app._tutorial_menu()
+	for id: StringName in TutorialLesson.LESSON_IDS:
+		app._start_tutorial(id)
+		await _settle()
+		var overlay := app.tutorial_overlay
+		var instruction := overlay._instruction
+		var rendered_bottom := instruction.position.y + instruction.get_minimum_size().y
+		_check(rendered_bottom < overlay._progress.position.y and overlay._progress.get_rect().end.y < overlay.get_node("Content/Actions").position.y, "%s full switching instructions stay clear of progress and buttons" % id)
+		_check(overlay.get_reserved_rect().end.y < app.battle.size.y - 130.0, "%s expanded guidance remains clear of the combat footer" % id)
+		if id == &"basics": await _capture("target-switch-tutorial")
+		if id == &"frost":
+			app.tutorial.step_index = 1
+			app.tutorial.refresh()
+			await _settle()
+			await _capture("frost-retention-tutorial")
+		app._tutorial_menu()
+	var output := FileAccess.open(evidence.path_join("teaching-copy-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Teaching copy UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+	quit(1 if failures else 0)
+
+
+func _review_curved_frames() -> void:
+	app._tutorial_menu()
+	app._start_tutorial(&"basics")
+	await _settle()
+	var session := app.battle.session
+	session.set_physics_process(false)
+	var source := session.enemies[0]
+	source.position = session.player_position + Vector2(-540, -150) / BattleSession.ARENA_SIZE
+	source.previous_position = source.position
+	source.aimed_position = session.player_position
+	session._emit_pattern(source, &"single", 0.32)
+	var threat := session.threats[-1]
+	var origin := threat.position
+	var target := session.player_position
+	var arrival := threat.aim_curve((target - origin) * BattleSession.ARENA_SIZE)
+	_check(threat.position == source.position and threat.curvature != 0.0, "real enemy emitter launches a turning projectile at its origin")
+	await _capture("curved-launch")
+	var advanced := 0.0
+	for fraction: float in [0.5, 0.9]:
+		var destination := arrival * fraction
+		while advanced < destination:
+			var delta := minf(1.0 / 60.0, destination - advanced)
+			session._advance_threats(delta)
+			advanced += delta
+		await _settle()
+		_check(session.threats.has(threat) and threat.trail.size() > 12, "curved projectile retains spaced actual history for a legible tail")
+		var tail := MotionTrail.build(threat.trail, threat.position, threat.position, 1.0, false, 32)
+		_check(tail[-1] == threat.position, "display trail terminates at the actual projectile head")
+		await _capture("curved-%d" % roundi(fraction * 100.0))
+	var travel := (threat.position - origin) * BattleSession.ARENA_SIZE
+	_check(absf(travel.cross(((target - origin) * BattleSession.ARENA_SIZE).normalized())) > 10.0, "visible mid-flight position deviates from the straight enemy-to-PC line")
+	app.battle.warnings.quality = 0
+	app.battle.warnings.reduced_motion = true
+	await _capture("curved-low-reduced")
+	var hp := session.player_hp_q
+	while advanced < arrival and session.threats.has(threat):
+		session._advance_threats(1.0 / 60.0)
+		advanced += 1.0 / 60.0
+	_check(session.player_hp_q < hp and not session.threats.has(threat), "real displayed curved flight reaches stationary PC and settles one hit")
+	await _settle()
+	await _capture("curved-contact")
+
+
 func _wheel(control: Control, button: MouseButton) -> void:
 	var event := InputEventMouseButton.new()
 	event.position = root.get_screen_transform() * control.get_global_transform() * Vector2(30, 30)
@@ -560,6 +1083,7 @@ func _move_to(control: Control) -> void:
 
 
 func _click(control: Control) -> void:
+	await _move_to(control)
 	var event := InputEventMouseButton.new()
 	event.position = root.get_screen_transform() * control.get_global_transform() * (control.size * 0.5)
 	event.button_index = MOUSE_BUTTON_LEFT
@@ -577,8 +1101,9 @@ func _type(value: String) -> void:
 		await _key(character.to_upper().unicode_at(0) as Key, character.unicode_at(0))
 
 
-func _key(code: Key, unicode_value: int = 0) -> void:
+func _key(code: Key, unicode_value: int = 0, window_id: int = 0) -> void:
 	var event := InputEventKey.new()
+	event.window_id = window_id
 	event.keycode = code
 	event.physical_keycode = code
 	event.unicode = unicode_value
@@ -594,6 +1119,8 @@ func _key(code: Key, unicode_value: int = 0) -> void:
 func _settle() -> void:
 	for frame in 3:
 		await process_frame
+	while is_instance_valid(app) and is_instance_valid(app.practice_entrance):
+		await process_frame
 
 
 func _check(condition: bool, label: String) -> void:
@@ -606,6 +1133,11 @@ func _check(condition: bool, label: String) -> void:
 func _capture(label: String) -> void:
 	if DisplayServer.get_name() == "headless":
 		return
+	if "--screen-capture" in OS.get_cmdline_user_args():
+		await create_timer(0.8).timeout
+		var capture_rect := Rect2i(DisplayServer.window_get_position(), DisplayServer.window_get_size())
+		DisplayServer.screen_get_image_rect(capture_rect).save_png(evidence.path_join(label + ".png"))
+		return
 	await RenderingServer.frame_post_draw
 	var source := root.get_texture().get_image()
 	var image := Image.create(source.get_width(), source.get_height(), false, Image.FORMAT_RGBA8)
@@ -613,6 +1145,7 @@ func _capture(label: String) -> void:
 		for x in source.get_width():
 			image.set_pixel(x, y, source.get_pixel(x, y).linear_to_srgb())
 	image.save_png(evidence.path_join(label + ".png"))
+	await process_frame
 
 
 func _capture_gold_flow(control: Control) -> void:

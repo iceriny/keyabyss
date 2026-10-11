@@ -1,0 +1,227 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://ui/scenes/page_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://ui/tutorial_menu.gd" id="2"]
+[ext_resource type="Script" path="res://ui/open_button.gd" id="3"]
+[ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="4"]
+
+[node name="TutorialMenu" instance=ExtResource("1")]
+script = ExtResource("2")
+
+[node name="Body" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin" index="0"]
+theme_override_constants/separation = 28
+
+[node name="Basics" type="HBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="0"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="Copy" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Basics"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Basics/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94, 0.87, 0.68, 1)
+theme_override_font_sizes/font_size = 27
+text = "第一笔 · 从容施法"
+
+[node name="Note" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Basics/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.67, 0.73, 0.76, 1)
+text = "输入词咒、切换目标，再练习御术、闪避与终式。"
+autowrap_mode = 3
+
+[node name="Begin" type="Button" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Basics"]
+custom_minimum_size = Vector2(186, 46)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 20
+text = "基础练习"
+script = ExtResource("3")
+
+[node name="Section" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="1"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_colors/font_color = Color(0.68, 0.64, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+text = "四书习术  /  选择一种战斗节奏"
+
+[node name="Books" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body" index="2"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="frost" type="HBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Seal" type="TextureRect" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/frost"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.7)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Copy" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/frost"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/frost/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 25
+
+[node name="Note" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/frost/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.67, 0.73, 0.76, 1)
+autowrap_mode = 3
+
+[node name="Begin" type="Button" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/frost"]
+custom_minimum_size = Vector2(186, 46)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+text = "开始习术"
+script = ExtResource("3")
+
+[node name="flame" type="HBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Seal" type="TextureRect" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/flame"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.7)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Copy" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/flame"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/flame/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 25
+
+[node name="Note" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/flame/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.67, 0.73, 0.76, 1)
+autowrap_mode = 3
+
+[node name="Begin" type="Button" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/flame"]
+custom_minimum_size = Vector2(186, 46)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+text = "开始习术"
+script = ExtResource("3")
+
+[node name="storm" type="HBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Seal" type="TextureRect" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/storm"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.7)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Copy" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/storm"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/storm/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 25
+
+[node name="Note" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/storm/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.67, 0.73, 0.76, 1)
+autowrap_mode = 3
+
+[node name="Begin" type="Button" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/storm"]
+custom_minimum_size = Vector2(186, 46)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+text = "开始习术"
+script = ExtResource("3")
+
+[node name="spirit" type="HBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Seal" type="TextureRect" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/spirit"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.7)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Copy" type="VBoxContainer" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/spirit"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/spirit/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 25
+
+[node name="Note" type="Label" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/spirit/Copy"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.67, 0.73, 0.76, 1)
+autowrap_mode = 3
+
+[node name="Begin" type="Button" parent="ContentLayer/Panel/Layout/BodyRegion/BodyScroll/ContentMargin/Body/Books/spirit"]
+custom_minimum_size = Vector2(186, 46)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+text = "开始习术"
+script = ExtResource("3")

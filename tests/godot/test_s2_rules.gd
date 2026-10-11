@@ -3,6 +3,13 @@ extends "res://tests/godot/test_s1_rules.gd"
 
 
 func _run() -> void:
+	if "--frost-control" in OS.get_cmdline_user_args():
+		_four_frost()
+		_four_defenses()
+		for session in sessions: session.free()
+		print("FROST_CONTROL_RULES: ", "PASS" if failures == 0 else "FAIL ", failures)
+		quit(0 if failures == 0 else 1)
+		return
 	if "--combat-feedback" in OS.get_cmdline_user_args():
 		_four_flame()
 		_four_frost()
@@ -493,7 +500,7 @@ func _four_frost() -> void:
 	control.runtime._apply_cold(target, 200 * 1024, control.compiled_build)
 	_check(target.cold == 127 and target.frozen_time == 0.0, "cold saturates during thaw immunity without refreezing")
 	control.runtime.advance(1.0)
-	_check(target.frozen_time > 0.0 and target.cold == 55, "remaining cold can freeze again when ordinary immunity ends")
+	_check(target.frozen_time > 0.0 and target.cold == 67, "cold retained throughout the grace period can freeze again when ordinary immunity ends")
 	var boss := control.enemies[1]
 	boss.boss = true
 	control.runtime._apply_cold(boss, 91 * 1024, control.compiled_build)
@@ -507,6 +514,34 @@ func _four_frost() -> void:
 	pushed.frozen_time = 0.2
 	outside.runtime.advance(0.3)
 	_check(pushed.frozen_time == 0.0, "a frozen enemy pushed outside the combat boundary still thaws")
+	var grace := _four_session(&"frost")
+	var chilling := grace.enemies[0]
+	grace.runtime._apply_cold(chilling, 35 * 1024, grace.compiled_build)
+	grace.runtime.advance(0.75)
+	_check(chilling.cold == 35 and is_equal_approx(chilling.cold_grace, 0.25), "fresh cold does not decay for the first world second")
+	grace.runtime._apply_cold(chilling, 35 * 1024, grace.compiled_build)
+	grace.runtime.advance(1.0)
+	_check(chilling.cold == 70 and chilling.cold_grace == 0.0, "a later cold application refreshes the whole grace period")
+	grace.runtime.advance(0.5)
+	_check(chilling.cold == 67, "after grace, natural cold decay is six points per world second")
+	grace.runtime._apply_cold(chilling, 1024, grace.compiled_build)
+	grace.runtime.advance(1.25)
+	_check(chilling.cold == 67 and is_equal_approx(chilling.cold_remainder, 0.5), "a step crossing grace expiry decays only its final quarter second")
+	var split := _four_session(&"frost")
+	split.runtime._apply_cold(split.enemies[0], 68 * 1024, split.compiled_build)
+	split.runtime.advance(0.75)
+	split.runtime.advance(0.5)
+	_check(split.enemies[0].cold == chilling.cold and is_equal_approx(split.enemies[0].cold_remainder, chilling.cold_remainder), "cold grace and fractional decay agree across different step partitions")
+	var preserved := _four_session(&"frost", {&"F005": 1})
+	preserved.runtime._apply_cold(preserved.enemies[0], 35 * 1024, preserved.compiled_build)
+	preserved.runtime.advance(6.0)
+	_check(preserved.enemies[0].cold == 9, "cold decay relic still reduces the new base rate after grace")
+	var sustained := _four_session(&"frost")
+	for cast in 3:
+		_word(sustained, "abcde")
+		sustained.runtime.contact(sustained.projectiles[-1].effect, sustained.enemies[0], sustained.player_position, true)
+		if cast < 2: sustained.runtime.advance(2.0)
+	_check(sustained.enemies[0].frozen_time > 0.0, "three paid five-character frost casts spaced two seconds apart accumulate enough cold to freeze")
 
 
 func _four_storm() -> void:
@@ -633,7 +668,9 @@ func _four_defenses() -> void:
 				session.enemies[0].position = origin + Vector2(70.0, 0.0) / BattleSession.ARENA_SIZE
 				session.enemies[0].cold = 10
 				session.runtime.advance(0.5)
-				_check(session.enemies[0].cold == 19, "ice mist adds thirty cold per second while natural cold decay continues")
+				_check(session.enemies[0].cold == 22, "ice mist applies thirty cold per second and starts grace on its first gain")
+				session.runtime.advance(0.5)
+				_check(session.enemies[0].cold == 37 and is_equal_approx(session.enemies[0].cold_grace, 1.0), "continuous ice mist refreshes grace and retains its full next cold gain")
 				session.player_position = origin - Vector2(100.0, 0.0) / BattleSession.ARENA_SIZE
 				_check(session.runtime.obscures(session.enemies[0]), "ice mist hides a line of sight longer than ninety pixels")
 				session.player_position = session.enemies[0].position - Vector2(89.0, 0.0) / BattleSession.ARENA_SIZE

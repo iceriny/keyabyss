@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://ui/scenes/relic_reward_choice.tscn" id="extra2"]
 [ext_resource type="PackedScene" path="res://ui/scenes/frost_impact_light.tscn" id="extra3"]
 [ext_resource type="PackedScene" path="res://ui/scenes/ultimate_ice_light.tscn" id="extra4"]
+[ext_resource type="PackedScene" path="res://ui/scenes/practice_entrance.tscn" id="extra5"]
 [ext_resource type="PackedScene" path="res://ui/scenes/ultimate_indicator.tscn" id="s0"]
 [ext_resource type="PackedScene" path="res://ui/scenes/ultimate_field.tscn" id="s1"]
 [ext_resource type="PackedScene" path="res://ui/scenes/stat_readout.tscn" id="s2"]
@@ -91,7 +92,7 @@ glow_enabled = true
 
 [node name="RenderPreparation" type="Node"]
 script = ExtResource("script")
-scenes = Array[PackedScene]([ExtResource("s0"), ExtResource("s1"), ExtResource("s2"), ExtResource("s3"), ExtResource("s4"), ExtResource("s5"), ExtResource("s6"), ExtResource("s7"), ExtResource("s8"), ExtResource("s9"), ExtResource("s10"), ExtResource("s11"), ExtResource("s12"), ExtResource("s13"), ExtResource("s14"), ExtResource("s15"), ExtResource("s16"), ExtResource("s17"), ExtResource("s18"), ExtResource("s19"), ExtResource("s20"), ExtResource("s21"), ExtResource("s22"), ExtResource("s23"), ExtResource("s24"), ExtResource("s25"), ExtResource("s26"), ExtResource("s27"), ExtResource("s28"), ExtResource("s29"), ExtResource("s30"), ExtResource("s31"), ExtResource("s32"), ExtResource("s33"), ExtResource("extra0"), ExtResource("extra1"), ExtResource("extra2"), ExtResource("extra3"), ExtResource("extra4")])
+scenes = Array[PackedScene]([ExtResource("s0"), ExtResource("s1"), ExtResource("s2"), ExtResource("s3"), ExtResource("s4"), ExtResource("s5"), ExtResource("s6"), ExtResource("s7"), ExtResource("s8"), ExtResource("s9"), ExtResource("s10"), ExtResource("s11"), ExtResource("s12"), ExtResource("s13"), ExtResource("s14"), ExtResource("s15"), ExtResource("s16"), ExtResource("s17"), ExtResource("s18"), ExtResource("s19"), ExtResource("s20"), ExtResource("s21"), ExtResource("s22"), ExtResource("s23"), ExtResource("s24"), ExtResource("s25"), ExtResource("s26"), ExtResource("s27"), ExtResource("s28"), ExtResource("s29"), ExtResource("s30"), ExtResource("s31"), ExtResource("s32"), ExtResource("s33"), ExtResource("extra0"), ExtResource("extra1"), ExtResource("extra2"), ExtResource("extra3"), ExtResource("extra4"), ExtResource("extra5")])
 materials = Array[Material]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3"), ExtResource("m4"), ExtResource("m5"), ExtResource("m6"), ExtResource("m7"), ExtResource("m8"), ExtResource("m9"), ExtResource("m10"), ExtResource("m11"), ExtResource("m12"), ExtResource("m13"), ExtResource("m14"), ExtResource("m15"), ExtResource("m16"), ExtResource("m17"), ExtResource("m18"), ExtResource("m19"), ExtResource("m20"), ExtResource("m21"), ExtResource("m22"), ExtResource("m23"), ExtResource("m24"), ExtResource("m25"), ExtResource("m26")])
 computes = Array[RDShaderFile]([ExtResource("c0"), ExtResource("c1"), ExtResource("c2"), ExtResource("c3")])
 

@@ -3,6 +3,8 @@ extends Control
 ## Danger geometry is kept out of world bloom, refraction and decorative particles.
 
 var session: BattleSession
+var quality: int = 2
+var reduced_motion: bool = false
 var _melee_cues: Dictionary[StringName, ColorRect] = {}
 var _orb: GradientTexture2D
 const MELEE_CUE = preload("res://ui/scenes/melee_attack_visual.tscn")
@@ -89,10 +91,33 @@ func _draw() -> void:
 		var radius := threat.radius * scale_factor
 		var samples := PackedVector2Array()
 		for sample in threat.trail: samples.append(sample * size)
-		var tail := MotionTrail.build(samples, threat.position * size, point, 64.0 * scale_factor, false, 12)
-		for index in range(1, tail.size()):
-			var strength := float(index) / tail.size()
-			draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.1), radius * 2.2 * strength, true)
-			draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.5), maxf(1.0, radius * 0.5 * strength), true)
+		var curved := not is_zero_approx(threat.curvature)
+		var tail := MotionTrail.build(samples, threat.position * size, point, (180.0 if curved else 64.0) * scale_factor, false, 32 if curved else 12)
+		if curved:
+			_draw_curved_tail(tail, tint, scale_factor)
+		else:
+			for index in range(1, tail.size()):
+				var strength := float(index) / tail.size()
+				draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.1), radius * 2.2 * strength, true)
+				draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.5), maxf(1.0, radius * 0.5 * strength), true)
 		draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius * 3.5, Vector2.ONE * radius * 7.0), false, Color(tint, 0.6))
+		if curved:
+			draw_circle(point, radius, Color("26302c", 0.8))
+			draw_arc(point, radius, 0.0, TAU, 24, Color(tint, 0.85), scale_factor, true)
 		draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius, Vector2.ONE * radius * 2.0), false, Color("fff0d7"))
+
+
+func _draw_curved_tail(tail: PackedVector2Array, tint: Color, scale_factor: float) -> void:
+	var length := 0.0
+	for index in range(1, tail.size()):
+		length += tail[index - 1].distance_to(tail[index])
+	var traveled := 0.0
+	var gold := tint.lerp(Color("c9ae72"), 0.4)
+	# A thin, dim history follows real positions; only the round head marks danger.
+	for index in range(1, tail.size()):
+		traveled += tail[index - 1].distance_to(tail[index])
+		var strength := pow(traveled / length, 1.5)
+		if quality > 0 and not reduced_motion:
+			draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.025), 10.0 * scale_factor, true)
+		draw_line(tail[index - 1], tail[index], Color(gold, strength * 0.075), 4.0 * scale_factor, true)
+		draw_line(tail[index - 1], tail[index], Color(gold, strength * 0.44), (0.6 + strength * 0.8) * scale_factor, true)
