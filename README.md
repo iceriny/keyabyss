@@ -4,11 +4,11 @@
 
 键渊面向桌面键盘与鼠标：打字施法、弹反与闪避、四书、局内遗物和少量线性成长。主工程采用 Godot 原生 2D、类型化 GDScript、Forward+／HDR 2D，Windows 为首要平台。
 
-正式流程包含四书、58 件局内遗物、三章九场、五档难度与保留遗物的连续挑战；大型天赋、专属许可、副书、形状配置和复杂加工／事件已退出。场外成长由有效人工字符自动推进，全书共享且有上限。最高档的成长与继承路径正在按[收益评估](docs/COMBAT-BALANCE-DESIGN.md)复验，实际状态与证据边界见[阶段总结](docs/STAGE-SUMMARY.md)。Godot 使用自己的档案，不迁入旧浏览器进度；玩法基线为[实施交接](docs/migration/AGENT-HANDOFF.md)指定的 Git 提交，当前 [legacy/web](legacy/web/README.md) 已含后续重构。
+正式流程包含四书、196 件局内遗物、三章九场、五档难度与保留遗物的连续挑战；大型天赋、专属许可、副书、形状配置和复杂加工／事件已退出。场外成长由有效人工字符自动推进，全书共享且有上限。最高档的成长与继承路径正在按[收益评估](docs/COMBAT-BALANCE-DESIGN.md)复验，实际状态与证据边界见[阶段总结](docs/STAGE-SUMMARY.md)。Godot 使用自己的档案，不迁入旧浏览器进度；玩法基线为[实施交接](docs/migration/AGENT-HANDOFF.md)指定的 Git 提交，当前 [legacy/web](legacy/web/README.md) 已含后续重构。
 
 ## 开发入口
 
-[下载 Windows x64 测试包](https://github.com/iceriny/keyabyss/releases/tag/v0.7.0-test.20261011)。完整解压后双击 `keyabyss.exe`，无需安装 Godot 或 .NET 开发工具；包内附诊断启动脚本与使用说明。
+[下载 Windows x64 测试包](https://github.com/iceriny/keyabyss/releases/tag/v0.7.0-test.20261012)。完整解压后双击 `keyabyss.exe`，无需安装 Godot 或 .NET 开发工具；包内附诊断启动脚本与使用说明。
 
 默认主分支 [`main`](https://github.com/iceriny/keyabyss/tree/main) 为 Godot 工程；原 Web 工程保存在 [`preview`（预览版）](https://github.com/iceriny/keyabyss/tree/preview)，可按该分支 README 启动或构建离线包。两个工程请克隆到不同目录。`legacy/web/` 保留迁移参考及制作工具，不作为预览版的启动入口。
 
