@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G005"
+title = "长卷"
+description = "至少7个字母的词咒伤害提高 {long_pct}%；短词伤害降低 {short_pct_abs}%。"
+modifiers = {&"long_pct": 14, &"short_pct": -6}
+tags = PackedStringArray("long", "damage")
+max_stacks = 1
+rarity = &"common"
+exclusive_group = &"word_length"
+supported = true
+stage = &"relics-3"

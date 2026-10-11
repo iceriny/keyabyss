@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G019"
+title = "金墨瓶"
+description = "获得的共鸣提高 {resonance_pct}%。"
+modifiers = {&"resonance_pct": 8}
+tags = PackedStringArray("resonance")
+max_stacks = 2
+rarity = &"common"
+supported = true
+stage = &"relics-3"

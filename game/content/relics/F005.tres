@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F005"
+title = "藏寒纸"
+description = "寒气的自然流失减慢 {cold_decay_pct}%。"
+modifiers = {&"cold_decay_pct": 12}
+tags = PackedStringArray("cold")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("frost")
+supported = true
+stage = &"relics-3"

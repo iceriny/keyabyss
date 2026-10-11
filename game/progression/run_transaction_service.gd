@@ -68,11 +68,11 @@ func prepare_actions(selection: BuildSelection, state: RunCombatState, requests:
 	for instance in proposed.instances:
 		if not acquired.has(instance.instance_id): continue
 		if instance.content_id == &"R012" and candidate_state.claim_asset(instance.usage_key(), &"heal"):
-			candidate_state.hp_q = mini(maximum_hp, candidate_state.hp_q + 30 * Q)
+			candidate_state.hp_q = mini(maximum_hp, candidate_state.hp_q + roundi(build.relic_number(&"R012", &"heal") * Q))
 		if instance.content_id == &"R009" and candidate_state.claim_asset(instance.usage_key(), &"dodge-charge"):
 			dodge_delta += 1
 		if instance.content_id == &"R042" and candidate_state.claim_asset("room:%d" % state.room_serial, &"price"):
-			candidate_state.hp_q = maxi(Q, candidate_state.hp_q - 8 * Q)
+			candidate_state.hp_q = maxi(Q, candidate_state.hp_q - roundi(build.relic_number(&"R042", &"cost") * Q))
 	return {"selection": proposed, "state": candidate_state, "build": build, "dodge_delta": dodge_delta, "diagnostics": PackedStringArray()}
 
 

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A017"
+title = "回锋火笔"
+description = "完美御术反击命中时，附加 {parry_burn} 点灼烧。"
+modifiers = {&"parry_burn": 12}
+tags = PackedStringArray("parry", "burn")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("flame")
+supported = true
+stage = &"relics-3"

@@ -19,8 +19,16 @@ func _run() -> void:
 	assert(DisplayServer.get_name() != "headless", "Battle presentation requires the actual HDR renderer")
 	_check_motion_tools()
 	evidence = "res://.temp/godot-m2/presentation-%s" % Time.get_ticks_usec()
+	if "--projectile-sync-cost" in OS.get_cmdline_user_args():
+		for argument in OS.get_cmdline_user_args():
+			if argument.begins_with("--sync-label="):
+				evidence = "res://.temp/relic-upgrade/performance/" + argument.trim_prefix("--sync-label=").validate_filename()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	root.size = Vector2i(1920, 1080)
+	if "--projectile-sync-cost" in OS.get_cmdline_user_args():
+		await _check_projectile_sync_cost()
+		quit()
+		return
 	if "--word-contrast" in OS.get_cmdline_user_args():
 		await _check_word_contrast()
 		quit()
@@ -555,6 +563,67 @@ func _check_combat_feedback() -> void:
 	assert(page.visuals._waves.is_empty(), "Ultimate release has no additional spatial wave")
 	assert(not page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"clear_pulse"))
 	await _capture("ultimate-without-shockwave")
+	page.queue_free()
+	await process_frame
+
+
+func _check_projectile_sync_cost() -> void:
+	var session := BattleSession.new()
+	session.start_baseline(&"spirit", [VocabularyEntry.new("orbit", "轨道")], "normal", "projectile-sync-cost", false)
+	var options := AppSettings.new(evidence.path_join("settings.cfg"))
+	options.sound = false
+	options.fluid_quality = 0
+	var page := BattlePage.create(session, options, ArchiveHome.BOOKS[2])
+	page.theme = ArchiveTheme.create(ArchiveHome.BOOKS[2].color)
+	root.add_child(page)
+	session.set_physics_process(false)
+	await process_frame
+	paused = true
+	var measurements: Array[Dictionary] = []
+	for count in [128, 512, 1024]:
+		while session.projectiles.size() < count:
+			var effect := BattleEffect.new()
+			effect.kind = &"spirit_bolt"
+			effect.origin = Vector2(.5, .5)
+			var projectile := BattleProjectile.new(effect)
+			projectile.position = Vector2(.6, .5)
+			projectile.velocity = Vector2(1080, 0)
+			projectile.trail = PackedVector2Array([Vector2(.4, .5), Vector2(.5, .5)])
+			session.projectiles.append(projectile)
+		page.visuals._process(0.0)
+		assert(page.visuals._projectile_nodes.size() == count)
+		var samples: Array[float] = []
+		for iteration in 60:
+			var started := Time.get_ticks_usec()
+			page.visuals._process(0.0)
+			samples.append((Time.get_ticks_usec() - started) / 1000.0)
+		samples.sort()
+		measurements.append({"projectiles": count, "median_ms": samples[30], "p95_ms": samples[57], "max_ms": samples[-1]})
+		print("PROJECTILE_SYNC ", measurements[-1])
+	var fraction := Engine.get_physics_interpolation_fraction()
+	for projectile in session.projectiles:
+		var visual: BattleProjectileVisual = page.visuals._projectile_nodes[projectile]
+		assert(visual.head.position == projectile.previous_position.lerp(projectile.position, fraction) * page.visuals.size)
+		assert(visual.trail.points == visual.trail_glow.points)
+	var removed: BattleProjectile = session.projectiles.pop_at(511)
+	var retiring: BattleProjectileVisual = page.visuals._projectile_nodes[removed]
+	var retained: BattleProjectile = session.projectiles[511]
+	var retained_visual: BattleProjectileVisual = page.visuals._projectile_nodes[retained]
+	page.visuals._process(0.0)
+	assert(page.visuals._projectile_nodes.size() == 1023 and not page.visuals._projectile_nodes.has(removed))
+	assert(not retiring.head.visible and retiring.is_inside_tree(), "retirement retains the original fade lifecycle")
+	assert(page.visuals._projectile_nodes[retained] == retained_visual, "unchanged projectiles retain their visual identity")
+	session.projectiles.append(removed)
+	page.visuals._process(0.0)
+	assert(page.visuals._projectile_nodes.size() == 1024 and page.visuals._projectile_nodes[removed] != retiring)
+	session.projectiles.clear()
+	page.visuals._process(0.0)
+	assert(page.visuals._projectile_nodes.is_empty())
+	var output := FileAccess.open(evidence.path_join("projectile-sync.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"measurements": measurements, "identity_position_retirement_passed": true}, "\t"))
+	output.close()
+	print("Projectile identity, interpolated position, trail pairing, removal/readdition and empty collection passed")
+	paused = false
 	page.queue_free()
 	await process_frame
 

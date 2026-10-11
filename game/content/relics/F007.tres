@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F007"
+title = "裂冰砚"
+description = "冻裂伤害提高 {shatter_pct}%。"
+modifiers = {&"shatter_pct": 15}
+tags = PackedStringArray("shatter")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("frost")
+supported = true
+stage = &"relics-3"

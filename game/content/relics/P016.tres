@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P016"
+title = "回批纸笔"
+description = "完美御术反击命中时，附加 {parry_mark} 点易伤。"
+modifiers = {&"parry_mark": 12}
+tags = PackedStringArray("parry", "mark")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("spirit")
+supported = true
+stage = &"relics-3"

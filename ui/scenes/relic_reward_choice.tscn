@@ -1,12 +1,13 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://ui/relic_reward_choice.gd" id="1"]
 [ext_resource type="Material" path="res://ui/materials/relic_choice.tres" id="2"]
 [ext_resource type="Script" path="res://ui/relic_glyph.gd" id="3"]
 [ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="4"]
+[ext_resource type="Script" path="res://ui/smooth_scroll.gd" id="5"]
 
 [node name="RelicChoice" type="MarginContainer"]
-custom_minimum_size = Vector2(0, 370)
+custom_minimum_size = Vector2(0, 498)
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 22
 theme_override_constants/margin_right = 22
@@ -22,7 +23,7 @@ material = ExtResource("2")
 
 [node name="Content" type="VBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 13
+theme_override_constants/separation = 10
 
 [node name="Shortcut" type="Label" parent="Content"]
 layout_mode = 2
@@ -37,7 +38,7 @@ autowrap_mode = 3
 layout_mode = 2
 
 [node name="Glyph" type="Control" parent="Content/Pedestal"]
-custom_minimum_size = Vector2(126, 126)
+custom_minimum_size = Vector2(108, 108)
 layout_mode = 2
 script = ExtResource("3")
 tint = Color(0.85098, 0.752941, 0.545098, 1)
@@ -47,7 +48,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("4")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.568627, 0.662745, 0.647059, 1)
 horizontal_alignment = 1
 autowrap_mode = 3
@@ -56,17 +57,29 @@ autowrap_mode = 3
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
-theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 28
 theme_override_colors/font_color = Color(0.913725, 0.835294, 0.643137, 1)
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Description" type="Label" parent="Content"]
-custom_minimum_size = Vector2(0, 112)
+[node name="Stack" type="Label" parent="Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.6, 0.68, 0.65, 1)
+horizontal_alignment = 1
+
+[node name="Reading" type="ScrollContainer" parent="Content"]
+custom_minimum_size = Vector2(0, 178)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("5")
+
+[node name="Description" type="Label" parent="Content/Reading"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 19

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P025"
+title = "银墨折纸"
+description = "纸灵命中时，附加 {spirit_shock_hit} 点感电。"
+modifiers = {&"spirit_shock_hit": 4}
+tags = PackedStringArray("spirit", "shock")
+max_stacks = 2
+rarity = &"rare"
+allowed_books = PackedStringArray("spirit")
+requires_capabilities = PackedStringArray("shock")
+supported = true
+stage = &"relics-3"

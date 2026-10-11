@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G028"
+title = "回批手稿"
+description = "完美御术成功时，额外获得 {parry_resonance} 点共鸣。"
+modifiers = {&"parry_resonance": 1}
+tags = PackedStringArray("parry", "resonance")
+max_stacks = 2
+rarity = &"common"
+supported = true
+stage = &"relics-3"

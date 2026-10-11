@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A021"
+title = "炉火全集"
+description = "火雾施加的灼烧提高 {fire_field_rate_pct}%，焰印火雾延长 {fire_field_ms_s} 秒。"
+modifiers = {&"fire_field_rate_pct": 25, &"fire_field_ms": 800}
+tags = PackedStringArray("fire_field")
+max_stacks = 1
+rarity = &"awakening"
+allowed_books = PackedStringArray("flame")
+exclusive_group = &"flame_awakening"
+required_stacks = {&"A005": 2, &"A006": 2}
+supported = true
+stage = &"relics-3"

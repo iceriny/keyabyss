@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A023"
+title = "焚夜长歌"
+description = "焚世余烬延长 {ultimate_ms_s} 秒，起手火浪伤害提高 {flame_wave_pct}%。"
+modifiers = {&"ultimate_ms": 1500, &"flame_wave_pct": 25}
+tags = PackedStringArray("ultimate")
+max_stacks = 1
+rarity = &"awakening"
+allowed_books = PackedStringArray("flame")
+exclusive_group = &"flame_awakening"
+required_stacks = {&"A011": 2, &"A013": 2}
+supported = true
+stage = &"relics-3"

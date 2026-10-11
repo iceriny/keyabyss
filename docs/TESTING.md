@@ -26,6 +26,22 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 ## 原生工具入口
 
+### 遗物与阅读系统
+
+按实际修改选择入口。目录检查覆盖196件定义、每书106件的独立可达性、前置／互斥、偏好和单次报价编译；机制检查按效果族通过正式取得、编译、人工输入与真实命中验证，不逐件建立测试。`test_s2_run.gd`默认分支包含旧构筑拒绝恢复时保留原档、失效奖励免费重建、保存失败与重试及事务去重。
+
+```powershell
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_catalog.gd', '--', '--expanded')
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_effects.gd')
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_s2_run.gd')
+# 实际Forward+窗口，使用隔离档案：
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--debug', '--script', 'res://tests/godot/test_ui_refinement.gd', '--', '--relic-upgrade')
+```
+
+阅读窗口分支检查全部遗物首层／满层数字插值，并以原生鼠标／Alt事件检查术语悬浮、详情切换、固定操作位置和实际取得；另核对四书觉醒、减少动态、图鉴、指南与记录。保存的HDR转sRGB画面需人工审阅，不以断言或截图转换期间的帧率替代视觉／性能结论。
+
+效果检查的`--balance`分支用于内容收束后的统一组合采样，`--storm-ablation`用于定位雷鸣叠加来源；它们使用有限目标、固定3／6／9字符每秒及真实支付，不代表正式房波或真人通关。弹体同步微基准沿用`test_battle_presentation.gd -- --projectile-sync-cost`，仅测表现同步CPU开销。实际结果与限制见[阶段总结](STAGE-SUMMARY.md)和[收益评估](COMBAT-BALANCE-DESIGN.md)。
+
 战斗算法可用 `pwsh -File tools/godot/compare-combat.ps1` 从优化前提交 `c39c032` 生成隔离参考子类，比较四书事件／状态与 1,152 个闪避选点；`-BenchmarkOnly` 只采样微基准，`-DodgeOnly` 跳过逐步战斗。该上传基线与本地原记录 `9f3539b` 的规则源码相同，仅剔除了转入私有资产库的新增字体。适配器针对该基线的方法与数据声明，未来结构变化需同步审阅，不能作为任意 Git 版本的通用比较器。正常运行前工具自动做锁定依赖的 Debug 编译。生成文件与日志留在 `.temp/`，不进入游戏或导出。
 
 局部几何入口为 `test_battle_session.gd -- --geometry`，覆盖连续扫掠、首击顺序、贯穿快照／死亡连锁及接触尾迹；`test_defense_movement.gd` 覆盖御术与时钟。`test_combat_algorithms.gd -- --cold` 单列首次操作、会话准备、封送分配与 GC。数值程序集在各配置均启用优化，需和受影响 GDScript 一起检查；实际命令与结果见[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md)。

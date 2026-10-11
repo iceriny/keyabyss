@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A008"
+title = "踏火行草"
+description = "闪避火场延长 {dodge_flame_ms_s} 秒，半径增加 {dodge_flame_radius}。"
+modifiers = {&"dodge_flame_ms": 500, &"dodge_flame_radius": 8}
+tags = PackedStringArray("dodge", "fire_field")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("flame")
+supported = true
+stage = &"relics-3"

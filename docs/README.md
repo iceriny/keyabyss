@@ -23,6 +23,7 @@
 | --- | --- |
 | [金丝水晶](ART-DIRECTION.md)、[开放 UI](OPEN-UI.md) | 材质、画面层级、固定操作与内部滚动 |
 | [文案规范](CONTENT-STYLE.md) | 词咒、条件、效果、代价和玩家可读说明 |
+| [遗物与阅读系统](RELIC-SYSTEM.md) | 四书各106件可用池、资格拓扑、稀有度、共享数值、术语与Alt详情 |
 | [四书实施](migration/PLAN.md#四书战斗机制实施) | 输入契约、分书接入、遗物与正式流程、场景校准的依赖与出口 |
 | [四书遥测参考](COMBAT-TELEMETRY.md) | 未来可选的玩法事件、观察问题与指标口径 |
 | [UI 实践](migration/UI-IMPLEMENTATION-LESSONS.md)、[M2 实施经验](migration/M2-IMPLEMENTATION-LESSONS.md) | 已遇到的问题、原生取舍和历史证据边界 |

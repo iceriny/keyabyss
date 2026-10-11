@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G012"
+title = "勘误纸"
+description = "有错字的词咒伤害提高 {imperfect_pct}%。"
+modifiers = {&"imperfect_pct": 10}
+tags = PackedStringArray("correction")
+max_stacks = 2
+rarity = &"common"
+exclusive_group = &"proofreading"
+supported = true
+stage = &"relics-3"

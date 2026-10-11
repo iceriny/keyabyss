@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F001"
+title = "凝霜墨"
+description = "施加的寒气点数提高 {cold_pct}%。"
+modifiers = {&"cold_pct": 10}
+tags = PackedStringArray("cold")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("frost")
+supported = true
+stage = &"relics-3"

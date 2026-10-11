@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P001"
+title = "轻灵纸"
+description = "纸灵游击伤害提高 {spirit_pct}%。"
+modifiers = {&"spirit_pct": 10}
+tags = PackedStringArray("spirit")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("spirit")
+supported = true
+stage = &"relics-3"

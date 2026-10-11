@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F014"
+title = "霜花护页"
+description = "冻结敌人时，获得 {freeze_shield} 点护盾。"
+modifiers = {&"freeze_shield": 1}
+tags = PackedStringArray("freeze", "shield")
+max_stacks = 2
+rarity = &"uncommon"
+allowed_books = PackedStringArray("frost")
+requires_all = PackedStringArray("F004")
+grants_capabilities = PackedStringArray("shield")
+supported = true
+stage = &"relics-3"

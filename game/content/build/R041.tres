@@ -15,10 +15,14 @@ parameters = {
 [resource]
 script = ExtResource("1")
 id = &"R041"
-title = "停笔沙漏"
-description = "闪避后世界以10%速度流动，持续1.5秒；期间可继续打字施法，闪避与御术仍按真实时间恢复。"
+title = "停笔书签"
+description = "闪避后，战场放慢 {duration} 秒；仍可正常输入。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
 max_stacks = 1
+numbers = {&"duration": 1.5}
+stack_values = PackedStringArray()
+tags = PackedStringArray("dodge")
+rarity = &"rare"

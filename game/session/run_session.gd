@@ -99,10 +99,24 @@ func restore() -> bool:
 		return false
 	candidate.repository = repository
 	candidate.profile = profile
+	candidate.compiler = compiler
 	var incompatible := int(candidate.facts.get("content_version", -1)) != SaveRepository.CONTENT_VERSION or int(candidate.facts.get("graph_version", -1)) != SaveRepository.GRAPH_VERSION
 	if incompatible and profile.has_pending_run():
 		last_error = "远征规则已变化，旧局已保留；请明确重开。"
 		return false
+	if profile.has_pending_run() and not compiler.compile(candidate.selection).success():
+		last_error = "遗物规则已变化，旧局已保留；请明确重开。"
+		return false
+	var save_required := false
+	if candidate.phase in ["BATTLE_REWARD", "REWARD"]:
+		var eligible := AcquisitionService.new(compiler).candidates(candidate.selection, candidate.acquisition_context())
+		var offered: Array = candidate.offer.candidates
+		var refresh := offered.is_empty() and not eligible.is_empty()
+		for id: Variant in offered:
+			if not id is String or id not in eligible: refresh = true
+		if refresh:
+			candidate._make_reward_offer(candidate)
+			save_required = true
 	if candidate.phase in ["BATTLE", "BATTLE_REWARD"]:
 		candidate.facts["resume_attempt_id"] = candidate.attempt_id
 		candidate.facts["resume_characters"] = int(candidate.facts.get("checkpoint_characters", 0))
@@ -111,7 +125,8 @@ func restore() -> bool:
 		candidate.room_serial -= 1
 		candidate.phase = "REWARD" if candidate.phase == "BATTLE_REWARD" else "READY_FOR_ROOM"
 		candidate.facts["route_complete"] = true
-		return _save(candidate)
+		save_required = true
+	if save_required: return _save(candidate)
 	_adopt(candidate)
 	return true
 
@@ -759,14 +774,9 @@ func _merge_statistics(candidate: RunSession, snapshot: Dictionary) -> void:
 
 
 func _make_reward_offer(candidate: RunSession) -> void:
-	var eligible := AcquisitionService.new(compiler).candidates(candidate.selection, candidate.acquisition_context())
 	var rng := RandomNumberGenerator.new()
 	rng.state = int(candidate.reward_rng_state)
-	var candidates: Array[String] = []
-	while not eligible.is_empty() and candidates.size() < 3:
-		var index := rng.randi_range(0, eligible.size() - 1)
-		candidates.append(eligible[index])
-		eligible.remove_at(index)
+	var candidates := AcquisitionService.new(compiler).offered(candidate.selection, candidate.acquisition_context(), rng)
 	candidate.reward_rng_state = str(rng.state)
 	candidate.facts["offer_serial"] = int(candidate.facts.get("offer_serial", 0)) + 1
 	candidate.offer = {"id": "%s:reward:%d" % [run_id, int(candidate.facts.offer_serial)], "kind": "reward", "candidates": candidates}

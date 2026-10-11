@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T011"
+title = "雷池旁注"
+description = "雷鸣终章每次脉冲额外施加 {storm_domain_shock} 点感电。"
+modifiers = {&"storm_domain_shock": 3}
+tags = PackedStringArray("ultimate", "shock")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("storm")
+supported = true
+stage = &"relics-3"

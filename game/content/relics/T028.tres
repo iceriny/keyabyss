@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T028"
+title = "永夜雷卷"
+description = "雷鸣终章延长 {ultimate_ms_s} 秒，每次脉冲额外施加 {storm_domain_shock} 点感电。"
+modifiers = {&"ultimate_ms": 1500, &"storm_domain_shock": 6}
+tags = PackedStringArray("ultimate")
+max_stacks = 1
+rarity = &"awakening"
+allowed_books = PackedStringArray("storm")
+exclusive_group = &"storm_awakening"
+required_stacks = {&"T011": 2, &"T012": 2}
+supported = true
+stage = &"relics-3"

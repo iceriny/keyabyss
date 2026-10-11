@@ -54,10 +54,12 @@ static func draw_glyph(surface: CanvasItem, center: Vector2, radius: float, item
 		for rule in item.rules:
 			terms += " " + str(rule.operation)
 			for parameter in rule.parameters: terms += " " + str(parameter)
+		if item is RelicDefinition:
+			for parameter in item.modifiers: terms += " " + str(parameter)
 		_draw_engraving(surface, center + Vector2(0, 0.08) * radius, radius * 0.32, terms, color, line * 0.85)
-	var signature := str(item.id).substr(1).to_int()
-	for index in 8:
-		var direction := Vector2.from_angle(index * TAU / 8.0 - PI * 0.5)
+	var signature := str(item.id).substr(1).to_int() + ("RGFTPA".find(str(item.id).left(1)) + 1) * 256
+	for index in 11:
+		var direction := Vector2.from_angle(index * TAU / 11.0 - PI * 0.5)
 		var point := center + direction * radius * 0.88
 		if signature & (1 << index):
 			var leaf := PackedVector2Array([point - direction * radius * 0.10, point + direction.rotated(0.9) * radius * 0.14, point + direction * radius * 0.13, point - direction * radius * 0.10])
@@ -69,17 +71,18 @@ static func draw_glyph(surface: CanvasItem, center: Vector2, radius: float, item
 static func _motif(title: String) -> String:
 	for entry in [
 		["exclamation", ["惊叹"]], ["stop", ["终止"]],
-		["feather", ["羽毛", "羽签", "轻羽"]], ["nib", ["笔尖", "笔锋", "抄笔"]], ["rod", ["笔杆", "笔套", "笔架"]],
+		["fold", ["纸鹤", "纸偶", "纸翼"]],
+		["feather", ["羽毛", "羽签", "轻羽"]], ["nib", ["笔尖", "笔锋", "抄笔", "笔"]], ["rod", ["笔杆", "笔套", "笔架"]],
 		["shoe", ["鞋"]], ["knife", ["刀"]], ["crown", ["冠"]], ["hourglass", ["沙漏", "砂钟"]], ["bell", ["铃"]],
 		["compass", ["罗盘", "路标"]], ["ruler", ["尺"]], ["lens", ["镜", "玻片", "底片"]], ["gear", ["齿轮", "开关"]],
 		["coil", ["线圈", "接点", "电桥"]], ["net", ["网", "筛", "粉", "砂", "灰"]], ["tube", ["吸管", "虹吸"]],
 		["valve", ["阀"]], ["needle", ["针", "钉"]], ["clamp", ["夹", "扣"]], ["box", ["匣", "袋"]],
-		["cup", ["杯", "陶胆", "晶胆"]], ["crystal", ["晶", "棱", "楔"]], ["stone", ["石", "坠", "镇"]],
+		["cup", ["杯", "陶胆", "晶胆"]], ["crystal", ["晶", "棱", "楔"]], ["stone", ["石", "坠", "镇", "砚"]],
 		["thread", ["绳", "线", "索", "丝", "缝", "引线"]], ["stamp", ["印", "蜡", "标章", "雷章"]],
 		["bookmark", ["签", "封条", "书票"]], ["ring", ["环", "结界"]], ["beads", ["连珠"]],
-		["fold", ["使魔", "军团"]], ["book", ["书封", "封皮", "圣典", "残卷", "禁卷", "抄本", "底本", "卷", "字谱", "簿", "誓书"]],
+		["fold", ["使魔", "军团"]], ["book", ["书封", "封皮", "圣典", "残卷", "禁卷", "抄本", "底本", "卷", "字谱", "簿", "誓书", "书", "本", "册", "集", "录", "传", "诗", "歌", "纪事"]],
 		["bottle", ["墨水", "墨瓶", "银墨", "余烬墨", "墨囊", "墨池"]], ["drop", ["墨迹", "墨点", "墨核", "封釉"]],
-		["page", ["页", "片", "箔", "内衬", "字帖", "字模", "折痕"]]]:
+		["bottle", ["墨"]], ["page", ["页", "片", "箔", "内衬", "字帖", "字模", "折痕", "纸", "札", "批注", "注", "落款"]]]:
 		for word: String in entry[1]:
 			if title.contains(word): return entry[0]
 	return "script"
@@ -189,7 +192,7 @@ static func _draw_engraving(surface: CanvasItem, center: Vector2, radius: float,
 			surface.draw_line(center - axis * radius, center + axis * radius, color, line, true)
 	elif "charge" in terms or "conduct" in terms or "电" in terms or "雷" in terms:
 		_stroke(surface, center, radius, [Vector2(0.35, -1), Vector2(-0.44, 0.05), Vector2(0.38, -0.05), Vector2(-0.3, 1)], color, line)
-	elif "heat" in terms or "dot" in terms or "烬" in terms or "热" in terms:
+	elif "heat" in terms or "burn" in terms or "fire" in terms or "dot" in terms or "烬" in terms or "热" in terms:
 		_stroke(surface, center, radius, [Vector2(0, -1), Vector2(-0.7, 0.27), Vector2(-0.32, 0.85), Vector2(0.35, 0.85), Vector2(0.7, 0.24), Vector2(0, -1)], color, line)
 	elif "heal" in terms or "hp" in terms:
 		_stroke(surface, center, radius, [Vector2(-0.7, 0), Vector2(0.7, 0)], color, line)

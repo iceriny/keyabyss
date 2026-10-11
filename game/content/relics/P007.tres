@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P007"
+title = "伴读小册"
+description = "纸灵上限增加 {spirit_capacity}。"
+modifiers = {&"spirit_capacity": 1}
+tags = PackedStringArray("spirit")
+max_stacks = 1
+rarity = &"rare"
+allowed_books = PackedStringArray("spirit")
+requires_all = PackedStringArray("P001")
+supported = true
+stage = &"relics-3"

@@ -1,6 +1,7 @@
 class_name AcquisitionService
 extends RefCounted
 const ACTIVE_RELICS = BuildCompiler.RESTORED_RELICS
+const RARITY_WEIGHTS := {&"common": 100.0, &"uncommon": 65.0, &"rare": 30.0, &"awakening": 10.0}
 
 var compiler: BuildCompiler
 
@@ -12,31 +13,91 @@ func _init(build_compiler: BuildCompiler = null) -> void:
 func evaluate(selection: BuildSelection, content_id: StringName, context: Dictionary = {}) -> Dictionary:
 	var definition := compiler.catalog.get_definition(content_id) as RelicDefinition
 	var diagnostics: PackedStringArray = []
-	if selection == null or definition == null or content_id not in BuildCompiler.RESTORED_RELICS:
-		return _result(definition, PackedStringArray(["CONTENT_NOT_RESTORED"]))
+	if selection == null or definition == null:
+		return _result(definition, PackedStringArray(["UNKNOWN_RELIC"]))
 	var active := compiler.compile(selection)
 	if not active.success(): return _result(definition, active.diagnostics)
-	if active.build.asset_stacks(content_id) >= definition.max_stacks:
-		diagnostics.append("MAX_STACKS:" + str(content_id))
-	if not definition.allowed_books.is_empty() and str(selection.book_id) not in definition.allowed_books:
-		diagnostics.append("WRONG_MAIN_BOOK:" + str(content_id))
-	for required in definition.requires_all:
-		if active.build.asset_stacks(StringName(required)) == 0:
-			diagnostics.append("MISSING_RELIC:" + required)
+	diagnostics = _diagnose(definition, _qualification(active.build), context)
+	return _result(definition, diagnostics)
+
+
+func _diagnose(definition: RelicDefinition, qualification: Dictionary, context: Dictionary) -> PackedStringArray:
+	var stacks: Dictionary[StringName, int] = qualification.stacks
+	var diagnostics := definition.eligibility(qualification.book, stacks, stacks, qualification.capabilities, qualification.groups, true)
+	var content_id := definition.id
 	if content_id == &"R017" and int(context.get("longest", 0)) < 3:
 		diagnostics.append("VOCABULARY_NEEDS_ASSISTABLE_WORD")
 	if content_id == &"R014" and (int(context.get("shortest", 0)) < 1 or int(context.get("shortest", 0)) > 4):
 		diagnostics.append("VOCABULARY_NEEDS_SHORT_WORD")
 	if content_id == &"R015" and int(context.get("longest", 0)) < 7:
 		diagnostics.append("VOCABULARY_NEEDS_LONG_WORD")
-	return _result(definition, diagnostics)
+	return diagnostics
 
 func candidates(selection: BuildSelection, context: Dictionary = {}) -> PackedStringArray:
+	return _candidate_state(selection, context).ids
+
+
+func _candidate_state(selection: BuildSelection, context: Dictionary) -> Dictionary:
 	var ids: PackedStringArray = []
-	for id in compiler.catalog.ordered_ids():
-		if compiler.catalog.get_definition(StringName(id)) is RelicDefinition and evaluate(selection, StringName(id), context).eligible:
+	var active := compiler.compile(selection)
+	if not active.success(): return {"ids": ids, "build": null}
+	var qualification := _qualification(active.build)
+	for id in compiler.catalog.relic_ids():
+		var definition := compiler.catalog.get_definition(StringName(id)) as RelicDefinition
+		if _diagnose(definition, qualification, context).is_empty():
 			ids.append(id)
-	return ids
+	return {"ids": ids, "build": active.build}
+
+
+func _qualification(build: CompiledBuild) -> Dictionary:
+	var groups: Dictionary = {}
+	var stacks := build.assets()
+	for id in stacks:
+		var definition := compiler.catalog.get_definition(id) as RelicDefinition
+		if definition.exclusive_group == &"": continue
+		var members: Array[StringName] = []
+		if groups.has(definition.exclusive_group): members = groups[definition.exclusive_group]
+		members.append(id)
+		groups[definition.exclusive_group] = members
+	return {"book": build.book(), "stacks": stacks, "capabilities": build.capabilities(), "groups": groups}
+
+
+func offered(selection: BuildSelection, context: Dictionary, rng: RandomNumberGenerator, count: int = 3) -> Array[String]:
+	var state := _candidate_state(selection, context)
+	var ids: PackedStringArray = state.ids
+	var offers: Array[String] = []
+	if ids.is_empty() or count <= 0: return offers
+	var build: CompiledBuild = state.build
+	var owned_tags: PackedStringArray = []
+	for id in build.assets():
+		var definition := compiler.catalog.get_definition(id) as RelicDefinition
+		for tag in definition.tags:
+			if tag not in owned_tags: owned_tags.append(tag)
+	var weights: Array[float] = []
+	for id in ids:
+		var definition := compiler.catalog.get_definition(StringName(id)) as RelicDefinition
+		var weight: float = RARITY_WEIGHTS.get(definition.rarity, 100.0)
+		if definition.allowed_books.size() == 1 or str(build.book()) in definition.preferred_books: weight *= 1.4
+		for tag in definition.tags:
+			if tag in owned_tags:
+				weight *= 1.25
+				break
+		if build.asset_stacks(definition.id) > 0: weight *= 0.85
+		weights.append(weight)
+	while not ids.is_empty() and offers.size() < count:
+		var total := 0.0
+		for weight in weights: total += weight
+		var draw := rng.randf() * total
+		var index := weights.size() - 1
+		for position in weights.size():
+			draw -= weights[position]
+			if draw < 0.0:
+				index = position
+				break
+		offers.append(ids[index])
+		ids.remove_at(index)
+		weights.remove_at(index)
+	return offers
 
 
 

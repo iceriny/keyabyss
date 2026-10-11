@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F010"
+title = "宽边雪纸"
+description = "冰雾半径增加 {mist_radius}。"
+modifiers = {&"mist_radius": 12}
+tags = PackedStringArray("dodge", "mist")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("frost")
+supported = true
+stage = &"relics-3"

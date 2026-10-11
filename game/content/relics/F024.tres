@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F024"
+title = "炉边雪稿"
+description = "寒气超过30点的敌人，灼烧伤害提高 {cold_burn_pct}%。"
+modifiers = {&"cold_burn_pct": 14}
+tags = PackedStringArray("cold", "burn")
+max_stacks = 2
+rarity = &"rare"
+allowed_books = PackedStringArray("frost")
+requires_capabilities = PackedStringArray("burn")
+supported = true
+stage = &"relics-3"

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P026"
+title = "群纸列传"
+description = "纸灵上限增加 {spirit_capacity}，交叉斩伤害提高 {cross_pct}%。"
+modifiers = {&"spirit_capacity": 1, &"cross_pct": 25}
+tags = PackedStringArray("cross", "spirit")
+max_stacks = 1
+rarity = &"awakening"
+allowed_books = PackedStringArray("spirit")
+exclusive_group = &"spirit_awakening"
+required_stacks = {&"P006": 2, &"P007": 1}
+supported = true
+stage = &"relics-3"

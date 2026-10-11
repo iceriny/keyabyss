@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G031"
+title = "珍藏书匣"
+description = "释放终式时，获得 {ultimate_shield} 点护盾。"
+modifiers = {&"ultimate_shield": 5}
+tags = PackedStringArray("ultimate", "shield")
+max_stacks = 2
+rarity = &"rare"
+required_stacks = {&"G019": 2}
+grants_capabilities = PackedStringArray("shield")
+supported = true
+stage = &"relics-3"

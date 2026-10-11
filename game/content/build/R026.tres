@@ -15,10 +15,14 @@ parameters = {
 [resource]
 script = ExtResource("1")
 id = &"R026"
-title = "引力墨核"
-description = "直接施法命中时，牵引附近敌人靠近落点，便于穿透与连锁。"
+title = "牵引墨"
+description = "直接施法命中时，牵引附近敌人靠近落点。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
 max_stacks = 1
+numbers = {}
+stack_values = PackedStringArray()
+tags = PackedStringArray("area")
+rarity = &"uncommon"

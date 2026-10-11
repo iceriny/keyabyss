@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G017"
+title = "蘸水笔"
+description = "完美御术成功时，获得 {parry_shield} 点护盾。"
+modifiers = {&"parry_shield": 2}
+tags = PackedStringArray("parry", "shield")
+max_stacks = 2
+rarity = &"common"
+grants_capabilities = PackedStringArray("shield")
+supported = true
+stage = &"relics-3"

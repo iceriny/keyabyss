@@ -10,7 +10,7 @@
 
 冰火小样已接入正式战斗，并继续保留 `development/element_lab/run.cmd` 作为独立观察入口。两者共用 `ui/effects/frost_growth.*`、`frost_surface.glsl`、`combustion.*` 及 `ui/materials/ice_surface.gdshader`、`combustion.gdshader`。晶枝实时附着、增厚，薄膜从成熟枝网延迟铺展，晶尖领先；两张生成微观纹理位于 `assets/art/effects/`。小样可切换膜层及水汽密度，暂停时仍可移动灯光，详见[小样说明](../development/element_lab/README.md)。
 
-正式入口已收缩：主书直接起局，编译／奖励只读取主书及 R001–R058，旧天赋、副书、形状和材料不再参与。`s2_itinerary.tres` 连接三章九房、17 类普通敌人与三位守关者；路线为休息／付血换遗物。图鉴使用固定列表与详情。留痕按有效字符自动增长，最多增加 20 点初始生命。连续挑战保留主书、遗物和已用机会，先升档，再进入最高档周目。
+主书直接起局，编译／奖励读取统一遗物目录：R001–R058及`game/content/relics/`，共196件，每书可达池106件。旧天赋、副书、形状和材料不参与。`s2_itinerary.tres`连接三章九房、17类普通敌人与三位守关者；路线为休息／付血换遗物。图鉴使用固定列表与详情。留痕按有效字符自动增长，最多增加20点初始生命。连续挑战保留主书、遗物和已用机会，先升档，再进入最高档周目。
 
 御术按真实玩家碰撞体和至多 0.06 秒来弹轨迹预测判定；持续 0.30 秒，前 0.10 秒为完美，冷却 0.70 秒（R058 为 0.49）。普通防御免除该攻击伤害并轻推周围敌人，力度为完美防御的 15%，保留运动、蓄力、冲锋与待发攻击；已防住的同次冲锋继续穿越且不重复伤害玩家。完美反射敌弹或中断近战／冲锋，区域攻击不反射。两种防御命中后，每次御术产生一次 160 设计像素的周边击退，直接攻击者受力更强，按质量衰减，不附加范围伤害；空按不产生击退，范围不参与来弹拦截。反制道具在 520 设计像素范围内反射敌弹并中断敌人及 Boss，基础伤害为 12 点，不随反射弹数膨胀。普通纸灵移动推进为原来的 0.75，特殊交叉合击、伤害和存续计时不变。
 
@@ -59,20 +59,20 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `game/vocabulary/` | 具名词条与导入报告、五类外部格式解析、严格选词、用户词表原子保存 |
 | `game/persistence/app_settings.gd` | ConfigFile 设置与备份恢复，分辨率预设、自动输出、窗口／全屏及音量应用 |
 | `ui/game_display.gd` | 1920×1080 设计坐标与实际输出分离，统一游戏像素预算、独立界面缩放和高分辨率字体采样 |
-| `ui/page_shell.gd`、`open_button.gd` | 固定标题／操作、内部滚动、开放按钮柔光、词令使用辅助字体；普通控件无默认焦点和 Tooltip |
+| `ui/page_shell.gd`、`open_button.gd` | 固定标题／操作、内部滚动、开放按钮柔光、词令使用辅助字体；普通控件无默认焦点或默认Tooltip，正文术语由专用系统解释 |
 | `ui/command_tag.gd`、`ui/key_hint.gd`、`ui/scenes/key_hint.tscn` | 可见词令标签与具名按键标记；词令操作调用同一个真实控件，文本编辑和滑条调整有独立输入归属 |
 | `ui/smooth_scroll.gd` | 桌面滚轮连续目标与浮点收敛；滚动条拖动立即接管，减少动态直接定位 |
 | `ui/viewport_output.gd` | 编辑器与运行时都按输出节点的相对路径取得 HDR 视口纹理，避免嵌套场景的局部纹理路径失效 |
 | `ui/archive_stage.gd`、`archive_theme.gd` | 场景独立 HDR 合成、WorldEnvironment 柔光与全幅选书折射；原生文字不受模糊；共享 Theme 实例随当前 accent 渐变。减少动态按需刷新一帧并在渲染后停更 |
 | `ui/guide_content.gd` | 输入、防御、道具、远征、成长和连续挑战说明，四条直观遗物示例与词输入练习入口 |
 | `ui/practice_page.gd` | 实际词会话、三词选择、渐进词长、本次人工字符／错字统计；不发成长收入 |
-| `game/build/`、`game/content/build/` | 4 书和 58 件遗物定义、构筑快照、叠层、局内多前置、逐份资产与使用身份；旧字段只供已存档数据解析 |
+| `game/build/`、`game/content/build/`、`game/content/relics/` | 四书与196件遗物、能力／层数拓扑、互斥、参数上限、构筑快照、逐份资产；旧字段只供存档解析 |
 | `game/progression/`、`game/persistence/save_repository.gd` | 自动线性成长、普通／God 隔离、正式获取、经验事实、奖励与保存成功后发布的事务；旧版本首次迁移保留独立原档副本 |
 | `game/session/run_session.gd`、`run_state_codec.gd` | 九房流程、简单路线、保存边界、跨房遗物周期、去重结算、通关保留遗物升档及最高档周目 |
 | `RunSession.suspend_battle`、`restart`、`isolate_to_god` | 单份活动存档、窗口关闭保存、房间级恢复、重开原子归档；隐藏 God 接管先保护普通档锁，再写隔离档，失败可重试且不重复成长 |
 | `ui/journey_emblem.gd`、`app/main.gd` 的行间／留痕／记录 | 原生线绘路线选择、五阶成长进度、固定列表及历史构筑详情；构筑与记录统计正式遗物实例 |
-| `ui/content_description.gd`、`app/main.gd` 的图鉴页面 | 58 件遗物的固定列表与详情、检索、层数和当前获取条件；奖励与图鉴共用描述和图形 |
-| `ui/relic_reward_choice.gd`、`ui/materials/relic_choice.gdshader` | 三件遗物并排展示共用图形、名称与简述，独立详情阻止背景领取；羽化透光材质、图案点击与正式获取事务 |
+| `ui/game_text.gd`、`content_description.gd`、`game_terms.gd`、`term_tooltips.gd` | 动态数值、层数比较、前置／互斥及全局正文悬浮解释；奖励、196件图鉴、指南与记录共用 |
+| `ui/relic_reward_choice.gd`、`ui/materials/relic_choice.gdshader` | 三卡固定布局、稀有度色彩、四书觉醒光纹、按住Alt详情、内部滚动、正式获取事务 |
 | `game/session/battle_session.gd`、`game/session/run_combat_state.gd`、`game/spells/spell_runtime.gd` | 唯一固定步、四书独立产出、接触与有限派生、遗物周期、道具词咒、防御、一次结果与跨房交接 |
 | `game/combat/damage_packet.gd`、`game/content/element_trait.gd` | 五类伤害组成、确定分割与实际抗性结算 |
 | `development/build_lab.tscn`、`build_lab.gd`、`build_lab_scenarios.gd` | 完整目录、编译诊断、十类遭遇、正式输入及战斗链、有效结果与来源检查、安全更新；独立开发配置 |

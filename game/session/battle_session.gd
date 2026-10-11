@@ -231,7 +231,7 @@ func start(request: BattleStartRequest, state: RunCombatState = null) -> void:
 	_attack_serial = 0
 	_apply_acquisition()
 	if compiled_build.has(&"room-price") and run_state.claim_asset("room:%s" % ledger.room_id, &"price"):
-		player_hp_q = maxi(Q, player_hp_q - 10 * Q)
+		player_hp_q = maxi(Q, player_hp_q - roundi(Q * compiled_build.relic_number(&"R042", &"room_cost")))
 	god_mode = request.god_mode
 	if god_mode: _fill_god_resources()
 	state_changed.emit()
@@ -253,7 +253,7 @@ func _fill_god_resources() -> void:
 func _apply_acquisition() -> void:
 	for asset in compiled_build.asset_instances():
 		if asset.content_id == &"R012" and run_state.claim_asset(asset.usage_key(), &"heal"):
-			runtime.heal(30 * Q)
+			runtime.heal(roundi(Q * compiled_build.relic_number(&"R012", &"heal")))
 		if asset.content_id == &"R009" and run_state.claim_asset(asset.usage_key(), &"dodge-charge"):
 			dodge_charges = minf(2.0 + compiled_build.value(&"dodge_capacity"), dodge_charges + 1.0)
 
@@ -361,7 +361,7 @@ func _start_room(selected_book: StringName, entries: Array[VocabularyEntry], sel
 	_enemy_health_scale = MODE_HEALTH[_difficulty_rank] * (1.0 + depth * (0.065 + _difficulty_rank * 0.009) + depth * depth * 0.0025) * pow(1.18, loop_index)
 	_enemy_speed_scale = minf(4.8, MODE_SPEED[_difficulty_rank] * (1.0 + depth * (0.028 + _difficulty_rank * 0.004)))
 	_enemy_attack_scale = maxf(0.42, MODE_WINDOW[_difficulty_rank] / (1.0 + depth * (0.018 + _difficulty_rank * 0.004))) / (1.0 + 0.04 * loop_index)
-	_dodge_recovery_seconds = MODE_DODGE_CD[_difficulty_rank] * (0.72 if compiled_build.asset_stacks(&"R009") > 0 else 1.0)
+	_dodge_recovery_seconds = MODE_DODGE_CD[_difficulty_rank] * (1.0 - compiled_build.relic_number(&"R009", &"recovery_pct") / 100.0)
 	_hurt_iframe = MODE_IFRAME[_difficulty_rank]
 	_spawned = 0
 	_room_world_time = 0.0
@@ -498,7 +498,7 @@ func step(delta: float) -> void:
 			manual_characters += 1
 			add_resonance(roundi(1.2 * Q))
 			if not spirits.is_empty():
-				spirit_time = 8.0 + compiled_build.asset_stacks(&"R005") + 2.0 * compiled_build.asset_stacks(&"R035")
+				spirit_time = RelicParameters.spirit_duration(compiled_build)
 			_progression_dirty = true
 			event_committed.emit({"kind": &"manual_input", "at": player_position})
 	for attempt in _abandoned:
@@ -523,7 +523,7 @@ func step(delta: float) -> void:
 	parry_cooldown = maxf(0.0, parry_cooldown - delta)
 	dodge_window = maxf(0.0, dodge_window - delta)
 	hurt_window = maxf(0.0, hurt_window - delta)
-	_dodge_recovery_seconds = MODE_DODGE_CD[_difficulty_rank] * (0.72 if compiled_build.asset_stacks(&"R009") > 0 else 1.0)
+	_dodge_recovery_seconds = MODE_DODGE_CD[_difficulty_rank] * (1.0 - compiled_build.relic_number(&"R009", &"recovery_pct") / 100.0)
 	dodge_charges = minf(2.0 + compiled_build.value(&"dodge_capacity"), dodge_charges + delta / _dodge_recovery_seconds)
 	dodge_cooldown = maxf(0.0, (1.0 - dodge_charges) * _dodge_recovery_seconds)
 	var world_step := world_delta(delta)
@@ -566,7 +566,7 @@ func step(delta: float) -> void:
 		for asset in compiled_build.asset_instances():
 			if asset.content_id == &"R024" and run_state.claim_asset(asset.usage_key(), &"revive"):
 				@warning_ignore("integer_division")
-				player_hp_q = roundi(player_max_hp_q * 0.45)
+				player_hp_q = roundi(player_max_hp_q * compiled_build.relic_number(&"R024", &"heal_pct") / 100.0)
 				hurt_window = 3.0
 				threats.clear()
 				hazards.clear()
@@ -704,7 +704,7 @@ func _commit_word(completion: WordCompletion) -> void:
 func add_resonance(amount: int) -> void:
 	if ultimate_time > 0.0: return
 	var before := resonance_q
-	resonance_q = mini(ULTIMATE_COST_Q, resonance_q + roundi(amount * (1.35 if compiled_build.asset_stacks(&"R040") > 0 else 1.0)))
+	resonance_q = mini(ULTIMATE_COST_Q, resonance_q + roundi(amount * (1.0 + compiled_build.relic_number(&"R040", &"resonance_pct") / 100.0) * RelicParameters.ratio(compiled_build, &"resonance_pct")))
 	if before < ULTIMATE_COST_Q and resonance_q == ULTIMATE_COST_Q:
 		event_committed.emit({"kind": &"ultimate_ready", "at": player_position})
 
@@ -752,6 +752,8 @@ func _advance_effects(delta: float) -> void:
 		if effect.kind in [&"frost_spear", &"frost_fragment", &"frost_ultimate", &"flame_burst", &"flame_splash", &"flame_meteor", &"echo"]:
 			var projectile := BattleProjectile.new(effect)
 			projectile.speed *= float(Q + effect.build.value(&"flight_speed_q")) / Q
+			if effect.kind in [&"frost_spear", &"frost_fragment", &"frost_ultimate"]:
+				projectile.speed *= RelicParameters.ratio(effect.build, &"frost_flight_pct")
 			projectile.velocity = ((target.position - projectile.position) * ARENA_SIZE).normalized() * projectile.speed
 			projectiles.append(projectile)
 		else:
@@ -877,7 +879,7 @@ func _advance_blades(delta: float) -> void:
 				spirit.endpoint = target.position
 			elif spirit.mode == &"return":
 				spirit.endpoint = orbit
-			var flight_scale := (1.0 if spirit.crossing else SPIRIT_MOVEMENT_SCALE) * (1.8 if book_id == &"spirit" and ultimate_time > 0.0 else 1.0)
+			var flight_scale := (1.0 if spirit.crossing else SPIRIT_MOVEMENT_SCALE) * (1.8 if book_id == &"spirit" and ultimate_time > 0.0 else 1.0) * RelicParameters.ratio(compiled_build, &"spirit_speed_pct")
 			spirit.flight_time = minf(spirit.duration, spirit.flight_time + delta * flight_scale)
 			spirit.position = spirit.sample(spirit.flight_time / spirit.duration)
 			if delta > 0.0:
@@ -894,6 +896,7 @@ func _advance_blades(delta: float) -> void:
 					spirit.damage_q = 0
 					spirit.struck = true
 					spirit.cooldown = 0.6 if ultimate_time > 0.0 and book_id == &"spirit" else 1.2
+					spirit.cooldown *= 1.0 - compiled_build.modifier(&"spirit_cooldown_pct") / 100.0
 					if spirit.crossing and compiled_build.asset_stacks(&"R048") > 0: spirit.cooldown = 0.0
 					spirit.crossing = false
 					spirit.begin(&"return", orbit)
@@ -919,7 +922,7 @@ func _spirit_orbit(slot: int, count: int) -> Vector2:
 
 func _summon_spirit() -> void:
 	var count := spirit_blade_count()
-	var capacity := (SPIRIT_CAPACITY if book_id == &"spirit" else 1) + compiled_build.value(&"summon_capacity")
+	var capacity := spirit_capacity()
 	if count >= capacity:
 		return
 	var spirit := BattleSpirit.new()
@@ -929,6 +932,10 @@ func _summon_spirit() -> void:
 	spirit.cooldown = 0.35 + count * 0.15
 	spirits.append(spirit)
 	event_committed.emit({"kind": &"spirit_summon", "at": spirit.position})
+
+
+func spirit_capacity() -> int:
+	return (SPIRIT_CAPACITY if book_id == &"spirit" else 1) + compiled_build.value(&"summon_capacity") + compiled_build.modifier(&"spirit_capacity")
 
 
 func spirit_target(origin: Vector2) -> BattleEnemy:
@@ -946,7 +953,7 @@ func spirit_target(origin: Vector2) -> BattleEnemy:
 func command_spirit_cross(mark: BattleEffect, target: BattleEnemy) -> void:
 	for spirit in spirits:
 		if spirit.effect != null: runtime.retire(spirit.effect)
-		var lot := ledger.earn(mark.lot.root_id, StringName("cross:%d" % spirit.slot), compiled_build.identity(), SpellLot.Kind.POWER, roundi(mark.base_power_q * 0.18 * (2.0 if compiled_build.asset_stacks(&"R048") > 0 else 1.0)), &"spirit-cross", DamagePacket.Element.PAPER)
+		var lot := ledger.earn(mark.lot.root_id, StringName("cross:%d" % spirit.slot), compiled_build.identity(), SpellLot.Kind.POWER, roundi(mark.base_power_q * 0.18 * (1.0 + compiled_build.relic_number(&"R048", &"cross_pct") / 100.0) * RelicParameters.ratio(compiled_build, &"cross_pct")), &"spirit-cross", DamagePacket.Element.PAPER)
 		spirit.effect = runtime._effect(lot, &"spirit_cross", target.id, spirit.position, compiled_build)
 		spirit.effect.depth = 1
 		spirit.target_id = target.id
@@ -1006,7 +1013,7 @@ func _advance_enemy_motion(delta: float) -> void:
 			desired = enemy.charge_direction * enemy.charge_speed
 		desired *= enemy.cold_move_scale()
 		if enemy.local_slow_time > 0.0: desired *= 0.75
-		if compiled_build.asset_stacks(&"R018") > 0 and typing.target_id == enemy.id: desired *= 0.82
+		if typing.target_id == enemy.id: desired *= 1.0 - compiled_build.relic_number(&"R018", &"slow_pct") / 100.0
 		for source in enemies:
 			if source.alive() and source != enemy and source.aura == &"haste" and enemy_in_combat(source) and ((source.position - enemy.position) * ARENA_SIZE).length() <= source.aura_radius:
 				desired *= 1.18
@@ -1472,7 +1479,7 @@ func _commit_action(action: StringName) -> void:
 		if parry_cooldown <= 0.0 and _dodge_time >= 0.17:
 			parry_window = DEFENSE_WINDOW
 			_perfect_reflect_remaining = 0.0
-			parry_cooldown = 0.49 if compiled_build.asset_stacks(&"R058") > 0 else 0.7
+			parry_cooldown = RelicParameters.parry_cooldown(compiled_build)
 			_parry_succeeded = false
 			event_committed.emit({"kind": &"parry_start", "at": _player_position()})
 		else:
@@ -1632,6 +1639,8 @@ func _parry_feedback(source_id: StringName, grade: StringName = &"perfect") -> v
 	var perfect := grade == &"perfect"
 	if perfect:
 		# Start once on success; later hits cannot refresh the reflection window.
+		runtime.add_shield(compiled_build.modifier(&"parry_shield") * Q)
+		add_resonance(compiled_build.modifier(&"parry_resonance") * Q)
 		_perfect_reflect_remaining = PERFECT_REFLECT_WINDOW
 		parry_window = maxf(parry_window, PERFECT_REFLECT_WINDOW)
 		counter_slow_remaining = 0.52
@@ -1871,13 +1880,11 @@ func _commit_ultimate() -> void:
 	var center := player_position
 	var ultimate := BattleUltimate.new(book_id, center)
 	ultimate.effect = runtime.ultimate(target)
-	ultimate.duration += compiled_build.value(&"ultimate_duration_ms") / 1000.0
+	ultimate.duration = RelicParameters.ultimate_duration(compiled_build)
 	if book_id == &"frost": runtime.add_shield(20 * Q)
 	if book_id == &"frost" and compiled_build.asset_stacks(&"R045") > 0:
-		runtime.add_shield(10 * Q)
-	if book_id == &"storm" and compiled_build.asset_stacks(&"R047") > 0: ultimate.duration = 9.0
-	if book_id == &"flame" and compiled_build.asset_stacks(&"R056") > 0:
-		ultimate.duration = 7.0
+		runtime.add_shield(roundi(Q * compiled_build.relic_number(&"R045", &"shield")))
+	runtime.add_shield(compiled_build.modifier(&"ultimate_shield") * Q)
 	ultimate.lifetime = maxf(ultimate.lifetime, ultimate.duration)
 	ultimate.pulses_left += compiled_build.value(&"ultimate_pulses")
 	ultimates.append(ultimate)
@@ -1891,7 +1898,7 @@ func _commit_ultimate() -> void:
 			var direction := ((enemy.position - center) * ARENA_SIZE).normalized()
 			enemy.impulse += direction * (120.0 if enemy.boss else 500.0) / enemy.mass
 		if book_id == &"flame":
-			runtime._deal(enemy, roundi(60 * Q * runtime.damage_multiplier()), &"flame_wave", center, 1, ultimate.effect.lot.root_id)
+			runtime._deal(enemy, roundi(60 * Q * runtime.damage_multiplier() * RelicParameters.ratio(compiled_build, &"flame_wave_pct")), &"flame_wave", center, 1, ultimate.effect.lot.root_id)
 	if book_id == &"spirit":
 		spirit_time = 8.0
 		for blade in SPIRIT_CAPACITY: _summon_spirit()
@@ -1919,15 +1926,15 @@ func _advance_ultimates(delta: float) -> void:
 			var targets := runtime._nearby(ultimate.center, ultimate.radius)
 			for enemy in targets:
 				match ultimate.book:
-					&"frost": runtime._apply_cold(enemy, 18 * Q, compiled_build)
-					&"storm": runtime.add_shock(enemy, 18)
+					&"frost": runtime._apply_cold(enemy, (18 + compiled_build.modifier(&"ultimate_cold")) * Q, compiled_build)
+					&"storm": runtime.add_shock(enemy, 18 + compiled_build.modifier(&"storm_domain_shock"))
 					&"flame":
 						runtime.add_burn(enemy, 15, ultimate.effect.lot.root_id, 1)
-						runtime._deal(enemy, roundi(12 * Q * runtime.damage_multiplier()), &"flame_domain", ultimate.center, 1, ultimate.effect.lot.root_id)
+						runtime._deal(enemy, roundi(12 * Q * runtime.damage_multiplier() * RelicParameters.ratio(compiled_build, &"flame_domain_pct")), &"flame_domain", ultimate.center, 1, ultimate.effect.lot.root_id)
 			if ultimate.book == &"frost" and not targets.is_empty():
 				var target: BattleEnemy = targets[_rng.randi_range(0, targets.size() - 1)]
 				var origin := target.position + Vector2.from_angle(_rng.randf() * TAU) * 240.0 / ARENA_SIZE
-				var lot := ledger.earn(ultimate.effect.lot.root_id, StringName(runtime._tx("ice-domain")), compiled_build.identity(), SpellLot.Kind.POWER, roundi(36 * Q * runtime.damage_multiplier()), &"ice-domain", DamagePacket.Element.ICE)
+				var lot := ledger.earn(ultimate.effect.lot.root_id, StringName(runtime._tx("ice-domain")), compiled_build.identity(), SpellLot.Kind.POWER, roundi(36 * Q * runtime.damage_multiplier() * RelicParameters.ratio(compiled_build, &"frost_domain_pct")), &"ice-domain", DamagePacket.Element.ICE)
 				var spear := runtime._effect(lot, &"frost_ultimate", target.id, origin, compiled_build)
 				spear.manual_count = 3
 				spear.depth = 1
@@ -1976,7 +1983,7 @@ func commit_damage(enemy: BattleEnemy, damage_q: int, raw_q: int, source: String
 	if not enemy.alive():
 		enemy.aiming = false
 		if enemy.marked_time > 0.0 and compiled_build.asset_stacks(&"R049") > 0:
-			add_resonance(8 * Q)
+			add_resonance(roundi(Q * compiled_build.relic_number(&"R049", &"resonance")))
 		runtime.on_enemy_death(enemy, source, 0)
 		var death_definition: EnemyCombatDefinition = _enemy_definitions[enemy.id]
 		if death_definition.death_spawn_kind != &"" and not enemy.small:
@@ -2073,7 +2080,9 @@ func _take_player_damage(amount: int, attack_id: String) -> void:
 	var shield := mini(run_state.shield_q, amount)
 	run_state.shield_q -= shield
 	amount -= shield
-	amount = roundi(amount * pow(0.75, compiled_build.asset_stacks(&"R019")))
+	amount = roundi(amount * (1.0 + compiled_build.relic_number(&"R019", &"damage_pct") / 100.0))
+	amount = roundi(amount * (1.0 - compiled_build.modifier(&"defense_pct") / 100.0))
+	amount = roundi(amount * (1.0 + compiled_build.relic_number(&"R043", &"incoming_pct") / 100.0))
 	@warning_ignore("integer_division")
 	amount = amount * (Q + compiled_build.value(&"incoming_bonus_q")) / Q
 	player_hp_q = maxi(0, player_hp_q - amount)

@@ -54,7 +54,7 @@ var hover_amount := PackedFloat32Array([0.0, 0.0, 0.0, 0.0])
 var caption: VBoxContainer
 var title_group: VBoxContainer
 var archive_label: Label
-var menu: VBoxContainer
+var menu: GridContainer
 var prepare_button: OpenButton
 var back_button: OpenButton
 var left_wing: VBoxContainer
@@ -99,8 +99,9 @@ func _ready() -> void:
 	book_command = $BookCommand
 	hint = $Hint
 	bottom_hint.text = ""
-	var home_keys := VBoxContainer.new()
+	var home_keys := HBoxContainer.new()
 	home_keys.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	home_keys.add_theme_constant_override("separation", 24)
 	bottom_hint.add_child(home_keys)
 	home_keys.add_child(KeyHint.create("← / →", "切换法书"))
 	home_keys.add_child(KeyHint.create("Enter", "准备出征"))
@@ -433,15 +434,15 @@ func _layout() -> void:
 	floor_plane.size = Vector2(minf(safe_width * .85, 1200), content_height * .35)
 	floor_plane.position = Vector2(size.x*.5, content_height*.62) - floor_plane.size*.5
 	caption.size.x = minf(470.0, safe_width * .44)
-	menu.position = Vector2(safe_left + safe_width * .05, content_height - 32 - menu.get_combined_minimum_size().y)
-	menu.size.x = 235
-	prepare_button.position = Vector2(size.x * .5 - 130, content_height - 78)
+	menu.position = Vector2(safe_left + safe_width * .05, content_height - 42 - menu.get_combined_minimum_size().y)
+	menu.size.x = 390
+	prepare_button.position = Vector2(size.x * .5 - 130, content_height - 96)
 	prepare_button.size = Vector2(260, 52)
 	back_button.position = Vector2(safe_left + safe_width * .05, 85)
 	left_wing.size.x = minf(390, safe_width * .26)
 	right_wing.size.x = minf(390, safe_width * .26)
-	bottom_hint.position = Vector2(safe_left + safe_width * .95 - 166, size.y - 55)
-	bottom_hint.size = Vector2(166, 48)
+	bottom_hint.position = Vector2(safe_left + safe_width * .95 - 350, size.y - 44)
+	bottom_hint.size = Vector2(350, 32)
 	command_label.position = Vector2(safe_left + safe_width*.05, size.y - 44)
 	command_label.size = Vector2(650, 38)
 	book_command.hide()
@@ -551,8 +552,6 @@ func _safe_left() -> float:
 
 func _draw_decoration() -> void:
 	decoration.draw_line(Vector2(0, size.y - 64), Vector2(size.x, size.y - 64), Color(accent, .16), 1.0)
-	if prepared:
-		decoration.draw_string(get_theme_default_font(), Vector2(size.x * .5 - 180, size.y - 165), "三章 · 九场 · 一次全新构筑", HORIZONTAL_ALIGNMENT_CENTER, 360, 15, Color("9caa9f"))
 
 
 func _text(parent: Node, value: String, font_size: int, color: Color) -> Label:

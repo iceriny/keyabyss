@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G030"
+title = "朱批薄册"
+description = "生命不足40%时，伤害提高 {low_health_pct}%；受到的生命伤害增加 {defense_pct_abs}%。"
+modifiers = {&"low_health_pct": 10, &"defense_pct": -5}
+tags = PackedStringArray("risk")
+max_stacks = 2
+rarity = &"uncommon"
+exclusive_group = &"binding"
+supported = true
+stage = &"relics-3"

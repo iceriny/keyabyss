@@ -158,7 +158,9 @@ func _process(delta: float) -> void:
 			_create_actor(enemy)
 		_actors[enemy.id].sync_enemy(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, session.world_time, delta, reduced_motion, quality)
 		_actors[enemy.id].modulate.a = (1.0 - _actors[enemy.id].dead_time) * (1.0 if enemy.combat_locked else 0.06 + 0.94 * pow(BattleSession.arena_clarity(enemy.position, enemy.radius), 2.0))
+	var active_projectiles: Dictionary[BattleProjectile, bool] = {}
 	for projectile in session.projectiles:
+		active_projectiles[projectile] = true
 		if not _projectile_nodes.has(projectile):
 			var visual := BattleProjectileVisual.create(projectile, quality, reduced_motion)
 			visual.world_size = size
@@ -166,7 +168,7 @@ func _process(delta: float) -> void:
 			_projectile_nodes[projectile] = visual
 		_projectile_nodes[projectile].sync_frame(size, Engine.get_physics_interpolation_fraction())
 	for projectile in _projectile_nodes.keys():
-		if not session.projectiles.has(projectile):
+		if not active_projectiles.has(projectile):
 			_projectile_nodes[projectile].retire()
 			_projectile_nodes.erase(projectile)
 	for spirit in session.spirits:

@@ -24,6 +24,9 @@ func _run() -> void:
 	app.presentation_enabled = "--setup-feedback" in OS.get_cmdline_user_args()
 	root.add_child(app)
 	await _settle()
+	if "--relic-upgrade" in OS.get_cmdline_user_args():
+		await _review_relic_upgrade()
+		return
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--cleanup-route="):
 			await _review_cleanup(argument.trim_prefix("--cleanup-route="))
@@ -131,6 +134,145 @@ func _run() -> void:
 	report.close()
 	print("UI refinement checks: %d passed, %d failed | %s" % [checks.size() - failures, failures, evidence])
 	quit(0 if failures == 0 else 1)
+
+
+func _review_relic_upgrade() -> void:
+	await create_timer(0.4).timeout
+	await _capture("relic-home")
+	var catalog := BuildCatalog.new()
+	for id in catalog.relic_ids():
+		var relic := catalog.get_definition(StringName(id)) as RelicDefinition
+		for stack in [1, relic.max_stacks]:
+			var description := ContentDescription.summary(relic, stack)
+			_check(not description.contains("{") and not description.contains("}"), "%s layer %d renders every numeric token" % [id, stack])
+	_check(ContentDescription.summary(catalog.get_definition(&"R001"), 2).contains("56.25"), "compound growth reads the same numeric definition")
+	_check(GameTerms.matches("完美御术后获得护盾").size() == 2, "longest terms avoid nested duplicate explanations")
+	app.run = RunSession.new(app.saves, app.profile)
+	_check(app.run.begin(&"frost", app.settings), "isolated UI run starts")
+	app.run.phase = "REWARD"
+	app.run.rewards.earned = 3
+	app.run.offer = {"id": "ui-relic", "candidates": ["G001", "F007", "F026"]}
+	app.run.selection.assets = {&"F003": 1, &"F007": 1}
+	app._show_run_stage(false)
+	await _settle()
+	var choices := app.page.body.get_node("RewardChoices")
+	var first := choices.get_child(0) as RelicRewardChoice
+	var second := choices.get_child(1) as RelicRewardChoice
+	var third := choices.get_child(2) as RelicRewardChoice
+	_check(first._surface != second._surface and second._surface != third._surface, "rarity cards own independent shader state")
+	_check(first._surface.get_shader_parameter("rarity_color") != third._surface.get_shader_parameter("rarity_color"), "rarities visibly use different colors")
+	_check(bool(third._surface.get_shader_parameter("awakening")), "awakening enables the book effect")
+	var original_rect := first.get_global_rect()
+	var button := first.content.get_child(first.content.get_child_count() - 1) as Button
+	var button_rect := button.get_global_rect()
+	await _capture("relic-summary")
+	await _alt(true)
+	_check(first.detail_mode and second.detail_mode and third.detail_mode, "physical Alt opens all card details")
+	_check((second.get_node("Content/Reading/Description") as Label).text.contains("取得后 · 2层"), "owned relic preview shows actual next layer")
+	_check(first.get_global_rect() == original_rect and button.get_global_rect() == button_rect, "Alt keeps card and action positions fixed")
+	await _capture("relic-alt")
+	await _alt(false)
+	_check(not first.detail_mode and not third.detail_mode, "releasing Alt restores summaries")
+	var prose := second.get_node("Content/Reading/Description") as Label
+	var found := GameTerms.matches(prose.text)
+	_check(not found.is_empty(), "reward effect contains a registered term")
+	if not found.is_empty():
+		var bounds := prose.get_character_bounds(found[0].get_start())
+		var motion := InputEventMouseMotion.new()
+		motion.position = root.get_screen_transform() * prose.get_global_transform() * bounds.get_center()
+		Input.parse_input_event(motion)
+		await create_timer(0.4).timeout
+		_check(app.term_tooltips._bubble.visible and app.term_tooltips._title.text == found[0].get_string(), "real pointer over a shaped character opens its glossary entry")
+		_check(app.term_tooltips._bubble.mouse_filter == Control.MOUSE_FILTER_IGNORE, "tooltip never intercepts reward input")
+		await _capture("relic-tooltip")
+		await _move_to(app.page.heading)
+		_check(not app.term_tooltips._bubble.visible, "moving away dismisses term explanation")
+	third.reduced_motion = false
+	await create_timer(0.4).timeout
+	_check(float(third._surface.get_shader_parameter("clock")) > 0.0, "awakening motion advances with normal motion")
+	await _capture("relic-frost-motion")
+	third.reduced_motion = true
+	await _settle()
+	_check(is_zero_approx(float(third._surface.get_shader_parameter("clock"))), "reduced motion freezes awakening animation")
+	for book in [&"flame", &"storm", &"spirit"]:
+		app.run.selection.book_id = book
+		app.run.selection.assets.clear()
+		var awakening: String = {&"flame": "A021", &"storm": "T026", &"spirit": "P026"}[book]
+		app.run.offer.candidates = [awakening, "G027", "G025"]
+		app._show_run_stage(false)
+		await _settle()
+		var card := app.page.body.get_node("RewardChoices").get_child(0) as RelicRewardChoice
+		var rare := app.page.body.get_node("RewardChoices").get_child(1) as RelicRewardChoice
+		_check(rare._surface.get_shader_parameter("rarity_color") == ContentDescription.COLORS["rare"], "rare relic uses its own card color")
+		_check(int(card._surface.get_shader_parameter("school")) == ["frost", "flame", "storm", "spirit"].find(str(book)), "awakening chooses " + str(book) + " effect")
+		await _capture("relic-" + str(book))
+		card.reduced_motion = false
+		await create_timer(0.4).timeout
+		await _capture("relic-" + str(book) + "-motion")
+	app.run.selection.book_id = &"frost"
+	app.run.offer.candidates = ["G001", "G002", "G025"]
+	app._show_run_stage(false)
+	await _settle()
+	first = app.page.body.get_node("RewardChoices").get_child(0)
+	await _click(first.content.get_child(first.content.get_child_count() - 1))
+	_check(app.run.compiler.compile(app.run.selection).build.asset_stacks(&"G001") == 1, "real reward button commits the selected relic")
+	_check(app.run.rewards.spent == 1 and app.run.offer.id != "ui-relic", "reward transaction spends once and advances offer")
+	app._relics_page()
+	await create_timer(0.6).timeout
+	_check(app.commands.has("relic196"), "codex includes all 196 relics")
+	await _capture("relic-codex")
+	app._guide()
+	await create_timer(0.5).timeout
+	_check(app.commands.has("note-04"), "guide builds dynamic relic examples")
+	app.commands["note-04"].call()
+	await _settle()
+	var example_matches := false
+	for label: Label in app.page.body.find_children("*", "Label", true, false):
+		if label.text == ContentDescription.summary(catalog.get_definition(&"R041")): example_matches = true
+	_check(example_matches, "guide example reads relic data instead of duplicated copy")
+	app.page.scroll.scroll_vertical = 0
+	await _settle()
+	for label: Label in app.page.body.find_children("*", "Label", true, false):
+		if not label.text.contains("起手迎击"): continue
+		var bounds := label.get_character_bounds(label.text.find("完美御术"))
+		var motion := InputEventMouseMotion.new()
+		motion.position = root.get_screen_transform() * label.get_global_transform() * bounds.get_center()
+		Input.parse_input_event(motion)
+		await create_timer(0.4).timeout
+		_check(app.term_tooltips._bubble.visible and app.term_tooltips._title.text == "完美御术", "global glossary also handles guide prose")
+		break
+	app._run_records()
+	app._record_detail({"book": "frost", "reason": "victory", "rooms": 9, "characters": 321, "build": app.run.selection.to_dict()})
+	await _settle()
+	var recorded := false
+	for label: Label in app._history_detail.find_children("*", "Label", true, false):
+		if label.text == ContentDescription.summary(catalog.get_definition(&"G001")): recorded = true
+	_check(recorded, "record descriptions read the recorded relic layers")
+	app._home(false)
+	await _settle()
+	_check(not app.term_tooltips._bubble.visible, "closing source page dismisses tooltip")
+	app.run = null
+	app.profile.run_checkpoint.clear()
+	app.archive.set_prepared(true)
+	await _settle()
+	await _capture("relic-preparation")
+	var report := FileAccess.open(evidence.path_join("relic-results.json"), FileAccess.WRITE)
+	report.store_string(JSON.stringify({"checks": checks, "failures": failures, "renderer": RenderingServer.get_current_rendering_method()}, "\t"))
+	report.close()
+	print("Relic UI checks: %d passed, %d failed | %s" % [checks.size() - failures, failures, evidence])
+	app.queue_free()
+	await process_frame
+	quit(0 if failures == 0 else 1)
+
+
+func _alt(down: bool) -> void:
+	var event := InputEventKey.new()
+	event.keycode = KEY_ALT
+	event.physical_keycode = KEY_ALT
+	event.pressed = down
+	event.alt_pressed = down
+	Input.parse_input_event(event)
+	await _settle()
 
 
 func _review_m2_pages() -> void:

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G010"
+title = "蓝墨笺"
+description = "每完成5次词咒，获得 {word_shield} 点护盾。"
+modifiers = {&"word_shield": 2}
+tags = PackedStringArray("shield")
+max_stacks = 2
+rarity = &"common"
+grants_capabilities = PackedStringArray("shield")
+supported = true
+stage = &"relics-3"

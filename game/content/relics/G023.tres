@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G023"
+title = "尾注墨"
+description = "击杀敌人时，额外获得 {kill_resonance} 点共鸣。"
+modifiers = {&"kill_resonance": 1}
+tags = PackedStringArray("resonance", "finishing")
+max_stacks = 2
+rarity = &"uncommon"
+supported = true
+stage = &"relics-3"

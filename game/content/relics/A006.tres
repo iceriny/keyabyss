@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A006"
+title = "慢燃纸"
+description = "焰印留下的火雾延长 {fire_field_ms_s} 秒。"
+modifiers = {&"fire_field_ms": 300}
+tags = PackedStringArray("fire_field")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("flame")
+supported = true
+stage = &"relics-3"

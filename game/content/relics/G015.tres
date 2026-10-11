@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G015"
+title = "战记批注"
+description = "对首领的施法伤害提高 {boss_pct}%。"
+modifiers = {&"boss_pct": 10}
+tags = PackedStringArray("boss")
+max_stacks = 2
+rarity = &"uncommon"
+supported = true
+stage = &"relics-3"

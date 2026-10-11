@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G013"
+title = "初版书"
+description = "对满生命敌人的施法伤害提高 {fresh_pct}%。"
+modifiers = {&"fresh_pct": 12}
+tags = PackedStringArray("opening")
+max_stacks = 2
+rarity = &"common"
+supported = true
+stage = &"relics-3"

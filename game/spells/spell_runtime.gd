@@ -63,15 +63,24 @@ func install(next_build: CompiledBuild) -> void:
 func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empowered: bool) -> BattleEffect:
 	_book_cast_count += 1
 	_record_word(fact)
-	var multiplier := damage_multiplier() * (1.0 + mini(10, _combo) * (0.05 if build.asset_stacks(&"R030") > 0 else 0.025))
-	if fact.mistakes == 0: multiplier *= 1.08 + 0.35 * build.asset_stacks(&"R016")
+	var multiplier := damage_multiplier() * (1.0 + mini(10, _combo) * (build.relic_number(&"R030", &"step_pct") / 100.0 if build.asset_stacks(&"R030") > 0 else 0.025))
+	var word_bonus := build.modifier(&"empowered_pct") if empowered else 0
+	word_bonus += build.modifier(&"perfect_pct") if fact.mistakes == 0 else build.modifier(&"imperfect_pct")
+	if fact.fully_manual(): word_bonus += build.modifier(&"manual_pct")
+	if fact.word.length() <= 4: word_bonus += build.modifier(&"short_pct")
+	if fact.word.length() >= 7: word_bonus += build.modifier(&"long_pct")
+	word_bonus += mini(10, _combo) * build.modifier(&"combo_pct")
+	multiplier *= 1.0 + clampi(word_bonus, -50, 70) / 100.0
+	var book_bonus: StringName = {&"frost": &"ice_direct_pct", &"flame": &"flame_direct_pct", &"storm": &"storm_direct_pct", &"spirit": &"power_pct"}[build.book()]
+	if build.book() != &"spirit": multiplier *= RelicParameters.ratio(build, book_bonus)
+	if fact.mistakes == 0: multiplier *= 1.08 + build.relic_number(&"R016", &"damage_pct") / 100.0
 	if fact.word.length() <= 4 and build.asset_stacks(&"R014") > 0:
-		multiplier *= 1.0 + 0.6 * build.asset_stacks(&"R014")
+		multiplier *= 1.0 + build.relic_number(&"R014", &"damage_pct") / 100.0
 		world.dodge_charges = minf(2.0 + build.value(&"dodge_capacity"), world.dodge_charges + 0.1)
 	if fact.word.length() >= 7 and build.asset_stacks(&"R015") > 0:
-		multiplier *= 1.0 + 0.75 * build.asset_stacks(&"R015")
+		multiplier *= 1.0 + build.relic_number(&"R015", &"damage_pct") / 100.0
 		clear_radius(target.position, 105.0, &"R015")
-	if build.asset_stacks(&"R022") > 0 and _cast_count % 4 == 0: multiplier *= 2.0
+	if build.asset_stacks(&"R022") > 0 and _cast_count % roundi(build.relic_number(&"R022", &"interval")) == 0: multiplier *= 2.0
 	if _reflection_boost:
 		multiplier *= 2.0
 		_reflection_boost = false
@@ -91,12 +100,12 @@ func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empow
 		while _spirit_letters >= 5:
 			_spirit_letters -= 5
 			world._summon_spirit()
-		world.spirit_time = 8.0 + build.asset_stacks(&"R005") + 2.0 * build.asset_stacks(&"R035")
+		world.spirit_time = RelicParameters.spirit_duration(build)
 	_after_cast(fact)
-	if build.asset_stacks(&"R054") > 0 and empowered and build.book() == &"flame": add_shield(5 * Q * build.asset_stacks(&"R054"))
+	if build.asset_stacks(&"R054") > 0 and empowered and build.book() == &"flame": add_shield(roundi(Q * build.relic_number(&"R054", &"shield")))
 	dispatch(effect, target)
 	_configure_shape(effect)
-	if build.asset_stacks(&"R006") > 0 and _cast_count % 3 == 0: _periodic_copy(effect)
+	if build.asset_stacks(&"R006") > 0 and _cast_count % roundi(build.relic_number(&"R006", &"interval")) == 0: _periodic_copy(effect)
 	_save_counters()
 	return effect
 
@@ -116,71 +125,97 @@ func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary
 		amount = effect.primary_share_q
 	var base_amount := amount
 	var factor := 1.0
+	var hit_bonus := 0
+	if target.hp_q == target.max_hp_q: hit_bonus += effect.build.modifier(&"fresh_pct")
+	if target.hp_q < target.max_hp_q * 0.5: hit_bonus += effect.build.modifier(&"wounded_pct")
+	if target.boss: hit_bonus += effect.build.modifier(&"boss_pct")
+	if target.frozen_time > 0.0: hit_bonus += effect.build.modifier(&"frozen_pct")
+	if target.shock > 30: hit_bonus += effect.build.modifier(&"shocked_pct")
+	if target.burn > 10: hit_bonus += effect.build.modifier(&"burning_pct")
+	var status_count := int(target.cold > 0) + int(target.burn > 10) + int(target.shock > 0) + int(target.vulnerability > 0)
+	if status_count >= 2: hit_bonus += effect.build.modifier(&"mixed_pct")
+	if effect.kind in [&"storm_arc", &"storm_chain"]:
+		if target.cold > 30: hit_bonus += effect.build.modifier(&"cold_chain_pct")
+		if target.burn > 10: hit_bonus += effect.build.modifier(&"burn_chain_pct")
+	if effect.kind in [&"spirit_blade", &"spirit_cross"]:
+		if target.cold > 30: hit_bonus += effect.build.modifier(&"cold_spirit_pct")
+		if target.burn > 10: hit_bonus += effect.build.modifier(&"burn_spirit_pct")
+		if world.ultimate_time > 0.0: hit_bonus += effect.build.modifier(&"ultimate_spirit_pct")
+	factor *= 1.0 + mini(70, hit_bonus) / 100.0
 	if effect.kind in [&"spirit_blade", &"spirit_cross"] and world.book_id == &"spirit" and world.ultimate_time > 0.0:
 		factor *= 1.5
 	if effect.kind == &"storm_arc" and target.shock > 30:
 		target.shock -= 10
 		effect.jumps += 1
-		effect.arc_charge += 0.25
+		effect.arc_charge += 0.25 * RelicParameters.ratio(effect.build, &"charge_pct")
+		add_shield(effect.build.modifier(&"charged_shield") * Q)
 	if effect.kind == &"storm_arc":
 		factor *= effect.arc_charge
 	if target.frozen_time > 0.0:
-		factor *= 1.18 + 0.4 * effect.build.asset_stacks(&"R031")
+		factor *= 1.18 + effect.build.relic_number(&"R031", &"damage_pct") / 100.0
 		if effect.empowered and effect.kind == &"frost_spear": factor *= 1.25
-	if target.boss and effect.build.asset_stacks(&"R027") > 0: factor *= 1.15
+	if target.boss: factor *= 1.0 + effect.build.relic_number(&"R027", &"boss_pct") / 100.0
 	if factor > 1.0:
 		var bonus := ledger.earn(effect.lot.root_id, StringName(_tx("hit-relic")), effect.build.identity(), SpellLot.Kind.POWER, int(amount * (factor - 1.0)), &"hit", ELEMENTS[effect.build.book()])
 		ledger.aggregate(_tx("hit-join"), effect.lot, bonus)
 		amount = int(amount * factor)
 	if effect.kind in [&"frost_spear", &"frost_fragment", &"frost_ultimate"]:
-		_apply_cold(target, (roundi((55.0 if effect.empowered else 35.0) * effect.manual_count / 5.0) + 10 * effect.build.asset_stacks(&"R003")) * Q, effect.build)
+		_apply_cold(target, (roundi((55.0 if effect.empowered else 35.0) * effect.manual_count / 5.0) + roundi(effect.build.relic_number(&"R003", &"ice_cold"))) * Q, effect.build)
 	elif effect.build.asset_stacks(&"R003") > 0:
-		_apply_cold(target, 45 * Q * effect.build.asset_stacks(&"R003"), effect.build)
+		_apply_cold(target, roundi(Q * effect.build.relic_number(&"R003", &"cold")), effect.build)
+	if direct:
+		_apply_cold(target, (effect.build.modifier(&"cold_hit") + (effect.build.modifier(&"empowered_cold") if effect.empowered else 0)) * Q, effect.build)
+		if effect.build.modifier(&"burn_hit") > 0: add_burn(target, effect.build.modifier(&"burn_hit"), effect.lot.root_id, effect.depth, effect.build)
+		if effect.build.modifier(&"shock_hit") > 0: add_shock(target, effect.build.modifier(&"shock_hit"), effect.build)
+		if effect.build.modifier(&"cross_mark_hit") > 0:
+			add_mark(target, effect.build.modifier(&"cross_mark_hit"), roundi(effect.build.relic_number(&"G026", &"mark_limit")), effect.build)
+		if effect.build.modifier(&"mark_hit") > 0: add_mark(target, effect.build.modifier(&"mark_hit"), 127, effect.build)
+	if effect.kind in [&"spirit_blade", &"spirit_cross"] and effect.build.modifier(&"spirit_shock_hit") > 0:
+		add_shock(target, effect.build.modifier(&"spirit_shock_hit"), effect.build)
 	if effect.kind in [&"flame_burst", &"flame_meteor", &"flame_ultimate"]:
-		add_burn(target, roundi(70.0 * effect.manual_count / 5.0), effect.lot.root_id, effect.depth)
+		add_burn(target, roundi(70.0 * effect.manual_count / 5.0), effect.lot.root_id, effect.depth, effect.build)
 	if direct and effect.build.asset_stacks(&"R028") > 0: _status(target, &"corrosion", 1, 0)
 	if effect.kind == &"spirit_mark":
-		target.vulnerability = mini(127, target.vulnerability + 4 * effect.manual_count)
-		target.mark_grace = 1.5
-		target.marked_time = 8.0
+		add_mark(target, 4 * effect.manual_count + (effect.build.modifier(&"mark_fresh_points") if target.hp_q == target.max_hp_q else 0), 127, effect.build)
+		add_shield(effect.build.modifier(&"mark_shield") * Q)
 	if effect.kind == &"storm_arc":
-		add_shock(target, roundi(36.0 * effect.manual_count / 5.0))
+		add_shock(target, roundi(36.0 * effect.manual_count / 5.0), effect.build)
 	_pending_death_depth[target.id] = effect.depth
 	var packet := ledger.spend(_tx("hit"), effect.lot, mini(amount, effect.lot.amount_q))
 	_commit_damage(target, packet, effect.kind, origin, effect.empowered, contact_at, direct)
 	if effect.kind == &"storm_arc" and effect.arc_index < 3 and world.ultimate_time > 0.0 and effect.build.asset_stacks(&"R047") > 0:
-		add_shield(2 * Q)
+		add_shield(roundi(Q * effect.build.relic_number(&"R047", &"shield")))
 	_impulse(target, origin, (530.0 if effect.empowered else 300.0) if effect.kind == &"frost_spear" else 150.0)
-	if direct and effect.build.asset_stacks(&"R027") > 0 and target.alive() and not target.boss and target.hp_q < target.max_hp_q * 0.18:
+	if direct and effect.build.asset_stacks(&"R027") > 0 and target.alive() and not target.boss and target.hp_q < target.max_hp_q * effect.build.relic_number(&"R027", &"threshold_pct") / 100.0:
 		_deal(target, target.hp_q, &"R027", target.position, 0)
 	if direct and effect.build.asset_stacks(&"R007") > 0:
-		_burst(target.position, 90.0 + 25.0 * build.asset_stacks(&"R023"), int(base_amount * factor * 0.35 * build.asset_stacks(&"R007")), &"R007", target.id, 1)
+		_burst(target.position, effect.build.relic_number(&"R007", &"radius") + effect.build.relic_number(&"R023", &"radius"), int(base_amount * factor * effect.build.relic_number(&"R007", &"damage_pct") / 100.0), &"R007", target.id, 1)
 	if direct and effect.build.asset_stacks(&"R026") > 0: _pull(target.position, 190.0, 260.0)
-	if direct and build.asset_stacks(&"R032") > 0:
-		_region(target.position, (114.0 if effect.empowered else 75.0) + (35.0 if build.asset_stacks(&"R032") > 0 else 0.0), 2.6 + (3.0 if build.asset_stacks(&"R032") > 0 else 0.0), &"cold_field")
+	if direct and effect.build.asset_stacks(&"R032") > 0:
+		_region(target.position, effect.build.relic_number(&"R032", &"empowered_radius" if effect.empowered else &"radius"), effect.build.relic_number(&"R032", &"duration"), &"cold_field")
 	elif direct and effect.kind == &"frost_spear":
 		world.event_committed.emit({"kind": &"frost_ground", "at": target.position, "radius": 114.0 if effect.empowered else 75.0, "duration": 2.6})
-	if effect.empowered and effect.kind == &"frost_spear" and build.asset_stacks(&"R045") > 0:
-		for enemy in _nearby(target.position, 155.0): _apply_cold(enemy, 100 * Q, build)
+	if effect.empowered and effect.kind == &"frost_spear" and effect.build.asset_stacks(&"R045") > 0:
+		for enemy in _nearby(target.position, 155.0): _apply_cold(enemy, roundi(Q * effect.build.relic_number(&"R045", &"cold")), effect.build)
 	if effect.kind == &"flame_burst" and effect.empowered:
-		var radius := (115.0 if effect.empowered else 55.0) + 25.0 * build.asset_stacks(&"R053")
+		var radius := (115.0 if effect.empowered else 55.0) + effect.build.relic_number(&"R053", &"radius") + effect.build.modifier(&"fire_field_radius")
 		for enemy in _nearby(target.position, radius, target.id):
-			add_burn(enemy, 35, effect.lot.root_id, effect.depth + 1)
+			add_burn(enemy, 35, effect.lot.root_id, effect.depth + 1, effect.build)
 			_deal(enemy, int(base_amount * (0.5 if effect.empowered else 0.22)), &"flame_splash", target.position, effect.depth + 1)
 		_deal(target, int(base_amount * 0.5), &"flame_splash", target.position, effect.depth + 1)
-		_region(target.position, radius, 3.2, &"fire_field")
+		_region(target.position, radius, 3.2 + RelicParameters.seconds(effect.build, &"fire_field_ms"), &"fire_field")
 	if effect.kind == &"storm_arc" and effect.empowered:
-		var radius := 125.0 + 25.0 * effect.build.asset_stacks(&"R023")
+		var radius := 125.0 + effect.build.relic_number(&"R023", &"radius") + effect.build.modifier(&"storm_burst_radius")
 		for enemy in _nearby(target.position, radius, target.id):
-			add_shock(enemy, 30)
-			_deal(enemy, roundi(effect.base_power_q * STORM_HEAD_SCALE * 0.3), &"storm_burst", target.position, 1)
+			add_shock(enemy, 30, effect.build)
+			_deal(enemy, roundi(effect.base_power_q * STORM_HEAD_SCALE * 0.3 * RelicParameters.ratio(effect.build, &"storm_burst_pct")), &"storm_burst", target.position, 1)
 		world.event_committed.emit({"kind": &"field", "source": &"overload", "at": target.position, "radius": radius})
 	if effect.kind == &"storm_arc" or (direct and build.asset_stacks(&"R034") > 0): _conduct(target)
 	if effect.kind == &"storm_arc":
 		effect.visited.append(str(target.id))
 		_continue_arc(effect, target)
 	elif direct and build.book() != &"storm" and build.asset_stacks(&"R002") > 0:
-		_chain(target, int(base_amount * 0.45), build.asset_stacks(&"R002"))
+		_chain(target, int(base_amount * build.relic_number(&"R002", &"chain_pct") / 100.0), roundi(build.relic_number(&"R002", &"jumps")))
 	if not target.alive(): on_enemy_death(target, effect.kind, effect.depth)
 	effect.damage_q = effect.lot.amount_q
 	if effect.applications > 1: effect.applications -= 1
@@ -246,7 +281,11 @@ func ultimate(target: BattleEnemy) -> BattleEffect:
 
 
 func take_spirit_attack(target: BattleEnemy, position: Vector2) -> BattleEffect:
-	var amount := roundi(60 * Q * 0.12 * damage_multiplier() * (1.0 + 0.25 * build.asset_stacks(&"R005") + 0.3 * build.asset_stacks(&"R035")))
+	var amount := roundi(60 * Q * 0.12 * damage_multiplier() * (1.0 + (build.relic_number(&"R005", &"damage_pct") + build.relic_number(&"R035", &"damage_pct")) / 100.0))
+	var bonus := build.modifier(&"spirit_pct")
+	if run.shield_q > 0: bonus += build.modifier(&"shielded_spirit_pct")
+	if world.spirit_blade_count() >= world.spirit_capacity(): bonus += build.modifier(&"full_spirit_pct")
+	amount = roundi(amount * (1.0 + mini(60, bonus) / 100.0))
 	var lot := ledger.earn(_tx("spirit-strike"), &"spirit", build.identity(), SpellLot.Kind.POWER, amount, &"spirit", DamagePacket.Element.PAPER)
 	var effect := _effect(lot, &"spirit_blade", target.id, position, build)
 	effect.depth = 1
@@ -345,9 +384,9 @@ func _configure_shape(effect: BattleEffect) -> void:
 	if effect.shaped: return
 	effect.shaped = true
 	if effect.kind in [&"frost_spear", &"frost_ultimate"]:
-		configure_frost_hits(effect, 2 + (2 if effect.empowered else 0) + (2 if effect.build.asset_stacks(&"R044") > 0 else 0))
+		configure_frost_hits(effect, 2 + (2 if effect.empowered else 0) + roundi(effect.build.relic_number(&"R044", &"pierces")) + effect.build.modifier(&"frost_pierce"))
 	if effect.kind == &"storm_arc":
-		effect.arc_base_hits = 3 + effect.build.asset_stacks(&"R002") + 2 * effect.build.asset_stacks(&"R046")
+		effect.arc_base_hits = 3 + roundi(effect.build.relic_number(&"R002", &"jumps") + effect.build.relic_number(&"R046", &"jumps")) + effect.build.modifier(&"chain_hits")
 		effect.jumps = effect.arc_base_hits - 1
 
 
@@ -380,21 +419,25 @@ func _pulse_status(status: OngoingSpell) -> void:
 
 func _apply_cold(target: BattleEnemy, amount: int, snapshot: CompiledBuild) -> void:
 	if not target.alive() or amount <= 0: return
-	target.cold = mini(127, target.cold + roundi(float(amount) / Q * (1.0 + float(snapshot.value(&"cold_efficiency_q")) / Q)))
-	_try_freeze(target)
+	target.cold = mini(127, target.cold + roundi(float(amount) / Q * (1.0 + float(snapshot.value(&"cold_efficiency_q")) / Q) * RelicParameters.ratio(snapshot, &"cold_pct")))
+	_try_freeze(target, snapshot)
 
 
-func _try_freeze(target: BattleEnemy) -> void:
+func _try_freeze(target: BattleEnemy, snapshot: CompiledBuild = null) -> void:
 	if target.cold <= 90 or target.frozen_time > 0.0 or target.freeze_cooldown > 0.0: return
+	if snapshot == null: snapshot = build
 	target.cold -= 60
-	target.frozen_time = 1.5 if target.boss else 2.0 + 0.15 * build.asset_stacks(&"R003")
+	target.frozen_time = RelicParameters.freeze_duration(snapshot, target.boss)
 	freezes += 1
+	add_shield(snapshot.modifier(&"freeze_shield") * Q)
+	world.add_resonance(snapshot.modifier(&"freeze_resonance") * Q)
 	world.event_committed.emit({"kind": &"freeze", "at": target.position, "enemy": target.id, "duration": target.frozen_time})
 
 
-func add_burn(target: BattleEnemy, points: float, root: String, depth: int = 0) -> void:
+func add_burn(target: BattleEnemy, points: float, root: String, depth: int = 0, snapshot: CompiledBuild = null) -> void:
 	if not target.alive(): return
-	target.burn_remainder += points * (1.0 + 0.2 * build.asset_stacks(&"R051"))
+	if snapshot == null: snapshot = build
+	target.burn_remainder += points * (1.0 + snapshot.relic_number(&"R051", &"points_pct") / 100.0) * RelicParameters.ratio(snapshot, &"burn_points_pct")
 	var gained := floori(target.burn_remainder)
 	target.burn_remainder -= gained
 	target.burn = clampi(target.burn + gained, 0, 127)
@@ -403,10 +446,20 @@ func add_burn(target: BattleEnemy, points: float, root: String, depth: int = 0) 
 	target.burn_time = maxf(0.0, (target.burn - 10) / 5.0 * BURN_INTERVAL)
 
 
-func add_shock(target: BattleEnemy, points: int) -> void:
+func add_shock(target: BattleEnemy, points: int, snapshot: CompiledBuild = null) -> void:
 	if not target.alive(): return
-	target.shock = clampi(target.shock + points, 0, 127)
-	target.shock_grace = 2.0
+	if snapshot == null: snapshot = build
+	target.shock = clampi(target.shock + roundi(points * RelicParameters.ratio(snapshot, &"shock_pct")), 0, 127)
+	target.shock_grace = 2.0 + RelicParameters.seconds(snapshot, &"shock_grace_ms")
+
+
+func add_mark(target: BattleEnemy, points: int, ceiling: int = 127, snapshot: CompiledBuild = null) -> void:
+	# A secondary source cannot lower or maintain a stronger native mark.
+	if target.vulnerability > ceiling: return
+	if snapshot == null: snapshot = build
+	target.vulnerability = mini(ceiling, target.vulnerability + roundi(points * RelicParameters.ratio(snapshot, &"mark_pct")))
+	target.mark_grace = 1.5 + RelicParameters.seconds(snapshot, &"mark_grace_ms")
+	target.marked_time = 8.0
 
 
 func _advance_states(delta: float) -> void:
@@ -417,20 +470,20 @@ func _advance_states(delta: float) -> void:
 			enemy.freeze_cooldown = 3.0 if enemy.boss else 1.0
 		elif frozen_before <= 0.0:
 			enemy.freeze_cooldown = maxf(0.0, enemy.freeze_cooldown - delta)
-		enemy.cold_remainder += delta * 12.0
+		enemy.cold_remainder += delta * 12.0 * (1.0 - build.modifier(&"cold_decay_pct") / 100.0)
 		var cold_loss := floori(enemy.cold_remainder)
 		enemy.cold_remainder -= cold_loss
 		enemy.cold = maxi(0, enemy.cold - cold_loss)
 		var mark_decay := maxf(0.0, delta - enemy.mark_grace)
 		enemy.mark_grace = maxf(0.0, enemy.mark_grace - delta)
-		enemy.vulnerability_remainder += mark_decay * 12.0
+		enemy.vulnerability_remainder += mark_decay * 12.0 * (1.0 - build.modifier(&"mark_decay_pct") / 100.0)
 		var mark_loss := floori(enemy.vulnerability_remainder)
 		enemy.vulnerability_remainder -= mark_loss
 		enemy.vulnerability = maxi(0, enemy.vulnerability - mark_loss)
 		enemy.marked_time = maxf(0.0, enemy.marked_time - delta)
 		var shock_decay := maxf(0.0, delta - enemy.shock_grace)
 		enemy.shock_grace = maxf(0.0, enemy.shock_grace - delta)
-		enemy.shock_remainder += shock_decay * 8.0
+		enemy.shock_remainder += shock_decay * 8.0 * (1.0 - build.modifier(&"shock_decay_pct") / 100.0)
 		var shock_loss := floori(enemy.shock_remainder)
 		enemy.shock_remainder -= shock_loss
 		enemy.shock = maxi(0, enemy.shock - shock_loss)
@@ -441,7 +494,7 @@ func _advance_states(delta: float) -> void:
 			if field.effect.kind == &"fire_field": layers += 1
 			elif field.effect.kind in [&"cold_field", &"ice_mist"]: cold_rate += 30.0
 		if layers > 0:
-			add_burn(enemy, 40.0 * (1.0 - pow(0.5, layers)) * delta, "fire-field", 1)
+			add_burn(enemy, 40.0 * (1.0 - pow(0.5, layers)) * delta * RelicParameters.ratio(build, &"fire_field_rate_pct"), "fire-field", 1)
 		if cold_rate > 0.0:
 			enemy.cold_gain_remainder += cold_rate * delta
 			var gain := floori(enemy.cold_gain_remainder)
@@ -453,7 +506,11 @@ func _advance_states(delta: float) -> void:
 			while enemy.burn_clock >= BURN_INTERVAL and enemy.burn > 10 and enemy.alive():
 				enemy.burn_clock -= BURN_INTERVAL
 				enemy.burn = maxi(0, enemy.burn - 5)
-				var damage := roundi(6 * Q * damage_multiplier() * (1.0 + 0.3 * build.asset_stacks(&"R050")) * (1.35 if build.asset_stacks(&"R056") > 0 else 1.0))
+				var damage := roundi(6 * Q * damage_multiplier() * (1.0 + build.relic_number(&"R050", &"damage_pct") / 100.0) * (1.0 + build.relic_number(&"R056", &"burn_pct") / 100.0))
+				var bonus := build.modifier(&"burn_pct")
+				if enemy.burn < 50: bonus += build.modifier(&"burn_weak_pct")
+				if enemy.cold > 30: bonus += build.modifier(&"cold_burn_pct")
+				damage = roundi(damage * (1.0 + mini(70, bonus) / 100.0))
 				_deal(enemy, damage, &"flame_burn", enemy.position, enemy.burn_depth + 1, enemy.burn_root)
 		else:
 			enemy.burn_clock = 0.0
@@ -474,7 +531,7 @@ func obscures(enemy: BattleEnemy) -> bool:
 func arc_target(effect: BattleEffect, origin: Vector2) -> BattleEnemy:
 	var best: BattleEnemy = null
 	var best_distance := INF
-	var extension := 100.0 * effect.build.asset_stacks(&"R023")
+	var extension := effect.build.relic_number(&"R023", &"chain_range") + effect.build.modifier(&"chain_range")
 	for next in world.enemies:
 		if not next.alive() or next.id == &"" or not BattleSession.enemy_in_combat(next): continue
 		if str(next.id) in effect.visited: continue
@@ -494,7 +551,8 @@ func _continue_arc(effect: BattleEffect, target: BattleEnemy) -> void:
 	var next := arc_target(effect, target.position)
 	if next == null: return
 	# Retain the former absolute tail while lowering the head of the chain.
-	var floor_ratio := 0.315 if effect.build.asset_stacks(&"R033") > 0 else 0.18
+	var floor_ratio := 0.18 * (1.0 + effect.build.relic_number(&"R033", &"tail_pct") / 100.0)
+	floor_ratio *= RelicParameters.ratio(effect.build, &"chain_tail_pct")
 	var ratio := maxf(floor_ratio, STORM_HEAD_SCALE - (STORM_HEAD_SCALE - floor_ratio) * (effect.arc_index + 1) / maxi(1, effect.arc_base_hits - 1))
 	var retained := roundi(effect.base_power_q * ratio)
 	var lot := ledger.earn(effect.lot.root_id, StringName(_tx("chain")), effect.build.identity(), SpellLot.Kind.POWER, retained, &"chain", DamagePacket.Element.LIGHTNING)
@@ -533,9 +591,10 @@ func _periodic_copy(template: BattleEffect) -> void:
 			target = candidate
 			best_distance = distance
 	if target == null: return
+	var copy_ratio_q := int(Q * template.build.relic_number(&"R006", &"damage_pct") / 100.0)
 	# Truncate to whole fixed-point units without converting the ledger to float.
 	@warning_ignore("integer_division")
-	var output := ledger.earn(template.lot.root_id, &"R006", template.build.identity(), SpellLot.Kind.POWER, template.damage_q * 665 / Q, &"copy", ELEMENTS[template.build.book()])
+	var output := ledger.earn(template.lot.root_id, &"R006", template.build.identity(), SpellLot.Kind.POWER, roundi((template.damage_q * copy_ratio_q / Q) * RelicParameters.ratio(template.build, &"copy_pct")), &"copy", ELEMENTS[template.build.book()])
 	output.claims[&"copied"] = true
 	var effect := _effect(output, &"echo", target.id, template.origin, template.build)
 	_configure_shape(effect)
@@ -615,20 +674,23 @@ func graze(threat: BattleThreat) -> void:
 	threat.grazed = true
 	var boosted := build.asset_stacks(&"R038") > 0
 	world.add_resonance(int((1.4 if boosted else 0.7) * Q))
-	if boosted: add_shield(int(0.6 * Q))
+	if boosted: add_shield(int(Q * build.relic_number(&"R038", &"shield")))
 
 
 func on_dodge(origin: Vector2, destination: Vector2) -> void:
-	if build.asset_stacks(&"R041") > 0: world.precision_slow_remaining = 1.5
+	world.add_resonance(build.modifier(&"dodge_resonance") * Q)
+	if build.modifier(&"dodge_cold") > 0:
+		for enemy in _nearby(origin, 105.0): _apply_cold(enemy, build.modifier(&"dodge_cold") * Q, build)
+	if build.asset_stacks(&"R041") > 0: world.precision_slow_remaining = build.relic_number(&"R041", &"duration")
 	if build.asset_stacks(&"R037") > 0:
 		_pull(origin, 190.0, 260.0)
 		_region(origin, 190.0, 1.2, &"gravity_field")
 	if build.book() == &"flame":
-		_region(origin, 60.0 + 20.0 * build.asset_stacks(&"R055"), 2.0 + build.asset_stacks(&"R055"), &"fire_field")
+		_region(origin, 60.0 + build.relic_number(&"R055", &"radius") + build.modifier(&"dodge_flame_radius"), 2.0 + build.relic_number(&"R055", &"duration") + RelicParameters.seconds(build, &"dodge_flame_ms"), &"fire_field")
 	elif build.book() == &"frost":
-		_region(origin, 105.0, 3.0, &"ice_mist")
+		_region(origin, 105.0 + build.modifier(&"mist_radius"), 3.0 + RelicParameters.seconds(build, &"mist_ms"), &"ice_mist")
 	elif build.book() == &"spirit":
-		_region(origin, 26.0, 4.0, &"paper_crane")
+		_region(origin, 26.0 + build.modifier(&"crane_radius"), 4.0 + RelicParameters.seconds(build, &"crane_ms"), &"paper_crane")
 	elif build.book() == &"storm":
 		var start := origin * BattleSession.ARENA_SIZE
 		var end := destination * BattleSession.ARENA_SIZE
@@ -636,8 +698,8 @@ func on_dodge(origin: Vector2, destination: Vector2) -> void:
 			if not BattleSession.enemy_in_combat(enemy): continue
 			var point := enemy.position * BattleSession.ARENA_SIZE
 			if point.distance_to(Geometry2D.get_closest_point_to_segment(point, start, end)) <= 28.0 + enemy.radius:
-				add_shock(enemy, 30)
-				_deal(enemy, roundi(18 * Q * damage_multiplier()), &"storm_dodge", origin, 1)
+				add_shock(enemy, 30 + build.modifier(&"dodge_shock"))
+				_deal(enemy, roundi(18 * Q * damage_multiplier() * RelicParameters.ratio(build, &"dodge_storm_pct")), &"storm_dodge", origin, 1)
 		world.event_committed.emit({"kind": &"storm_path", "from": origin, "at": destination})
 
 
@@ -648,7 +710,7 @@ func intercept_crane(threat: BattleThreat) -> bool:
 		if CombatGeometry.sweep_discs(threat.previous_position * BattleSession.ARENA_SIZE, threat.position * BattleSession.ARENA_SIZE, center, center, threat.radius + field.radius) == INF: continue
 		var target := world.enemy_by_id(threat.source_id)
 		if target == null or not target.alive(): target = world._nearest_living(field.center)
-		if target != null: _deal(target, roundi(24 * Q * damage_multiplier()), &"paper_crane", field.center, 1)
+		if target != null: _deal(target, roundi(24 * Q * damage_multiplier() * RelicParameters.ratio(build, &"crane_pct")), &"paper_crane", field.center, 1)
 		world.event_committed.emit({"kind": &"spirit_intercept", "at": field.center})
 		fields.erase(field)
 		return true
@@ -670,7 +732,7 @@ func _next() -> int:
 
 func on_dodge_landed(at: Vector2) -> void:
 	if build.asset_stacks(&"R010") > 0:
-		clear_radius(at, 135.0, &"dodge_clear")
+		clear_radius(at, build.relic_number(&"R010", &"radius"), &"dodge_clear")
 		for enemy in _nearby(at, 180.0): _impulse(enemy, at, 210.0)
 	if build.asset_stacks(&"R037") > 0:
 		if build.asset_stacks(&"R010") == 0: clear_radius(at, 75.0, &"dodge_clear")
@@ -678,15 +740,19 @@ func on_dodge_landed(at: Vector2) -> void:
 
 
 func damage_multiplier() -> float:
-	var factor := pow(1.25, build.asset_stacks(&"R001"))
-	if build.asset_stacks(&"R036") > 0 and world.player_hp_q < world.player_max_hp_q * 0.4: factor *= 1.5
-	if build.asset_stacks(&"R042") > 0: factor *= 1.4
-	if build.asset_stacks(&"R043") > 0: factor *= 1.45
+	var factor := 1.0 + build.relic_number(&"R001", &"damage_pct") / 100.0
+	var bonus := build.modifier(&"power_pct")
+	if world.player_hp_q < world.player_max_hp_q * 0.4: bonus += build.modifier(&"low_health_pct")
+	if run.shield_q > 0: bonus += build.modifier(&"shielded_pct")
+	factor *= 1.0 + clampi(bonus, -50, 75) / 100.0
+	if build.asset_stacks(&"R036") > 0 and world.player_hp_q < world.player_max_hp_q * build.relic_number(&"R036", &"threshold_pct") / 100.0: factor *= 1.0 + build.relic_number(&"R036", &"damage_pct") / 100.0
+	if build.asset_stacks(&"R042") > 0: factor *= 1.0 + build.relic_number(&"R042", &"damage_pct") / 100.0
+	if build.asset_stacks(&"R043") > 0: factor *= 1.0 + build.relic_number(&"R043", &"damage_pct") / 100.0
 	return factor
 
 
 func add_shield(amount: int) -> void:
-	run.shield_q = mini(60 * Q, run.shield_q + amount)
+	run.shield_q = mini(RelicParameters.shield_capacity(build) * Q, run.shield_q + amount)
 
 
 func clear_radius(at: Vector2, radius: float, source: StringName = &"clear") -> void:
@@ -740,7 +806,7 @@ func pull_environment(at: Vector2, radius: float, force: float, pulse: bool = tr
 
 func _impulse(target: BattleEnemy, at: Vector2, force: float) -> void:
 	if target.boss or target.speed == 0.0: return
-	target.impulse += (target.position - at).normalized() * force * (1.0 + 0.6 * build.asset_stacks(&"R025")) / target.mass
+	target.impulse += (target.position - at).normalized() * force * (1.0 + build.relic_number(&"R025", &"push_pct") / 100.0) / target.mass
 
 
 func _region(at: Vector2, radius: float, lifetime: float, kind: StringName) -> void:
@@ -777,9 +843,9 @@ func _status(target: BattleEnemy, kind: StringName, added_stacks: int, spread_de
 	var maximum := 5 if kind == &"flame_burn" and build.asset_stacks(&"R056") > 0 else 3
 	var stacks := mini(maximum, added_stacks + (existing.stacks if existing != null else 0))
 	var interval := 0.5 if kind == &"flame_burn" else 1.0
-	var lifetime := 3.0 + build.asset_stacks(&"R051") if kind == &"flame_burn" else 4.0
+	var lifetime := 3.0 + build.asset_stacks(&"R051") if kind == &"flame_burn" else build.relic_number(&"R028", &"duration")
 	var pulses := int(lifetime / interval)
-	var per_pulse := int(6 * Q * damage_multiplier() * (1.0 + 0.3 * build.asset_stacks(&"R050"))) if kind == &"flame_burn" else 8 * Q * build.asset_stacks(&"R028")
+	var per_pulse := int(6 * Q * damage_multiplier() * (1.0 + build.relic_number(&"R050", &"damage_pct") / 100.0)) if kind == &"flame_burn" else roundi(Q * build.relic_number(&"R028", &"damage"))
 	var next_tick := existing.next_at if existing != null else clock + interval
 	if existing != null:
 		spread_depth = mini(spread_depth, existing.spread_depth)
@@ -801,7 +867,7 @@ func _status(target: BattleEnemy, kind: StringName, added_stacks: int, spread_de
 func _chain(target: BattleEnemy, amount: int, count: int) -> void:
 	var seen: Dictionary[StringName, bool] = {target.id: true}
 	var origin := target.position
-	var radius := 265.0 + 100.0 * build.asset_stacks(&"R023")
+	var radius := 265.0 + build.relic_number(&"R023", &"chain_range") + build.modifier(&"chain_range")
 	var radius_squared := radius * radius
 	for index in count:
 		var next: BattleEnemy = null
@@ -828,10 +894,13 @@ func _conduct(target: BattleEnemy) -> void:
 	if not target.alive(): return
 	if build.asset_stacks(&"R034") <= 0 and build.asset_stacks(&"R046") <= 0: return
 	var count: int = _conduct_counts.get(target.id, 0) + 1
-	_conduct_counts[target.id] = count % 3
-	if count < 3: return
+	var interval := roundi(build.relic_number(&"R034" if build.asset_stacks(&"R034") > 0 else &"R046", &"interval"))
+	_conduct_counts[target.id] = count % interval
+	if count < interval: return
 	var radius := 190.0 if build.asset_stacks(&"R046") > 0 else 125.0
-	var damage := int((34 + 8 * (world.chapter - 1)) * Q * damage_multiplier() * (1.0 + 0.35 * build.asset_stacks(&"R033")))
+	radius += build.modifier(&"overload_radius")
+	var damage := int((34 + 8 * (world.chapter - 1)) * Q * damage_multiplier() * (1.0 + build.relic_number(&"R033", &"overload_pct") / 100.0))
+	damage = roundi(damage * RelicParameters.ratio(build, &"overload_pct"))
 	if build.asset_stacks(&"R046") > 0: _pull(target.position, radius + 50.0, 380.0)
 	if build.asset_stacks(&"R034") > 0: clear_radius(target.position, 135.0, &"overload")
 	_deal(target, damage, &"overload", target.position, 1)
@@ -858,22 +927,28 @@ func on_player_hurt() -> void:
 func on_enemy_death(target: BattleEnemy, _kind: StringName, depth: int = 0) -> void:
 	if _settled_deaths.has(target.id): return
 	_settled_deaths[target.id] = true
+	add_shield(build.modifier(&"kill_shield") * Q)
+	world.add_resonance(build.modifier(&"kill_resonance") * Q)
+	if target.burn > 10:
+		add_shield(build.modifier(&"burn_kill_shield") * Q)
+		world.add_resonance(build.modifier(&"burn_kill_resonance") * Q)
+	if target.vulnerability > 0: world.add_resonance(build.modifier(&"mark_kill_resonance") * Q)
 	depth = _pending_death_depth.get(target.id, depth)
-	if build.asset_stacks(&"R011") > 0 and world.typing.target_id == target.id and world.typing.progress > 0: add_shield(10 * Q)
+	if build.asset_stacks(&"R011") > 0 and world.typing.target_id == target.id and world.typing.progress > 0: add_shield(roundi(Q * build.relic_number(&"R011", &"shield")))
 	if target.burn > 10 and build.asset_stacks(&"R052") > 0 and target.burn_depth < 2:
-		for next in _nearby(target.position, 130.0 + 25.0 * build.asset_stacks(&"R052"), target.id).slice(0, 2 + build.asset_stacks(&"R052")):
+		for next in _nearby(target.position, 130.0 + build.relic_number(&"R052", &"radius") + build.modifier(&"burn_spread_radius"), target.id).slice(0, 2 + roundi(build.relic_number(&"R052", &"targets")) + build.modifier(&"burn_spread_targets")):
 			add_burn(next, mini(70, target.burn), target.burn_root, target.burn_depth + 1)
 	for status in ongoing.duplicate():
 		if status.target_id != target.id: continue
 		if status.effect.kind == &"flame_burn" and build.asset_stacks(&"R052") > 0 and status.spread_depth < 2:
-			for next in _nearby(target.position, 130.0 + 25.0 * build.asset_stacks(&"R052"), target.id).slice(0, 2 + build.asset_stacks(&"R052")):
+			for next in _nearby(target.position, 130.0 + build.relic_number(&"R052", &"radius"), target.id).slice(0, 2 + roundi(build.relic_number(&"R052", &"targets"))):
 				_burn(next, mini(2, status.stacks), status.spread_depth + 1)
 		retire(status.effect)
 		ongoing.erase(status)
 	if target.frozen_time > 0.0 and (build.book() == &"frost" or build.asset_stacks(&"R004") > 0) and depth < 3:
-		_burst(target.position, 100.0 + 20.0 * build.asset_stacks(&"R004") + 25.0 * build.asset_stacks(&"R023"), int((28 + 18 * build.asset_stacks(&"R004")) * Q * damage_multiplier()), &"frost_shatter", target.id, depth + 1, true)
+		_burst(target.position, 100.0 + build.relic_number(&"R004", &"radius") + build.relic_number(&"R023", &"radius") + build.modifier(&"shatter_radius"), int((28 + build.relic_number(&"R004", &"damage")) * Q * damage_multiplier() * RelicParameters.ratio(build, &"shatter_pct")), &"frost_shatter", target.id, depth + 1, true)
 		if build.asset_stacks(&"R044") > 0 and depth == 0:
-			for next in _nearby(target.position, 3000.0, target.id).slice(0, 6):
+			for next in _nearby(target.position, 3000.0, target.id).slice(0, roundi(build.relic_number(&"R044", &"fragments"))):
 				var lot := ledger.earn(_tx("avalanche"), &"R044", build.identity(), SpellLot.Kind.POWER, int(26 * Q * damage_multiplier()), &"frost_fragment", DamagePacket.Element.ICE)
 				var effect := _effect(lot, &"frost_fragment", next.id, target.position, build)
 				effect.depth = 2
@@ -881,6 +956,10 @@ func on_enemy_death(target: BattleEnemy, _kind: StringName, depth: int = 0) -> v
 
 
 func counter_contact(target: BattleEnemy) -> void:
+	_apply_cold(target, build.modifier(&"parry_cold") * Q, build)
+	if build.modifier(&"parry_burn") > 0: add_burn(target, build.modifier(&"parry_burn"), _tx("parry-burn"), 1)
+	if build.modifier(&"parry_shock") > 0: add_shock(target, build.modifier(&"parry_shock"))
+	if build.modifier(&"parry_mark") > 0: add_mark(target, build.modifier(&"parry_mark"))
 	if build.asset_stacks(&"R057") == 0: return
 	match build.book():
 		&"frost": _apply_cold(target, 100 * Q, build)
@@ -889,9 +968,7 @@ func counter_contact(target: BattleEnemy) -> void:
 			add_shock(target, 36)
 			_conduct(target)
 		&"spirit":
-			target.marked_time = 8.0
-			target.vulnerability = mini(127, target.vulnerability + 20)
-			target.mark_grace = 1.5
+			add_mark(target, 20)
 			world.spirit_focus = target.id
 			world.spirit_time = minf(18.0, world.spirit_time + 2.0)
 			world._summon_spirit()
@@ -911,23 +988,26 @@ func _record_word(fact: WordCompletion) -> void:
 	_perfect_words = _perfect_words + 1 if fact.mistakes == 0 else 0
 	if fact.fully_manual():
 		_manual_words += 1
-		if build.asset_stacks(&"R017") > 0 and _manual_words % 4 == 0: _assist_tokens += 1
+		if build.asset_stacks(&"R017") > 0 and _manual_words % roundi(build.relic_number(&"R017", &"interval")) == 0: _assist_tokens += 1
 	_save_counters()
 
 
 func _after_cast(fact: WordCompletion) -> void:
-	if build.asset_stacks(&"R013") > 0 and _cast_count % 6 == 0: heal(4 * Q * build.asset_stacks(&"R013"))
-	if build.asset_stacks(&"R039") > 0 and _cast_count % 5 == 0: add_shield(12 * Q * build.asset_stacks(&"R039"))
-	if build.asset_stacks(&"R020") > 0 and _cast_count % 5 == 0:
-		clear_radius(world.player_position, 220.0, &"R020")
-		_burst(world.player_position, 220.0, 35 * Q, &"R020")
-	if build.asset_stacks(&"R029") > 0 and fact.mistakes == 0 and _perfect_words % 3 == 0:
-		clear_radius(world.player_position, 150.0, &"R029")
-		_burst(world.player_position, 150.0, 24 * Q, &"R029")
+	if _cast_count % 6 == 0: heal(build.modifier(&"word_heal") * Q)
+	if _cast_count % 5 == 0: add_shield(build.modifier(&"word_shield") * Q)
+	if build.asset_stacks(&"R013") > 0 and _cast_count % roundi(build.relic_number(&"R013", &"interval")) == 0: heal(roundi(Q * build.relic_number(&"R013", &"heal")))
+	if build.asset_stacks(&"R039") > 0 and _cast_count % roundi(build.relic_number(&"R039", &"interval")) == 0: add_shield(roundi(Q * build.relic_number(&"R039", &"shield")))
+	if build.asset_stacks(&"R020") > 0 and _cast_count % roundi(build.relic_number(&"R020", &"interval")) == 0:
+		clear_radius(world.player_position, build.relic_number(&"R020", &"radius"), &"R020")
+		_burst(world.player_position, build.relic_number(&"R020", &"radius"), roundi(Q * build.relic_number(&"R020", &"damage")), &"R020")
+	if build.asset_stacks(&"R029") > 0 and fact.mistakes == 0 and _perfect_words % roundi(build.relic_number(&"R029", &"interval")) == 0:
+		clear_radius(world.player_position, build.relic_number(&"R029", &"radius"), &"R029")
+		_burst(world.player_position, build.relic_number(&"R029", &"radius"), roundi(Q * build.relic_number(&"R029", &"damage")), &"R029")
 
 
 func on_pickup_completed(pickup: BattlePickup, _reflected: int, fact: WordCompletion, paid: Dictionary) -> void:
 	_record_word(fact)
+	heal(build.modifier(&"pickup_heal") * Q)
 	work_bank.append(ledger.earn(fact.attempt_id, build.book(), build.identity(), SpellLot.Kind.WORK, int(paid.work_q), &"active-completion"))
 	if pickup.kind == &"rune":
 		disarm_burst(pickup.position, 12 * Q, 520.0)
@@ -950,7 +1030,7 @@ func on_disarm() -> float:
 	if build.asset_stacks(&"R008") == 0: return 1.0
 	_reflection_boost = true
 	_save_counters()
-	return 1.6
+	return 1.0 + build.relic_number(&"R008", &"damage_pct") / 100.0
 
 
 func rescue_burst() -> void:

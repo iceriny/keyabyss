@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G024"
+title = "火漆批注"
+description = "直接施法命中时，附加 {burn_hit} 点灼烧。"
+modifiers = {&"burn_hit": 8}
+tags = PackedStringArray("burn")
+max_stacks = 2
+rarity = &"uncommon"
+grants_capabilities = PackedStringArray("burn")
+preferred_books = PackedStringArray("flame")
+supported = true
+stage = &"relics-3"

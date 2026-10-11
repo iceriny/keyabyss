@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A015"
+title = "余烬尾注"
+description = "击杀燃烧敌人时，额外获得 {burn_kill_resonance} 点共鸣。"
+modifiers = {&"burn_kill_resonance": 1}
+tags = PackedStringArray("burn", "resonance")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("flame")
+supported = true
+stage = &"relics-3"

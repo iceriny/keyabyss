@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G011"
+title = "练字簿"
+description = "亲手完成整个词咒时，施法伤害提高 {manual_pct}%。"
+modifiers = {&"manual_pct": 10}
+tags = PackedStringArray("manual")
+max_stacks = 2
+rarity = &"common"
+supported = true
+stage = &"relics-3"

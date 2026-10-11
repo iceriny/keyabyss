@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G003"
+title = "校对笔"
+description = "无错字的词咒伤害提高 {perfect_pct}%。"
+modifiers = {&"perfect_pct": 10}
+tags = PackedStringArray("perfect")
+max_stacks = 2
+rarity = &"common"
+supported = true
+exclusive_group = &"proofreading"
+stage = &"relics-3"

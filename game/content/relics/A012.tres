@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A012"
+title = "炉心图录"
+description = "焚世余烬的火域伤害提高 {flame_domain_pct}%。"
+modifiers = {&"flame_domain_pct": 12}
+tags = PackedStringArray("ultimate")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("flame")
+supported = true
+stage = &"relics-3"

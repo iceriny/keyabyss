@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T008"
+title = "宽幅雷纸"
+description = "电爆半径增加 {storm_burst_radius}。"
+modifiers = {&"storm_burst_radius": 12}
+tags = PackedStringArray("empowered")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("storm")
+supported = true
+stage = &"relics-3"

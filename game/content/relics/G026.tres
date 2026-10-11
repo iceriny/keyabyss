@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G026"
+title = "纸鹤书签"
+description = "直接施法命中时，附加 {cross_mark_hit} 点易伤；此书签最多累积至 {mark_limit} 点。"
+modifiers = {&"cross_mark_hit": 5}
+numbers = {&"mark_limit": 32}
+tags = PackedStringArray("mark")
+max_stacks = 2
+rarity = &"uncommon"
+grants_capabilities = PackedStringArray("mark")
+preferred_books = PackedStringArray("spirit")
+supported = true
+stage = &"relics-3"

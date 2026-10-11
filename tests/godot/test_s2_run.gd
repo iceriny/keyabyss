@@ -17,11 +17,13 @@ var sampling_book := ""
 class FailingRepository:
 	extends SaveRepository
 	var reject_next := false
+	var save_calls: int = 0
 
 	func _init(base: String) -> void:
 		super(&"normal", base)
 
 	func save_profile(candidate: ProfileState, expected_revision: int) -> bool:
+		save_calls += 1
 		if reject_next:
 			reject_next = false
 			last_error = "INJECTED_SAVE_FAILURE"
@@ -39,6 +41,7 @@ func _run() -> void:
 	for mode in MODES: _test_continuation(mode)
 	_test_records_and_end()
 	_test_reroll()
+	_test_relic_restore_compatibility()
 	_test_full_pool_supply()
 	var arguments := OS.get_cmdline_user_args()
 	for argument in arguments:
@@ -67,7 +70,7 @@ func _run() -> void:
 	quit(0 if failures == 0 else 1)
 
 
-func _new_run(label: String, mode: String = "normal", book: StringName = &"frost", growth: bool = false, seed: String = "") -> RunSession:
+func _new_run(label: String, mode: String = "normal", book: StringName = &"frost", growth: bool = false, run_seed: String = "") -> RunSession:
 	var repository := FailingRepository.new(directory.path_join(label))
 	var session := RunSession.new(repository, repository.load_profile())
 	if growth:
@@ -77,7 +80,7 @@ func _new_run(label: String, mode: String = "normal", book: StringName = &"frost
 	var settings := AppSettings.new()
 	settings.difficulty = mode
 	settings.progressive = false
-	settings.run_seed = "s2-" + label if seed.is_empty() else seed
+	settings.run_seed = "s2-" + label if run_seed.is_empty() else run_seed
 	_check(session.begin(book, settings), "direct book begin: " + session.last_error)
 	return session
 
@@ -229,6 +232,92 @@ func _test_reroll() -> void:
 	_check(session.reroll_reward(str(session.offer.id)) and int(session.facts.rerolls) == 0, "last reroll is consumed")
 	after = session.to_checkpoint()
 	_check(not session.reroll_reward(str(session.offer.id)) and session.to_checkpoint() == after, "zero rerolls rejects further redraw")
+
+
+func _test_relic_restore_compatibility() -> void:
+	var legal := _new_run("compat-legal")
+	_acquire_fixture(legal, &"R003", "compat-legal:cold")
+	legal = _save_legacy_checkpoint(legal)
+	var bytes := FileAccess.get_file_as_bytes(legal.repository.path)
+	var checkpoint := legal.profile.run_checkpoint.duplicate(true)
+	var revision := legal.profile.revision
+	var saves := (legal.repository as FailingRepository).save_calls
+	_check(legal.restore() and _json_equal(legal.to_checkpoint(), checkpoint), "legal old relic ownership resumes unchanged")
+	_check(legal.profile.revision == revision and (legal.repository as FailingRepository).save_calls == saves and FileAccess.get_file_as_bytes(legal.repository.path) == bytes, "legal ready checkpoints need no compatibility save")
+	for conflict in ["exclusive", "capability"]:
+		var old := _new_run("compat-" + conflict, "normal", &"frost" if conflict == "exclusive" else &"flame")
+		var assets := {&"R003": 2, &"R004": 2, &"R031": 1, &"R032": 1, &"R044": 1, &"R045": 1} if conflict == "exclusive" else {&"R004": 1}
+		for id: StringName in assets:
+			for layer: int in assets[id]:
+				old.selection.instances.append(_legacy_relic(id, "%s:%s:%d" % [conflict, id, layer]))
+		old.phase = "BATTLE"
+		old.room_serial = 1
+		old.attempt_id = "compat-" + conflict + ":attempt"
+		old.facts["checkpoint_characters"] = 11
+		old = _save_legacy_checkpoint(old)
+		bytes = FileAccess.get_file_as_bytes(old.repository.path)
+		checkpoint = old.profile.run_checkpoint.duplicate(true)
+		revision = old.profile.revision
+		saves = (old.repository as FailingRepository).save_calls
+		_check(not old.restore() and "旧局已保留" in old.last_error and "重开" in old.last_error, "new %s requirements reject the old build through the preserved-run path" % conflict)
+		_check(old.profile.has_pending_run() and _json_equal(old.profile.run_checkpoint, checkpoint) and old.profile.revision == revision, "rejected %s ownership retains the original checkpoint and revision" % conflict)
+		_check((old.repository as FailingRepository).save_calls == saves and FileAccess.get_file_as_bytes(old.repository.path) == bytes, "rejected %s battle does not publish resume state or alter the file" % conflict)
+		var settings := AppSettings.new()
+		_check(old.restart(&"storm", settings) and old.selection.instances.is_empty(), "explicit restart remains available after an incompatible %s build" % conflict)
+	for old_phase in ["REWARD", "BATTLE_REWARD"]:
+		var old := _reward_fixture("compat-offer-" + old_phase)
+		old.phase = old_phase
+		old.attempt_id = "compat-offer:attempt"
+		old.offer.candidates = ["R045"]
+		old = _save_legacy_checkpoint(old)
+		var obsolete_id: String = old.profile.run_checkpoint.offer.id
+		var reward_state: Dictionary = old.profile.run_checkpoint.rewards.duplicate(true)
+		var rerolls: int = old.profile.run_checkpoint.facts.rerolls
+		var serial: int = old.profile.run_checkpoint.facts.offer_serial
+		bytes = FileAccess.get_file_as_bytes(old.repository.path)
+		checkpoint = old.profile.run_checkpoint.duplicate(true)
+		revision = old.profile.revision
+		saves = (old.repository as FailingRepository).save_calls
+		(old.repository as FailingRepository).reject_next = true
+		_check(not old.restore(), "a failed %s offer migration remains recoverable" % old_phase)
+		_check(_json_equal(old.profile.run_checkpoint, checkpoint) and old.profile.revision == revision and FileAccess.get_file_as_bytes(old.repository.path) == bytes, "failed %s offer migration publishes no quote, RNG or resume state" % old_phase)
+		_check(old.restore(), "%s offer with obsolete qualification is rebuilt" % old_phase)
+		_check(old.profile.revision == revision + 1 and (old.repository as FailingRepository).save_calls == saves + 2, "%s offer and battle resume publish one successful save transaction" % old_phase)
+		_check(old.phase == "REWARD" and str(old.offer.id).begins_with(old.run_id + ":reward:") and str(old.offer.id) != obsolete_id and int(old.facts.offer_serial) == serial + 1, "%s refresh keeps the run identity and advances the quote once" % old_phase)
+		_check(_json_equal(old.rewards.to_dict(), reward_state) and int(old.facts.rerolls) == rerolls, "%s automatic refresh spends no reward or reroll" % old_phase)
+		var service := AcquisitionService.new(old.compiler)
+		for id: String in old.offer.candidates:
+			_check(service.evaluate(old.selection, StringName(id), old.acquisition_context()).eligible, "refreshed offer contains only currently eligible IDs: " + id)
+		var fresh := old.offer.duplicate(true)
+		var reloaded := RunSession.new(old.repository, old.repository.load_profile())
+		saves = (old.repository as FailingRepository).save_calls
+		_check(reloaded.restore() and reloaded.offer == fresh and (old.repository as FailingRepository).save_calls == saves, "%s refreshed offer reopens without a second redraw" % old_phase)
+		var chosen := StringName(reloaded.offer.candidates[0])
+		_check(not reloaded.take_reward(chosen, obsolete_id), "obsolete %s quote cannot acquire the refreshed reward" % old_phase)
+		_check(reloaded.take_reward(chosen, str(fresh.id)), "refreshed %s quote acquires through the real transaction" % old_phase)
+		revision = reloaded.profile.revision
+		var owned := reloaded.selection.instances.size()
+		_check(reloaded.take_reward(chosen, str(fresh.id)) and reloaded.profile.revision == revision and reloaded.selection.instances.size() == owned, "repeated %s acquisition retains its once-only receipt" % old_phase)
+	var empty := _reward_fixture("compat-empty-offer")
+	empty.offer.candidates.clear()
+	empty = _save_legacy_checkpoint(empty)
+	_check(empty.restore() and not empty.offer.candidates.is_empty(), "an old exhausted pool quote becomes a reward when the expanded pool is reachable")
+
+
+func _legacy_relic(id: StringName, identity: String) -> CombatAssetInstance:
+	var instance := CombatAssetInstance.new()
+	instance.instance_id = identity
+	instance.content_id = id
+	instance.source_id = &"reward"
+	return instance
+
+
+func _save_legacy_checkpoint(session: RunSession) -> RunSession:
+	var proposed := session.profile.copy()
+	proposed.run_checkpoint = session.to_checkpoint()
+	proposed.revision += 1
+	_check(session.repository.save_profile(proposed, session.profile.revision), "old ownership/offer fixture uses the real profile writer")
+	return RunSession.new(session.repository, session.repository.load_profile())
 
 
 func _test_full_pool_supply() -> void:
@@ -497,7 +586,7 @@ func _defend() -> void:
 		elif battle.dodge_charges >= 1.0: _key(KEY_ALT)
 
 
-func _key(code: int, unicode: int = 0, pressed: bool = true) -> void:
+func _key(code: Key, unicode: int = 0, pressed: bool = true) -> void:
 	var event := InputEventKey.new()
 	event.keycode = code
 	event.physical_keycode = code

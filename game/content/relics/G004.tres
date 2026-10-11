@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"G004"
+title = "短笺"
+description = "不超过4个字母的词咒伤害提高 {short_pct}%；长词伤害降低 {long_pct_abs}%。"
+modifiers = {&"short_pct": 12, &"long_pct": -6}
+tags = PackedStringArray("short", "damage")
+max_stacks = 1
+rarity = &"common"
+exclusive_group = &"word_length"
+supported = true
+stage = &"relics-3"

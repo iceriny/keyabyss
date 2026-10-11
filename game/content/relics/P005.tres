@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P005"
+title = "慢褪墨"
+description = "易伤的自然流失减慢 {mark_decay_pct}%。"
+modifiers = {&"mark_decay_pct": 12}
+tags = PackedStringArray("mark")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("spirit")
+supported = true
+stage = &"relics-3"

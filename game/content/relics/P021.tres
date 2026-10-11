@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P021"
+title = "初名手稿"
+description = "标记满生命敌人时，额外施加 {mark_fresh_points} 点易伤。"
+modifiers = {&"mark_fresh_points": 6}
+tags = PackedStringArray("mark", "opening")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("spirit")
+supported = true
+stage = &"relics-3"

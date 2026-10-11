@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A009"
+title = "传火书线"
+description = "野火书签的灼烧传播范围增加 {burn_spread_radius}。"
+modifiers = {&"burn_spread_radius": 16}
+tags = PackedStringArray("burn", "spread")
+max_stacks = 2
+rarity = &"uncommon"
+allowed_books = PackedStringArray("flame")
+requires_all = PackedStringArray("R052")
+supported = true
+stage = &"relics-3"

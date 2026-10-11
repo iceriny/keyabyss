@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F003"
+title = "双折冰页"
+description = "冰锥多穿透 {frost_pierce} 个目标；直接伤害降低 {ice_direct_pct_abs}%。"
+modifiers = {&"frost_pierce": 1, &"ice_direct_pct": -6}
+tags = PackedStringArray("pierce")
+max_stacks = 1
+rarity = &"uncommon"
+allowed_books = PackedStringArray("frost")
+exclusive_group = &"frost_lance"
+supported = true
+stage = &"relics-3"

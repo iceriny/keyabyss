@@ -1,6 +1,7 @@
 class_name KeyabyssApp
 extends Node
 ## Owns page navigation and services, while word progress belongs to TypingSession.
+const REWARD_HINT := "按住 Alt 查看详情     ·     1 / 2 / 3 取得遗物"
 
 @onready var root: GameDisplay = $Interface/Root
 @onready var router: InputRouter = $InputRouter
@@ -55,6 +56,7 @@ var god_enabled := false
 var _restart_requested := false
 var _history_detail: VBoxContainer
 var fps_display: FpsDisplay
+var term_tooltips: TermTooltips
 var _calibration_return := "home"
 var _calibration_archive_visible := true
 
@@ -77,6 +79,11 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	_load_profile()
+	term_tooltips = TermTooltips.new()
+	term_tooltips.name = "TermTooltips"
+	term_tooltips.build_provider = _reading_build
+	term_tooltips.scope_provider = _reading_scope
+	root.add_child(term_tooltips)
 	fps_display = FpsDisplay.create()
 	fps_display.z_index = 90
 	root.add_child(fps_display)
@@ -103,6 +110,8 @@ func _ready() -> void:
 		if is_instance_valid(page):
 			if route in ["practice", "battle"]:
 				page.command_hint.text = "Space 御术 · 方向 / Alt 闪避 · 单独松开 Shift 终式"
+			elif route == "reward" and value.is_empty():
+				page.command_hint.text = REWARD_HINT
 			else:
 				page.command_hint.text = "词令  %s▏" % value if not value.is_empty() else "点击或输入词令"
 	)
@@ -351,6 +360,26 @@ func _apply_control_policy(node_id: int) -> void:
 		return
 	control.focus_mode = Control.FOCUS_CLICK if control is LineEdit or control is TextEdit else Control.FOCUS_NONE
 	control.tooltip_text = ""
+	if control is Label and is_instance_valid(term_tooltips):
+		term_tooltips.register(control)
+
+
+func _reading_build() -> CompiledBuild:
+	# Records describe stored layers; their glossary must not borrow the live run.
+	if route == "history": return null
+	if run != null and (run.phase != "RESULT" or route == "build"):
+		return run.compiler.compile(run.selection).build
+	var selected := BuildSelection.new()
+	selected.book_id = StringName(settings.book_id)
+	return BuildCompiler.new().compile(selected).build
+
+
+func _reading_scope() -> Node:
+	if is_instance_valid(page) and page.visible:
+		var detail := page.get_node_or_null("RewardDetail")
+		return detail if detail != null else page
+	if is_instance_valid(battle) and battle.visible: return battle
+	return archive
 
 
 func _apply_book_theme() -> void:
@@ -460,7 +489,7 @@ func _guide() -> void:
 				return
 			build_started = Time.get_ticks_usec()
 	var sections := VBoxContainer.new()
-	GuideContent._add_demonstration(sections, labels, rules)
+	GuideContent._add_demonstration(sections, labels, rules, _reading_build())
 	GuideContent._add_practice(sections, rules, _start_practice)
 	for button: OpenButton in sections.find_children("*", "OpenButton", true, false):
 		button.defer_decoration = true
@@ -1507,17 +1536,23 @@ func _show_run_stage(audible: bool = true) -> void:
 		_start_battle()
 		return
 	if run.phase in ["REWARD", "BATTLE_REWARD"]:
-		_open("reward", "选择遗物", "选择一件带走 · 还可领取 %d 件" % run.rewards.available(), audible)
+		_open("reward", "选择遗物", "还可领取 %d 件" % run.rewards.available(), audible)
 		page.set_width(1320.0)
+		page.compact_height = 960
+		page.scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		page.command_hint.text = REWARD_HINT
 		page.close_button.disabled = true
+		var reading_build := run.compiler.compile(run.selection).build
 		var choices := HBoxContainer.new()
 		choices.name = "RewardChoices"
 		choices.add_theme_constant_override("separation", 26)
 		page.body.add_child(choices)
 		for id: String in run.offer.candidates:
 			var definition := run.compiler.catalog.get_definition(StringName(id))
-			var choice := preload("res://ui/scenes/relic_reward_choice.tscn").instantiate() as RelicRewardChoice
+			var choice := load("res://ui/scenes/relic_reward_choice.tscn").instantiate() as RelicRewardChoice
 			choice.definition = definition
+			choice.catalog = run.compiler.catalog
+			choice.build = reading_build
 			choice.reduced_motion = settings.reduce_motion
 			choice.shortcut = str(run.offer.candidates.find(id) + 1)
 			choices.add_child(choice)
@@ -1535,10 +1570,6 @@ func _show_run_stage(audible: bool = true) -> void:
 			commands[str(run.offer.candidates.find(id) + 1)] = take.pressed.emit
 			take.add_theme_font_size_override("font_size", 21)
 			choice.picked.connect(take.pressed.emit)
-			var details := OpenButton.new()
-			details.text = "查看详情"
-			details.pressed.connect(_show_reward_detail.bind(definition))
-			column.add_child(details)
 		_reward_companion()
 		_button(page.footer, "查看遗物", "relics", _relics_page)
 		if run.offer.candidates.is_empty():
@@ -1636,7 +1667,7 @@ func _show_reward_detail(definition: CombatContentDefinition) -> void:
 	page.add_child(detail)
 	detail.set_width(740)
 	detail.command_hint.text = "Esc 返回"
-	PageShell.label(detail.body, ContentDescription.text(definition, run.compiler.catalog), 21)
+	PageShell.label(detail.body, ContentDescription.text(definition, run.compiler.catalog, _reading_build(), true), 21)
 	detail.close_button.pressed.connect(_close_reward_detail)
 	PageShell.button(detail.footer, "关闭详情", _close_reward_detail)
 	sound.play_cue("ui.open")
@@ -1651,14 +1682,15 @@ func _close_reward_detail() -> void:
 
 
 func _reward_companion() -> void:
+	var build := _reading_build()
 	var companion := HBoxContainer.new()
 	companion.name = "CurrentBuild"
-	companion.add_theme_constant_override("separation", 30)
-	companion.custom_minimum_size.y = 148
+	companion.add_theme_constant_override("separation", 24)
+	companion.custom_minimum_size.y = 92
 	page.body.add_child(companion)
 	var art := TextureRect.new()
 	art.texture = load("res://assets/art/books/%s.png" % run.selection.book_id)
-	art.custom_minimum_size = Vector2(126, 146)
+	art.custom_minimum_size = Vector2(70, 86)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	art.modulate = Color(0.8, 0.9, 0.9, 0.8)
@@ -1666,12 +1698,13 @@ func _reward_companion() -> void:
 	companion.add_child(art)
 	var vitals := VBoxContainer.new()
 	vitals.custom_minimum_size.x = 234
-	vitals.add_theme_constant_override("separation", 9)
+	vitals.add_theme_constant_override("separation", 5)
 	companion.add_child(vitals)
-	PageShell.label(vitals, ContentDescription.BOOKS[str(run.selection.book_id)], 22, Color("bdc4b5"))
+	PageShell.label(vitals, ContentDescription.BOOKS[str(run.selection.book_id)], 19, Color("bdc4b5"))
 	var hp: int = battle.session.player_hp_q if is_instance_valid(battle) else int(run.combat.hp_q)
-	var maximum_hp: int = battle.session.player_max_hp_q if is_instance_valid(battle) else run.compiler.compile(run.selection).build.maximum_hp_q()
-	PageShell.label(vitals, "生命 %d / %d" % [ceili(hp / 1024.0), ceili(maximum_hp / 1024.0)], 17, Color("a2b2a5"))
+	var maximum_hp: int = battle.session.player_max_hp_q if is_instance_valid(battle) else build.maximum_hp_q()
+	var shield: int = battle.session.run_state.shield_q if is_instance_valid(battle) else int(run.combat.shield_q)
+	PageShell.label(vitals, "生命 %d / %d   护盾 %d" % [ceili(hp / 1024.0), ceili(maximum_hp / 1024.0), ceili(shield / 1024.0)], 17, Color("a2b2a5"))
 	var health := ProgressBar.new()
 	health.custom_minimum_size.y = 4
 	health.max_value = maximum_hp
@@ -1679,16 +1712,20 @@ func _reward_companion() -> void:
 	health.show_percentage = false
 	health.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vitals.add_child(health)
-	var shield: int = battle.session.run_state.shield_q if is_instance_valid(battle) else int(run.combat.shield_q)
-	PageShell.label(vitals, "护盾 %d" % ceili(shield / 1024.0), 17, Color("a2b4bd"))
 	var owned := VBoxContainer.new()
 	owned.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	companion.add_child(owned)
-	PageShell.label(owned, "已持有的遗物", 17, Color("94a59e"))
+	var relic_count := 0
+	for id in build.assets(): relic_count += build.asset_stacks(id)
+	PageShell.label(owned, "已持有 %d 件遗物" % relic_count, 16, Color("94a59e"))
+	var owned_scroll := SmoothScroll.new()
+	owned_scroll.custom_minimum_size.y = 54
+	owned_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	owned.add_child(owned_scroll)
 	var names: PackedStringArray = []
-	for instance in run.selection.instances:
-		names.append(run.compiler.catalog.get_definition(instance.content_id).title)
-	PageShell.label(owned, "、".join(names) if not names.is_empty() else "尚未取得遗物", 17, Color("8c9f97"))
+	for id in build.assets():
+		names.append(run.compiler.catalog.get_definition(id).title + (" ×%d" % build.asset_stacks(id) if build.asset_stacks(id) > 1 else ""))
+	PageShell.label(owned_scroll, "、".join(names) if not names.is_empty() else "尚未取得遗物", 17, Color("a8bab1"))
 
 
 func _choose_route(choice: String) -> void:
@@ -1711,7 +1748,7 @@ func _relics_page(owned_only: bool = false) -> void:
 	page.scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	page.body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var search := LineEdit.new()
-	search.placeholder_text = "搜索遗物名称"
+	search.placeholder_text = "搜索名称或效果"
 	search.focus_mode = Control.FOCUS_CLICK
 	page.body.add_child(search)
 	var workspace := HBoxContainer.new()
@@ -1739,6 +1776,7 @@ func _relics_page(owned_only: bool = false) -> void:
 	glyph.custom_minimum_size = Vector2(100, 100)
 	detail.add_child(glyph)
 	var title := PageShell.label(detail, "", 26, Color("dfc58b"))
+	var category := PageShell.label(detail, "", 16, Color("aeb9b5"))
 	var description := PageShell.label(detail, "", 18)
 	var eligibility := PageShell.label(detail, "", 17)
 	eligibility.visible = not owned_only
@@ -1754,10 +1792,13 @@ func _relics_page(owned_only: bool = false) -> void:
 		glyph.definition = definition
 		glyph.queue_redraw()
 		title.text = definition.title
-		description.text = ContentDescription.text(definition, catalog)
-		var chosen := run.selection if run != null and run.phase != "RESULT" else BuildSelection.new()
-		if run == null or run.phase == "RESULT":
+		var relic := definition as RelicDefinition
+		category.text = ContentDescription.RARITIES[str(relic.rarity)] + (" · 通用" if relic.allowed_books.is_empty() else " · " + ContentDescription.BOOKS[str(relic.allowed_books[0])])
+		var chosen := run.selection if run != null and (run.phase != "RESULT" or owned_only) else BuildSelection.new()
+		if run == null or (run.phase == "RESULT" and not owned_only):
 			chosen.book_id = StringName(settings.book_id)
+		description.text = ContentDescription.text(definition, catalog, compiler.compile(chosen).build)
+		title.add_theme_color_override("font_color", ContentDescription.COLORS[str((definition as RelicDefinition).rarity)])
 		var context := run.acquisition_context() if run != null else {"shortest": settings.min_length, "longest": settings.max_length}
 		if not owned_only:
 			var qualification := acquisition.evaluate(chosen, id, context)
@@ -1774,7 +1815,7 @@ func _relics_page(owned_only: bool = false) -> void:
 	if run != null:
 		for instance in run.selection.instances:
 			owned[instance.content_id] = owned.get(instance.content_id, 0) + 1
-	for id: String in AcquisitionService.ACTIVE_RELICS:
+	for id: String in catalog.relic_ids():
 		if owned_only and owned.get(StringName(id), 0) <= 0: continue
 		if first_id == &"": first_id = StringName(id)
 		listed.append(StringName(id))
@@ -1782,7 +1823,7 @@ func _relics_page(owned_only: bool = false) -> void:
 		commands["relic" + str(listed.size())] = select.bind(StringName(id))
 	search.text_changed.connect(func(query: String) -> void:
 		for button in buttons:
-			button.visible = query.is_empty() or str(button.get_meta("relic_title")).contains(query))
+			button.visible = query.is_empty() or str(button.get_meta("relic_search")).contains(query))
 	if first_id != &"": select.call(first_id)
 	else: PageShell.label(detail, "尚未取得遗物。击败敌人积累经验，获得三选一机会。", 18, Color("acbab2"))
 	_catalog_button(page.footer, "返回", "back", _back)
@@ -1793,8 +1834,9 @@ func _relics_page(owned_only: bool = false) -> void:
 		var definition := catalog.get_definition(listed[index])
 		var caption := definition.title + (" ×%d" % owned.get(listed[index], 0) if owned_only else "")
 		var button := _catalog_button(list, caption, "relic" + str(index + 1), select.bind(listed[index]))
-		button.set_meta("relic_title", definition.title)
-		button.visible = search.text.is_empty() or definition.title.contains(search.text)
+		var search_text: String = definition.title + ContentDescription.summary(definition) + ContentDescription.RARITIES[str((definition as RelicDefinition).rarity)]
+		button.set_meta("relic_search", search_text)
+		button.visible = search.text.is_empty() or search_text.contains(search.text)
 		buttons.append(button)
 		if Time.get_ticks_usec() - build_started >= 2000 and index + 1 < listed.size():
 			await get_tree().process_frame
@@ -1945,6 +1987,7 @@ func _record_detail(record: Dictionary, audible: bool = true) -> void:
 		glyph.custom_minimum_size = Vector2(120, 65)
 		cell.add_child(glyph)
 		PageShell.label(cell, "%s ×%d" % [definition.title, int(assets[id])], 15).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		PageShell.label(cell, ContentDescription.summary(definition, int(assets[id])), 14, Color("aeb9b5"))
 	if assets.is_empty(): PageShell.label(_history_detail, "未携带遗物", 16, Color("91a69b"))
 	PageShell.label(_history_detail, "行间足迹", 21, Color("d8c496"))
 	for item: Dictionary in record.get("routes", []):

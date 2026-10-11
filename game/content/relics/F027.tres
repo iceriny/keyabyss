@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F027"
+title = "冬夜全集"
+description = "冻结延长 {freeze_ms_s} 秒，首领减半；对冻结敌人的施法伤害提高 {frozen_pct}%。"
+modifiers = {&"freeze_ms": 300, &"frozen_pct": 20}
+tags = PackedStringArray("freeze")
+max_stacks = 1
+rarity = &"awakening"
+allowed_books = PackedStringArray("frost")
+exclusive_group = &"frost_awakening"
+required_stacks = {&"F004": 2, &"F006": 2}
+supported = true
+stage = &"relics-3"

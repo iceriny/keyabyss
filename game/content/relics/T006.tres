@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T006"
+title = "充雷墨"
+description = "主电链每次充能带来的增伤提高 {charge_pct}%。"
+modifiers = {&"charge_pct": 8}
+tags = PackedStringArray("charge")
+max_stacks = 2
+rarity = &"uncommon"
+allowed_books = PackedStringArray("storm")
+requires_all = PackedStringArray("T001")
+supported = true
+stage = &"relics-3"

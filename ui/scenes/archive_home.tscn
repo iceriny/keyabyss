@@ -249,6 +249,7 @@ horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="Traits" type="Label" parent="CaptionLayer/Caption"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("4")
@@ -318,7 +319,7 @@ mouse_filter = 2
 theme_override_colors/font_color = Color(0.584314, 0.615686, 0.592157, 1)
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 12
-text = "封 印 书 库\n触碰法书，唤醒共鸣"
+text = "封 印 书 库"
 horizontal_alignment = 2
 autowrap_mode = 3
 
@@ -334,40 +335,42 @@ theme_override_font_sizes/font_size = 12
 horizontal_alignment = 2
 autowrap_mode = 3
 
-[node name="Menu" type="VBoxContainer" parent="."]
+[node name="Menu" type="GridContainer" parent="."]
 layout_mode = 0
 offset_left = 96.0
 offset_top = 800.0
 offset_right = 331.0
 mouse_filter = 2
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 30
+theme_override_constants/v_separation = 10
+columns = 2
 
 [node name="Vocab" type="Button" parent="Menu"]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(170, 36)
 layout_mode = 2
 theme_override_constants/h_separation = 40
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "词库    vocab"
 script = ExtResource("3")
 
 [node name="Profile" type="Button" parent="Menu"]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(170, 36)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "留痕    profile"
 script = ExtResource("3")
 
 [node name="History" type="Button" parent="Menu"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "远征记录    history"
 script = ExtResource("3")
 
 [node name="Relics" type="Button" parent="Menu"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "遗物图鉴    relics"
 script = ExtResource("3")
 
@@ -375,7 +378,7 @@ script = ExtResource("3")
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 40
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "施法指南    help"
 script = ExtResource("3")
 
@@ -383,7 +386,7 @@ script = ExtResource("3")
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 40
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "设置    settings"
 script = ExtResource("3")
 
@@ -391,7 +394,7 @@ script = ExtResource("3")
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 40
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17
 text = "离开    quit"
 script = ExtResource("3")
 

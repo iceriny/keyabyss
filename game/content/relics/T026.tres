@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T026"
+title = "千里雷书"
+description = "主电链增加 {chain_hits} 个目标；电链伤害降低 {storm_direct_pct_abs}%。"
+modifiers = {&"chain_hits": 1, &"storm_direct_pct": -5}
+tags = PackedStringArray("chain")
+max_stacks = 1
+rarity = &"awakening"
+allowed_books = PackedStringArray("storm")
+exclusive_group = &"storm_awakening"
+required_stacks = {&"T003": 2, &"T004": 2}
+supported = true
+stage = &"relics-3"

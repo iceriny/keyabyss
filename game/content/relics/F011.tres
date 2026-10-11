@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"F011"
+title = "冰河图录"
+description = "冰河纪事的冰锥伤害提高 {frost_domain_pct}%。"
+modifiers = {&"frost_domain_pct": 12}
+tags = PackedStringArray("ultimate")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("frost")
+supported = true
+stage = &"relics-3"

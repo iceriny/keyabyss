@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"A010"
+title = "分火纸页"
+description = "野火书签每次多传播给 {burn_spread_targets} 个目标。"
+modifiers = {&"burn_spread_targets": 1}
+tags = PackedStringArray("burn", "spread")
+max_stacks = 1
+rarity = &"rare"
+allowed_books = PackedStringArray("flame")
+requires_all = PackedStringArray("R052")
+supported = true
+stage = &"relics-3"

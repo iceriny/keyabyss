@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T018"
+title = "带电校本"
+description = "对感电超过30点的敌人，施法伤害提高 {shocked_pct}%。"
+modifiers = {&"shocked_pct": 10}
+tags = PackedStringArray("shock", "damage")
+max_stacks = 2
+rarity = &"uncommon"
+allowed_books = PackedStringArray("storm")
+requires_all = PackedStringArray("T001")
+supported = true
+stage = &"relics-3"

@@ -3,6 +3,12 @@ extends RefCounted
 
 const BOOKS := [&"frost", &"flame", &"storm", &"spirit"]
 const Q := 1024
+const BOOK_CAPABILITIES := {
+	&"frost": ["cold", "freeze", "frost_shatter", "area"],
+	&"flame": ["burn", "fire_field", "area"],
+	&"storm": ["chain", "shock", "area"],
+	&"spirit": ["spirit", "mark"],
+}
 const RESTORED_RELICS: Array[StringName] = [&"R001", &"R002", &"R003", &"R004", &"R005", &"R006", &"R007", &"R008", &"R009", &"R010", &"R011", &"R012", &"R013", &"R014", &"R015", &"R016", &"R017", &"R018", &"R019", &"R020", &"R021", &"R022", &"R023", &"R024", &"R025", &"R026", &"R027", &"R028", &"R029", &"R030", &"R031", &"R032", &"R033", &"R034", &"R035", &"R036", &"R037", &"R038", &"R039", &"R040", &"R041", &"R042", &"R043", &"R044", &"R045", &"R046", &"R047", &"R048", &"R049", &"R050", &"R051", &"R052", &"R053", &"R054", &"R055", &"R056", &"R057", &"R058"]
 # Legacy snapshot readers still name these tokens; compilation does not use them.
 const SHAPES := {&"frost": [&"ice_lance", &"crystal_ring"], &"flame": [&"flame_column", &"embers"], &"storm": [&"lightning_beam", &"radial_lightning"], &"spirit": [&"lone_blade", &"patrol_blade"]}
@@ -41,21 +47,58 @@ func compile(selection: BuildSelection) -> BuildCompileResult:
 		build._rules[&"heat"] = true
 		build._rules[&"dot"] = true
 	var instances: Array[CombatAssetInstance] = normalized.instances
+	var stacks: Dictionary[StringName, int] = {}
+	var groups: Dictionary = {}
 	for instance in instances:
 		var definition := catalog.get_definition(instance.content_id) as RelicDefinition
-		if definition == null or instance.content_id not in RESTORED_RELICS:
-			result.diagnostics.append("%s：遗物尚未恢复。" % instance.content_id)
+		if definition == null:
+			result.diagnostics.append("UNKNOWN_RELIC:" + str(instance.content_id))
 			continue
-		if not definition.allowed_books.is_empty() and str(selection.book_id) not in definition.allowed_books:
-			result.diagnostics.append("%s：不适用于当前主书。" % instance.content_id)
-		for required in definition.requires_all:
-			var owned := false
-			for asset in instances: owned = owned or str(asset.content_id) == required
-			if not owned: result.diagnostics.append("%s：需要局内遗物%s。" % [instance.content_id, required])
-		var stacks: int = build._asset_stacks.get(instance.content_id, 0) + 1
-		if stacks > definition.max_stacks: result.diagnostics.append("%s：超过叠层上限。" % instance.content_id)
-		build._assets[instance.content_id] = stacks
-		build._asset_stacks[instance.content_id] = stacks
+		stacks[instance.content_id] = int(stacks.get(instance.content_id, 0)) + 1
+		if definition.exclusive_group != &"":
+			var members: Array[StringName] = []
+			if groups.has(definition.exclusive_group): members = groups[definition.exclusive_group]
+			if definition.id not in members: members.append(definition.id)
+			groups[definition.exclusive_group] = members
+	if not result.diagnostics.is_empty(): return result
+	var pending := PackedStringArray(stacks.keys())
+	pending.sort()
+	var active_stacks: Dictionary[StringName, int] = {}
+	var capabilities := PackedStringArray(BOOK_CAPABILITIES[selection.book_id])
+	while not pending.is_empty():
+		var activated := false
+		for id in pending.duplicate():
+			var definition := catalog.get_definition(StringName(id)) as RelicDefinition
+			if not definition.eligibility(selection.book_id, stacks, active_stacks, capabilities, groups).is_empty(): continue
+			active_stacks[definition.id] = stacks[definition.id]
+			for capability in definition.grants_capabilities:
+				if capability not in capabilities: capabilities.append(capability)
+			pending.remove_at(pending.find(id))
+			activated = true
+		if not activated:
+			for id in pending:
+				var definition := catalog.get_definition(StringName(id)) as RelicDefinition
+				result.diagnostics.append_array(definition.eligibility(selection.book_id, stacks, active_stacks, capabilities, groups))
+			return result
+	build._asset_stacks = stacks
+	build._assets = stacks.duplicate()
+	capabilities.sort()
+	build._capabilities = capabilities
+	for id in stacks:
+		var definition := catalog.get_definition(id) as RelicDefinition
+		var numbers: Dictionary[StringName, float] = {}
+		for key in definition.number_keys(): numbers[key] = definition.number(key, stacks[id])
+		build._relic_numbers[id] = numbers
+		for key in definition.modifiers:
+			if not RelicParameters.CAPS.has(key):
+				result.diagnostics.append("UNKNOWN_RELIC_MODIFIER:" + str(key))
+			else:
+				build._modifiers[key] = build.modifier(key) + definition.modifiers[key] * stacks[id]
+	for key in build._modifiers:
+		var cap: int = RelicParameters.CAPS[key]
+		build._modifiers[key] = clampi(build._modifiers[key], -cap, cap)
+	for instance in instances:
+		var definition := catalog.get_definition(instance.content_id) as RelicDefinition
 		for rule in definition.rules:
 			var diagnostic := CombatRuleContract.diagnose(rule)
 			if not diagnostic.is_empty(): result.diagnostics.append(diagnostic)

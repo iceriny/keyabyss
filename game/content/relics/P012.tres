@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"P012"
+title = "宽翼折纸"
+description = "符文纸鹤拦弹半径增加 {crane_radius}。"
+modifiers = {&"crane_radius": 4}
+tags = PackedStringArray("crane")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("spirit")
+supported = true
+stage = &"relics-3"

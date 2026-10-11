@@ -15,10 +15,14 @@ parameters = {
 [resource]
 script = ExtResource("1")
 id = &"R057"
-title = "返咒铭文"
-description = "完美御术的反射命中与近战迎击附带法书效果：冰霜积寒、雷鸣导电、火焰灼烧、纸灵标记并唤醒纸灵。"
+title = "回批铭文"
+description = "完美御术反击附带本书效果：寒气、感电、灼烧，或标记并唤醒纸灵。"
 stage = &"M3"
 supported = true
 rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
 max_stacks = 1
+numbers = {}
+stack_values = PackedStringArray()
+tags = PackedStringArray("parry")
+rarity = &"uncommon"

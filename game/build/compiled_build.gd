@@ -2,11 +2,15 @@ class_name CompiledBuild
 extends RefCounted
 ## Installed snapshots are private. Readers receive values or copies.
 
-const PARAMETER_VERSION := "s2.1"
+## Included in the compiled identity; this is not a save schema version.
+const PARAMETER_VERSION := "relics-3"
 var _id: String
 var _book: StringName
 var _rules: Dictionary[StringName, bool] = {}
 var _values: Dictionary[StringName, int] = {}
+var _modifiers: Dictionary[StringName, int] = {}
+var _relic_numbers: Dictionary[StringName, Dictionary] = {}
+var _capabilities: PackedStringArray = []
 var _modes: Dictionary[StringName, StringName] = {}
 var _mode_operations: Dictionary[StringName, StringName] = {}
 var _sources: Dictionary[StringName, PackedStringArray] = {}
@@ -32,9 +36,21 @@ func value(parameter: StringName, fallback: int = 0) -> int:
 	return _values.get(parameter, fallback)
 
 
+func modifier(key: StringName) -> int:
+	return _modifiers.get(key, 0)
+
+
+func relic_number(id: StringName, key: StringName) -> float:
+	return _relic_numbers.get(id, {}).get(key, 0.0)
+
+
+func capabilities() -> PackedStringArray:
+	return _capabilities.duplicate()
+
+
 func maximum_hp_q() -> int:
 	@warning_ignore("integer_division")
-	return value(&"base_hp_q", 100 * 1024) * (1024 + value(&"max_hp_bonus_q")) / 1024 + value(&"max_hp_flat_q")
+	return value(&"base_hp_q", 100 * 1024) * (1024 + value(&"max_hp_bonus_q")) / 1024 + value(&"max_hp_flat_q") + modifier(&"max_hp_flat") * 1024
 
 
 func mode(slot: StringName) -> StringName:

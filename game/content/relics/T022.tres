@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"T022"
+title = "重拍雷稿"
+description = "强化施法伤害提高 {empowered_pct}%；所有施法伤害降低 {power_pct_abs}%。"
+modifiers = {&"empowered_pct": 14, &"power_pct": -4}
+tags = PackedStringArray("empowered")
+max_stacks = 2
+rarity = &"common"
+allowed_books = PackedStringArray("storm")
+exclusive_group = &"storm_rhythm"
+supported = true
+stage = &"relics-3"
