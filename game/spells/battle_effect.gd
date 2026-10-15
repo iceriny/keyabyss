@@ -28,3 +28,9 @@ var base_power_q: int = 0
 var arc_base_hits: int = 3
 var arc_index: int = 0
 var arc_charge: float = 1.0
+var manual_cast: bool = false
+var mist_cast: bool = false
+var bonus_shock: int = 0
+var split_released: bool = false
+var arc_anchor: StringName
+var retargetable: bool = true

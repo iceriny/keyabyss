@@ -2,7 +2,7 @@
 
 > 历史归档：2026-10-08 调整范围前的设计、计划或证据。正文中的要求与“下一步”不构成当前任务；当前实施见[交接文档](../../../migration/AGENT-HANDOFF.md).
 
-本页记录输入与目标边界，不替代 [TODO](../TODO.md) 或候选内容的逐项去向表。旧路径均相对于 `legacy/web/`；完整旧实现接线见[迁移前快照](../../pre-godot/TECHNICAL-SNAPSHOT.md)。
+本页记录输入与目标边界，不替代 TODO 或候选内容的逐项去向表。旧路径均相对于 `legacy/web/`；完整旧实现接线见[迁移前快照](../../pre-godot/TECHNICAL-SNAPSHOT.md)。
 
 ## 代码去向
 
@@ -38,7 +38,7 @@
 
 ## 内容身份与新游戏存档
 
-有效内容去向依据[候选去向表](../build-system-design/appendix-content-disposition.md)，该表不是存档 ID 转换代码。Godot 内容目录需要独立的 schema_version 与 content_version，成长连线使用 graph_version，位置和画法另有 layout_version。
+有效内容去向依据候选去向表，该表不是存档 ID 转换代码。Godot 内容目录需要独立的 schema_version 与 content_version，成长连线使用 graph_version，位置和画法另有 layout_version。
 
 逐项落地时至少登记：稳定旧 ID（若有）、Godot ID、来源文档、保留／合并／移除原因、资源路径、许可、取得入口、作用规则、玩家说明及实际验证范围。未实现项不能仅凭展示资源进入可购买和可掉落集合。
 

@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R013"
 title = "朱砂印"
+choice_role = &"recovery"
 description = "每完成 {interval} 次词咒，恢复 {heal} 点生命。"
 stage = &"M3"
 supported = true

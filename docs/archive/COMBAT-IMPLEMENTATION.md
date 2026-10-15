@@ -2,7 +2,7 @@
 
 > 历史归档：保留当时的方案、状态或检查结果，不作为当前待办、完成声明或实施约束。当前入口见[文档导航](../README.md)。
 
-分支：`codex/combat-system-deepening`。设计契约见 [整体计划](Combat_System_Deepening_Plan.md) 与 [统一收益模型](../COMBAT-BALANCE-DESIGN.md)。阶段结果以实际接入和验收为准，不以新增文件数量认定完成。
+分支：`codex/combat-system-deepening`。设计契约见 整体计划 与 [统一收益模型](../COMBAT-BALANCE-DESIGN.md)。阶段结果以实际接入和验收为准，不以新增文件数量认定完成。
 
 ## 难度目标
 

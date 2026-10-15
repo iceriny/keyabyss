@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://ui/materials/open_crystal.gdshader" id="shader"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/crystal/river_structure.exr" id="structure_a"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/crystal/river_gradient.exr" id="gradient_a"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/crystal/river_flow.exr" id="flow_a"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/crystal/branch_fan_structure.exr" id="structure_b"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/crystal/branch_fan_gradient.exr" id="gradient_b"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/crystal/branch_fan_flow.exr" id="flow_b"]
+
+[resource]
+shader = ExtResource("shader")
+shader_parameter/structure_a = ExtResource("structure_a")
+shader_parameter/gradient_a = ExtResource("gradient_a")
+shader_parameter/flow_a = ExtResource("flow_a")
+shader_parameter/structure_b = ExtResource("structure_b")
+shader_parameter/gradient_b = ExtResource("gradient_b")
+shader_parameter/flow_b = ExtResource("flow_b")

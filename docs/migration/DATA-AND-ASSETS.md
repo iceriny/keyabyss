@@ -11,7 +11,7 @@ Godot 是活动实现的唯一来源。玩法恢复基线为 `b713c6eea472f6c01d
 | `simulation/progression/{RewardSystem,EligibilityService}.ts` | `game/progression/`、奖励页 | 三选一、主书／词库／已有遗物资格、觉醒前置、重抽和满层补给 |
 | `content/routes/*.ts`、`RewardSystem.chooseRoute()` | `RunSession` 与路线页 | 休息、试炼、赠礼、庇护、付血换奖励；具体支付与不可致死等条件 |
 | `content/enemies/`、`content/bosses/`、`content/elites/` | 敌人定义与战斗调度 | 原 17 类普通敌人、3 Boss、精英变化的实际行为与威胁 |
-| `content/chapters/`、`progression/{Campaign,EncounterDirector,difficulty}.ts` | 行程 Resource 与 RunSession | 三章九场、波次、Boss、五档及周目压力 |
+| `content/chapters/`、`progression/{Campaign,EncounterDirector,difficulty}.ts` | 行程 Resource 与 RunSession | 三章九页、段、Boss、五档及周目压力 |
 | `RewardSystem.continueLoop()`、`application/SessionController.ts` | 结算页与连续远征 | 保留遗物、更强周目、生命／重抽；本次另接升到下一难度 |
 | `src/ui/`、`src/rendering/`、音频定义 | 原生 Control、场景、shader、粒子与音频 | 反馈、时序、声音、阅读层级与减少动态；不迁移 Web 框架 |
 
@@ -55,7 +55,7 @@ Godot 是活动实现的唯一来源。玩法恢复基线为 `b713c6eea472f6c01d
 | gold／鎏金藏书票 | R021 | 领取后击杀经验×1.35；最多1层，无章额外经验上限 | 已恢复35%击杀经验，无章节额外经验cap | G；D.gainXP→ BS.commit_damage、RewardLedger.consume、RunSession奖励事实结算 |
 | crit／惊叹号 | R022 | 每4次casts直接施法×2；最多1层；casts含道具完词，但道具分支不暴击 | 已恢复第四次完词周期；道具计数，该次须主术才暴击 | G；C.cast→ SR.assemble/_record_word |
 | reach／远行墨迹 | R023 | 连锁距离265+100s，爆墨／冻裂半径+25s；最多2层 | 已恢复电弧与爆墨／冻裂对应范围 | G；S.chain、blast/shatter.values→ SR._chain/_continue_arc/contact/on_enemy_death |
-| rescue／未完待续 | R024 | 致命伤一次复活45%最大生命、3秒无敌、清弹／激光／爆炸并范围伤害；最多1层 | 已恢复一次救援，消费身份跨房保存 | G；D.hurt→ BS._take_player_damage、SR.rescue_burst、RunCombatState.claim_asset |
+| rescue／未完待续 | R024 | 致命伤一次复活45%最大生命、3秒无敌、清弹／激光／爆炸并范围伤害；最多1层 | 已恢复一次救援，消费身份跨页保存 | G；D.hurt→ BS._take_player_damage、SR.rescue_burst、RunCombatState.claim_asset |
 | heavy／鲸骨笔杆 | R025 | 击退×(1+0.6s)，碰撞伤害×2（持有即生效）；最多2层 | 已恢复附加击退及碰撞翻倍 | G；S.strike、M.resolveBodies→ SR.contact/body_contact、BS碰撞边界 |
 | gravity／引力墨核 | R026 | 直接命中牵引190范围、力260；最多1层，牵引排除Boss／固定敌人 | 已恢复直接命中额外牵引 | G；S.strike、M.pull→ SR.contact/_pull |
 | execute／终止符 | R027 | 直接命中后普通敌人剩余比例<18%处决；Boss伤害×1.15（执行不限direct）；最多1层 | 已恢复生命比例处决及Boss伤害 | G；S.strike→ SR.contact |
@@ -73,7 +73,7 @@ Godot 是活动实现的唯一来源。玩法恢复基线为 `b713c6eea472f6c01d
 | ward／护页结界 | R039 | 每5次casts护盾+12s，上限60；最多2层 | 已恢复第五次完词护盾及60上限 | G；H.afterCast→ SR._after_cast/add_shield |
 | haste／共鸣墨晶 | R040 | 完词共鸣×1.35，基础无错8／有错6；最多1层 | 已恢复完词共鸣倍率与8／6基础值 | G；C.addResonance→ BS主术／道具词咒共鸣提交 |
 | hourglass／停笔沙漏 | R041 | 闪避后真实1.5秒世界速度10%，允许继续输入，防御恢复按真实时间；最多1层 | 已恢复世界／真实时间分离及持续输入 | G；M.dodge、CombatSimulation.update→ SR.on_dodge、BS.step |
-| bloodprice／血字契约 | R042 | 伤害×1.4；领取及每新页扣8生命，同页一次，至少1生命；最多1层 | 已恢复领取／新房付血与同房去重 | G；H.acquire、D.payBloodPrice、EncounterDirector→ RunTransactionService.prepare_actions、RunSession新房付血 |
+| bloodprice／血字契约 | R042 | 伤害×1.4；领取及每新页扣8生命，同页一次，至少1生命；最多1层 | 已恢复领取／新页付血与同页去重 | G；H.acquire、D.payBloodPrice、EncounterDirector→ RunTransactionService.prepare_actions、RunSession新页付血 |
 | glass／玻璃书封 | R043 | 施法及纸灵×1.45，受伤×1.3；最多1层 | 已恢复施法／纸灵收益及受伤风险 | G；H.damageMultiplier、D.hurt→ SR.damage_multiplier、BS._take_player_damage |
 | avalanche／雪崩圣典 | R044 | frost书、shatter+permafrost前置；冻裂原始死亡depth0射最多6枚冰针，冰枪穿透+2；最多1层 | 已恢复局内组合前置与有限冰针 | G；D.kill、frostB.cast→ SR.on_enemy_death/_configure_shape、AcquisitionService.evaluate |
 | iceheart／凛冬残卷 | R045 | frost书、frost+brittle前置；终式+30盾、冰针tick0.13替代0.25，强化冰附近155积寒100；最多1层 | 已恢复局内觉醒、终式护盾与冰针节奏 | G；frostB.ultimate/tick、S.strike→ BS._commit_ultimate/_advance_ultimates、SR.contact |
@@ -93,15 +93,15 @@ Godot 是活动实现的唯一来源。玩法恢复基线为 `b713c6eea472f6c01d
 
 ### 已恢复范围与运行证据
 
-S1 实际代表池为 `R001、R002、R003、R005、R006、R012、R014、R015、R016、R019、R041、R050`（12件），随后S2扩展至R001–R058全部身份。四书无需天赋编译，正式资格只看主书、局内持有层数、词库及觉醒组合；不合并基线身份，不开放R059之后的新增目录。主术强化计数包含辅助主词而不包含道具；遗物完词周期包含道具，跨房保存。R017保留Ctrl主动补全，与旧自动截词有意不同；人工字符回执与实例消费去重继续保留。
+S1 实际代表池为 `R001、R002、R003、R005、R006、R012、R014、R015、R016、R019、R041、R050`（12件），随后S2扩展至R001–R058全部身份。此处记录恢复基线，不限制后续新增遗物或正式池调整；当前资格和机制见[遗物系统](../RELIC-SYSTEM.md)及[实施方案](PLAN.md)。四书无需天赋编译；主术强化计数包含辅助主词而不包含道具，遗物完词周期包含道具并跨页保存。R017保留Ctrl主动补全，与旧自动截词有意不同；人工字符回执与实例消费去重继续保留。
 
-已有实际证据：`test_s1_rules.gd` 与 `test_s2_rules.gd` 均输出PASS0；S2事务241 checks／0 failures；正式四书九房流程469 checks／0 failures，流程证据目录为 `.temp/shrink/flow/s2-869684`。规则侧记录见 `.temp/shrink/relics/RESULT.md`。这些检查分别覆盖规则族、受控夹具、获取事务及正式流程，不表示所有正式随机组合、长局性能、玩家体验或整体平衡均已覆盖；后续小范围接线的验证以对应最新记录为准。
+已有实际证据：`test_s1_rules.gd` 与 `test_s2_rules.gd` 均输出PASS0；S2事务241 checks／0 failures；正式四书九页流程469 checks／0 failures，流程证据目录为 `.temp/shrink/flow/s2-869684`。规则侧记录见 `.temp/shrink/relics/RESULT.md`。这些检查分别覆盖规则族、受控夹具、获取事务及正式流程，不表示所有正式随机组合、长局性能、玩家体验或整体平衡均已覆盖；后续小范围接线的验证以对应最新记录为准。
 
 ## 现有文件与旧生成链
 
-`docs/migration/M3-CONTENT-MAP.json` 保留为历史M3定义索引，不描述当前正式目录或恢复目标。旧候选Markdown已[归档](../archive/2026-10-08-build-system/README.md)。取消的天赋图／加工生成工具及相关旧资源已移入 `.delete/shrink-20261008/` 的tools、game、ui等分类目录；315项T/K/N/R059+资源位于其 `build-ce8183e3ec394bcdbfa99f0891b4dfde/`，旧Variant／StoredSpell执行结构位于 `rules-code/`。不得将归档输入或待删除工具重新接回生成链。
+旧M3内容表和候选设计已退出当前目录；必要的实施与验收证据见[历史记录](../archive/2026-10-08-build-system/README.md)。取消的天赋图／加工生成工具及相关旧资源已移入 `.delete/shrink-20261008/`。不得将旧候选或待删除工具重新接回生成链。
 
-活动BuildCatalog只加载四书和58遗物，Godot是唯一维护源，不双向同步Web。旧档必要解析字段及结构保留；它们不恢复加工执行分支，不进入正式奖励池。
+BuildCatalog与遗物定义共同维护当前原生内容，正式池以实际资格为准，Godot是唯一维护源，不双向同步Web。旧档必要解析字段及结构保留；兼容读取不自动赋予新奖励资格，也不恢复加工执行分支。
 
 ## 素材与工具
 

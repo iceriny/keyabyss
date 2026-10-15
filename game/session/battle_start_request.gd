@@ -16,3 +16,4 @@ var attempt_id: String
 var chapter: int = 1
 var loop_index: int = 0
 var god_mode: bool = false
+var flight_continuation: Dictionary = {}

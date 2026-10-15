@@ -6,13 +6,13 @@
 script = ExtResource("1")
 id = &"T014"
 title = "蓄雷护页"
+choice_role = &"defense"
 description = "主电链消耗感电充能时，获得 {charged_shield} 点护盾。"
 modifiers = {&"charged_shield": 1}
 tags = PackedStringArray("charge", "shield")
 max_stacks = 2
 rarity = &"rare"
 allowed_books = PackedStringArray("storm")
-requires_all = PackedStringArray("T006")
 grants_capabilities = PackedStringArray("shield")
 supported = true
 stage = &"relics-3"

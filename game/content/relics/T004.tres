@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"T004"
 title = "长线批注"
-description = "电链接入范围增加 {chain_range}。"
-modifiers = {&"chain_range": 24}
+description = "亲手施放的电链结束时，回击仍存活的首个目标，造成基础威力 {damage_pct}% 的伤害；回击不再连锁。"
+numbers = {&"damage_pct": 35}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("chain")
 max_stacks = 2
 rarity = &"common"

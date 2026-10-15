@@ -1,0 +1,11 @@
+{
+  "seconds": 19.868133470999965,
+  "ocular_microtrials": 3360,
+  "typing_sessions": 65,
+  "master_seeds": [
+    903,
+    941,
+    20261014
+  ],
+  "notes": "Figure diagnostics, not recruited humans; raw traces retained"
+}

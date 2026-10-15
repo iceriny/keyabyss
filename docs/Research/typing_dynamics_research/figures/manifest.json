@@ -1,0 +1,219 @@
+[
+  {
+    "number": 1,
+    "stem": "01_baseline_wpm",
+    "caption": "均值及以个体为单位重抽样的95%蒙特卡洛区间；A连贯固定，B随机词固定，C随机位置静止，D随机位置缓慢移动。",
+    "sources": "results/analysis/baseline_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 2,
+    "stem": "02_wpm_distributions",
+    "caption": "小提琴图呈现合成个体的两次会话均值分布，不是现实人群采样分布。",
+    "sources": "results/baseline/baseline_sessions.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 3,
+    "stem": "03_task_transition",
+    "caption": "A到B同时改变上下文、词频和词长分布；不能解释为孤立的语义随机化效应。",
+    "sources": "results/analysis/baseline_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 4,
+    "stem": "04_letter_character_rates",
+    "caption": "CPM=LPM+正确完整词数/分钟；每个正确提交的空格计1字符。",
+    "sources": "results/analysis/baseline_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 5,
+    "stem": "05_speed_error",
+    "caption": "这里计数生成的错误事件，而非每次编辑距离；默认最终修复，因此不能把它称作未纠正错误率。",
+    "sources": "results/baseline/baseline_sessions.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 6,
+    "stem": "06_trajectories",
+    "caption": "6秒轨迹；标称3度/秒。周期轨迹的实际均方速度与其他家族并未强制匹配，边界反弹是理想反射。",
+    "sources": "results/traces/trajectory_families.csv.gz",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 7,
+    "stem": "07_target_gaze",
+    "caption": "固定诊断个体与种子的一次原始连续轨迹；没有为图形效果筛选受试者。",
+    "sources": "results/traces/session_eyes.csv.gz",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 8,
+    "stem": "08_eye_states",
+    "caption": "各词的眼动服务区间；空白时间表示模型允许依据已编码的内容继续输入，并非缺测的人类眼动。",
+    "sources": "results/traces/session_eyes.csv.gz",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 9,
+    "stem": "09_pursuit_error",
+    "caption": "排除首1秒和扫视，只统计可见目标的平滑追踪状态；0速度点改用注视状态。不是获取阶段的全程偏心度。",
+    "sources": "results/traces/pursuit_speed.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 10,
+    "stem": "10_occlusion_reacquisition",
+    "caption": "目标重新可见后首次误差小于0.8度且不在扫视中的时间。图示成功恢复事件均值；未及时恢复的删失事件比例另见CSV，不能把该均值当无条件期望。",
+    "sources": "results/traces/occlusion_reacquisition.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 11,
+    "stem": "11_crowding_recognition",
+    "caption": "固定注视的受控微实验：目标偏心度1.5度，两个侧方词，不发生字框遮挡；误差条为二项Wilson区间。",
+    "sources": "results/traces/crowding_brief_exposure.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 12,
+    "stem": "12_search_field",
+    "caption": "定位时间由眼动状态、目标位置及注视落点产生，并非固定搜索延迟。",
+    "sources": "results/analysis/sensitivity_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 13,
+    "stem": "13_frequency_recognition",
+    "caption": "真实词库中长度5的词，中央注视、无干扰；频率作用函数是先验，点云是实际积分输出，不是ELP观测。",
+    "sources": "results/traces/lexical_frequency.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 14,
+    "stem": "14_length_completion",
+    "caption": "高水平高手；完成延迟包含等待输出顺序的时间，不能把它的倒数直接当流水线吞吐率。各词长库的词频尚有残余差异。",
+    "sources": "results/traces/word_length_trials.csv.gz",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 15,
+    "stem": "15_similarity_errors",
+    "caption": "横轴使用采样后实际相似度而不是请求值。本参数区间下竞争错误很少；接近零不能证明不存在词汇干扰。",
+    "sources": "results/sensitivity/sensitivity_sessions.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 16,
+    "stem": "16_keyboard_path",
+    "caption": "该连线表示按键发生顺序，不是声称同一根手指在所有键之间移动。按各自手指保存位置与释放时间。",
+    "sources": "results/traces/session_keys.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 17,
+    "stem": "17_finger_gantt",
+    "caption": "浅色条为手指定位，粗线为键按下到释放；不同手指可以重叠，按键输出顺序保持不变。",
+    "sources": "results/traces/session_keys.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 18,
+    "stem": "18_transition_intervals",
+    "caption": "短诊断会话中的实际按键分布，含词边界暂停，样本量小；论文类别均值的校准结果另见图25。",
+    "sources": "results/traces/session_keys.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 19,
+    "stem": "19_resource_timeline",
+    "caption": "实际事件时刻。重叠占用不能简单相加为总用时；视觉与手指运动通过资源份额和提交顺序耦合。",
+    "sources": "results/traces/session_keys.csv;results/traces/session_words.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 20,
+    "stem": "20_parameter_sensitivity",
+    "caption": "128组拉丁超立方先验设计的单调关联；不是Sobol方差贡献，参数间交互不会完整体现在此图。",
+    "sources": "results/analysis/sensitivity_rank.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 21,
+    "stem": "21_interaction_heatmap",
+    "caption": "高水平高手；20个配对合成个体/单元，35秒，无外部遮挡。",
+    "sources": "results/analysis/interaction_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 22,
+    "stem": "22_ablation",
+    "caption": "高水平组配对差异与个体Bootstrap区间。移除记忆还会移除预视，因此不是纯工作记忆效应；关闭纠错保留严格净字符计分。",
+    "sources": "results/analysis/ablation_contrasts.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 23,
+    "stem": "23_population_convergence",
+    "caption": "按固定个体ID顺序的累计均值；样本数由独立先导方差决定，图线平稳不代表模型结构误差消失。",
+    "sources": "results/baseline/baseline_sessions.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 24,
+    "stem": "24_parameter_uncertainty",
+    "caption": "每个参数设计点平均4个固定能力个体的输出；不是现实个体预测分布，未覆盖的结构不确定性也不在其中。",
+    "sources": "results/analysis/uncertainty_draw_means.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 25,
+    "stem": "25_empirical_calibration",
+    "caption": "3个锚点档 × 4个类别；每档4个自由参数匹配4个均值。吻合是数值校准，不是独立的人类行为验证。",
+    "sources": "data/raw/typing_summary_observations.csv;results/validation/motor_calibration.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 26,
+    "stem": "26_motor_limit",
+    "caption": "点及连接线来自完整模型仿真；对应低阶拟合函数及留出误差见报告参数表。渐近值只属于给定任务/残差假设，不是人类生理极限。",
+    "sources": "results/analysis/motor_limit_statistics.csv;results/analysis/surrogate_curves.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 27,
+    "stem": "27_preview_policy",
+    "caption": "各点使用相同合成个体ID和随机词流，直接检验预视时机，不与另一批无预视主实验个体混作配对。",
+    "sources": "results/analysis/sensitivity_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 28,
+    "stem": "28_time_step",
+    "caption": "同个体/词流但不同步长的布朗增量并非同路径耦合；这是弱收敛诊断，不是强收敛阶的测量。",
+    "sources": "results/analysis/time_step_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 29,
+    "stem": "29_fatigue",
+    "caption": "最长30分钟；曲线为整场平均，不是末段瞬时速度。疲劳与热身参数为先验，个体允许非单调变化。",
+    "sources": "results/analysis/fatigue_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 30,
+    "stem": "30_lexical_controls",
+    "caption": "前两项匹配边际词汇分布但序列不同。上下文效应强度仍由模型先验指定，不能据此反推真实因果效应。",
+    "sources": "results/analysis/lexical_control_statistics.csv",
+    "script": "scripts/generate_figures.py"
+  },
+  {
+    "number": 31,
+    "stem": "31_boundary_calibration",
+    "caption": "曲线为完整仿真网格，叉号为论文WPM均值约束的位置。残差可能合并多种未分辨的词间/任务差异，不应赋予单一生理解释。",
+    "sources": "results/validation/boundary_calibration_grid.csv;results/validation/boundary_fit.csv",
+    "script": "scripts/generate_figures.py"
+  }
+]

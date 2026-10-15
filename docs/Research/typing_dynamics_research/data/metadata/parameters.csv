@@ -1,0 +1,178 @@
+parameter,group,meaning,unit,value,status,source,uncertainty,applicability
+seed,shared,主随机种子,dimensionless / categorical,20261014,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+duration_s,shared,计分墙钟时长,s,60.0,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+dt_s,shared,连续积分步长,s,0.005,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+preview,shared,是否允许下一词预视,dimensionless / categorical,1,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+preview_reveal,shared,下一词出现触发事件,dimensionless / categorical,previous_word_first_key,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+submit,shared,提交键,dimensionless / categorical,space,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+correction,shared,纠错策略,dimensionless / categorical,end,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+allow_skip,shared,主任务禁止主动跳词,dimensionless / categorical,False,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+memory,shared,完整单词工作记忆开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+force_tracking,shared,识别后持续追踪条件,dimensionless / categorical,False,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+font_height_deg,shared,字形高度视角,deg,0.38,design,实验设计,.22–.55,本项目任务，不是通用人体常数
+screen_width_px,shared,显示宽度像素,px,1920,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+screen_height_px,shared,显示高度像素,px,1080,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+screen_width_cm,shared,显示物理宽度,cm,53.1,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+viewing_distance_cm,shared,观看距离,cm,60.0,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+field_width_deg,shared,词中心出现范围宽度,deg,28.0,design,实验设计,6–40,本项目任务，不是通用人体常数
+field_height_deg,shared,词中心出现范围高度,deg,15.0,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+fixed_slot_x_deg,shared,固定槽位横坐标绝对值,deg,1.6,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+sampling,shared,词库抽样分布,dimensionless / categorical,uniform,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+min_length,shared,最短词长,dimensionless / categorical,3,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+max_length,shared,最长词长,dimensionless / categorical,8,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+minimum_corpus_count,shared,词库最低原始计数,dimensionless / categorical,10,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+cue_strength,shared,目标线索相对显著性,dimensionless / categorical,14.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+distractors,shared,干扰词数量,dimensionless / categorical,0,design,实验设计,0–24,本项目任务，不是通用人体常数
+speed_deg_s,shared,初始/标称移动速度,deg/s,3.0,design,实验设计,0–10,本项目任务，不是通用人体常数
+trajectory,shared,轨迹家族,dimensionless / categorical,ou_accel,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+max_accel_deg_s2,shared,有界加速度家族上限,deg/s^2,12.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+predictability,shared,速度回归/加速度噪声控制量，不是已标定心理量,dimensionless / categorical,0.85,prior,R06–R14 机制约束；数值为显式先验,.2–1,本项目任务，不是通用人体常数
+occlusion_duty,shared,外部遮挡目标占空比,dimensionless / categorical,0.0,design,实验设计,0–.4,本项目任务，不是通用人体常数
+occlusion_duration_s,shared,遮挡平均持续时间,s,0.25,design,实验设计,.08–1.2,本项目任务，不是通用人体常数
+occlusion_depth,shared,外部遮挡不透明度,dimensionless / categorical,1.0,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+occlusion_phase,shared,遮挡发生在编码前/后,dimensionless / categorical,all,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+max_recognition_s,shared,最大单词识别等待,s,6.0,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+similarity,shared,请求的干扰词相似度，实际值另记,dimensionless / categorical,0.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+fatigue,shared,疲劳与热身开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+fatigue_start_min,shared,疲劳项开始时间,min,8.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+fatigue_slope,shared,默认疲劳斜率（真实个体值另在Person中抽样）,dimensionless / categorical,0.008,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+warmup_gain,shared,默认热身幅度（个体值另抽样）,dimensionless / categorical,0.015,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+speed_policy,shared,速度—准确率策略,dimensionless / categorical,1.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+memory_half_life_s,shared,记忆保持时间尺度（不是指数半衰期公式的实测半衰期）,s,8.0,prior,R06–R14 机制约束；数值为显式先验,3–15 in LHS; .5–30 in single factor,本项目任务，不是通用人体常数
+attention,shared,注意力竞争开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+pursuit,shared,平滑追踪开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+prediction,shared,运动预测开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+crowding,shared,视觉拥挤开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+competition,shared,识别竞争开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+parallel,shared,不同手指预备并行开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+sequence,shared,序列熟悉度开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+fixed_eye,shared,固定延迟替代眼动的消融开关,dimensionless / categorical,False,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+errors,shared,运动错误生成开关,dimensionless / categorical,True,design,实验设计,固定设计值,本项目任务，不是通用人体常数
+saccade_latency_s,shared,扫视准备时间的均值,s,0.18,prior,R06–R14 机制约束；数值为显式先验,.14–.23,本项目任务，不是通用人体常数
+saccade_latency_cv,shared,扫视准备时间变异系数,dimensionless / categorical,0.22,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+saccade_duration_intercept_s,shared,扫视时长截距,s,0.021,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+saccade_duration_s_per_deg,shared,扫视时长幅度斜率,deg,0.0022,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+saccade_endpoint_sd_deg,shared,扫视落点标准差截距,deg,0.1,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+saccade_endpoint_sd_per_deg,shared,扫视落点标准差幅度斜率,deg,0.025,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+pursuit_latency_s,shared,延迟观察与追踪启动尺度,s,0.12,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+pursuit_gain,shared,名义追踪增益（实际使用Person抽样值）,dimensionless / categorical,0.93,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+pursuit_tau_s,shared,眼速度一阶控制时间常数,s,0.075,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+pursuit_position_gain_s_inv,shared,眼位置误差反馈系数,1/s,6.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+catchup_threshold_deg,shared,追赶扫视误差阈值,deg,1.3,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+bouma_factor,shared,拥挤临界间距的偏心度系数,dimensionless / categorical,0.45,prior,R06–R14 机制约束；数值为显式先验,.30–.60,本项目任务，不是通用人体常数
+sensory_observation_sd_deg,shared,位置感知噪声标准差,deg,0.06,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+position_process_noise,shared,位置状态估计过程噪声强度,deg^2/s^3,1.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+recognition_base_s,shared,词汇证据积累的基础时间尺度,s,0.175,prior,R06–R14 机制约束；数值为显式先验,.14–.23,本项目任务，不是通用人体常数
+recognition_frequency_s,shared,低频惩罚系数,s,0.018,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+recognition_length_s,shared,长词惩罚系数,s,0.009,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+recognition_diffusion,shared,证据扩散强度,evidence/sqrt(s),0.38,prior,R06–R14 机制约束；数值为显式先验,.25–.50,本项目任务，不是通用人体常数
+recognition_threshold,shared,识别阈值,dimensionless / categorical,1.0,prior,R06–R14 机制约束；数值为显式先验,未被本次LHS完整覆盖；见单变量/结构消融,本项目任务，不是通用人体常数
+context_drift_gain,shared,连贯条件漂移率增益先验,dimensionless / categorical,0.12,prior,R06–R14 机制约束；数值为显式先验,0–.25,本项目任务，不是通用人体常数
+between_motor_cv,beginner,个体间运动尺度变异系数,dimensionless / categorical,0.2,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_s,beginner,单次中央动作规划时间,s,0.065,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_gap_s,beginner,词内计划生成间距,s,0.04,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+lookahead,beginner,可预规划按键数,dimensionless / categorical,1,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+motor_attention,beginner,运动期间注意力需求份额,dimensionless / categorical,0.58,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+error_p,beginner,单动作错误基础概率,dimensionless / categorical,0.02,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+detection_p,beginner,词内检测概率,dimensionless / categorical,0.5,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+keyboard_look_p,beginner,每词看键盘概率,dimensionless / categorical,0.65,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+key_hold_s,beginner,平均按键保持时间,s,0.12899,observed_input,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+alt_s,beginner,跨手基础间隔尺度,s,0.35853923259826953,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+left_ratio,beginner,左手相邻动作间隔比,dimensionless / categorical,0.9132003686109101,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+right_ratio,beginner,右手相邻动作间隔比,dimensionless / categorical,0.9049074984261735,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+repeat_s,beginner,同键重复间隔尺度,s,0.19387430278911602,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+boundary_delay_s,beginner,词间动作衔接残差均值；整任务汇总数据推导,s,1.238611899632541,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+between_motor_cv,ordinary,个体间运动尺度变异系数,dimensionless / categorical,0.18,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_s,ordinary,单次中央动作规划时间,s,0.026,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_gap_s,ordinary,词内计划生成间距,s,0.016,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+lookahead,ordinary,可预规划按键数,dimensionless / categorical,2,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+motor_attention,ordinary,运动期间注意力需求份额,dimensionless / categorical,0.32,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+error_p,ordinary,单动作错误基础概率,dimensionless / categorical,0.013,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+detection_p,ordinary,词内检测概率,dimensionless / categorical,0.7,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+keyboard_look_p,ordinary,每词看键盘概率,dimensionless / categorical,0.15,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+key_hold_s,ordinary,平均按键保持时间,s,0.11625,observed_input,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+alt_s,ordinary,跨手基础间隔尺度,s,0.17389727292837884,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+left_ratio,ordinary,左手相邻动作间隔比,dimensionless / categorical,1.0482969962787707,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+right_ratio,ordinary,右手相邻动作间隔比,dimensionless / categorical,0.9978368746516882,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+repeat_s,ordinary,同键重复间隔尺度,s,0.14711786234366522,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+boundary_delay_s,ordinary,词间动作衔接残差均值；整任务汇总数据推导,s,0.3005829261102044,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+between_motor_cv,skilled,个体间运动尺度变异系数,dimensionless / categorical,0.14,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_s,skilled,单次中央动作规划时间,s,0.016,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_gap_s,skilled,词内计划生成间距,s,0.01,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+lookahead,skilled,可预规划按键数,dimensionless / categorical,3,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+motor_attention,skilled,运动期间注意力需求份额,dimensionless / categorical,0.2,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+error_p,skilled,单动作错误基础概率,dimensionless / categorical,0.01,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+detection_p,skilled,词内检测概率,dimensionless / categorical,0.82,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+keyboard_look_p,skilled,每词看键盘概率,dimensionless / categorical,0.04,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+key_hold_s,skilled,平均按键保持时间,s,0.11,prior,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+alt_s,skilled,跨手基础间隔尺度,s,0.12871528413521277,interpolation,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+left_ratio,skilled,左手相邻动作间隔比,dimensionless / categorical,1.031674129581684,interpolation,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+right_ratio,skilled,右手相邻动作间隔比,dimensionless / categorical,0.9743938101008043,interpolation,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+repeat_s,skilled,同键重复间隔尺度,s,0.13108350669554739,interpolation,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+boundary_delay_s,skilled,词间动作衔接残差均值；整任务汇总数据推导,s,0.18291141873277686,interpolation,geometric interpolation R01 anchors + priors,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+between_motor_cv,expert,个体间运动尺度变异系数,dimensionless / categorical,0.1,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_s,expert,单次中央动作规划时间,s,0.01,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_gap_s,expert,词内计划生成间距,s,0.006,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+lookahead,expert,可预规划按键数,dimensionless / categorical,4,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+motor_attention,expert,运动期间注意力需求份额,dimensionless / categorical,0.11,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+error_p,expert,单动作错误基础概率,dimensionless / categorical,0.007,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+detection_p,expert,词内检测概率,dimensionless / categorical,0.9,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+keyboard_look_p,expert,每词看键盘概率,dimensionless / categorical,0.01,prior,R01 Table 3 summary-constrained fit,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+key_hold_s,expert,平均按键保持时间,s,0.10449,observed_input,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+alt_s,expert,跨手基础间隔尺度,s,0.09527247949904355,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+left_ratio,expert,左手相邻动作间隔比,dimensionless / categorical,1.0153148520184114,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+right_ratio,expert,右手相邻动作间隔比,dimensionless / categorical,0.9515015142071006,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+repeat_s,expert,同键重复间隔尺度,s,0.11679673327133207,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+boundary_delay_s,expert,词间动作衔接残差均值；整任务汇总数据推导,s,0.11130568038508902,aggregate_fit,R01 Table 3,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+between_motor_cv,elite,个体间运动尺度变异系数,dimensionless / categorical,0.12,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_s,elite,单次中央动作规划时间,s,0.007,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+planning_gap_s,elite,词内计划生成间距,s,0.004,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+lookahead,elite,可预规划按键数,dimensionless / categorical,5,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+motor_attention,elite,运动期间注意力需求份额,dimensionless / categorical,0.07,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+error_p,elite,单动作错误基础概率,dimensionless / categorical,0.006,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+detection_p,elite,词内检测概率,dimensionless / categorical,0.93,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+keyboard_look_p,elite,每词看键盘概率,dimensionless / categorical,0.005,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+key_hold_s,elite,平均按键保持时间,s,0.08,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+alt_s,elite,跨手基础间隔尺度,s,0.063,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+left_ratio,elite,左手相邻动作间隔比,dimensionless / categorical,1.14,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+right_ratio,elite,右手相邻动作间隔比,dimensionless / categorical,1.1,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+repeat_s,elite,同键重复间隔尺度,s,0.105,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+boundary_delay_s,elite,词间动作衔接残差均值；整任务汇总数据推导,s,0.05565284019254451,prior,explicit extrapolative prior; not a measured competition cohort,个体运动对数正态变异+LHS乘子；不能由汇总拟合识别所有参数,合成能力档；非人口分层估计
+boundary_delay_multiplier,shared,词间衔接残差的参数先验乘子,1,"Uniform(0.6,1.4)",prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+boundary_trial_log_sd,shared,每词衔接残差的对数波动,1,0.25,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+acuity_e0_deg,shared,字母偏心度尺度截距,deg,.85,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+acuity_font_multiplier,shared,字体对可辨范围系数,1,2.2,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+acuity_power,shared,偏心度衰减指数,1,1.45,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+font_width_ratio,shared,字形横向宽高比,1,.56,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+motion_slip_scale,shared,视网膜滑移质量损失尺度,deg/s,14,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+crowding_edge_intercept,shared,拥挤核基础尺度,deg,.12,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+competitor_floor,shared,竞争者漂移率底值,1,.04,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+competitor_gain,shared,竞争者相似性漂移率增益,1,.68,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+competitor_power,shared,竞争相似度指数,1,4,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+motor_travel_a,shared,手指几何定位时间截距,s,.028,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+motor_travel_b,shared,手指几何定位难度系数,s/bit,.040,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+same_finger_multiplier,shared,同指异键额外序列约束,1,1.16,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+sequence_gain,shared,n-gram熟悉度效应,1/logcount,.038,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+sequence_center,shared,序列熟悉度参考点,logcount,4.2,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+rhythm_ar,shared,逐键节奏自相关,1,.35,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+rhythm_log_sd,shared,逐键对数噪声标准差,1,.18,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+error_detection_median,shared,纠错检测时间中位数,s,.14,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+error_detection_log_sd,shared,纠错检测对数波动,1,.2,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+error_type_probs,shared,相邻误触/遗漏/重复/颠倒/同手/规划错误类型比例,probability,".40,.15,.13,.13,.10,.09",prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+memory_hazard_base,shared,记忆失败概率的危险度系数,1,.006,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+memory_age_power,shared,记忆保留时间指数,1,1.3,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+memory_length_power,shared,词长对记忆失败的影响,1,2,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+eye_accel_clip,shared,追踪眼速度变化上限,deg/s^2,300,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+eye_speed_clip,shared,眼追踪速度截断,deg/s,35,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+gaze_keyboard_duration,shared,每词看键盘的时间片,s,.24,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+gaze_keyboard_move,shared,向键盘转移的平滑路径时长,s,.050,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+saccade_sensitivity,shared,扫视期证据获取系数,1,.025,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+return_inhibition,shared,访问过干扰目标的抑制,"1,s",.12 for .7 s,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+motion_speed_cap,shared,速度截断,deg/s,1.8 × nominal,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+motion_accel_mean_reversion,shared,有色加速度均值回归,1/s,2,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+motion_velocity_mean_reversion,shared,有界加速度轨迹的漂移回归,1/s,.20,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+fatigue_person_slope,shared,个体疲劳斜率,1/min,"clipped N(.008,.007),[-.008,.032]",prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+warmup_person_gain,shared,个体热身效应,1,"clipped N(.015,.015),[-.03,.06]",prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+lexical_person_log_sd,shared,词识别个体变异，各组相同,1,.12,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+saccade_person_log_sd,shared,扫视准备个体变异，各组相同,1,.12,prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定
+pursuit_person_gain,shared,追踪增益个体变异，各组相同,1,"clipped N(.93,.035),[.78,1.02]",prior,机制候选函数；无对应的本次原始数据拟合,部分受结构消融检查；并非所有常数均已传播不确定性,需在目标任务中识别/标定

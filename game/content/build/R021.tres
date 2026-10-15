@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R021"
 title = "鎏金藏书票"
+choice_role = &"power"
 description = "之后击杀敌人获得的经验增加 {experience_pct}%。"
 stage = &"M4"
 supported = true

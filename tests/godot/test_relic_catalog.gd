@@ -11,6 +11,7 @@ var checks: int = 0
 var failures: int = 0
 var reach_compiler: BuildCompiler
 var reach_service: AcquisitionService
+var include_retired_sources: bool = false
 const WORD_CONTEXT := {"shortest": 3, "longest": 8}
 
 
@@ -20,10 +21,14 @@ func _initialize() -> void:
 
 func _run() -> void:
 	_test_catalog()
+	_test_retired_compatibility()
+	_test_current_qualification()
 	_test_qualification()
 	_test_capability_topology()
 	_test_modifiers()
 	_test_offers()
+	_test_offer_roles()
+	_test_expansion_supply()
 	print("RELIC_CATALOG: ", checks, " checks, ", failures, " failures")
 	quit(0 if failures == 0 else 1)
 
@@ -31,18 +36,25 @@ func _run() -> void:
 func _test_catalog() -> void:
 	var catalog := BuildCatalog.new()
 	var ids := catalog.relic_ids()
+	var all_ids := catalog.relic_ids(true)
+	_check(ids.size() == 97 and all_ids.size() == 196, "Active rewards contain 97 identities while all 196 definitions remain readable")
+	var expected := BuildCatalog.ACTIVE_RELIC_IDS.duplicate()
+	expected.sort()
+	_check(ids == expected, "Official rewards match the single active ID policy")
 	var sorted := ids.duplicate()
 	sorted.sort()
 	_check(ids == sorted, "Relic directory has stable ID ordering")
 	for index in range(1, 59):
-		_check("R%03d" % index in ids, "Baseline ID survives: R%03d" % index)
+		_check("R%03d" % index in all_ids, "Baseline definition survives: R%03d" % index)
 	reach_compiler = BuildCompiler.new(catalog)
 	reach_service = AcquisitionService.new(reach_compiler)
 	for book in BuildCompiler.BOOKS:
 		var capacity := 0
+		var expected_capacity := 0
 		for id in ids:
 			var definition := catalog.get_definition(StringName(id)) as RelicDefinition
 			if not definition.allowed_books.is_empty() and str(book) not in definition.allowed_books: continue
+			expected_capacity += 1
 			if "--expanded" not in OS.get_cmdline_user_args(): continue
 			var initial := BuildSelection.new()
 			initial.book_id = book
@@ -54,7 +66,7 @@ func _test_catalog() -> void:
 				_check(reach_compiler.compile(reached).success(), "%s/%s reachable selection passes the same compiler" % [book, id])
 		if "--expanded" in OS.get_cmdline_user_args():
 			print("RELIC_CAPACITY ", book, ": ", capacity)
-			_check(capacity > 100, "%s has over 100 actually reachable relic definitions (%d)" % [book, capacity])
+			_check(capacity == expected_capacity, "%s can reach every active definition allowed for its book (%d/%d)" % [book, capacity, expected_capacity])
 		var selection := BuildSelection.new()
 		selection.book_id = book
 		var pool := AcquisitionService.new(BuildCompiler.new(catalog)).candidates(selection, WORD_CONTEXT)
@@ -66,6 +78,62 @@ func _test_catalog() -> void:
 	_check(second.get_definition(&"R001") != null, "Catalog dictionaries do not expose the shared loading cache")
 
 
+func _test_retired_compatibility() -> void:
+	var catalog := BuildCatalog.new()
+	reach_compiler = BuildCompiler.new(catalog)
+	reach_service = AcquisitionService.new(reach_compiler)
+	include_retired_sources = true
+	var active_ids := catalog.relic_ids()
+	for id in catalog.relic_ids(true):
+		if id in active_ids: continue
+		var definition := catalog.get_definition(StringName(id)) as RelicDefinition
+		var selection := BuildSelection.new()
+		if not definition.allowed_books.is_empty(): selection.book_id = StringName(definition.allowed_books[0])
+		var plan: Array[Dictionary] = [{"kind": "relic", "id": definition.id, "wanted": 1, "ancestors": PackedStringArray()}]
+		var reached := _follow_acquisition_plan(selection, plan)
+		_check(reached != null, "Retired definition retains compatible prerequisites and issued-offer qualification: " + id)
+		if reached == null: continue
+		var compiled := reach_compiler.compile(reached)
+		_check(compiled.success(), "Retired assets continue to compile: " + id)
+		if not compiled.success(): continue
+		var formal := BuildSelection.new()
+		formal.book_id = reached.book_id
+		formal.instances = compiled.build.asset_instances()
+		var restored := BuildSelection.from_dict(formal.to_dict())
+		_check(restored != null and reach_compiler.compile(restored).success(), "Saved retired instances round-trip with their original IDs: " + id)
+		var prior := reached.copy()
+		prior.assets.erase(definition.id)
+		_check(reach_service.evaluate(prior, definition.id, WORD_CONTEXT).eligible, "A previously issued retired offer can still be accepted: " + id)
+		_check(id not in reach_service.candidates(prior, WORD_CONTEXT), "Retired IDs stay out of new candidate pools: " + id)
+	include_retired_sources = false
+
+
+func _test_current_qualification() -> void:
+	var catalog := BuildCatalog.new()
+	var service := AcquisitionService.new(BuildCompiler.new(catalog))
+	var selection := BuildSelection.new()
+	_check(service.evaluate(selection, &"G006", WORD_CONTEXT).eligible, "Mixed-length relic accepts a vocabulary containing short and long words")
+	var short_only := service.evaluate(selection, &"G006", {"shortest": 3, "longest": 5})
+	_check(not short_only.eligible and "VOCABULARY_NEEDS_LONG_WORD" in short_only.diagnostics, "Mixed-length relic reports the existing long-word diagnostic")
+	var long_only := service.evaluate(selection, &"G006", {"shortest": 5, "longest": 9})
+	_check(not long_only.eligible and "VOCABULARY_NEEDS_SHORT_WORD" in long_only.diagnostics, "Mixed-length relic reports the existing short-word diagnostic")
+	selection.assets[&"G006"] = 1
+	_check(service.compiler.compile(selection).success(), "An owned mixed-length relic is not invalidated by acquisition-only vocabulary restrictions")
+	selection = BuildSelection.new()
+	_check(not service.evaluate(selection, &"G027", WORD_CONTEXT).eligible, "A single native elemental state cannot unlock a mixed-state reaction")
+	selection.assets[&"G024"] = 1
+	_check(service.evaluate(selection, &"G027", WORD_CONTEXT).eligible, "Two elemental state sources unlock the mixed-state reaction")
+	selection = BuildSelection.new()
+	selection.book_id = &"spirit"
+	_check("P007" not in service.candidates(selection, {"shortest": 3, "longest": 6}), "Long-word paper command stays out of vocabularies ending at six letters")
+	_check("P007" in service.candidates(selection, {"shortest": 3, "longest": 7}), "Long-word paper command appears when a seven-letter word is available")
+	for id in [&"R044", &"R045", &"R046", &"R047", &"R048", &"R049", &"R056"]:
+		var definition := catalog.get_definition(id) as RelicDefinition
+		_check(definition.required_stacks.size() == 2, "Awakening keeps its two identity prerequisites: " + str(id))
+		for required in definition.required_stacks:
+			_check(definition.required_stacks[required] == 1, "Awakening no longer requires duplicate prerequisite layers: " + str(id))
+
+
 ## Search only obtains relics through the public qualification API. Each target
 ## begins from an empty build; capability providers and exclusive branches are
 ## alternatives with backtracking, never preinstalled authorization fixtures.
@@ -75,6 +143,7 @@ func _follow_acquisition_plan(selection: BuildSelection, plan: Array[Dictionary]
 	var tail := plan.duplicate()
 	tail.pop_front()
 	if task.kind == "acquire":
+		if not include_retired_sources and str(task.id) not in reach_compiler.catalog.relic_ids(): return null
 		var candidate := selection.copy()
 		while int(candidate.assets.get(task.id, 0)) < int(task.wanted):
 			if not reach_service.evaluate(candidate, task.id, WORD_CONTEXT).eligible: return null
@@ -93,10 +162,23 @@ func _follow_acquisition_plan(selection: BuildSelection, plan: Array[Dictionary]
 	if task.kind == "capability":
 		var compiled := reach_compiler.compile(selection)
 		if str(task.capability) in compiled.build.capabilities(): return _follow_acquisition_plan(selection, tail)
-		for id in reach_compiler.catalog.relic_ids():
+		for id in reach_compiler.catalog.relic_ids(include_retired_sources):
 			var source := reach_compiler.catalog.get_definition(StringName(id)) as RelicDefinition
 			if str(task.capability) not in source.grants_capabilities: continue
 			var branch: Array[Dictionary] = [{"kind": "relic", "id": source.id, "wanted": 1, "ancestors": task.ancestors}]
+			branch.append_array(tail)
+			var reached := _follow_acquisition_plan(selection, branch)
+			if reached != null: return reached
+		return null
+	if task.kind == "state_sources":
+		var compiled := reach_compiler.compile(selection)
+		var sources := 0
+		for capability in ["cold", "burn", "shock", "mark"]:
+			if capability in compiled.build.capabilities(): sources += 1
+		if sources >= 2: return _follow_acquisition_plan(selection, tail)
+		for capability in ["cold", "burn", "shock", "mark"]:
+			if capability in compiled.build.capabilities(): continue
+			var branch: Array[Dictionary] = [{"kind": "capability", "capability": capability, "ancestors": task.ancestors}, task]
 			branch.append_array(tail)
 			var reached := _follow_acquisition_plan(selection, branch)
 			if reached != null: return reached
@@ -123,6 +205,7 @@ func _follow_acquisition_plan(selection: BuildSelection, plan: Array[Dictionary]
 		prerequisites.append({"kind": "any", "ids": definition.requires_any, "ancestors": ancestors})
 	for capability in definition.requires_capabilities:
 		prerequisites.append({"kind": "capability", "capability": capability, "ancestors": ancestors})
+	if id == &"G027": prerequisites.append({"kind": "state_sources", "ancestors": ancestors})
 	prerequisites.append({"kind": "acquire", "id": id, "wanted": task.wanted})
 	prerequisites.append_array(tail)
 	return _follow_acquisition_plan(selection, prerequisites)
@@ -266,9 +349,119 @@ func _test_offers() -> void:
 	_check(PackedStringArray(all) == pool and "O07" in all, "Every nonzero rarity remains reachable and a large count stops at pool size")
 
 
+func _test_offer_roles() -> void:
+	var catalog := _fixture_catalog()
+	var specs := [
+		[&"OMECHANISM", &"mechanism", "chain"],
+		[&"OPOWER", &"power", "damage"],
+		[&"ODEFENSE", &"defense", "chain"],
+		[&"ORECOVERY", &"recovery", "healing"],
+		[&"ONEWPOWER", &"power", "damage"],
+	]
+	for spec: Array in specs:
+		var definition := _relic(catalog, spec[0], 2)
+		definition.choice_role = spec[1]
+		definition.tags = [spec[2]]
+	var compiler := CountingCompiler.new(catalog)
+	var service := AcquisitionService.new(compiler)
+	var selection := BuildSelection.new()
+	selection.assets[&"OMECHANISM"] = 1
+	selection.assets[&"OPOWER"] = 1
+	var mechanism_positions: Dictionary[int, bool] = {}
+	for seed_value in range(32):
+		var offer_rng := RandomNumberGenerator.new()
+		offer_rng.seed = seed_value
+		compiler.compile_calls = 0
+		var offers := service.offered(selection, {}, offer_rng)
+		_check(compiler.compile_calls == 1, "Role-aware offers still compile once")
+		var roles: Dictionary[StringName, bool] = {}
+		var tags: Dictionary[String, bool] = {}
+		var has_new := false
+		for id in offers:
+			var definition := catalog.get_definition(StringName(id)) as RelicDefinition
+			roles[definition.choice_role] = true
+			tags[definition.tags[0]] = true
+			has_new = has_new or not selection.assets.has(definition.id)
+			if definition.choice_role == &"mechanism": mechanism_positions[offers.find(id)] = true
+		_check(offers.size() == 3 and roles.has(&"mechanism") and has_new, "Every feasible offer includes a mechanism and an unowned identity")
+		_check(roles.size() == 3 and tags.size() == 3, "Available role and first-tag diversity wins before weighted preference")
+	_check(mechanism_positions.size() > 1, "Mechanisms do not always occupy the same choice position")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 41
+	var single := service.offered(selection, {}, rng, 1)
+	_check(single == ["OMECHANISM"], "A single slot prioritizes a mechanism when a new identity cannot also fit")
+	_check(service.offered(selection, {}, rng, 0).is_empty(), "A zero-count offer remains empty")
+	var invalid := selection.copy()
+	invalid.book_id = &"missing"
+	_check(service.offered(invalid, {}, rng).is_empty(), "Invalid builds cannot produce role-aware offers")
+	for id in [&"OPOWER", &"ODEFENSE", &"ORECOVERY", &"ONEWPOWER"]: catalog.definitions.erase(id)
+	selection.assets.erase(&"OPOWER")
+	var all := service.offered(selection, {}, rng, 99)
+	_check(all == ["OMECHANISM"], "A pool with one owned role/tag falls back without excluding its only reward")
+
+
+func _test_expansion_supply() -> void:
+	var catalog := BuildCatalog.new()
+	var service := AcquisitionService.new(BuildCompiler.new(catalog))
+	var numerical: Dictionary[StringName, Dictionary] = {
+		&"G008": {&"shield_cap": 15}, &"G020": {&"ultimate_ms": 1000},
+		&"F001": {&"cold_pct": 20}, &"F021": {&"frost_flight_pct": 12},
+		&"A007": {&"fire_field_radius": 15}, &"A008": {&"dodge_flame_ms": 750, &"dodge_flame_radius": 12}, &"A011": {&"flame_wave_pct": 20},
+		&"T007": {&"storm_burst_pct": 20}, &"T008": {&"storm_burst_radius": 16},
+		&"P008": {&"spirit_speed_pct": 12}, &"P009": {&"spirit_cooldown_pct": 12}, &"P012": {&"crane_radius": 6},
+	}
+	for id in numerical:
+		var definition := catalog.get_definition(id) as RelicDefinition
+		_check(str(id) in catalog.relic_ids() and definition.max_stacks == 2, "Expanded numerical identity remains an active two-layer reward: " + str(id))
+		_check(definition.choice_role != &"mechanism", "A larger value or radius is not labeled as a behavior mechanism: " + str(id))
+		for key: StringName in numerical[id]:
+			_check(definition.modifiers.get(key) == numerical[id][key], "Numerical resource has its selected per-layer value: " + str(id) + "/" + str(key))
+			_check(int(definition.modifiers[key]) * definition.max_stacks <= int(RelicParameters.CAPS[key]), "Both numerical layers remain useful below their shared cap: " + str(id) + "/" + str(key))
+	var roles: Dictionary[StringName, StringName] = {
+		&"G017": &"defense", &"G021": &"recovery", &"G023": &"recovery", &"G031": &"defense",
+		&"F014": &"defense", &"T014": &"defense", &"P013": &"defense", &"P025": &"mechanism",
+		&"F003": &"mechanism", &"F017": &"mechanism", &"A006": &"mechanism", &"A017": &"mechanism",
+		&"T004": &"mechanism", &"T016": &"mechanism", &"P007": &"mechanism", &"P011": &"mechanism",
+	}
+	for id in roles:
+		var definition := catalog.get_definition(id) as RelicDefinition
+		_check(str(id) in catalog.relic_ids() and definition.choice_role == roles[id], "Expanded reward keeps its actual supply role: " + str(id))
+	var selection := BuildSelection.new()
+	_check(not service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "Shield capacity still needs an actual shield source")
+	selection.assets[&"R039"] = 1
+	_check(service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "An existing formal shield identity supplies the capacity prerequisite")
+	selection = BuildSelection.new()
+	_check(service.evaluate(selection, &"G031", WORD_CONTEXT).eligible, "Ultimate shield no longer depends on a retired double-stack prerequisite")
+	_check(service.evaluate(selection, &"F014", WORD_CONTEXT).eligible, "Native freezing can obtain freeze shield/resonance without retired frost pages")
+	selection.book_id = &"storm"
+	_check(service.evaluate(selection, &"T014", WORD_CONTEXT).eligible, "Native charging can obtain charged shield without retired charge prerequisites")
+	selection.book_id = &"spirit"
+	_check(not service.evaluate(selection, &"P025", WORD_CONTEXT).eligible, "Cross-book paper shock still requires its state source")
+	selection.assets[&"G025"] = 1
+	_check(service.evaluate(selection, &"P025", WORD_CONTEXT).eligible, "Formal shock annotation unlocks the paper shock synergy")
+	selection.assets[&"P013"] = 2
+	var compiled := service.compiler.compile(selection)
+	_check(compiled.success() and compiled.build.modifier(&"mark_shield") == 3, "The second mark-shield layer respects its intentional three-point aggregate cap")
+	for book in BuildCompiler.BOOKS:
+		selection = BuildSelection.new()
+		selection.book_id = book
+		for seed_value in 16:
+			var rng := RandomNumberGenerator.new()
+			rng.seed = 20261013 + seed_value
+			var offers := service.offered(selection, WORD_CONTEXT, rng)
+			var offer_roles: Dictionary[StringName, bool] = {}
+			var offer_ids: Dictionary[String, bool] = {}
+			for id in offers:
+				var definition := catalog.get_definition(StringName(id)) as RelicDefinition
+				offer_roles[definition.choice_role] = true
+				offer_ids[id] = true
+			_check(offers.size() == 3 and offer_ids.size() == 3, "%s expanded offers keep three distinct identities" % book)
+			_check(offer_roles.has(&"mechanism") and offer_roles.size() == 3, "%s expanded offers retain a mechanism and varied numerical/resource roles" % book)
+
+
 func _fixture_catalog() -> BuildCatalog:
 	var catalog := BuildCatalog.new()
-	for id in catalog.relic_ids(): catalog.definitions.erase(StringName(id))
+	for id in catalog.relic_ids(true): catalog.definitions.erase(StringName(id))
 	return catalog
 
 

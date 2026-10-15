@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R028"
 title = "腐蚀墨迹"
+choice_role = &"mechanism"
 description = "直接施法留下腐蚀，持续 {duration} 秒，每秒每层造成 {damage} 点伤害，最多3层。"
 stage = &"M3"
 supported = true

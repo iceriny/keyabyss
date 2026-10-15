@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R034"
 title = "避雷印"
+choice_role = &"mechanism"
 description = "同一敌人每受到 {interval} 次直接施法或电链命中，引发过载并清除附近敌弹。"
 stage = &"M3"
 supported = true

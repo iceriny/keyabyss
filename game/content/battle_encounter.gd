@@ -12,6 +12,9 @@ extends Resource
 @export var health_multiplier: float = 1.0
 @export var enemies: Array[EnemyCombatDefinition] = [preload("res://game/content/enemies/nib.tres"), preload("res://game/content/enemies/quill.tres"), preload("res://game/content/enemies/guard.tres")]
 @export var element_traits: Array[ElementTrait] = []
+## Authored first arrivals count toward the room quota, then the normal pool resumes.
+@export var opening_enemies: Array[EnemyCombatDefinition] = []
+@export var role_limits: Dictionary[StringName, int] = {}
 ## Off-axis arrivals share the same entry, grace and compass pipeline.
 ## Disabled for the current single-room composition; content can opt in later.
 @export_range(0.0, 1.0) var ambush_chance: float = 0.0

@@ -68,12 +68,25 @@ func _draw() -> void:
 			else:
 				draw_dashed_line(start, finish, Color(color, 0.35 + progress * 0.4), 1.2, 12.0 * scale_factor, true)
 	for enemy in session.enemies:
-		if enemy.behavior == &"melee" or not enemy.alive() or not enemy.aiming or not BattleSession.enemy_in_combat(enemy):
+		if enemy.behavior in [&"melee", &"ward"] or not enemy.alive() or not BattleSession.enemy_in_combat(enemy):
 			continue
 		var from := enemy.previous_position.lerp(enemy.position, fraction) * size
+		if enemy.behavior == &"refrain" and (enemy.aiming or enemy.followup_time > 0.0):
+			for beat in 2:
+				var pending := enemy.aiming or beat == 1
+				var mark := from + Vector2((float(beat) - 0.5) * 15.0, enemy.radius + 14.0) * scale_factor
+				draw_circle(mark, 3.2 * scale_factor, Color("f0d6ad", 0.9 if pending else 0.12))
+				if pending: draw_arc(mark, 5.2 * scale_factor, 0.0, TAU, 16, Color("cbab88", 0.6), scale_factor, true)
+		if not enemy.aiming: continue
 		var target := enemy.aimed_position * size
 		var urgency := 1.0 - clampf(enemy.attack_clock / enemy.warning_time, 0.0, 1.0)
 		var tint := Color("e9a788", 0.15 + urgency * 0.6)
+		if enemy.behavior == &"snipe":
+			draw_dashed_line(from, target, Color(tint, 0.18 + urgency * 0.24), scale_factor, 9.0 * scale_factor, true)
+			var mark_radius := (9.0 + (1.0 - urgency) * 9.0) * scale_factor
+			for corner in 4:
+				var angle := corner * PI * 0.5 + PI * 0.125
+				draw_arc(target, mark_radius, angle, angle + PI * 0.25, 8, Color(tint, 0.75), 1.4 * scale_factor, true)
 		if enemy.behavior == &"charge":
 			var side := (target - from).normalized().orthogonal() * enemy.radius * scale_factor
 			draw_line(from + side, target + side, tint, 1.5, true)
@@ -87,24 +100,99 @@ func _draw() -> void:
 			draw_arc(from, enemy.radius + 17, angle - 0.32, angle + 0.32, 20, Color("ffdbb0", urgency), 2.0, true)
 	for threat in session.threats:
 		var point := threat.previous_position.lerp(threat.position, fraction) * size
-		var tint := Color("adf1ce") if threat.reflected else Color("efb28d")
+		var tint := threat_color(threat)
 		var radius := threat.radius * scale_factor
-		var samples := PackedVector2Array()
-		for sample in threat.trail: samples.append(sample * size)
-		var curved := not is_zero_approx(threat.curvature)
-		var tail := MotionTrail.build(samples, threat.position * size, point, (180.0 if curved else 64.0) * scale_factor, false, 32 if curved else 12)
-		if curved:
-			_draw_curved_tail(tail, tint, scale_factor)
-		else:
-			for index in range(1, tail.size()):
-				var strength := float(index) / tail.size()
-				draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.1), radius * 2.2 * strength, true)
-				draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.5), maxf(1.0, radius * 0.5 * strength), true)
-		draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius * 3.5, Vector2.ONE * radius * 7.0), false, Color(tint, 0.6))
-		if curved:
-			draw_circle(point, radius, Color("26302c", 0.8))
-			draw_arc(point, radius, 0.0, TAU, 24, Color(tint, 0.85), scale_factor, true)
-		draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius, Vector2.ONE * radius * 2.0), false, Color("fff0d7"))
+		if quality == 0:
+			var samples := PackedVector2Array()
+			for sample in threat.trail: samples.append(sample * size)
+			var curved := not is_zero_approx(threat.curvature)
+			var tail := MotionTrail.build(samples, threat.position * size, point, (180.0 if curved else 64.0) * scale_factor, false, 32)
+			if curved:
+				_draw_curved_tail(tail, tint, scale_factor)
+			else:
+				for index in range(1, tail.size()):
+					var strength := float(index) / tail.size()
+					draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.1), radius * 2.2 * strength, true)
+					draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.5), maxf(1.0, radius * 0.5 * strength), true)
+		_draw_threat_head(threat, point, radius, tint, scale_factor)
+
+
+static func threat_color(threat: BattleThreat) -> Color:
+	if threat.reflected: return Color("adf1ce")
+	if threat.heavy: return Color("ee9475")
+	match threat.visual_style:
+		&"needle": return Color("f4d798")
+		&"refrain": return Color("e0bdd0")
+		&"wisp": return Color("b4c8e5")
+		&"rune": return Color("d3afe5")
+		&"vortex": return Color("bdacd9")
+		&"shard": return Color("e6bc92")
+	return Color("efb28d")
+
+
+func _draw_threat_head(threat: BattleThreat, point: Vector2, radius: float, tint: Color, scale_factor: float) -> void:
+	# The HDR world owns emission; keep a modest fallback when bloom is disabled.
+	if quality == 0:
+		draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius * 2.5, Vector2.ONE * radius * 5.0), false, Color(tint, 0.26))
+	var heading := (threat.velocity * size / BattleSession.ARENA_SIZE).angle()
+	draw_set_transform(point, heading, Vector2.ONE * radius)
+	var edge := maxf(1.0, scale_factor) / radius
+	var dark := Color("302b35", 0.95)
+	var core := Color("fff1d6") if not threat.reflected else Color("e2ffe9")
+	var style := &"heavy" if threat.heavy else threat.visual_style
+	match style:
+		&"needle":
+			var outline := PackedVector2Array([Vector2(1.65, 0), Vector2(-0.65, -0.85), Vector2(-1.2, 0), Vector2(-0.65, 0.85), Vector2(1.65, 0)])
+			draw_colored_polygon(outline, dark)
+			draw_polyline(outline, tint, edge * 1.4, true)
+			draw_line(Vector2(-0.8, 0), Vector2(1.25, 0), core, edge * 1.3, true)
+		&"quill":
+			var outline := PackedVector2Array([Vector2(1.3, 0), Vector2(-0.6, -1), Vector2(-0.2, 0), Vector2(-0.6, 1), Vector2(1.3, 0)])
+			draw_colored_polygon(outline, Color(tint, 0.65))
+			draw_polyline(outline, tint, edge, true)
+			draw_line(Vector2(-0.2, 0), Vector2(1.1, 0), core, edge, true)
+		&"refrain":
+			for side: float in [-1.0, 1.0]:
+				var page := PackedVector2Array([Vector2(0.8, 0), Vector2(0.4, side), Vector2(-1, side * 0.7), Vector2(-0.5, 0), Vector2(0.8, 0)])
+				draw_colored_polygon(page, dark)
+				draw_polyline(page, tint, edge * 1.4, true)
+				draw_line(Vector2(-0.45, side * 0.35), Vector2(0.3, side * 0.45), core, edge, true)
+		&"wisp":
+			draw_arc(Vector2.ZERO, 1.0, -PI * 0.65, PI * 0.65, 20, tint, edge * 2.8, true)
+			draw_arc(Vector2(0.14, 0), 0.65, -PI * 0.6, PI * 0.6, 16, core, edge, true)
+		&"rune":
+			var diamond := PackedVector2Array([Vector2(1.2, 0), Vector2(0, -1.2), Vector2(-1.2, 0), Vector2(0, 1.2), Vector2(1.2, 0)])
+			draw_colored_polygon(diamond, dark)
+			draw_polyline(diamond, tint, edge * 1.4, true)
+			draw_line(Vector2(-0.4, 0), Vector2(0.4, 0), core, edge, true)
+			draw_line(Vector2(0, -0.4), Vector2(0, 0.4), core, edge, true)
+		&"vortex":
+			draw_circle(Vector2.ZERO, 1.0, dark)
+			for arm in 2:
+				var curve := PackedVector2Array()
+				for index in 17:
+					var fraction := float(index) / 16.0
+					curve.append(Vector2.from_angle(fraction * PI * 1.5 + arm * PI) * lerpf(0.2, 1.1, fraction))
+				draw_polyline(curve, tint, edge * 1.5, true)
+		&"shard":
+			var crystal := PackedVector2Array([Vector2(1.25, 0), Vector2(-0.3, -1), Vector2(-1, -0.45), Vector2(-1, 0.45), Vector2(-0.3, 1), Vector2(1.25, 0)])
+			draw_colored_polygon(crystal, Color(tint, 0.35))
+			draw_polyline(crystal, tint, edge * 1.3, true)
+			draw_line(Vector2(-0.7, 0), Vector2(1.0, 0), core, edge, true)
+		&"heavy":
+			draw_circle(Vector2.ZERO, 1.0, dark)
+			draw_arc(Vector2.ZERO, 1.0, 0, TAU, 24, tint, edge * 2, true)
+			for tooth in 4:
+				var axis := Vector2.from_angle(tooth * PI * 0.5)
+				draw_line(axis * 0.65, axis * 1.2, tint, edge * 2, true)
+			draw_circle(Vector2.ZERO, 0.3, core)
+		_:
+			draw_circle(Vector2.ZERO, 0.9, dark)
+			draw_arc(Vector2.ZERO, 0.9, 0, TAU, 20, tint, edge * 1.4, true)
+			draw_circle(Vector2.ZERO, 0.45, core)
+	if threat.reflected:
+		draw_line(Vector2(-0.3, 0), Vector2(0.6, 0), core, edge * 1.8, true)
+	draw_set_transform(Vector2.ZERO)
 
 
 func _draw_curved_tail(tail: PackedVector2Array, tint: Color, scale_factor: float) -> void:

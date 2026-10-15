@@ -6,6 +6,7 @@
 script = ExtResource("1")
 id = &"G023"
 title = "尾注墨"
+choice_role = &"recovery"
 description = "击杀敌人时，额外获得 {kill_resonance} 点共鸣。"
 modifiers = {&"kill_resonance": 1}
 tags = PackedStringArray("resonance", "finishing")

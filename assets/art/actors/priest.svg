@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="228" viewBox="0 0 96 114"><path d="M48 8L67 24L64 45L82 94L48 105L14 94L32 45L29 24Z" fill="#52706c" stroke="#b7c6ae" stroke-width="1.4"/><path d="M35 27L48 19L61 27L57 46L39 46Z" fill="#273c44"/><path d="M39 34H44M52 34H57" stroke="#f0e4bc" stroke-width="2"/><path d="M48 48L40 79L48 87L56 79ZM21 23V95M15 30L21 18L27 30L21 42Z" fill="#b6baa0" stroke="#dcd2b1"/><path d="M32 71L26 91M64 71L70 91" stroke="#90ada0"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="228" viewBox="0 0 96 114">
+ <defs><linearGradient id="robe" x2=".85" y2="1"><stop stop-color="#c2cfb8"/><stop offset=".3" stop-color="#718e7c"/><stop offset=".7" stop-color="#2c4a4a"/><stop offset="1" stop-color="#799084"/></linearGradient><linearGradient id="gold"><stop stop-color="#7f7452"/><stop offset=".5" stop-color="#e5d7ab"/><stop offset="1" stop-color="#a99870"/></linearGradient></defs>
+ <path d="M34 43L48 38L63 43Q67 64 81 94L68 98L48 106L28 99L15 94Q30 66 34 43Z" fill="url(#robe)" stroke="#acbca5" stroke-width="1.4"/>
+ <path d="M43 49L39 88L31 97L47 102L62 97L57 88L54 49Z" fill="#1e3a40"/>
+ <path d="M35 49L28 72L34 86L41 55M62 49L69 74L61 87L54 55" fill="#bdcbb3" opacity=".18"/>
+ <path d="M48 8L66 23L63 46L48 55L32 45L30 24Z" fill="url(#robe)" stroke="url(#gold)" stroke-width="1.4"/>
+ <path d="M36 28Q48 18 60 28L56 43Q48 48 40 43Z" fill="#1a3039" stroke="#82988a"/>
+ <path d="M39 33L44 35M52 35L57 33" stroke="#f4e4b9" stroke-width="2"/>
+ <path d="M48 12V23M33 24L36 28M60 28L64 24M35 45L44 54L39 81L48 90L57 81L52 54L62 45" fill="none" stroke="url(#gold)" stroke-width="1.3"/>
+ <path d="M48 53L43 65L48 80L53 65Z" fill="#b8d2b5" stroke="#ead8a4"/><path d="M48 57V75" stroke="#ecedce"/>
+ <path d="M31 67Q27 85 23 91Q35 91 36 78M65 67Q69 85 73 91Q61 91 60 78M28 95Q39 93 40 87M68 95Q57 93 56 87" fill="none" stroke="#c4bd8e" stroke-width=".9"/>
+ <path d="M35 53L24 59L22 68L35 63M63 53L77 62L74 71L62 64" fill="url(#robe)" stroke="#a9b49a"/>
+ <path d="M21 32V97" stroke="#4d594e" stroke-width="4"/><path d="M21 32V97" stroke="url(#gold)" stroke-width="1.6"/>
+ <path d="M21 16Q11 25 16 33L21 40L26 33Q31 25 21 16Z" fill="#365651" stroke="url(#gold)" stroke-width="1.3"/><path d="M21 21L25 28L21 34L17 28Z" fill="#d4dfb9"/>
+</svg>

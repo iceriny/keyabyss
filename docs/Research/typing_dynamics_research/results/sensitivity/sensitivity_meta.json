@@ -1,0 +1,17 @@
+{
+  "name": "sensitivity",
+  "started_utc": "2026-10-13T16:37:10.958001+00:00",
+  "finished_utc": "2026-10-13T16:38:27.124862+00:00",
+  "wall_seconds": 76.16686370700018,
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "workers": 4,
+  "planned_sessions": 4680,
+  "executed_sessions": 4680,
+  "sessions_with_recognition_failure": 26,
+  "total_simulated_seconds": 163800.0,
+  "seed": 20261014,
+  "config_manifest": "results/sensitivity/sensitivity_jobs.jsonl.gz",
+  "output": "results/sensitivity/sensitivity_sessions.csv",
+  "output_sha256": "994452a20f283b9c44fe62d5778940bdc4ce562201bc909d04281debb9876854"
+}

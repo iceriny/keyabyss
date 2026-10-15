@@ -1,0 +1,88 @@
+BEGIN pilot: 960 sessions
+pilot: 256/960 (5.6s)
+pilot: 512/960 (9.7s)
+pilot: 768/960 (15.1s)
+END pilot: 21.9s
+BEGIN baseline: 4120 sessions
+baseline: 256/4120 (6.3s)
+baseline: 512/4120 (9.1s)
+baseline: 768/4120 (13.6s)
+baseline: 1024/4120 (17.7s)
+baseline: 1280/4120 (22.5s)
+baseline: 1536/4120 (27.4s)
+baseline: 1792/4120 (32.5s)
+baseline: 2048/4120 (37.9s)
+baseline: 2304/4120 (44.0s)
+baseline: 2560/4120 (50.7s)
+baseline: 2816/4120 (57.9s)
+baseline: 3072/4120 (65.8s)
+baseline: 3328/4120 (74.1s)
+baseline: 3584/4120 (82.3s)
+baseline: 3840/4120 (89.7s)
+baseline: 4096/4120 (97.8s)
+END baseline: 99.6s
+BEGIN no_preview: 1920 sessions
+no_preview: 256/1920 (5.2s)
+no_preview: 512/1920 (9.0s)
+no_preview: 768/1920 (12.2s)
+no_preview: 1024/1920 (15.8s)
+no_preview: 1280/1920 (20.0s)
+no_preview: 1536/1920 (24.7s)
+no_preview: 1792/1920 (29.7s)
+END no_preview: 32.9s
+BEGIN sensitivity: 4680 sessions
+sensitivity: 256/4680 (5.7s)
+sensitivity: 512/4680 (8.1s)
+sensitivity: 768/4680 (12.8s)
+sensitivity: 1024/4680 (15.3s)
+sensitivity: 1280/4680 (17.5s)
+sensitivity: 1536/4680 (19.9s)
+sensitivity: 1792/4680 (48.9s)
+sensitivity: 2048/4680 (64.9s)
+sensitivity: 2304/4680 (74.2s)
+sensitivity: 2560/4680 (77.4s)
+sensitivity: 2816/4680 (81.3s)
+sensitivity: 3072/4680 (84.7s)
+sensitivity: 3328/4680 (88.9s)
+sensitivity: 3584/4680 (92.7s)
+sensitivity: 3840/4680 (100.8s)
+sensitivity: 4096/4680 (105.0s)
+sensitivity: 4352/4680 (108.5s)
+sensitivity: 4608/4680 (112.8s)
+END sensitivity: 114.9s
+BEGIN fatigue: 192 sessions
+END fatigue: 45.7s
+BEGIN motor_limit: 640 sessions
+motor_limit: 256/640 (5.9s)
+motor_limit: 512/640 (10.2s)
+END motor_limit: 13.6s
+BEGIN interaction: 320 sessions
+interaction: 256/320 (13.1s)
+END interaction: 15.9s
+BEGIN ablation: 832 sessions
+ablation: 256/832 (9.5s)
+ablation: 512/832 (18.8s)
+ablation: 768/832 (29.9s)
+END ablation: 32.0s
+BEGIN encoding_visibility: 576 sessions
+encoding_visibility: 256/576 (9.2s)
+encoding_visibility: 512/576 (14.6s)
+END encoding_visibility: 16.5s
+BEGIN uncertainty: 1536 sessions
+uncertainty: 256/1536 (7.9s)
+uncertainty: 512/1536 (10.5s)
+uncertainty: 768/1536 (14.1s)
+uncertainty: 1024/1536 (17.4s)
+uncertainty: 1280/1536 (21.1s)
+uncertainty: 1536/1536 (25.6s)
+END uncertainty: 26.6s
+BEGIN time_step: 384 sessions
+time_step: 256/384 (6.6s)
+END time_step: 11.2s
+BEGIN lexical_control: 768 sessions
+lexical_control: 256/768 (23.2s)
+lexical_control: 512/768 (30.0s)
+lexical_control: 768/768 (37.3s)
+END lexical_control: 38.4s
+BEGIN duration: 120 sessions
+END duration: 12.8s

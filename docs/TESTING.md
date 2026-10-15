@@ -1,5 +1,9 @@
 # 验证范围与证据
 
+按行为查找脚本见[测试入口索引](../tests/README.md)。S1／S2 等文件名保留历史命名；选择依据是当前断言与依赖，不按阶段名执行整组。
+
+模型对照、覆盖边界与日志联合判定的通用方法，见[战斗实施经验第12节](migration/M2-IMPLEMENTATION-LESSONS.md#12-模型评估状态交接与验证方法)。
+
 检查与改动风险相称。优先最低成本的充分验证；相关小修改在阶段边界统一检查，已有证据足够时停止加验。当前结果见[阶段总结](STAGE-SUMMARY.md)，阶段出口见[迁移方案](migration/PLAN.md)。
 
 | 改动 | 首选检查 | 扩大条件 |
@@ -30,12 +34,14 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 ### 遗物与阅读系统
 
-按实际修改选择入口。目录检查覆盖196件定义、每书106件的独立可达性、前置／互斥、偏好和单次报价编译；机制检查按效果族通过正式取得、编译、人工输入与真实命中验证，不逐件建立测试。`test_s2_run.gd`默认分支包含旧构筑拒绝恢复时保留原档、失效奖励免费重建、保存失败与重试及事务去重。
+按实际修改选择入口。目录检查覆盖97件正式遗物的独立可达性、全部196件定义读取、99件退池实例／已发报价兼容、前置／互斥、数值双层有效增量、用途差异和单次报价编译；机制检查按效果族通过正式取得、编译、人工输入与真实命中验证，包括状态消费、派生隔离、真实闪避落点、场到期、分裂一次性、电链回击、纸鹤攻防与跨页周期，不逐件建立测试。`test_s2_run.gd`默认分支包含旧构筑拒绝恢复时保留原档、失效奖励免费重建、保存失败与重试及事务去重。
 
 ```powershell
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_catalog.gd', '--', '--expanded')
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_effects.gd')
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_s2_run.gd')
+# 内容闭环后按需统一采样，四书各六次获取，不作为普通改动固定检查：
+& ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_effects.gd', '--', '--gameplay-balance')
 # 实际Forward+窗口，使用隔离档案：
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--debug', '--script', 'res://tests/godot/test_ui_refinement.gd', '--', '--relic-upgrade')
 ```
@@ -44,7 +50,7 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 `test_ui_refinement.gd -- --menu-layout`使用同样的隔离窗口，覆盖书库／准备、设置分类、滑条与原生下拉、三选一、独立详情、稠密持有列表、图鉴检索、暂停往返和首次校准。检查方向／确认／数字与词令调用同一动作，输入框／词令前缀／弹层阻断误触，真实列表词令不被短编号提前提交，并保存各页布局。原生弹出窗口的按键事件携带该窗口ID；视口截图之后回到下一处理帧再继续操作。Windows可追加`--screen-capture`，将测试窗口置顶、等待0.8秒后仅截取客户区，使用显示输出颜色而不重复进行HDR转换；此参数只影响验证窗口。输入规则的较低成本回归仍用`test_input_settings.gd`。画面应单独审阅，功能断言不代替视觉检查。
 
-效果检查的`--balance`分支用于内容收束后的统一组合采样，`--storm-ablation`用于定位雷鸣叠加来源；它们使用有限目标、固定3／6／9字符每秒及真实支付，不代表正式房波或真人通关。弹体同步微基准沿用`test_battle_presentation.gd -- --projectile-sync-cost`，仅测表现同步CPU开销。实际结果与限制见[阶段总结](STAGE-SUMMARY.md)和[收益评估](COMBAT-BALANCE-DESIGN.md)。
+效果检查的`--balance`分支用于内容收束后的统一组合采样，`--storm-ablation`用于定位雷鸣叠加来源；它们使用有限目标、固定3／6／9字符每秒及真实支付，不代表正式页段或真人通关。弹体同步微基准沿用`test_battle_presentation.gd -- --projectile-sync-cost`，仅测表现同步CPU开销。实际结果与限制见[阶段总结](STAGE-SUMMARY.md)和[收益评估](COMBAT-BALANCE-DESIGN.md)。
 
 战斗算法可用 `pwsh -File tools/godot/compare-combat.ps1` 从优化前提交 `c39c032` 生成隔离参考子类，比较四书事件／状态与 1,152 个闪避选点；`-BenchmarkOnly` 只采样微基准，`-DodgeOnly` 跳过逐步战斗。该上传基线与本地原记录 `9f3539b` 的规则源码相同，仅剔除了转入私有资产库的新增字体。适配器针对该基线的方法与数据声明，未来结构变化需同步审阅，不能作为任意 Git 版本的通用比较器。正常运行前工具自动做锁定依赖的 Debug 编译。生成文件与日志留在 `.temp/`，不进入游戏或导出。
 
@@ -60,7 +66,7 @@ node tools/godot/mcp-smoke.mjs
 pwsh -File tools/godot/godot.ps1 export
 ```
 
-导入可能创建 UID 与导入配置，应审阅这些变化。Headless 运行不能证明 Forward+ 的真实画面；图形运行、截图和运行日志分别提供渲染、结构与错误证据。MCP 联调脚本验证连接和最小场景能力，不测游戏规则；输入、词库、应用和单房战斗检查如下。
+导入可能创建 UID 与导入配置，应审阅这些变化。Headless 运行不能证明 Forward+ 的真实画面；图形运行、截图和运行日志分别提供渲染、结构与错误证据。MCP 联调脚本验证连接和最小场景能力，不测游戏规则；输入、词库、应用和单页战斗检查如下。
 
 视觉验收使用关闭游戏嵌入的独立窗口，并记录游戏分辨率与实际显示区域。编辑器右上角运行也可能启用嵌入；浮动的 Game 窗口仍属于嵌入。若编辑器运行与缓冲区截图的锯齿不同，先对照关闭 `Embed Game on Next Play` 后的同一工程，核对启动参数中的 `--wid`、实际窗口尺寸与缩放；不得仅凭资源文件或缓冲区截图声称用户可见问题已消除。嵌入模式不支持正常的窗口模式切换，不能作为全屏行为验收环境。参见 [Godot 游戏嵌入说明](https://docs.godotengine.org/en/4.7/tutorials/editor/game_embedding.html)。
 
@@ -80,16 +86,16 @@ pwsh -File tools/godot/godot.ps1 run --debug --script res://tests/godot/test_ren
 
 结果页局部布局可运行锁定引擎的`--script res://tests/godot/test_feedback_presentation.gd -- --result-layout`（图形窗口）。该分支使用隔离档案，经正式出征后构造短局结果，检查归档数据、鼠标展开详情、底部位置与长列表内部滚动，并保存1920×1080截图；不模拟完整远征。默认分支另包含首页、符文规格和图鉴，只有相关改动才使用。截图阶段的同步取图与颜色转换耗时不作为游戏性能采样。
 
-- S1：优先复用输入／设置、战斗会话、单房和表现检查；修改旧脚本中与取消规则相关的断言，不直接沿用整套旧 M4 应用流程。
+- S1：优先复用输入／设置、战斗会话、单页和表现检查；修改旧脚本中与取消规则相关的断言，不直接沿用整套旧 M4 应用流程。
 - 每件保留遗物核对正式获取条件、叠层、触发和实际结果；按机制族复用案例，不用“有伤害”证明该遗物有效。
 - 路线与奖励检查重复提交、支付、满层补给和退出边界。复杂合同／租期不再是当前覆盖要求。
-- S2：覆盖三章九场、Boss、保留遗物升档、最高档继续周目、已用一次机会不刷新、普通重开清空局内遗物、结算不重复赚成长。
+- S2：覆盖三章九页、Boss、保留遗物升档、最高档继续周目、已用一次机会不刷新、普通重开清空局内遗物、结算不重复赚成长。
 - S3：检查旧 Godot 字符／记录保留、线性成长、普通／God 隔离与不兼容旧局的处理；正式完整内容的收益与最高档门槛按[评估方案](COMBAT-BALANCE-DESIGN.md)统一进行。
 - 人工输入速度、手感和视觉清晰度需要实际游玩；加速固定步或直接注入构筑只说明相应规则结果。
 
 ### 收缩后的正式检查
 
-`test_boss_resources.gd` 专门核对三位 Boss 的五档血量、正式生成及房间不会立即判胜；它不模拟完整 Boss 战。可用 `run --headless --script tests/godot/test_boss_resources.gd` 检查源码资源。导出工具还会用锁定编辑器引擎的 `--headless --main-pack <绝对 PCK 路径> --script <该脚本绝对路径>` 检查成品数据，失败即拒绝交付；源码检查不能替代这一步。
+`test_boss_resources.gd` 专门核对三位 Boss 的五档血量、正式生成及页不会立即判胜；它不模拟完整 Boss 战。可用 `run --headless --script tests/godot/test_boss_resources.gd` 检查源码资源。导出工具还会用锁定编辑器引擎的 `--headless --main-pack <绝对 PCK 路径> --script <该脚本绝对路径>` 检查成品数据，失败即拒绝交付；源码检查不能替代这一步。
 
 按改动选择下列入口，不作为每次修改后的全量套件：
 
@@ -97,18 +103,18 @@ pwsh -File tools/godot/godot.ps1 run --debug --script res://tests/godot/test_ren
 pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_s2_rules.gd
 pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_s2_encounters.gd
 pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_s2_run.gd
-# 四书九房，通过正式 Unicode 输入、获取、路线与保存：
+# 四书九页，通过正式 Unicode 输入、获取、路线与保存：
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--script', 'tests/godot/test_s2_run.gd', '--', '--formal')
 # 实际 Forward+ 窗口；--ui-only 仅复查页面与自然生成的道具词咒：
 pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_s1_application.gd
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--script', 'tests/godot/test_s1_application.gd', '--', '--ui-only')
 ```
 
-`test_s2_run.gd` 的默认模式使用明确的合法结果夹具验证保存失败、升档、继承、去重、满层补给与重开；`--formal` 才包含实际打字打赢九房。`--balance` 为分阶段数值取样入口，记录速度、准确率、种子、防御策略与失败，不以预期胜败替代测量。`--cold-only`、`--retained-only --mistakes` 分别测快速冷开与中速继承，`--seed=s3-sample-2` 更换种子，`--book=frost` 等参数只复测受影响法书。`test_profile_save.gd`、`test_talent_progress.gd` 和 `test_reward_ledger.gd` 分别保护迁移原档、五阶自动成长与实际经验去重。
+`test_s2_run.gd` 的默认模式使用明确的合法结果夹具验证保存失败、升档、继承、去重、满层补给与重开；`--formal` 才包含实际打字打赢九页。`--balance` 为分阶段数值取样入口，记录速度、准确率、种子、防御策略与失败，不以预期胜败替代测量。`--cold-only`、`--retained-only --mistakes` 分别测快速冷开与中速继承，`--seed=s3-sample-2` 更换种子，`--book=frost` 等参数只复测受影响法书。`test_profile_save.gd`、`test_talent_progress.gd` 和 `test_reward_ledger.gd` 分别保护迁移原档、五阶自动成长与实际经验去重。
 
 `test_s2_encounters.gd` 的 `--defense` 检查不打字的纯防御边界，`--tail` 检查停笔后有限效果，`--word-cost` 比较三／七字符的六词周期与主术等待。后两项隔离敌人 AI，不代表正式通关。窗口脚本支持 `--ui-only --low --reduce-motion` 复查低画质静态可读性；`--package-check` 将验证文件写到隔离的 `user://verification/`。使用锁定编辑器引擎的 `--main-pack <绝对 PCK 路径> --script <绝对测试脚本路径>` 从独立包目录验证资源，测试脚本本身不随包分发。官方 Release 模板不执行外部 `--script`，正式 EXE 另做独立启动检查；两类结果不能混称为 Release 交互自动化。测试子进程的 `APPDATA` 指向工作区独立目录，保持玩家数据不变。
 
-体验与存档针对性回归：`test_single_run_save.gd` 覆盖唯一存档、退出保存、房间恢复、重复奖励、重开原子性、God 分账及跨档写入失败重试；`test_s2_encounters.gd --arrival` 核对八向扇区分布与真实单敌批次，`--god` 核对四书普通／God 的致死、闪避和有限终式对象。`test_s1_application.gd --feedback` 在真实窗口完成首房打字、数字领奖、详情隔离、路线、继续／取消重开、暂停构筑／图鉴、隐藏激活和一步结束归档；`test_feedback_effects.gd` 使用受控敌人位置和敌弹，实际完词触发冰面、火场、反制与爆墨并截图，不将布置的战场当作正式玩法通关。
+体验与存档针对性回归：`test_single_run_save.gd` 覆盖唯一存档、退出保存、页恢复、重复奖励、重开原子性、God 分账及跨档写入失败重试；`test_s2_encounters.gd --arrival` 核对八向扇区分布与真实单敌批次，`--god` 核对四书普通／God 的致死、闪避和有限终式对象。`test_s1_application.gd --feedback` 在真实窗口完成首页打字、数字领奖、详情隔离、路线、继续／取消重开、暂停构筑／图鉴、隐藏激活和一步结束归档；`test_feedback_effects.gd` 使用受控敌人位置和敌弹，实际完词触发冰面、火场、反制与爆墨并截图，不将布置的战场当作正式玩法通关。
 
 以下 M1／M2 命令是保留底座的定位入口，先核对与本次改动相关的断言，不因文件存在而全部执行。
 
@@ -129,11 +135,11 @@ pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_ui_refinement.gd
 
 `test_display.gd` 使用 `.temp/display/` 独立设置，在十组代表性输出下检查设置固定头尾与滚动、准备页列宽、战场 HUD、安全区、正文／HDR 输出一致及字体采样。通过原生鼠标事件验证缩放与全屏留边后的命中位置；暂停中改界面缩放不推进战斗、不重置词条测量宽度。另覆盖分辨率保存恢复、窗口手动调整后修改无关设置、全屏往返及恢复默认。实际窗口保存 720p、4K、16:10、4:3 和超宽屏图像；无窗口仅验证断言，不作为图像或显卡性能证据。
 
-`test_ui_refinement.gd` 使用真实输入事件检查种子编辑与词令隔离、难度与设置词令、滑条调整、下拉展开、按键组件及平滑滚动的累积／停稳／拖动接管；实际窗口保存悬浮、准备与设置图像。应用战斗检查等待冷区入场后再输入可见词条；单房规则检查覆盖八向出生间隔、冷区不可选和自然入场。
+`test_ui_refinement.gd` 使用真实输入事件检查种子编辑与词令隔离、难度与设置词令、滑条调整、下拉展开、按键组件及平滑滚动的累积／停稳／拖动接管；实际窗口保存悬浮、准备与设置图像。应用战斗检查等待冷区入场后再输入可见词条；单页规则检查覆盖八向出生间隔、冷区不可选和自然入场。
 
 材质动态复查可为该入口追加 `-- --record-gold`，保存金丝局部连续帧及间隔采样的页面光晕帧。局部流光、分叉强弱、错峰节奏和整页受光分别观察；静态截图不能证明流动，采样过程含截图等待，不能据此评价真实帧率。
 
-## M2 单房规则检查
+## M2 单页规则检查
 
 四书机制优先使用当前专项入口，旧M2默认脚本中关于逐词供能、纸灵世界时间寿命和旧连锁规则的断言不作为当前契约：
 
@@ -157,7 +163,7 @@ pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_ui_refinement.gd
 --path . --script res://tests/godot/test_battle_presentation.gd -- --four-books
 ```
 
-场景采样固定3／6字符每秒、3／5／7字词、100%准确；普通目标100生命、耐久单体5000生命，停用AI移动／攻击及自动房波，保留击退。适配遗物经过实际获取事务预置；正式获取、真正Boss阶段与升档使用上方 `test_s2_run.gd --formal`。窗口专项以原生Unicode事件输入三词后观察状态、原生闪避与终极，终极人为充满仅用于视觉；输出HDR转sRGB帧需要人工查看。当前证据与限制见阶段总结。
+场景采样固定3／6字符每秒、3／5／7字词、100%准确；普通目标100生命、耐久单体5000生命，停用AI移动／攻击及自动页段，保留击退。适配遗物经过实际获取事务预置；正式获取、真正Boss阶段与升档使用上方 `test_s2_run.gd --formal`。窗口专项以原生Unicode事件输入三词后观察状态、原生闪避与终极，终极人为充满仅用于视觉；输出HDR转sRGB帧需要人工查看。当前证据与限制见阶段总结。
 
 修改光效采样、符阵导入或画布像素吸附时，可运行 `tests/godot/test_effect_sampling.gd`（必须使用图形模式）。它在 720p、1080p、1440p 中输出解析光环、SVG 符阵、原生线条与拖尾，检查实际 MSAA／mipmap 以及 0.35 像素移动是否被吸附。截图用于检查轮廓连续性，断言不替代视觉判断。
 
@@ -169,19 +175,19 @@ pwsh -File tools/godot/godot.ps1 run --headless --script tests/godot/test_battle
 
 覆盖人工回执唯一性、四书付费主术、致死后仍执行的效果、残响改投、弹反／定向闪避、终式有限调度及胜败出口。纸灵另覆盖逐词增员与上限、同一实体俯冲返航、额度耗尽后盘旋、满员补给、静默消散与重新召唤；表现时序保存三只协同、返航与消散帧。原生窗口应用检查另以真实键盘事件完成一词并确认命中，保存战斗静态与施法帧。规则检查不证明完整操作手感、所有画质档、连续特效或数值难度。
 
-`tests/godot/test_battle_room.gd` 通过正式应用完成四书三波普通房间，原生事件输入累计共鸣、释放终式、弹反与闪避，并覆盖暂停→设置→继续、胜败、重试和返回。使用独立临时设置与词库，不注入资源或无敌状态；窗口模式保存各波、赚得的终式和结果。Headless 可搭配引擎 `--fixed-fps 60` 快速验证规则流程，不能用其运行速度评价真实手感或性能。
+`tests/godot/test_battle_room.gd` 通过正式应用完成四书三段普通页，原生事件输入累计共鸣、释放终式、弹反与闪避，并覆盖暂停→设置→继续、胜败、重试和返回。使用独立临时设置与词库，不注入资源或无敌状态；窗口模式保存各波、赚得的终式和结果。Headless 可搭配引擎 `--fixed-fps 60` 快速验证规则流程，不能用其运行速度评价真实手感或性能。
 
-`tests/godot/test_battle_presentation.gd` 在实际 Forward+ 窗口检查四书飞行／命中／终式、防御、暂停缩放与画质应用。防御时序断言真实反射弹仍在飞行、近战弹反立即反击且随后明显退出近身范围，并捕获闪避途中与落点。引擎可执行文件的 `--` 后支持 `--book=flame`、`--low`、`--medium`、`--reduce-motion`；`--audio-only` 不截图，采样默认音量下的实际总线峰值及声部上限。`--movie` 跳过截图暂停，可配合引擎 `--write-movie` 保存连续演出。时序用高生命目标观察后效，其注入的终式仅用于视觉检查，正式共鸣可达性由完整房间检查覆盖。证据生成于 `.temp/godot-m2/`。
+`tests/godot/test_battle_presentation.gd` 在实际 Forward+ 窗口检查四书飞行／命中／终式、防御、暂停缩放与画质应用。防御时序断言真实反射弹仍在飞行、近战弹反立即反击且随后明显退出近身范围，并捕获闪避途中与落点。引擎可执行文件的 `--` 后支持 `--book=flame`、`--low`、`--medium`、`--reduce-motion`；`--audio-only` 不截图，采样默认音量下的实际总线峰值及声部上限。`--movie` 跳过截图暂停，可配合引擎 `--write-movie` 保存连续演出。时序用高生命目标观察后效，其注入的终式仅用于视觉检查，正式共鸣可达性由完整页检查覆盖。证据生成于 `.temp/godot-m2/`。
 
 表现检查使用 `.temp/legacy-ui-review/presentation-*/` 独立设置，经过真实入场事件验证首访不能跳过、F11 不触发入场、输入不泄漏到首页、音效顺序、再次跳过取消后续 cue、减少动态直接到达可交互状态及准备页背景文字退场；图形模式保存待机、两次折射波、到达书库与准备页的实际帧。图片需与旧版及源码一同检查，不能只凭断言认定效果相同。
 
-动态连续性检查另覆盖悬浮的中间态／清晰终态／移开恢复、主题中间色、快速切书接续、房间法阵锚点不变、专属封印权重交接，以及过渡中打开页面的颜色继承。设置检查覆盖即时预听与防抖保存、仅下拉值不同的默认恢复和缩放后装饰位置。
+动态连续性检查另覆盖悬浮的中间态／清晰终态／移开恢复、主题中间色、快速切书接续、页法阵锚点不变、专属封印权重交接，以及过渡中打开页面的颜色继承。设置检查覆盖即时预听与防抖保存、仅下拉值不同的默认恢复和缩放后装饰位置。
 
 按需绘制检查要确认场景的主题、悬浮、纹理就绪等刷新源已经收束，再在真实窗口中检查 Viewport 状态；无窗口模式没有实际绘制帧，不能用其状态证明停更。固定等待时长本身不能证明静止；当前本机窗口结果见阶段总结。
 
 MCP 上游键注入缺少 `InputEventKey.unicode`；它适合鼠标、Tab、Esc 和运行时观察，不能作为字符输入证据。应用测试直接分发带 Unicode 的原生按键，不为测试改变正式输入处理。HDR 截图先按高精度像素转 sRGB 再写 PNG，避免线性颜色被误判为画面发黑；生成的预览桥也应用此转换。截图仍需查看，自动布局断言不替代视觉判断。迁移界面必须实际运行旧版对应流程，按[体验映射](migration/EXPERIENCE-MAP.md)核对，不能只检查新页面自己能否运行。
 
-词条时序与冷区改动另由单房规则集覆盖：在途主术持有词条、无关命中不刷新、主目标命中后恢复词条；尚未有效锁定的冷区入场敌人不可新选／受伤／发动攻击，入场渐入。玩家靠边时，远程敌人也必须进入有效战场，不能因提前达到射程而停住，或因自行后退使词咒反复消失。有效战场内的点击、切换、字符锁定由固定步提交，击退至边缘及取消后仍可交战。表现脚本保存普通与强化施法对比、弹反、冷区与低画质帧；按钮悬浮截图包含中心光点及文字光晕。
+词条时序与冷区改动另由单页规则集覆盖：在途主术持有词条、无关命中不刷新、主目标命中后恢复词条；尚未有效锁定的冷区入场敌人不可新选／受伤／发动攻击，入场渐入。玩家靠边时，远程敌人也必须进入有效战场，不能因提前达到射程而停住，或因自行后退使词咒反复消失。有效战场内的点击、切换、字符锁定由固定步提交，击退至边缘及取消后仍可交战。表现脚本保存普通与强化施法对比、弹反、冷区与低画质帧；按钮悬浮截图包含中心光点及文字光晕。
 
 `test_battle_presentation.gd -- --words-only` 单独检查头顶释义的两行测量与省略、空释义高度、选中层级、设置即时开关、底部提示独立、锁定后边缘可见及完整词咒避让 HUD，并保存开／关与边缘帧。使用实际 Forward+ 窗口；`test_ui_refinement.gd` 另经正式词令 `translation` 检查开关与保存回读。旧版 `WordLabelLayout`、`OverlayRenderer` 和实际锁定／击退画面是表现对照入口。
 
@@ -225,11 +231,11 @@ Debug 包默认运行 `app/debug_log.gd`，每 5 秒输出心跳，超过 50 ms 
 
 本机可用 `pwsh -File tools/godot/godot.ps1 run --script tests/godot/profile_frames.gd -- --frame-profile --profile-driver --profile-label=sample` 运行首页→设置→战斗的固定窗口流程，输出 `.temp/frame-review/sample/frames.json`，并断言隐藏首页停绘和返回恢复。使用独立设置与词库，不改变玩家配置；这只能验证本机，不能替代发生卡顿的目标机采样。
 
-教学修改使用 `tests/godot/test_tutorial_lesson.gd`，覆盖五课的真实人工回执、付费施法和机制效果：冻裂超时后重试、火弹前排阻挡及停笔灼烧、感电实际充能、空雾与错线雷径不能达成、纸灵休眠再唤醒、纸鹤真实拦截反伤和四书终式。目标达成仅解锁继续，计时不会换步；`advance()`才切步／完成，重试及档案保持隔离。实际窗口专项为 `test_ui_refinement.gd -- --tutorial-mechanics --screen-capture`，覆盖23步全文排版和词咒避让、五课暂停／重试／退出、术语原生鼠标提示、普通／减少动态入场、灰烬完整原生输入与下一步／完成按钮。排版专项中的步骤直设只检验表现，不能替代规则推进证据。原`--tutorial-arc`入口保留教学导航、灰烬输入和弧形飞行的组合检查。弹道的敌人起点、左右弯曲、远距离命中、场地边缘、分步一致性、扇形中央弹道、移动躲开、完美御术／闪避与无伤害尾迹纳入现有 `test_defense_movement.gd`。
+教学修改使用 `tests/godot/test_tutorial_lesson.gd`，覆盖五课的真实人工回执、付费施法和机制效果：冻裂超时后重试、火弹前排阻挡及停笔灼烧、感电实际充能、空雾与错线雷径不能达成、纸灵休眠再唤醒、纸鹤真实拦截反伤和四书终式。另检查读说明直至余火熄灭／纸灵睡完后仍可继续，以及在当前步骤创建新会话后能够通过实际操作完成。目标达成仅解锁继续，计时不会换步；`advance()`才切步／完成，重试及档案保持隔离。实际窗口专项为 `test_ui_refinement.gd -- --tutorial-mechanics --screen-capture`，覆盖25步全文排版、固定主操作与词咒避让、五课当前步骤重试／暂停／退出、术语原生鼠标提示、普通／减少动态入场、灰烬完整原生输入及余火重试、纸灵休眠步骤重试后的等待／唤醒、一次完成返回选课、完成标记及再次进入。排版专项中的步骤直设只检验表现，不能替代规则推进证据。原`--tutorial-arc`入口保留教学导航、灰烬输入和弧形飞行的组合检查。弹道的敌人起点、左右弯曲、远距离命中、场地边缘、分步一致性、扇形中央弹道、移动躲开、完美御术／闪避与无伤害尾迹纳入现有 `test_defense_movement.gd`。
 
 仅修正弧形弹道时可运行实际窗口 `test_ui_refinement.gd -- --curved-trajectory --screen-capture`：正式敌人发射器产生来弹，关闭自动固定步后以受控步长推进实际威胁碰撞，捕获起点、途中、接近、低画质／减少动态及真实命中帧。通过 `godot.ps1` 调用时使用 `-EngineArguments @('--debug', '--script', 'res://tests/godot/test_ui_refinement.gd', '--', '--curved-trajectory', '--screen-capture')` 保留脚本参数。这些专项不替代连续真人体验与目标机性能。
 
-切换目标与寒气教学文案使用 `test_ui_refinement.gd -- --teaching-copy --screen-capture`，检查指南原生排版、五课首步长正文与进度／操作／战斗页脚的间隔，并捕获基础教学、指南和寒墨特色说明。教程引导高度随正文自动扩展。Tab前缀轮换规则沿用 `test_input_settings.gd`，不因文案更新改动输入规则。
+切换目标与教学布局使用 `test_ui_refinement.gd -- --teaching-copy --screen-capture`，实操shade／shard／flame例子与即时目标提示，检查指南原生排版、五课正文与目标／操作的间隔、原生向上闪避时讲解让位及词咒避让同步、1.25倍桌面UI缩放，并保存实际画面。Tab前缀轮换规则沿用 `test_input_settings.gd`，不因文案更新改动输入规则。窗口检查独占图形运行，初始化完成后取得真实窗口焦点；不在检查中屏蔽产品失焦暂停，也不与启动其他引擎窗口的检查并行。
 
 ## 旧实现的证据用途
 

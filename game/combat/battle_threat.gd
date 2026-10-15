@@ -9,6 +9,7 @@ var damage_q: int
 var radius: float = 5.0
 var life: float = 6.0
 var reflected: bool = false
+var cleared: bool = false
 var trail: PackedVector2Array = []
 var attack_id: String
 var effect: BattleEffect
@@ -16,6 +17,7 @@ var grazed: bool = false
 var curvature: float = 0.0
 var acceleration: float = 0.0
 var heavy: bool = false
+var visual_style: StringName
 
 
 func aim_curve(offset: Vector2) -> float:

@@ -1,0 +1,9 @@
+{
+  "method": "nonlinear least squares on 12 verified aggregate cells",
+  "raw_keystroke_fit": false,
+  "held_out_human_validation": false,
+  "seconds": 2.16021162800007,
+  "seed": 7261,
+  "fit_targets": "category IKI means; WPM not a target",
+  "note": "all group is a heterogeneous volunteer aggregate, not a population-representative ordinary subgroup"
+}

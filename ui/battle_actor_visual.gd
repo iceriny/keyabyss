@@ -25,6 +25,9 @@ const ENEMIES = {
 	&"vortex": preload("res://assets/art/actors/vortex.svg"),
 	&"echo-archivist": preload("res://assets/art/actors/echo_archivist.svg"),
 	&"final-editor": preload("res://assets/art/actors/final_editor.svg"),
+	&"pin-archer": preload("res://assets/art/actors/pin_archer.svg"),
+	&"refrain": preload("res://assets/art/actors/refrain.svg"),
+	&"folio-warden": preload("res://assets/art/actors/folio_warden.svg"),
 }
 @onready var body: Sprite2D = $Body
 @onready var surface: ShaderMaterial = body.material as ShaderMaterial
@@ -37,11 +40,14 @@ var _glow: Texture2D
 var _hit_motion := DampedMotion.new()
 var _hit_axis := Vector2.RIGHT
 var _freeze_weight := 0.0
+var _heading_initialized := false
 
 
 static func word_clearance(enemy: BattleEnemy) -> float:
 	if enemy.kind == &"leech":
 		return LEECH_VISUAL_EXTENT.y * 1.08 * BattleEnemy.SIZE_SCALE * (0.28 / 0.44 if enemy.small else 1.0)
+	if enemy.kind in [&"pin-archer", &"refrain", &"folio-warden"]:
+		return 43.0 * BattleEnemy.SIZE_SCALE
 	return enemy.radius
 
 
@@ -107,7 +113,18 @@ func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, redu
 		elif enemy.melee_strike > 0.0:
 			var swing := 1.0 - enemy.melee_strike / BattleEnemy.MELEE_STRIKE_TIME
 			body.position += enemy.melee_direction * sin(swing * PI) * 14.0
-	body.rotation = 0.0 if reduced else clampf((enemy.velocity.x + enemy.impulse.x) * 0.00055, -0.24, 0.24)
+	if enemy.behavior == &"snipe":
+		var facing := enemy.aimed_position if enemy.aiming else enemy.last_seen_position
+		var heading := ((facing - enemy.position) * BattleSession.ARENA_SIZE).angle() + PI * 0.5
+		if not _heading_initialized:
+			body.rotation = heading
+			_heading_initialized = true
+		elif not frozen:
+			body.rotation = rotate_toward(body.rotation, heading, delta * TAU * 1.5)
+		if enemy.aiming and not reduced and not frozen:
+			body.position -= Vector2.from_angle(body.rotation - PI * 0.5) * (1.0 - enemy.attack_clock / enemy.warning_time) * 5.0
+	else:
+		body.rotation = 0.0 if reduced else clampf((enemy.velocity.x + enemy.impulse.x) * 0.00055, -0.24, 0.24)
 	var axis := _hit_axis if _hit_motion.position.length() > 0.01 else enemy.velocity.normalized()
 	if axis.is_zero_approx():
 		axis = Vector2.UP

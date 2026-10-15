@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R003"
 title = "零度批注"
+choice_role = &"mechanism"
 description = "施法附加寒气，普通敌人的冻结延长 {freeze_ms_s} 秒。"
 stage = &"M3"
 supported = true

@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"T009"
 title = "疾书电笔"
-description = "闪避雷电路径的伤害提高 {dodge_storm_pct}%。"
-modifiers = {&"dodge_storm_pct": 12}
+description = "闪避后，下一次亲手施法必定强化，首击额外附加 {shock} 点感电。连续闪避不累积次数。"
+numbers = {&"shock": 20}
+stack_values = PackedStringArray("shock")
+choice_role = &"mechanism"
 tags = PackedStringArray("dodge")
 max_stacks = 2
 rarity = &"common"

@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"G008"
 title = "护页纸"
+choice_role = &"defense"
 description = "护盾上限增加 {shield_cap} 点。"
-modifiers = {&"shield_cap": 8}
+modifiers = {&"shield_cap": 15}
 tags = PackedStringArray("shield")
 max_stacks = 2
 rarity = &"uncommon"

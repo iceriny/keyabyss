@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"G020"
 title = "晚读札"
+choice_role = &"power"
 description = "终式持续时间延长 {ultimate_ms_s} 秒。"
-modifiers = {&"ultimate_ms": 400}
+modifiers = {&"ultimate_ms": 1000}
 tags = PackedStringArray("ultimate")
 max_stacks = 2
 rarity = &"common"

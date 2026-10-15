@@ -6,11 +6,12 @@
 script = ExtResource("1")
 id = &"G016"
 title = "复写纸"
-description = "双生笔尖复制的伤害提高 {copy_pct}%。"
-modifiers = {&"copy_pct": 10}
+description = "亲手施法的目标与上次不同，则向上个目标追加基础威力 {damage_pct}% 的追击；上个目标已死亡则追击新目标。"
+numbers = {&"damage_pct": 45}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("copy")
 max_stacks = 2
 rarity = &"uncommon"
-requires_all = PackedStringArray("R006")
 supported = true
 stage = &"relics-3"

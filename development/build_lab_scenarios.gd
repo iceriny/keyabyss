@@ -35,7 +35,7 @@ static func arrange(session: BattleSession, scenario: String) -> void:
 	assert(session.enemies.size() == offsets.size(), "Scenario composition does not match initial wave")
 	for index in offsets.size():
 		var enemy := session.enemies[index]
-		enemy.position = session.clamp_player(session.player_position + offsets[index] / BattleSession.ARENA_SIZE)
+		enemy.position = BattleSession.clamp_player(session.player_position + offsets[index] / BattleSession.ARENA_SIZE)
 		enemy.previous_position = enemy.position
 		enemy.attack_clock = clocks[index]
 
@@ -47,7 +47,7 @@ static func description(scenario: String) -> String:
 		"escort":
 			return "三只脆弱笔尖围着耐久羽笔。先清开周围小怪，还是集中处理羽笔？观察范围攻击、集中攻击与控制各自能争取多少安全输入时间。"
 		"waves":
-			return "三波普通敌人连续到来。立即用尽力量，还是保留后手？观察已部署的攻击、储备和回收能否接上下一波。"
+			return "三段普通敌人连续到来。立即用尽力量，还是保留后手？观察已部署的攻击、储备和回收能否接上下一段。"
 	assert(false, "Unknown build lab scenario: " + scenario)
 	return ""
 

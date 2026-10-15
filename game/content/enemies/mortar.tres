@@ -4,6 +4,7 @@
 script = ExtResource("1")
 kind = &"mortar"
 behavior = &"bombard"
+encounter_role = &"area"
 health = 80
 speed = 28.5
 radius = 22.77

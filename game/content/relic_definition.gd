@@ -3,6 +3,7 @@ extends CombatContentDefinition
 
 @export var opportunity_cost: int = 1
 @export var rarity: StringName = &"common"
+@export var choice_role: StringName = &"power"
 @export var tags: PackedStringArray = []
 @export var preferred_books: PackedStringArray = []
 @export var requires_capabilities: PackedStringArray = []

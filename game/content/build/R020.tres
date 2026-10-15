@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R020"
 title = "段落终结"
+choice_role = &"mechanism"
 description = "每完成 {interval} 次词咒，在自身周围清弹并造成 {damage} 点伤害。"
 stage = &"M3"
 supported = true

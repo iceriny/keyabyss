@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"P012"
 title = "宽翼折纸"
+choice_role = &"defense"
 description = "符文纸鹤拦弹半径增加 {crane_radius}。"
-modifiers = {&"crane_radius": 4}
+modifiers = {&"crane_radius": 6}
 tags = PackedStringArray("crane")
 max_stacks = 2
 rarity = &"common"

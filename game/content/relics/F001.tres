@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"F001"
 title = "凝霜墨"
+choice_role = &"power"
 description = "施加的寒气点数提高 {cold_pct}%。"
-modifiers = {&"cold_pct": 10}
+modifiers = {&"cold_pct": 20}
 tags = PackedStringArray("cold")
 max_stacks = 2
 rarity = &"common"

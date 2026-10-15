@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R033"
 title = "超导银墨"
+choice_role = &"power"
 description = "电链末段最低伤害提高 {tail_pct}%，遗物引发的过载伤害提高 {overload_pct}%。"
 stage = &"M3"
 supported = true

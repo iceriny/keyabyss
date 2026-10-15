@@ -6,6 +6,10 @@ const MELEE_REACH := 106.0
 const MELEE_HALF_ANGLE := 0.82
 const MELEE_STRIKE_TIME := 0.16
 const MELEE_RECOVERY := 0.46
+const REFRAIN_DELAY := 0.75
+const WARD_DURATION := 2.5
+const WARD_RANGE := 330.0
+const WARD_DAMAGE_SCALE := 0.75
 
 var id: StringName
 var kind: StringName = &"nib"
@@ -85,6 +89,11 @@ var small: bool = false
 var shielded: bool = false
 var front_armor_ready: bool = false
 var delayed_attacks: Array[Dictionary] = []
+var followup_time: float = 0.0
+var volley_origin := Vector2.ZERO
+var ward_remaining: float = 0.0
+var ward_target_id: StringName
+var ward_source_id: StringName
 
 
 func alive() -> bool:

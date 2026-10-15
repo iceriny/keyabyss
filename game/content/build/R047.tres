@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R047"
 title = "永昼雷章"
+choice_role = &"mechanism"
 description = "雷鸣终章延长至 {duration} 秒；期间每条主电链的前三次命中各获得 {shield} 点护盾。"
 stage = &"M3"
 supported = true

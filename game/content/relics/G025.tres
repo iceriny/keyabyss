@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"G025"
 title = "电光批注"
-description = "直接施法命中时，附加 {shock_hit} 点感电。"
-modifiers = {&"shock_hit": 6}
+description = "直接施法命中时附加 {shock_hit} 点感电。非雷鸣的亲手施法命中已有超过 {threshold} 点感电的敌人时，消耗 {consume} 点，在半径 {radius} 内造成基础威力 {damage_pct}% 的伤害。"
+modifiers = {&"shock_hit": 12}
+numbers = {&"threshold": 30, &"consume": 30, &"damage_pct": 35, &"radius": 120}
+choice_role = &"mechanism"
 tags = PackedStringArray("shock")
 max_stacks = 2
 rarity = &"uncommon"

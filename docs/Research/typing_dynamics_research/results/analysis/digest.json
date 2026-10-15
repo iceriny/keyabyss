@@ -1,0 +1,171 @@
+{
+  "executed_sessions": 18192,
+  "simulated_hours": 268.73333333333335,
+  "batch_compute_wall_seconds": 474.9539177520014,
+  "failure_sessions": 26,
+  "baseline_people": 354,
+  "baseline_sessions": 2832,
+  "baseline_completed_words": 165297,
+  "baseline_mean_metrics": [
+    {
+      "group": "beginner",
+      "task": "A",
+      "wpm5": 20.2078125,
+      "actual_wpm": 19.6015625,
+      "lpm": 81.4375,
+      "cpm": 101.0390625
+    },
+    {
+      "group": "beginner",
+      "task": "B",
+      "wpm5": 21.85625,
+      "actual_wpm": 15.5625,
+      "lpm": 93.71875,
+      "cpm": 109.28125
+    },
+    {
+      "group": "beginner",
+      "task": "C",
+      "wpm5": 21.8109375,
+      "actual_wpm": 15.53125,
+      "lpm": 93.5234375,
+      "cpm": 109.0546875
+    },
+    {
+      "group": "beginner",
+      "task": "D",
+      "wpm5": 21.8234375,
+      "actual_wpm": 15.5390625,
+      "lpm": 93.578125,
+      "cpm": 109.1171875
+    },
+    {
+      "group": "elite",
+      "task": "A",
+      "wpm5": 111.17157894736842,
+      "actual_wpm": 106.1842105263158,
+      "lpm": 449.6736842105263,
+      "cpm": 555.8578947368421
+    },
+    {
+      "group": "elite",
+      "task": "B",
+      "wpm5": 126.15263157894736,
+      "actual_wpm": 89.34210526315789,
+      "lpm": 541.421052631579,
+      "cpm": 630.7631578947369
+    },
+    {
+      "group": "elite",
+      "task": "C",
+      "wpm5": 119.73368421052632,
+      "actual_wpm": 84.76315789473684,
+      "lpm": 513.9052631578948,
+      "cpm": 598.6684210526316
+    },
+    {
+      "group": "elite",
+      "task": "D",
+      "wpm5": 119.31684210526316,
+      "actual_wpm": 84.4578947368421,
+      "lpm": 512.1263157894737,
+      "cpm": 596.5842105263158
+    },
+    {
+      "group": "expert",
+      "task": "A",
+      "wpm5": 89.5578125,
+      "actual_wpm": 85.3671875,
+      "lpm": 362.421875,
+      "cpm": 447.7890625
+    },
+    {
+      "group": "expert",
+      "task": "B",
+      "wpm5": 96.728125,
+      "actual_wpm": 68.703125,
+      "lpm": 414.9375,
+      "cpm": 483.640625
+    },
+    {
+      "group": "expert",
+      "task": "C",
+      "wpm5": 94.603125,
+      "actual_wpm": 67.1796875,
+      "lpm": 405.8359375,
+      "cpm": 473.015625
+    },
+    {
+      "group": "expert",
+      "task": "D",
+      "wpm5": 94.64375,
+      "actual_wpm": 67.203125,
+      "lpm": 406.015625,
+      "cpm": 473.21875
+    },
+    {
+      "group": "ordinary",
+      "task": "A",
+      "wpm5": 52.364179104477614,
+      "actual_wpm": 49.940298507462686,
+      "lpm": 211.88059701492537,
+      "cpm": 261.82089552238807
+    },
+    {
+      "group": "ordinary",
+      "task": "B",
+      "wpm5": 54.84776119402985,
+      "actual_wpm": 38.82835820895522,
+      "lpm": 235.41044776119404,
+      "cpm": 274.23880597014926
+    },
+    {
+      "group": "ordinary",
+      "task": "C",
+      "wpm5": 54.49850746268657,
+      "actual_wpm": 38.582089552238806,
+      "lpm": 233.91044776119404,
+      "cpm": 272.4925373134328
+    },
+    {
+      "group": "ordinary",
+      "task": "D",
+      "wpm5": 54.61194029850746,
+      "actual_wpm": 38.66417910447761,
+      "lpm": 234.3955223880597,
+      "cpm": 273.05970149253733
+    },
+    {
+      "group": "skilled",
+      "task": "A",
+      "wpm5": 69.821875,
+      "actual_wpm": 66.4375,
+      "lpm": 282.671875,
+      "cpm": 349.109375
+    },
+    {
+      "group": "skilled",
+      "task": "B",
+      "wpm5": 73.1984375,
+      "actual_wpm": 52.0390625,
+      "lpm": 313.953125,
+      "cpm": 365.9921875
+    },
+    {
+      "group": "skilled",
+      "task": "C",
+      "wpm5": 72.45,
+      "actual_wpm": 51.4765625,
+      "lpm": 310.7734375,
+      "cpm": 362.25
+    },
+    {
+      "group": "skilled",
+      "task": "D",
+      "wpm5": 72.515625,
+      "actual_wpm": 51.5234375,
+      "lpm": 311.0546875,
+      "cpm": 362.578125
+    }
+  ]
+}

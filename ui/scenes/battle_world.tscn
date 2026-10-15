@@ -1,7 +1,16 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://ui/battle_visuals.gd" id="1"]
 [ext_resource type="Shader" path="res://ui/materials/battle_shockwave.gdshader" id="2"]
+[ext_resource type="Script" path="res://ui/battle_threat_glow.gd" id="threat_glow"]
+[ext_resource type="Shader" path="res://ui/materials/battle_ribbon.gdshader" id="ribbon"]
+
+[sub_resource type="CanvasItemMaterial" id="ThreatAdditive"]
+blend_mode = 1
+light_mode = 1
+
+[sub_resource type="ShaderMaterial" id="ThreatRibbon"]
+shader = ExtResource("ribbon")
 
 [sub_resource type="ShaderMaterial" id="Material_wave"]
 resource_local_to_scene = true
@@ -34,6 +43,21 @@ mouse_filter = 2
 [node name="WorldCapture" type="BackBufferCopy" parent="."]
 z_index = 10
 copy_mode = 2
+
+[node name="ThreatGlow" type="Control" parent="."]
+z_index = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ThreatAdditive")
+script = ExtResource("threat_glow")
+
+[node name="Ribbons" type="MeshInstance2D" parent="ThreatGlow"]
+material = SubResource("ThreatRibbon")
 
 [node name="Shockwave" type="ColorRect" parent="."]
 visible = false

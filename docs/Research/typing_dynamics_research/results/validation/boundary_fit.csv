@@ -1,0 +1,4 @@
+group,target_wpm5,fitted_boundary_delay_s,source,method
+beginner,20.91,1.238611899632541,R01 Table3 WPM,monotone interpolation of simulated mean WPM; residual not physiologically identified
+ordinary,51.56,0.3005829261102044,R01 Table3 WPM,monotone interpolation of simulated mean WPM; residual not physiologically identified
+expert,89.56,0.11130568038508902,R01 Table3 WPM,monotone interpolation of simulated mean WPM; residual not physiologically identified

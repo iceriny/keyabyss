@@ -83,7 +83,7 @@ func _shape_filaments() -> void:
 func set_motion_reduced(value: bool) -> void:
 	reduced_motion = value
 	if glass != null:
-		glass.set_shader_parameter("clock", 0.0 if value else clock)
+		glass.set_shader_parameter("clock", clock)
 	if filaments != null:
 		filaments.ribbon.set_shader_parameter("motion_enabled", not value)
 
@@ -106,7 +106,7 @@ func _process(delta: float) -> void:
 	pulse = 0.0 if reduced_motion else maxf(0.0, pulse - delta * 1.8)
 	if not reduced_motion:
 		clock += delta
-	glass.set_shader_parameter("clock", 0.0 if reduced_motion else clock)
+	glass.set_shader_parameter("clock", clock)
 	glass.set_shader_parameter("activity", activity)
 	glass.set_shader_parameter("pulse", pulse)
 	glass.set_shader_parameter("light_center", pointer.clamp(Vector2.ZERO, Vector2.ONE))

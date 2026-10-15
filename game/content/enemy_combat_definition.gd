@@ -7,6 +7,8 @@ extends Resource
 @export var health: int = 22
 @export var attack_damage: int = 9
 @export var attack_interval: float = 5.4
+@export var warning_time: float = 0.9
+@export var encounter_role: StringName
 @export var experience: int = 0
 @export var behavior: StringName = &"ranged"
 @export var speed: float = 35.0

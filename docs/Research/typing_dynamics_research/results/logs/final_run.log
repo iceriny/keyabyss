@@ -1,0 +1,106 @@
+BEGIN boundary_calibration: 1152 sessions
+boundary_calibration: 256/1152 (7.2s)
+boundary_calibration: 512/1152 (10.4s)
+boundary_calibration: 768/1152 (13.7s)
+boundary_calibration: 1024/1152 (19.9s)
+END boundary_calibration: 23.9s
+BEGIN boundary_holdout: 192 sessions
+END boundary_holdout: 7.0s
+group
+beginner    21.18125
+expert      90.56250
+ordinary    49.94375
+Name: wpm5, dtype: float64
+BEGIN pilot: 960 sessions
+pilot: 256/960 (6.1s)
+pilot: 512/960 (10.6s)
+pilot: 768/960 (15.9s)
+END pilot: 22.0s
+BEGIN baseline: 2832 sessions
+baseline: 256/2832 (5.0s)
+baseline: 512/2832 (7.0s)
+baseline: 768/2832 (10.8s)
+baseline: 1024/2832 (14.4s)
+baseline: 1280/2832 (18.9s)
+baseline: 1536/2832 (23.5s)
+baseline: 1792/2832 (29.5s)
+baseline: 2048/2832 (36.2s)
+baseline: 2304/2832 (47.7s)
+baseline: 2560/2832 (58.8s)
+baseline: 2816/2832 (72.9s)
+END baseline: 74.5s
+BEGIN no_preview: 1920 sessions
+no_preview: 256/1920 (6.0s)
+no_preview: 512/1920 (9.3s)
+no_preview: 768/1920 (13.0s)
+no_preview: 1024/1920 (17.3s)
+no_preview: 1280/1920 (22.1s)
+no_preview: 1536/1920 (27.5s)
+no_preview: 1792/1920 (33.7s)
+END no_preview: 37.9s
+BEGIN sensitivity: 4680 sessions
+sensitivity: 256/4680 (5.9s)
+sensitivity: 512/4680 (8.0s)
+sensitivity: 768/4680 (12.3s)
+sensitivity: 1024/4680 (14.5s)
+sensitivity: 1280/4680 (16.4s)
+sensitivity: 1536/4680 (18.6s)
+sensitivity: 1792/4680 (21.5s)
+sensitivity: 2048/4680 (24.7s)
+sensitivity: 2304/4680 (30.5s)
+sensitivity: 2560/4680 (34.0s)
+sensitivity: 2816/4680 (37.0s)
+sensitivity: 3072/4680 (40.3s)
+sensitivity: 3328/4680 (44.5s)
+sensitivity: 3584/4680 (50.9s)
+sensitivity: 3840/4680 (61.7s)
+sensitivity: 4096/4680 (65.8s)
+sensitivity: 4352/4680 (69.3s)
+sensitivity: 4608/4680 (73.1s)
+END sensitivity: 76.2s
+BEGIN fatigue: 192 sessions
+END fatigue: 61.9s
+BEGIN motor_limit: 640 sessions
+motor_limit: 256/640 (6.6s)
+motor_limit: 512/640 (10.9s)
+END motor_limit: 14.5s
+BEGIN interaction: 320 sessions
+interaction: 256/320 (12.1s)
+END interaction: 14.3s
+BEGIN ablation: 896 sessions
+ablation: 256/896 (12.9s)
+ablation: 512/896 (23.0s)
+ablation: 768/896 (33.6s)
+END ablation: 44.7s
+BEGIN encoding_visibility: 576 sessions
+encoding_visibility: 256/576 (7.4s)
+encoding_visibility: 512/576 (10.9s)
+END encoding_visibility: 12.7s
+BEGIN uncertainty: 1536 sessions
+uncertainty: 256/1536 (8.2s)
+uncertainty: 512/1536 (10.6s)
+uncertainty: 768/1536 (13.7s)
+uncertainty: 1024/1536 (16.8s)
+uncertainty: 1280/1536 (22.2s)
+uncertainty: 1536/1536 (27.0s)
+END uncertainty: 28.0s
+BEGIN time_step: 384 sessions
+time_step: 256/384 (7.2s)
+END time_step: 10.8s
+BEGIN lexical_control: 768 sessions
+lexical_control: 256/768 (9.5s)
+lexical_control: 512/768 (13.7s)
+lexical_control: 768/768 (20.5s)
+END lexical_control: 21.5s
+BEGIN duration: 120 sessions
+END duration: 9.0s
+{
+  "executed_sessions": 17168,
+  "simulated_hours": 258.77777777777777,
+  "batch_compute_wall_seconds": 458.78010850600094,
+  "failure_sessions": 26,
+  "baseline_people": 354,
+  "baseline_sessions": 2832,
+  "baseline_completed_words": 165297
+}
+{'seconds': 20.730789477000144, 'ocular_microtrials': 3360, 'typing_sessions': 65, 'master_seeds': [903, 941, 20261014], 'notes': 'Figure diagnostics, not recruited humans; raw traces retained'}

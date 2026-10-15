@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R035"
 title = "共命书线"
+choice_role = &"mechanism"
 description = "纸灵游击伤害提高 {damage_pct}%，停笔后多活动 {duration} 秒；其他法书也可唤醒纸灵。"
 stage = &"M3"
 supported = true

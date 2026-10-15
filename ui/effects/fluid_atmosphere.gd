@@ -191,7 +191,7 @@ func _sync_battle_motion() -> void:
 	for threat in battle.threats:
 		var id := StringName("threat_%d" % threat.get_instance_id())
 		seen.append(id)
-		track_body(id, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), Color("c5ffc9") if threat.reflected else Color("ffb197"), .25, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
+		track_body(id, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), BattleThreatOverlay.threat_color(threat), .5 if threat.heavy else .38, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
 	for id in _motion.keys():
 		if id not in seen:
 			_motion.erase(id)

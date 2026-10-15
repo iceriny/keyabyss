@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R022"
 title = "惊叹号"
+choice_role = &"mechanism"
 description = "每第 {interval} 次完词的施法造成双倍伤害；道具词咒也计数。"
 stage = &"M3"
 supported = true

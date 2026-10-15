@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"T007"
 title = "重音雷章"
+choice_role = &"power"
 description = "强化施法的电爆伤害提高 {storm_burst_pct}%。"
-modifiers = {&"storm_burst_pct": 12}
+modifiers = {&"storm_burst_pct": 20}
 tags = PackedStringArray("empowered")
 max_stacks = 2
 rarity = &"common"

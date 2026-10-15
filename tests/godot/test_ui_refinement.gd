@@ -27,6 +27,9 @@ func _run() -> void:
 	app.presentation_enabled = "--setup-feedback" in OS.get_cmdline_user_args()
 	root.add_child(app)
 	await _settle()
+	if "--screen-capture" in OS.get_cmdline_user_args():
+		root.grab_focus()
+		await process_frame
 	if "--tutorial-mechanics" in OS.get_cmdline_user_args():
 		await _review_tutorial_mechanics()
 		return
@@ -352,7 +355,7 @@ func _review_menu_layout() -> void:
 	_check(app.commands.has("translation") and app.commands.has("effects") and app.commands.has("volume"), "calibration controls retain their own commands")
 	await _capture("menu-calibration")
 	await _key(KEY_SPACE)
-	_check(app.route == "home" and app.settings.first_setup_complete, "calibration primary confirms through the same save action")
+	_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete, "calibration primary saves before inviting the new player to practice")
 	var report := FileAccess.open(evidence.path_join("menu-results.json"), FileAccess.WRITE)
 	report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
 	report.close()
@@ -668,6 +671,9 @@ func _review_setup_feedback() -> void:
 	_check(setup.fps.sample_ready and setup.fps.frames_per_second > 0.0, "calibration reports measured FPS after initial preparation")
 	print("Calibration sample: %.1f FPS | enemies=%d | threats=%d | effects=%d | output=%s" % [setup.fps.frames_per_second, setup.preview.session.enemies.size(), setup.preview.session.threats.size(), setup.preview.session.effects.size(), str(setup.preview.stage.viewport.size)])
 	await _capture("setup-high")
+	if "--setup-invitation" in OS.get_cmdline_user_args():
+		await _review_setup_invitation(setup)
+		return
 	if "--setup-layout" in OS.get_cmdline_user_args():
 		_check(setup.panel.get_rect().get_center().distance_to(setup.size * 0.5) < 1.0, "calibration controls form a centered group")
 		app.settings.resolution = Vector2i(1440, 900)
@@ -685,7 +691,7 @@ func _review_setup_feedback() -> void:
 		var centered_pressure: WeakRef = weakref(setup.preview)
 		await _click(setup.confirm_button)
 		await create_timer(0.35).timeout
-		_check(app.route == "home" and app.settings.first_setup_complete and centered_pressure.get_ref() == null, "centered save action closes calibration and frees its pressure scene")
+		_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete and centered_pressure.get_ref() == null, "centered save action opens the first tutorial invitation and frees its pressure scene")
 		print("Setup layout: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
 		app._quit_game()
 		if failures > 0: quit(1)
@@ -721,7 +727,8 @@ func _review_setup_feedback() -> void:
 	var pressure_ref: WeakRef = weakref(setup.preview)
 	await _click(setup.confirm_button)
 	await create_timer(0.35).timeout
-	_check(app.route == "home" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "confirm saves calibration, returns home and frees the pressure scene")
+	_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "confirm saves calibration, opens the tutorial invitation and frees the pressure scene")
+	await _click(app.page.footer.get_node("Back"))
 	var frame_started := Time.get_ticks_usec()
 	var frame_count := 0
 	while Time.get_ticks_usec() - frame_started < 1000000:
@@ -776,6 +783,54 @@ func _review_setup_feedback() -> void:
 	paused = false
 	app._back()
 	print("Setup feedback: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
+	app._quit_game()
+	if failures > 0: quit(1)
+
+
+func _review_setup_invitation(setup: FirstVisitSetup) -> void:
+	var pressure_ref: WeakRef = weakref(setup.preview)
+	await _click(setup.confirm_button)
+	await _settle()
+	_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "first save opens the invitation and releases the pressure encounter")
+	_check(app.menu_navigation.selected_word() == "tutorial" and app.router.context == InputRouter.Context.MENU, "tutorial is the invitation primary action with menu input")
+	_check(app.page.heading.text.contains("练习施法") and app.page.subtitle_label.text.contains("基础操作"), "invitation explicitly recommends the learning order")
+	_check(Rect2(Vector2.ZERO, app.page.size).encloses(app.page.panel.get_rect()), "invitation stays inside the desktop output")
+	await _capture("first-tutorial-invitation")
+	var restored := AppSettings.new(app.settings.path)
+	restored.load_settings()
+	_check(restored.first_setup_complete, "setup completion is persisted before the invitation")
+	await _click(app.page.footer.get_node("Tutorial"))
+	await _settle()
+	_check(app.route == "tutorial" and app.page is TutorialMenu, "invitation opens the real five-course menu")
+	await _click((app.page as TutorialMenu).lesson_buttons[&"basics"])
+	await create_timer(1.0).timeout
+	_check(app.route == "battle" and app.tutorial.lesson_id == &"basics", "invited player enters the real basic practice through its entrance")
+	await _click(app.tutorial_overlay.exit_button)
+	await _settle()
+	app._home(false)
+	app.settings.first_setup_complete = false
+	app._first_setup_page()
+	await _settle()
+	await _click((app.page as FirstVisitSetup).confirm_button)
+	await _settle()
+	await _click(app.page.footer.get_node("Back"))
+	await _settle()
+	_check(app.route == "home" and app.commands.has("tutorial"), "later choice returns to the archive with its teaching entry")
+	app._first_setup_page()
+	await _settle()
+	await _click((app.page as FirstVisitSetup).confirm_button)
+	await _settle()
+	_check(app.route == "home", "completed users do not receive another invitation")
+	app._settings_page("home")
+	app._first_setup_page("settings")
+	await _settle()
+	await _click((app.page as FirstVisitSetup).confirm_button)
+	await _settle()
+	_check(app.route == "settings", "recalibration returns to settings without an invitation")
+	var output := FileAccess.open(evidence.path_join("setup-invitation-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Setup invitation: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
 	app._quit_game()
 	if failures > 0: quit(1)
 
@@ -913,6 +968,7 @@ func _review_tutorial_mechanics() -> void:
 		app._start_tutorial(id)
 		await _settle()
 		app.tutorial.session.set_physics_process(false)
+		var action_position := app.tutorial_overlay.next_button.global_position
 		for index in app.tutorial.step_count():
 			# Layout/wording review only. Actual progression is separately covered by rule tests.
 			app.tutorial.step_index = index
@@ -922,7 +978,9 @@ func _review_tutorial_mechanics() -> void:
 			var text := overlay._instruction
 			_check(text.position.y + text.get_minimum_size().y < overlay._progress.position.y and overlay._progress.get_rect().end.y < overlay.get_node("Content/Actions").position.y, "%s/%s copy stays clear of goal and controls" % [id, app.tutorial.current_step()])
 			_check(overlay.get_reserved_rect().end.y < app.battle.size.y - 130 and app.battle.word_exclusions[0] == overlay.get_reserved_rect(), "%s/%s reserves the full current guidance and stays above footer" % [id, app.tutorial.current_step()])
-			_check("悬浮虚线术语" in text.text, "%s/%s explicitly offers hover details" % [id, app.tutorial.current_step()])
+			_check(text.text.length() <= 140 and not text.text.contains("悬浮虚线术语") and not text.text.contains("未输入时 Tab"), "%s/%s stays concise without repeated global instructions" % [id, app.tutorial.current_step()])
+			_check(overlay.next_button.global_position.is_equal_approx(action_position) and overlay.get_reserved_rect().end.y < BattleStage.arena_point(app.tutorial.session.player_position, app.battle.size).y - 70, "%s/%s keeps the primary control fixed and guidance above the demonstration" % [id, app.tutorial.current_step()])
+			_check(not app.battle.wave_label.visible and not app.battle.timer_label.visible and not app.battle.get_node("BattleCompass").visible, "%s/%s omits expedition-only HUD from practice" % [id, app.tutorial.current_step()])
 			if (id == &"frost" and app.tutorial.current_step() == &"freeze") or (id == &"flame" and app.tutorial.current_step() == &"burn") or (id == &"storm" and app.tutorial.current_step() == &"charge") or (id == &"spirit" and app.tutorial.current_step() == &"crane"):
 				await _capture("mechanism-" + str(id))
 			if id == &"spirit" and app.tutorial.current_step() == &"crane":
@@ -934,15 +992,44 @@ func _review_tutorial_mechanics() -> void:
 				_check(app.term_tooltips._bubble.visible and app.term_tooltips._title.text == "符文纸鹤", "native pointer opens paper crane details directly in the lesson")
 				await _capture("mechanism-crane-tooltip")
 		await _click(app.tutorial_overlay.retry_button)
-		_check(app.tutorial.step_index == 0 and app.route == "battle", "%s retry passes through short entrance into fresh exercise" % id)
+		_check(app.tutorial.current_step() == &"ultimate" and app.route == "battle" and app.practice_entrance == null and not app.tutorial.ready_to_advance, "%s retry restores the current exercise without repeating the lesson or entry transition" % id)
+		_check(app.tutorial.session.manual_characters == 0 and app.tutorial.session.resonance_q == BattleSession.ULTIMATE_COST_Q, "%s retry restores usable prerequisites without granting a successful action" % id)
 		await _click(app.battle.pause_button)
 		await _type("resume")
 		_check(app.route == "battle" and not paused, "%s pause and resume restore lesson input" % id)
-		await _click(app.tutorial_overlay.exit_button)
+		var exit_control := app.tutorial_overlay.exit_button
+		var exit_events: Array[String] = []
+		exit_control.button_down.connect(func() -> void: exit_events.append("down"))
+		exit_control.button_up.connect(func() -> void: exit_events.append("up"))
+		exit_control.pressed.connect(func() -> void: exit_events.append("pressed"))
+		await _click(exit_control)
+		if app.route != "tutorial":
+			print("Tutorial exit missed: ", id, " route=", app.route, " events=", exit_events, " hovered=", root.gui_get_hovered_control(), " mouse=", root.get_mouse_position(), " rect=", exit_control.get_global_rect())
+			await _capture("exit-missed-" + str(id))
 		_check(app.route == "tutorial" and app.tutorial == null, "%s exits without expedition settlement" % id)
 	app._start_tutorial(&"flame")
 	await _settle()
 	await _exercise_flame_mechanisms()
+	_check((app.page as TutorialMenu).lesson_buttons[&"flame"].text == "再练一次", "completed lesson can immediately be repeated from selection")
+	await _click((app.page as TutorialMenu).lesson_buttons[&"flame"])
+	_check(app.tutorial.step_index == 0 and not app.tutorial.completed, "repeat from the completion menu starts a fresh lesson")
+	await _click(app.tutorial_overlay.exit_button)
+	app._enter_tutorial(&"spirit", TutorialLesson.STEPS[&"spirit"].find(&"sleep"))
+	await _settle()
+	await _click(app.tutorial_overlay.retry_button)
+	_check(app.tutorial.current_step() == &"sleep" and app.tutorial_overlay._progress.text.contains("先唤醒"), "native sleep retry starts with an actionable prompt for an empty flock")
+	await _click(app.battle.enemy_words[app.tutorial.session.enemies[0].id])
+	await _type(app.tutorial.session.typing.word)
+	var awake := app.tutorial.session.spirit_blade_count()
+	_check(awake > 0 and app.tutorial_overlay._progress.text.contains("停笔等待"), "manual input changes sleep guidance into the actual waiting phase")
+	await _capture("mechanism-sleep-wait")
+	var sleep_deadline := Time.get_ticks_msec() + 15000
+	while app.tutorial.session.spirit_blade_count() >= awake and Time.get_ticks_msec() < sleep_deadline:
+		await process_frame
+	_check(not app.tutorial.ready_to_advance and app.tutorial_overlay._progress.text == "完成一个词咒，唤醒纸灵", "an actual spirit falling asleep changes the native prompt without an extra click")
+	await _click(app.battle.enemy_words[app.tutorial.session.enemies[0].id])
+	await _type(app.tutorial.session.typing.word)
+	await _wait_tutorial_goal()
 	await _click(app.tutorial_overlay.exit_button)
 	app._home(false)
 	app._start_practice()
@@ -976,6 +1063,10 @@ func _exercise_flame_mechanisms() -> void:
 	await _type(app.tutorial.session.typing.word)
 	await _wait_tutorial_goal()
 	await _click(app.tutorial_overlay.next_button)
+	await _click(app.tutorial_overlay.retry_button)
+	_check(app.tutorial.current_step() == &"burn" and app.tutorial_overlay._progress.text.contains("点燃"), "retrying burn keeps the current step and asks to ignite the fresh target")
+	await _click(app.battle.enemy_words[app.tutorial.session.enemies[0].id])
+	await _type(app.tutorial.session.typing.word)
 	await _wait_tutorial_goal()
 	await _capture("mechanism-burn-achieved")
 	await _click(app.tutorial_overlay.next_button)
@@ -984,9 +1075,10 @@ func _exercise_flame_mechanisms() -> void:
 	await _click(app.tutorial_overlay.next_button)
 	await _key(KEY_SHIFT)
 	await _wait_tutorial_goal()
-	_check(not app.tutorial.completed and app.tutorial_overlay.next_button.text == "完成练习", "real ultimate results wait for the native finish control")
+	_check(not app.tutorial.completed and app.tutorial_overlay.next_button.text == "完成并返回", "real ultimate results remain readable until one explicit finish action")
+	await _capture("mechanism-flame-achieved")
 	await _click(app.tutorial_overlay.next_button)
-	_check(app.tutorial.completed and app.tutorial_overlay._counter.text == "练习完成", "native finish completes the actual book tutorial")
+	_check(app.route == "tutorial" and app.tutorial == null and &"flame" in app._completed_lessons, "one native finish returns to selection with the completed course marked")
 	await _capture("mechanism-flame-complete")
 
 
@@ -1000,17 +1092,71 @@ func _review_teaching_copy() -> void:
 	await _settle()
 	await _capture("target-switch-guide")
 	app._tutorial_menu()
+	app._start_tutorial(&"basics")
+	await _settle()
+	await _click(app.battle.enemy_words[app.tutorial.session.enemies[0].id])
+	await _type(app.tutorial.session.typing.word)
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	_check(app.tutorial.current_step() == &"switch" and app.tutorial.session.typing.word == "shade", "basic course stages the actual shade/shard/flame example")
+	await _capture("target-switch-before-input")
+	await _key(KEY_TAB)
+	_check(app.tutorial._switch_phase == 1 and app.tutorial.session.typing.word == "shard", "native Tab reveals the shared-opening instruction without a click or timer")
+	await _type("sha")
+	_check(app.tutorial_overlay._progress.text == "按 Tab，保留 sha 换目标", "action prompt responds to completed shared letters instead of asking to type them again")
+	await _key(KEY_TAB)
+	await _wait_tutorial_goal()
+	_check(app.tutorial.session.typing.word == "shade" and app.tutorial.session.typing.progress == 3, "native shared-opening switch keeps sha")
+	await _capture("target-switch-shared-opening")
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_TAB)
+	_check(not app.tutorial.ready_to_advance and app.tutorial.session.typing.word != "flame", "Tab alone cannot choose the different-opening example")
+	await _key(KEY_BACKSPACE)
+	await _type("f")
+	await _wait_tutorial_goal()
+	_check(app.tutorial.session.typing.word == "flame", "native cancellation and new first letter choose flame")
+	await _capture("target-switch-new-opening")
+	# Stage movement for layout review; the rule suite owns prerequisite progression.
+	app.tutorial.step_index = TutorialLesson.STEPS[&"basics"].find(&"dodge")
+	app.tutorial.ready_to_advance = false
+	app.tutorial._seen.clear()
+	app.tutorial._configure_step()
+	app.tutorial.refresh()
+	await _key(KEY_UP)
+	await create_timer(0.3).timeout
+	var player_point := BattleStage.arena_point(app.tutorial.session.player_position, app.battle.size)
+	_check(app.tutorial_overlay._at_bottom and not app.tutorial_overlay.get_reserved_rect().grow(60).has_point(player_point), "upward dodge moves the reading area away from the player")
+	_check(app.battle.word_exclusions[0] == app.tutorial_overlay.get_reserved_rect(), "words immediately reserve the relocated guidance")
+	await _capture("tutorial-dodge-clearance")
+	await _click(app.tutorial_overlay.next_button)
+	_check(app.tutorial.current_step() == &"ultimate" and not app.tutorial_overlay._at_bottom, "next staged mechanic restores the normal reading position")
+	app.settings.ui_scale = 1.25
+	app.root.refresh()
+	await _settle()
+	_check(app.tutorial_overlay.get_reserved_rect().end.y < BattleStage.arena_point(app.tutorial.session.player_position, app.battle.size).y - 60, "largest desktop UI scale keeps instructions above the practice scene")
+	await _capture("tutorial-large-ui")
+	await _key(KEY_UP)
+	await create_timer(0.3).timeout
+	player_point = BattleStage.arena_point(app.tutorial.session.player_position, app.battle.size)
+	_check(app.tutorial_overlay._at_bottom and not app.tutorial_overlay.get_reserved_rect().grow(60).has_point(player_point), "largest UI scale also clears an upward dodge without bouncing the guidance back")
+	_check(app.tutorial.session.enemies.all(func(enemy: BattleEnemy) -> bool: return not app.tutorial_overlay.get_reserved_rect().grow(40).has_point(BattleStage.arena_point(enemy.position, app.battle.size))), "relocated guidance also leaves the enemy demonstration clear at the largest UI scale")
+	await _capture("tutorial-large-ui-dodge")
+	app.settings.ui_scale = 1.0
+	app.root.refresh()
+	app._tutorial_menu()
 	for id: StringName in TutorialLesson.LESSON_IDS:
+		root.grab_focus()
 		app._start_tutorial(id)
 		await _settle()
 		var overlay := app.tutorial_overlay
 		var instruction := overlay._instruction
 		var rendered_bottom := instruction.position.y + instruction.get_minimum_size().y
-		_check(rendered_bottom < overlay._progress.position.y and overlay._progress.get_rect().end.y < overlay.get_node("Content/Actions").position.y, "%s full switching instructions stay clear of progress and buttons" % id)
+		_check(rendered_bottom < overlay._progress.position.y and overlay._progress.get_rect().end.y < overlay.get_node("Content/Actions").position.y, "%s short instructions stay clear of progress and buttons" % id)
+		_check(not instruction.text.contains("Tab") and instruction.text.length() < 100, "%s opening contains only its immediate mechanism" % id)
 		_check(overlay.get_reserved_rect().end.y < app.battle.size.y - 130.0, "%s expanded guidance remains clear of the combat footer" % id)
 		if id == &"basics": await _capture("target-switch-tutorial")
 		if id == &"frost":
-			app.tutorial.step_index = 1
+			app.tutorial.step_index = TutorialLesson.STEPS[id].find(&"freeze")
 			app.tutorial.refresh()
 			await _settle()
 			await _capture("frost-retention-tutorial")

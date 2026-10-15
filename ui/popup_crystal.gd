@@ -4,6 +4,7 @@ extends Control
 
 var reduced_motion := false
 var clock := 0.0
+var flow_clock := 0.0
 var popup: PopupMenu
 
 
@@ -57,4 +58,7 @@ func set_motion_reduced(value: bool) -> void:
 
 func _process(delta: float) -> void:
 	clock += delta
+	if not reduced_motion:
+		flow_clock += delta
+	($Depth.material as ShaderMaterial).set_shader_parameter("clock", flow_clock)
 	($Depth.material as ShaderMaterial).set_shader_parameter("arrival", 1.0 if reduced_motion else smoothstep(0.0,0.18,clock))

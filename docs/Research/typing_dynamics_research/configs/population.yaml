@@ -1,0 +1,80 @@
+beginner:
+  between_motor_cv: 0.2
+  planning_s: 0.065
+  planning_gap_s: 0.04
+  lookahead: 1
+  motor_attention: 0.58
+  error_p: 0.02
+  detection_p: 0.5
+  keyboard_look_p: 0.65
+  key_hold_s: 0.12899
+  alt_s: 0.35853923259826953
+  left_ratio: 0.9132003686109101
+  right_ratio: 0.9049074984261735
+  repeat_s: 0.19387430278911602
+  evidence: R01 Table 3 summary-constrained fit
+  boundary_delay_s: 1.238611899632541
+ordinary:
+  between_motor_cv: 0.18
+  planning_s: 0.026
+  planning_gap_s: 0.016
+  lookahead: 2
+  motor_attention: 0.32
+  error_p: 0.013
+  detection_p: 0.7
+  keyboard_look_p: 0.15
+  key_hold_s: 0.11625
+  alt_s: 0.17389727292837884
+  left_ratio: 1.0482969962787707
+  right_ratio: 0.9978368746516882
+  repeat_s: 0.14711786234366522
+  evidence: R01 Table 3 summary-constrained fit
+  boundary_delay_s: 0.3005829261102044
+skilled:
+  between_motor_cv: 0.14
+  planning_s: 0.016
+  planning_gap_s: 0.01
+  lookahead: 3
+  motor_attention: 0.2
+  error_p: 0.01
+  detection_p: 0.82
+  keyboard_look_p: 0.04
+  key_hold_s: 0.11
+  alt_s: 0.12871528413521277
+  left_ratio: 1.031674129581684
+  right_ratio: 0.9743938101008043
+  repeat_s: 0.13108350669554739
+  evidence: geometric interpolation R01 anchors + priors
+  boundary_delay_s: 0.18291141873277686
+expert:
+  between_motor_cv: 0.1
+  planning_s: 0.01
+  planning_gap_s: 0.006
+  lookahead: 4
+  motor_attention: 0.11
+  error_p: 0.007
+  detection_p: 0.9
+  keyboard_look_p: 0.01
+  key_hold_s: 0.10449
+  alt_s: 0.09527247949904355
+  left_ratio: 1.0153148520184114
+  right_ratio: 0.9515015142071006
+  repeat_s: 0.11679673327133207
+  evidence: R01 Table 3 summary-constrained fit
+  boundary_delay_s: 0.11130568038508902
+elite:
+  between_motor_cv: 0.12
+  planning_s: 0.007
+  planning_gap_s: 0.004
+  lookahead: 5
+  motor_attention: 0.07
+  error_p: 0.006
+  detection_p: 0.93
+  keyboard_look_p: 0.005
+  key_hold_s: 0.08
+  alt_s: 0.063
+  left_ratio: 1.14
+  right_ratio: 1.1
+  repeat_s: 0.105
+  evidence: explicit extrapolative prior; not a measured competition cohort
+  boundary_delay_s: 0.05565284019254451

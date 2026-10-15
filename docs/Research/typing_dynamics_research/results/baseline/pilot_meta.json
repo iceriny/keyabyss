@@ -1,0 +1,17 @@
+{
+  "name": "pilot",
+  "started_utc": "2026-10-13T16:33:57.457888+00:00",
+  "finished_utc": "2026-10-13T16:34:19.424680+00:00",
+  "wall_seconds": 21.966791963000105,
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "workers": 4,
+  "planned_sessions": 960,
+  "executed_sessions": 960,
+  "sessions_with_recognition_failure": 0,
+  "total_simulated_seconds": 38400.0,
+  "seed": 20261014,
+  "config_manifest": "results/baseline/pilot_jobs.jsonl.gz",
+  "output": "results/baseline/pilot_sessions.csv",
+  "output_sha256": "26caad5a6c2a7256c02e6f5a7f041f3fc167977903b40229baac037d173574fa"
+}

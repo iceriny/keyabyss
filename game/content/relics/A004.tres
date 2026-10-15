@@ -6,12 +6,13 @@
 script = ExtResource("1")
 id = &"A004"
 title = "余火短札"
-description = "灼烧不足50点时，每跳伤害提高 {burn_weak_pct}%。"
-modifiers = {&"burn_weak_pct": 12}
+description = "亲手施放的火弹命中已有至少 {threshold} 点灼烧的敌人时，消耗 {consume} 点灼烧引爆；每点在半径 {radius} 内造成 {damage_per_point} 点伤害。"
+numbers = {&"threshold": 50, &"consume": 40, &"damage_per_point": 1.8, &"radius": 135}
+stack_values = PackedStringArray("damage_per_point")
+choice_role = &"mechanism"
 tags = PackedStringArray("burn")
 max_stacks = 2
 rarity = &"uncommon"
 allowed_books = PackedStringArray("flame")
-requires_all = PackedStringArray("A002")
 supported = true
 stage = &"relics-3"

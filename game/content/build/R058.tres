@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R058"
 title = "回锋笔套"
+choice_role = &"defense"
 description = "御术冷却缩短 {cooldown_pct}%。"
 stage = &"M3"
 supported = true

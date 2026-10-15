@@ -1,0 +1,48 @@
+{
+  "schema": "crystal_half_fields_v2",
+  "name": "ascending",
+  "source": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\source\\ascending.png",
+  "source_sha256": "192b8a69c4c549d2e9c460a38d6a0659de3c8baff38c0c7fb549feaf44c5c440",
+  "size": [
+    1672,
+    941
+  ],
+  "source_size": [
+    1672,
+    941
+  ],
+  "black_padding_ltrb": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "content_edge_feather_px": [
+    0.0,
+    0.0
+  ],
+  "seed": 3,
+  "guide_count": 18,
+  "max_guides": 18,
+  "baseline_linear_rgb": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "decoded_broad_max": 0.9702281951904297,
+  "decoded_ridge_max": 0.6420739889144897,
+  "flow_mask_mean": 0.08475304394960403,
+  "flow_mask_max": 0.9983006715774536,
+  "gradient_abs_max": 0.6859999895095825,
+  "authored_height_scale": 0.9430048230267737,
+  "files": {
+    "structure": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\ascending_structure.exr",
+    "flow": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\ascending_flow.exr",
+    "gradient": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\ascending_gradient.exr"
+  },
+  "linear_data": true,
+  "storage": "RGBA16F",
+  "premultiplied": false,
+  "source_rgb_is_base_color": false,
+  "geometry": "independently authored fold height along image-guided 2-D curves; not physical reconstruction"
+}

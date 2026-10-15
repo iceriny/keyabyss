@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"G006"
 title = "行距尺"
-description = "强化施法的伤害提高 {empowered_pct}%。"
-modifiers = {&"empowered_pct": 10}
+description = "亲手连续完成一个短词咒（不超过4字母）和一个长词咒（至少7字母），或反过来完成：后一个必定强化，并获得 {shield} 点护盾。"
+numbers = {&"shield": 2}
+stack_values = PackedStringArray("shield")
+choice_role = &"mechanism"
 tags = PackedStringArray("empowered")
 max_stacks = 2
 rarity = &"common"

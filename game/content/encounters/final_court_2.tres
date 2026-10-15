@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BattleEncounter" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="BattleEncounter" load_steps=11 format=3]
 [ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="1"]
 [ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="2"]
 [ext_resource type="Resource" path="res://game/content/enemies/brood.tres" id="3"]
@@ -6,6 +6,9 @@
 [ext_resource type="Resource" path="res://game/content/enemies/mirror.tres" id="5"]
 [ext_resource type="Resource" path="res://game/content/enemies/mortar.tres" id="6"]
 [ext_resource type="Resource" path="res://game/content/enemies/scribe.tres" id="7"]
+[ext_resource type="Resource" path="res://game/content/enemies/pin_archer.tres" id="8"]
+[ext_resource type="Resource" path="res://game/content/enemies/refrain.tres" id="9"]
+[ext_resource type="Resource" path="res://game/content/enemies/folio_warden.tres" id="10"]
 [resource]
 script = ExtResource("1")
 room_id = &"final-court-2"
@@ -13,4 +16,5 @@ display_name = "终稿法庭 · 深处"
 chapter_number = 3
 wave_count = 3
 room_number = 2
-enemies = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7")])
+enemies = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10")])
+role_limits = Dictionary[StringName, int]({&"support": 1, &"area": 1, &"precision": 1})

@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"F009"
 title = "雾中札"
-description = "闪避留下的冰雾延长 {mist_ms_s} 秒。"
-modifiers = {&"mist_ms": 500}
+description = "闪避冰雾尚未散去时亲手完成词咒，冰锥命中处留下半径 {radius}、持续 {duration} 秒的寒气场。"
+numbers = {&"radius": 105, &"duration": 1.5}
+stack_values = PackedStringArray("duration")
+choice_role = &"mechanism"
 tags = PackedStringArray("dodge", "mist")
 max_stacks = 2
 rarity = &"common"

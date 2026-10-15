@@ -1,21 +1,14 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://ui/scenes/page_shell.tscn" id="1"]
 [ext_resource type="Script" path="res://ui/first_visit_setup.gd" id="2"]
 [ext_resource type="PackedScene" path="res://ui/fps_display.tscn" id="3"]
-[ext_resource type="Shader" path="res://ui/materials/setup_reading.gdshader" id="4"]
 [ext_resource type="Script" path="res://audio/battle_audio.gd" id="5"]
 [ext_resource type="FontFile" path="res://assets/fonts/jinghua-song.ttf" id="6"]
 [ext_resource type="Script" path="res://ui/open_button.gd" id="7"]
 
-[sub_resource type="ShaderMaterial" id="Reading"]
-shader = ExtResource("4")
-
 [node name="FirstVisitSetup" instance=ExtResource("1")]
 script = ExtResource("2")
-
-[node name="Wash" parent="." index="1"]
-material = SubResource("Reading")
 
 [node name="SampleAudio" type="Node2D" parent="." index="3"]
 script = ExtResource("5")
@@ -100,7 +93,7 @@ custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
-text = "保存并进入书库    ready"
+text = "保存并继续    ready"
 script = ExtResource("7")
 caption_alignment = 1
 

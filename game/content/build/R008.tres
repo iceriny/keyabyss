@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R008"
 title = "镜面批注"
+choice_role = &"mechanism"
 description = "反制道具的伤害提高 {damage_pct}%；反制后下一次施法伤害翻倍。"
 stage = &"M3"
 supported = true

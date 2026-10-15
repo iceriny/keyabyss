@@ -32,6 +32,7 @@ var reward_rng_state: String = "0"
 var event_rng_state: String = "0"
 var last_error: String
 var _pending_boundary: RunSession
+var _flight_continuation: Dictionary = {}
 
 
 func _init(saves: SaveRepository = null, state: ProfileState = null) -> void:
@@ -133,7 +134,7 @@ func restore() -> bool:
 
 func start_room(entries: Array[VocabularyEntry], prepared: VocabularyIndex) -> BattleStartRequest:
 	if phase != "READY_FOR_ROOM" or room_serial >= itinerary.encounters.size():
-		last_error = "当前没有可进入的房间。"
+		last_error = "当前没有可进入的页。"
 		return null
 	var candidate := copy()
 	candidate.room_serial += 1
@@ -169,6 +170,7 @@ func start_room(entries: Array[VocabularyEntry], prepared: VocabularyIndex) -> B
 	request.seed_text = seed_text + ":battle:" + str(candidate.facts.get("round_index", 0)) + ":" + str(candidate.room_serial)
 	request.progressive = bool(options.progressive)
 	request.minimum_length = int(options.minimum_length)
+	request.flight_continuation = _flight_continuation
 	var words: Array[String] = []
 	for entry in entries:
 		words.append(entry.word.replace(" ", ""))
@@ -256,6 +258,7 @@ func finish_room(battle: BattleSession) -> bool:
 	candidate.facts["last_receipt"] = {"characters": result.manual_characters, "words": result.manual_words, "reason": str(result.reason)}
 	candidate.offer.clear()
 	var victory := result.reason == &"victory"
+	candidate._flight_continuation = battle.capture_flight() if victory else {}
 	if not _expire(candidate, victory):
 		return false
 	if not victory or room_serial == itinerary.encounters.size():
@@ -274,6 +277,7 @@ func finish_room(battle: BattleSession) -> bool:
 
 
 func _close_run(candidate: RunSession) -> void:
+	candidate._flight_continuation = {}
 	candidate.facts["victory_pending"] = false
 	candidate.facts["result_build"] = candidate.selection.to_dict()
 	for contract in candidate.contracts:
@@ -594,7 +598,7 @@ func take_route(choice: String) -> bool:
 	if transactions.has(identity):
 		return transactions[identity] == choice
 	if phase != "ROUTE" or choice not in ["continue", "rest", "offering"]:
-		last_error = "当前不能进入下一房。"
+		last_error = "当前不能进入下一页。"
 		return false
 	var candidate := copy()
 	var maximum := compiler.compile(selection).build.maximum_hp_q()
@@ -633,6 +637,7 @@ func copy() -> RunSession:
 	var result := from_checkpoint(to_checkpoint())
 	result.repository = repository
 	result.profile = profile
+	result._flight_continuation = _flight_continuation
 	return result
 
 
@@ -737,6 +742,7 @@ func _adopt(candidate: RunSession) -> void:
 	rewards = candidate.rewards
 	pledged = candidate.pledged
 	profile = candidate.profile
+	_flight_continuation = candidate._flight_continuation
 
 
 func _consume_facts(candidate: RunSession, items: Array[RewardFact]) -> bool:

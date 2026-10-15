@@ -7,7 +7,7 @@ signal goal_changed(ready: bool)
 
 const LESSON_IDS := [&"basics", &"frost", &"flame", &"storm", &"spirit"]
 const STEPS := {
-	&"basics": [&"intro", &"parry", &"dodge", &"ultimate"],
+	&"basics": [&"intro", &"switch", &"cancel", &"parry", &"dodge", &"ultimate"],
 	&"frost": [&"intro", &"freeze", &"shatter", &"mist", &"ultimate"],
 	&"flame": [&"intro", &"block", &"burn", &"mist", &"ultimate"],
 	&"storm": [&"intro", &"charge", &"dodge", &"ultimate"],
@@ -29,16 +29,23 @@ var _seen: Dictionary[StringName, bool] = {}
 var _hit_targets: Dictionary[StringName, bool] = {}
 var _rear_cast := false
 var _spirit_peak := 0
+var _burn_ticks := 0
+var _burn_damage_q := 0
 var _ultimate_started := 0.0
 var _last_elapsed := 0.0
 var _healing_remainder := 0.0
 var _last_progress := ""
+var _switch_phase := 0
+var _previous_target: StringName
+var _previous_progress := 0
 
 
-static func create_lesson(id: StringName) -> TutorialLesson:
+static func create_lesson(id: StringName, initial_step: int = 0) -> TutorialLesson:
 	assert(id in LESSON_IDS, "Unknown practice lesson: %s" % id)
+	assert(initial_step >= 0 and initial_step < STEPS[id].size(), "Unknown practice step: %s" % initial_step)
 	var lesson := TutorialLesson.new()
 	lesson.lesson_id = id
+	lesson.step_index = initial_step
 	lesson.book_id = &"frost" if id == &"basics" else id
 	lesson.session = BattleSession.new()
 	var selection := BuildSelection.new()
@@ -78,6 +85,8 @@ static func create_lesson(id: StringName) -> TutorialLesson:
 	lesson.session.typing.word_completed.connect(lesson._remember_completion)
 	lesson.session.event_committed.connect(lesson._remember_event)
 	lesson.session.state_changed.connect(lesson._observe_committed_step)
+	lesson.session.typing.changed.connect(lesson._observe_typing)
+	if initial_step > 0: lesson._configure_step()
 	return lesson
 
 
@@ -112,8 +121,26 @@ func advance() -> void:
 func _remember_completion(fact: WordCompletion) -> void:
 	if fact.fully_manual():
 		_manual_attempts[fact.attempt_id] = true
+		if current_step() == &"switch" and not _seen.has(&"switch"):
+			_seen[&"restart_switch"] = true
 		if current_step() == &"block" and fact.target_id == session.enemies[2].id:
 			_rear_cast = true
+
+
+func _observe_typing() -> void:
+	var typing := session.typing
+	if current_step() == &"switch":
+		if _switch_phase == 0 and typing.target_id == session.enemies[1].id and typing.progress == 0 and _previous_target == session.enemies[0].id:
+			_switch_phase = 1
+		elif _switch_phase == 1 and _previous_progress == 3 and typing.progress == 3 and typing.word.begins_with("sha") and typing.target_id != _previous_target:
+			_seen[&"switch"] = true
+	elif current_step() == &"cancel":
+		if _previous_progress > 0 and typing.progress == 0 and typing.target_id == &"":
+			_seen[&"cancelled"] = true
+		if _seen.has(&"cancelled") and typing.target_id == session.enemies[2].id and typing.progress > 0:
+			_seen[&"cancel"] = true
+	_previous_target = typing.target_id
+	_previous_progress = typing.progress
 
 
 func _remember_event(event: Dictionary) -> void:
@@ -130,6 +157,9 @@ func _remember_event(event: Dictionary) -> void:
 		&"impact":
 			if int(event.applied_q) <= 0: return
 			_seen[event.source] = true
+			if current_step() == &"burn" and event.source == &"flame_burn" and not ready_to_advance:
+				_burn_ticks += 1
+				_burn_damage_q += int(event.applied_q)
 			if bool(event.empowered): _seen[&"empowered_hit"] = true
 			if event.source in [&"frost_spear", &"storm_arc"]:
 				_hit_targets[event.enemy] = true
@@ -151,6 +181,9 @@ func _observe_committed_step() -> void:
 		return
 	var real_delta := session.elapsed - _last_elapsed
 	_last_elapsed = session.elapsed
+	if current_step() == &"switch" and _seen.has(&"restart_switch"):
+		_seen.erase(&"restart_switch")
+		_configure_step()
 	# Low-damage mistakes remain real; practice restores health gradually.
 	_healing_remainder += real_delta * 5.0 * BattleSession.Q
 	var healing := floori(_healing_remainder)
@@ -160,8 +193,10 @@ func _observe_committed_step() -> void:
 	for effect in session.effects:
 		if effect.kind == &"storm_arc" and effect.arc_index > 0 and effect.arc_charge > 1.0:
 			_seen[&"charged"] = true
-	if current_step() == &"sleep" and session.spirit_blade_count() < _spirit_peak:
-		_seen[&"sleep"] = true
+	if current_step() == &"sleep":
+		var awake := session.spirit_blade_count()
+		_spirit_peak = maxi(_spirit_peak, awake)
+		if awake < _spirit_peak: _seen[&"sleep"] = true
 	if current_step() == &"shatter" and not session.enemies[0].alive() and not _seen.has(&"frost_shatter"):
 		# Missing the freeze window respawns the exercise instead of making it unwinnable.
 		var retry := session.enemies[0]
@@ -187,15 +222,22 @@ func _observe_committed_step() -> void:
 
 func _configure_step() -> void:
 	var step := current_step()
+	if step == &"cancel" and session.typing.progress > 0 and session.typing.word.begins_with("sha"):
+		return # Continue from the shared opening already typed.
 	if step == &"sleep":
 		_spirit_peak = session.spirit_blade_count()
 		return
-	if step == &"burn": return # The preceding blocked fireball supplies real residual burn.
+	if step == &"burn":
+		# Use a readable, real health bar for the burn forecast; fresh input can reignite it.
+		_clear_flying_spells()
+		session.enemies[0].max_hp_q = 240 * BattleSession.Q
+		session.enemies[0].hp_q = session.enemies[0].max_hp_q
+		return
 	if step == &"mark": return # Keep the spirits earned by the initial manual input.
 	if step == &"shatter":
 		# A fragile frozen target makes a real death chain reachable without a long damage grind.
 		_clear_flying_spells()
-		session.enemies[0].hp_q = BattleSession.Q
+		session.enemies[0].hp_q = (1 if session.enemies[0].frozen_time > 0.0 else 120) * BattleSession.Q
 		session.enemies[1].position = session.enemies[0].position + Vector2(75, 0) / BattleSession.ARENA_SIZE
 		session.enemies[1].previous_position = session.enemies[1].position
 		return
@@ -207,10 +249,12 @@ func _configure_step() -> void:
 	session.hurt_window = 0.0
 	session.perfect_dodge_remaining = 0.0
 	_clear_flying_spells()
+	session.typing.cancel()
 	session.threats.clear()
 	session.runtime.fields.clear()
 	for index in session.enemies.size():
 		var enemy := session.enemies[index]
+		enemy.max_hp_q = TRAINING_HEALTH * BattleSession.Q
 		enemy.hp_q = enemy.max_hp_q
 		session.runtime._settled_deaths.erase(enemy.id)
 		session.runtime._pending_death_depth.erase(enemy.id)
@@ -226,6 +270,15 @@ func _configure_step() -> void:
 		enemy.attack_clock = 1000000.0
 		enemy.aiming = false
 		session.typing.upsert_target(enemy.id, enemy.word)
+	if step in [&"switch", &"cancel"]:
+		_switch_phase = 0
+		for index in session.enemies.size():
+			var target := session.enemies[index]
+			target.word = ["shade", "shard", "flame"][index]
+			target.word_age = 1.0
+			session.typing.upsert_target(target.id, target.word)
+		session.typing.select_target(session.enemies[0].id)
+		_seen.erase(&"cancelled") # Restaging is not a cancellation performed by the player.
 	if step == &"parry" or step == &"crane":
 		var shooter := session.enemies[0]
 		shooter.behavior = &"curve"
@@ -257,17 +310,17 @@ func _clear_flying_spells() -> void:
 func _step_complete() -> bool:
 	match current_step():
 		&"intro":
+			if lesson_id == &"basics": return _casts >= 1
 			if _casts < 3 or not _empowered: return false
-			if lesson_id == &"basics": return true
 			match book_id:
 				&"frost": return _seen.has(&"empowered_hit") and _hit_targets.size() >= 2
 				&"flame": return _seen.has(&"flame_splash")
 				&"storm": return _seen.has(&"storm_burst") and _hit_targets.size() >= 2
 				&"spirit": return _seen.has(&"spirit_cross")
-		&"parry", &"freeze": return _seen.has(current_step())
+		&"switch", &"cancel", &"parry", &"freeze": return _seen.has(current_step())
 		&"shatter": return _seen.has(&"frost_shatter")
 		&"block": return _seen.has(&"blocked")
-		&"burn": return _seen.has(&"flame_burn")
+		&"burn": return _burn_ticks >= 3
 		&"charge": return _seen.has(&"charged")
 		&"mark": return _seen.has(&"spirit_mark") and _seen.has(&"spirit_blade") and session.enemies[0].vulnerability > 0
 		&"sleep": return _seen.has(&"sleep") and _seen.has(&"wake")
@@ -289,33 +342,46 @@ func _progress() -> String:
 		return "练习完成"
 	if ready_to_advance:
 		match current_step():
-			&"intro": return {&"basics": "三个词咒已完成", &"frost": "强化冰矛已贯穿训练靶", &"flame": "焰印已爆炸并留下火雾", &"storm": "电链与范围电爆已命中", &"spirit": "纸灵交叉斩已命中"}[lesson_id]
-			&"parry": return "御术已接住真实敌弹"
-			&"freeze": return "寒气已触发冻结"
-			&"shatter": return "冻裂已伤及旁边的训练靶"
-			&"block": return "后排施法的火弹已被前排挡住"
-			&"burn": return "停笔后灼烧仍实际造成了伤害"
-			&"charge": return "感电已被消耗，电链完成充能"
-			&"mark": return "易伤已标记，纸灵自动攻击已命中"
-			&"sleep": return "纸灵已休眠，再次完词已唤醒"
-			&"crane": return "纸鹤已拦截敌弹并反伤发射者"
-			&"mist": return "冰雾已积累寒气并遮蔽视线" if book_id == &"frost" else "闪避火雾已造成灼烧伤害"
-			&"dodge": return "闪避雷径已伤害靶并施加感电" if book_id == &"storm" else "方向闪避已完成"
-			&"ultimate": return {&"frost": "护盾已获得，领域冰锥已命中", &"flame": "火浪与持续火域都已造成伤害", &"storm": "终式期间施法已触发电爆与电链", &"spirit": "全部纸灵已唤醒并狂暴命中"}[book_id]
+			&"intro": return {&"basics": "法术已击出", &"frost": "冰矛穿过了多个目标", &"flame": "焰印爆炸，留下了火雾", &"storm": "电链和电爆击中了敌群", &"spirit": "纸灵一起攻击了目标"}[lesson_id]
+			&"switch": return "已换目标，sha 保留了下来"
+			&"cancel": return "已开始输入 flame"
+			&"parry": return "挡住了敌弹"
+			&"freeze": return "敌人冻住了"
+			&"shatter": return "冻裂伤到了旁边的敌人"
+			&"block": return "火弹打中了前排，后排没有受伤"
+			&"burn": return "余火又烧掉了 %s 点生命" % GameText.number(float(_burn_damage_q) / BattleSession.Q)
+			&"charge": return "电链增强了，还能多击中一个目标"
+			&"mark": return "纸灵正在自动攻击标记的目标"
+			&"sleep": return "纸灵又醒了"
+			&"crane": return "纸鹤挡住敌弹，反击了敌人"
+			&"mist": return "雾中的敌人积累了寒气" if book_id == &"frost" else "火雾让敌人持续掉血"
+			&"dodge": return "闪避路径击中了敌人，让它带上了感电" if book_id == &"storm" else "已完成闪避"
+			&"ultimate": return {&"frost": "获得了护盾，冰锥击中了敌人", &"flame": "火浪和火域都伤到了敌人", &"storm": "施法引发了电爆和电链", &"spirit": "全部纸灵醒来，攻击了敌人"}[book_id]
 	match current_step():
-		&"intro": return "完成词咒 %s / 3 · 强化命中 %s / 1" % [mini(_casts, 3), int(_seen.has(&"empowered_hit") or _seen.has(&"spirit_cross"))]
+		&"intro": return "输入敌人头顶的词咒" if lesson_id == &"basics" else "完成左边词咒 · 已施法 %s / 3" % mini(_casts, 3)
+		&"switch":
+			if _switch_phase == 0: return "按 Tab 换到 shard"
+			if session.typing.progress == 3: return "按 Tab，保留 sha 换目标"
+			return "输入 sha" if session.typing.progress < 3 else "按 Backspace，重新输入 sha"
+		&"cancel": return "输入 f，选择 flame" if _seen.has(&"cancelled") else "按 Backspace 取消当前输入" if session.typing.progress > 0 else "先输入 sha"
 		&"parry": return "等敌弹靠近，再按 Space"
-		&"freeze": return "前排寒气 %d / 91 · 连续完成它的词咒" % session.enemies[0].cold
-		&"shatter": return "靶已冻结，完成词咒击破它" if session.enemies[0].frozen_time > 0.0 else "冻结已结束；连续施法再次冻结并击破"
-		&"block": return "目标：后排词咒 %s" % session.enemies[2].word
-		&"burn": return "暂时停笔，等灼烧实际扣血"
-		&"charge": return "前排感电 %d · 连续命中直至充能" % session.enemies[0].shock
-		&"mark": return "完成前排词咒，等待纸灵自动命中"
-		&"sleep": return "已有纸灵休眠；完成词咒重新唤醒" if _seen.has(&"sleep") else "暂时停笔 · 纸灵维持剩余 %s 秒" % GameText.number(session.spirit_time)
-		&"crane": return "等靶锁定你，再按 ↓；等纸鹤反伤" if session.enemies[0].aiming else "等待预警 · 纸鹤需拦截真实敌弹"
-		&"mist": return "按 ←，把训练靶留在起点雾中"
-		&"dodge": return "按 →，让闪避路径穿过训练靶" if book_id == &"storm" else "按方向键完成一次闪避"
-		&"ultimate": return "终式期间继续完成前排词咒" if book_id == &"storm" and _seen.has(&"ultimate") else "已释放，等待领域实际生效" if _seen.has(&"ultimate") else "共鸣已满，单独按下并松开 Shift"
+		&"freeze": return "左边敌人寒气 %d / 91" % session.enemies[0].cold
+		&"shatter": return "完成左边词咒，击碎冰冻敌人" if session.enemies[0].frozen_time > 0.0 else "继续攻击左边敌人，把它冻住再击败"
+		&"block": return "输入最右边的 %s" % session.enemies[2].word
+		&"burn": return "停笔，看看血条上的橙色部分" if session.enemies[0].burn > 10 else "完成左边词咒，点燃敌人"
+		&"charge": return "左边敌人感电 %d / 31" % session.enemies[0].shock
+		&"mark": return "完成左边词咒，然后停笔"
+		&"sleep":
+			if _seen.has(&"sleep"): return "完成一个词咒，唤醒纸灵"
+			if session.spirit_blade_count() == 0: return "完成左边词咒，先唤醒纸灵"
+			return "停笔等待 · 约 %d 秒后纸灵会睡着" % ceili(session.spirit_time)
+		&"crane":
+			if session.runtime.fields.any(func(field: SpellField) -> bool: return field.effect.kind == &"paper_crane"):
+				return "纸鹤已留下，等它挡住敌弹"
+			return "现在按 ↓ 闪避" if session.enemies[0].aiming else "等敌人开始瞄准"
+		&"mist": return "按 ← 闪避"
+		&"dodge": return "按 → 穿过左边敌人" if book_id == &"storm" else "按方向键完成一次闪避"
+		&"ultimate": return "继续完成左边词咒" if book_id == &"storm" and _seen.has(&"ultimate") else "终式已释放" if _seen.has(&"ultimate") else "共鸣已满，按一下 Shift"
 	return ""
 
 
@@ -325,55 +391,59 @@ func _emit_step() -> void:
 	match current_step():
 		&"intro":
 			title = "完成词咒" if lesson_id == &"basics" else "施法与强化"
-			instruction = "亲手完成三个词咒，每第三次强化施法。" if lesson_id == &"basics" else {
-				&"frost": "冰锥能贯穿同线敌人；第三次成为更强、贯穿更多目标的冰矛。连续完成前排词咒三次，让冰矛实际命中。",
-				&"flame": "火弹被前排挡住；第三次焰印爆炸，伤及附近敌人并留下火雾。连续完成前排词咒三次，触发焰印。",
-				&"storm": "电链逐段衰减，同一条链不重复命中同一敌人；第三次附带范围电爆。连续完成前排词咒三次，击中敌群。",
-				&"spirit": "完成词咒按亲手字符数唤醒纸灵；本房五字词每次唤醒一只，自动游击。第三次施法指挥交叉斩。连续完成前排词咒三次。",
+			instruction = "词咒就是敌人头顶的单词。输入完整单词，就会向它施法。" if lesson_id == &"basics" else {
+				&"frost": "冰锥会穿过一条线上的敌人。每第三次施法变成更强的冰矛，能穿过更多敌人。",
+				&"flame": "每第三次施法打出焰印，爆炸伤到附近敌人，并留下一团火雾。",
+				&"storm": "电链会连着攻击多个敌人。每第三次施法还会引发电爆，伤到目标周围的敌人。",
+				&"spirit": "完成词咒会唤醒纸灵，它们会自动攻击。每第三次施法，它们会一起攻击当前目标。",
 			}[book_id]
-			instruction += "\n未输入时 Tab 轮换，Shift+Tab 反向。输入后只换相同开头，保留进度；只有一个匹配时不切换。换不同开头先 Backspace 取消，再输入首字。Esc 暂停。"
+		&"switch":
+			title = "换一个目标"
+			instruction = "还没开始输入时，Tab 可以换到另一个敌人。" if _switch_phase == 0 else "shade 和 shard 都以 sha 开头。切换时，已经输入的 sha 会保留。"
+		&"cancel":
+			title = "换到不同开头的单词"
+			instruction = "flame 不以 sha 开头，Tab 不会切到它。想改选它，需要先取消当前输入。"
 		&"parry":
 			title = "御术与反弹"
-			instruction = "敌弹将碰到你时按 Space 御术。起手0.10秒内接住可触发完美御术，反弹敌弹并短暂放慢时间。失误可等下一颗重试。"
+			instruction = "敌弹靠近时按空格，用御术挡住它。赶在碰到你的那一刻防御，还能把敌弹反弹回去。"
 		&"freeze":
 			title = "寒气与冻结"
-			instruction = "寒气减慢移动与攻击；超过90点消耗60点，冻结会暂停敌人的动作。新加寒气后1秒不流失，此后每秒减少6点。连续完成前排词咒，实际触发冻结。"
+			instruction = "连续攻击左边敌人，让寒气积满，它就会冻住。停得太久寒气会减少，所以尽量集中攻击。"
 		&"shatter":
-			title = "冻裂连锁"
-			instruction = "冻结期间死亡触发冻裂：炸伤附近敌人并施加寒气，可继续连锁。前排靶已剩少量生命；完成它的词咒，让旁边的靶受冻裂伤害。错过冻结窗口可连续施法再次冻结；未触发冻裂可继续重试。"
+			title = "击碎冻住的敌人"
+			instruction = "击败冻住的敌人会触发冻裂，伤到旁边的敌人。集中攻击左边的残血敌人，试着把它冻住再击碎。"
 		&"block":
 			title = "火弹被谁挡住"
-			instruction = "锁定后排并不保证火弹穿过前排。按 Tab 切到最右靶，再完成其词咒：沿途前排会承受火弹。转火时要考虑站位；焰印的爆炸可以波及旁边的敌人。"
+			instruction = "火弹飞向你选中的敌人，途中遇到其他敌人，就会先打中它。"
 		&"burn":
 			title = "停笔后的余火"
-			instruction = "灼烧超过10点后，每0.15秒扣血并消耗5点，降至10点停止。暂时停笔，等前排实际受到灼烧伤害。橙色生命尾段估计剩余余火伤害，可据此转火。"
+			instruction = "燃烧的敌人会持续掉血。血条上的橙色部分表示预计还会烧掉的生命，可以据此决定是否换目标。"
 		&"charge":
-			title = "感电为电链充能"
-			instruction = "电链命中积累感电，也能接入更远的敌人。目标感电超过30点时，电链消耗10点充能：提高后续伤害，并多跳一次。连续完成前排词咒，实际触发充能。"
+			title = "电链变得更强"
+			instruction = "连续攻击左边敌人，积累感电。感电足够时，再命中的电链会更强，还能多击中一个敌人。"
 		&"mark":
-			title = "标记与自动游击"
-			instruction = "施法标记目标，易伤会提高它受到的伤害。纸灵自动游击标记目标，不必逐次指挥。再完成前排词咒，随后停笔，等纸灵自动击中它。"
+			title = "让纸灵继续攻击"
+			instruction = "施法会给目标加上易伤，让它受到更多伤害。纸灵会继续自动攻击它，不用反复下令。"
 		&"sleep":
-			title = "维持与重新唤醒"
-			instruction = "有效输入会刷新纸灵的维持时间；停笔超时后逐只休眠。先停笔等一只休眠，再完成一个词咒重新唤醒。持续输入能维持纸灵，也持续积累标记。"
+			title = "停笔与唤醒"
+			instruction = "停笔一段时间，纸灵会逐只睡着。等一只睡着后，再完成一个词咒，把它唤醒。"
 		&"crane":
-			title = "纸鹤拦截与反伤"
-			instruction = "闪避在起点留下符文纸鹤，持续4秒。等训练靶预警、锁定你后按↓闪避：敌弹沿旧瞄准飞向纸鹤。纸鹤拦截一颗后反伤发射者并消失；朝它飞来的敌弹才会被拦截。"
+			title = "纸鹤挡弹反击"
+			instruction = "闪避会在原地留下符文纸鹤。等敌人瞄准后按 ↓，让它的弹打向纸鹤：纸鹤挡下一颗敌弹，就会反击发射它的敌人。"
 		&"mist":
 			title = "冰雾遮蔽" if book_id == &"frost" else "闪避留下火雾"
-			instruction = "按←闪避，把近靶留在起点冰雾中。冰雾持续3秒，给雾内敌人积累寒气，并遮蔽远处敌人的新瞄准；已经锁定的弹道仍会发射。" if book_id == &"frost" else "按←闪避，把近靶留在起点火雾中。火雾持续2秒、不断施加灼烧；离开后余火仍会扣血。停笔等靶真正受到雾造成的灼烧伤害。"
+			instruction = "按 ← 闪避，在原地留下冰雾。雾中的敌人会积累寒气，远处敌人也更难瞄准你；已经射来的敌弹仍要躲开。" if book_id == &"frost" else "按 ← 闪避，在原地留下火雾。旁边的敌人会被点燃，离开火雾后也会继续掉血。"
 		&"dodge":
-			title = "闪避雷径" if book_id == &"storm" else "方向闪避"
-			instruction = "按→穿过训练靶：闪避路径会伤害沿途敌人并施加30点感电。落点接近敌群时仍需留意后续攻击。" if book_id == &"storm" else "方向键朝指定方向闪避，Alt自动选择落点。消耗一次充能，获得1秒无敌；充能会恢复。现在按一个方向完成闪避。"
+			title = "闪避也能攻击" if book_id == &"storm" else "方向闪避"
+			instruction = "闪避路径会伤到沿途敌人，并让它们带上感电。" if book_id == &"storm" else "按方向键朝对应方向闪避，闪避后有1秒不会受伤。闪避次数用完后，需要等它恢复。"
 		&"ultimate":
-			title = {&"frost": "冰河纪事", &"flame": "焚世余烬", &"storm": "雷鸣终章", &"spirit": "千纸夜行"}[book_id]
-			instruction = "输入与成功防御积累共鸣。本次已补满；单独按下并松开Shift释放终式。\n" + {
-				&"frost": "获得20点护盾；领域持续积累寒气，并从不同方向发射冰锥。等领域冰锥真实命中。",
-				&"flame": "全场火浪立即伤害敌人；脚下火域持续施加灼烧，并独立造成伤害。等火浪和火域都实际命中。",
-				&"storm": "领域持续施加感电，期间每次施法都附带电爆，并保留一条电链。释放后再完成前排词咒，触发终式施法。",
-				&"spirit": "立即唤醒全部纸灵并使其狂暴，提升伤害、飞行速度与攻击频率。等狂暴纸灵实际击中目标。",
+			title = "释放终式"
+			instruction = ("输入与防御会积累共鸣，积满后按一下 Shift 释放终式。\n" if lesson_id == &"basics" else "") + {
+				&"frost": "你会获得护盾，周围会不断发射冰锥并积累寒气。",
+				&"flame": "火浪伤到全场敌人，随后留下持续伤害敌人的火域。",
+				&"storm": "周围敌人不断积累感电。再完成一个词咒，每次施法都能引发电爆。",
+				&"spirit": "全部纸灵立即醒来，飞得更快、攻击更频繁，伤害也更高。",
 			}[book_id]
-	instruction += "\n悬浮虚线术语可查看详细效果；达成目标后点击%s。" % ("完成练习" if step_index == step_count() - 1 else "下一步")
 	if completed:
 		instruction = "练习完成。可返回选择其他练习，或开始远征。"
 	_last_progress = _progress()

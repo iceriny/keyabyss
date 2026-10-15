@@ -28,6 +28,7 @@ func _run() -> void:
 		_check(not early_exit.completed and early_exit.session.room_result == null, "%s early exit has no settlement" % id)
 		early_exit.session.free()
 		early_exit.free()
+	_retry_entry_points()
 	for index in profiles.size():
 		_check(profiles[index].to_dict() == profile_snapshots[index], "practice leaves the loaded profile unchanged")
 	for path in archive_bytes:
@@ -62,19 +63,22 @@ func _exercise(id: StringName) -> void:
 	session.queue_action(&"ultimate")
 	_advance(lesson, 90)
 	_check(lesson.step_index == 0 and not lesson.completed, "%s unfinished input and actions cannot skip the first step" % id)
-	for index in 2:
-		_cast(lesson)
-	lesson.advance()
-	_check(lesson.step_index == 0 and facts.size() == 2 and session.completed_words == 2, "%s requires three real completed words" % id)
+	if id != &"basics":
+		for index in 2:
+			_cast(lesson)
+		lesson.advance()
+		_check(lesson.step_index == 0 and facts.size() == 2 and session.completed_words == 2, "%s requires three real completed words" % id)
 	_word(lesson)
 	if id in [&"frost", &"flame"]:
 		_check(lesson.current_step() == &"intro", "%s third input must wait for its empowered projectile to hit" % id)
 	_wait(lesson, func() -> bool: return lesson.ready_to_advance, 180)
-	_check(lesson.current_step() == &"intro" and lesson.ready_to_advance and facts.size() == 3 and facts.all(func(fact: WordCompletion) -> bool: return fact.fully_manual()), "%s completes its first goal with three fully manual paid casts and native impacts" % id)
-	_check(events.any(func(event: Dictionary) -> bool: return event.kind == &"cast" and event.empowered), "%s third cast is genuinely empowered" % id)
+	_check(lesson.current_step() == &"intro" and lesson.ready_to_advance and facts.size() == (1 if id == &"basics" else 3) and facts.all(func(fact: WordCompletion) -> bool: return fact.fully_manual()), "%s first goal uses the required fully manual paid casts and native impacts" % id)
+	if id != &"basics":
+		_check(events.any(func(event: Dictionary) -> bool: return event.kind == &"cast" and event.empowered), "%s third cast is genuinely empowered" % id)
 	_continue(lesson, &"intro")
 	match id:
 		&"basics":
+			_switching(lesson)
 			_defense(lesson, events)
 			session.queue_action(&"dodge_right")
 			_wait(lesson, func() -> bool: return lesson.ready_to_advance, 120)
@@ -110,6 +114,70 @@ func _exercise(id: StringName) -> void:
 	_check(repeat.step_index == 0 and not repeat.completed and repeat.session.manual_characters == 0 and repeat.session.resonance_q == 0, "%s repeat starts a fresh independent practice" % id)
 	repeat.session.free()
 	repeat.free()
+
+
+func _retry_entry_points() -> void:
+	# Retry uses a fresh session at the current step, without earlier casts or statuses.
+	for id: StringName in [&"frost", &"flame", &"spirit", &"storm"]:
+		var step: StringName = {&"frost": &"shatter", &"flame": &"burn", &"spirit": &"sleep", &"storm": &"dodge"}[id]
+		var lesson := TutorialLesson.create_lesson(id, TutorialLesson.STEPS[id].find(step))
+		var session := lesson.session
+		_check(lesson.current_step() == step and not lesson.ready_to_advance and session.manual_characters == 0, "%s retry preserves the requested step with no fabricated input" % id)
+		_advance(lesson, 120)
+		_check(not lesson.ready_to_advance, "%s retry does not complete from staged prerequisites alone" % id)
+		match id:
+			&"frost":
+				for attempt in 6:
+					if lesson.ready_to_advance: break
+					_cast(lesson)
+			&"flame":
+				_word(lesson)
+				_wait(lesson, func() -> bool: return lesson.ready_to_advance, 180)
+			&"spirit":
+				_word(lesson)
+				var awake := session.spirit_blade_count()
+				_wait(lesson, func() -> bool: return session.spirit_blade_count() < awake, 900)
+				_check(not lesson.ready_to_advance and lesson._progress().contains("唤醒"), "fresh sleep retry still needs a manual wake after actual sleep")
+				_word(lesson)
+				_wait(lesson, func() -> bool: return lesson.ready_to_advance, 120)
+			&"storm":
+				session.queue_action(&"dodge_right")
+				_wait(lesson, func() -> bool: return lesson.ready_to_advance, 120)
+		_check(lesson.ready_to_advance, "%s can finish its retried mechanic through real combat actions" % id)
+		session.free()
+		lesson.free()
+
+
+func _switching(lesson: TutorialLesson) -> void:
+	var session := lesson.session
+	var typing := session.typing
+	_check(lesson.current_step() == &"switch" and session.enemies.map(func(enemy: BattleEnemy) -> String: return enemy.word) == ["shade", "shard", "flame"], "switching has a deterministic visible example")
+	_advance(lesson, 60)
+	_check(not lesson.ready_to_advance, "time cannot satisfy a target-switch exercise")
+	_word(lesson)
+	_advance(lesson, 35)
+	_check(lesson._switch_phase == 0 and typing.word == "shade" and not lesson.ready_to_advance, "finishing an example word restages the exercise instead of making it unwinnable")
+	typing.cycle_target()
+	session.step(1.0 / 60.0)
+	_check(lesson._switch_phase == 1 and typing.word == "shard", "empty-input Tab updates the next instruction immediately")
+	for letter in "sha":
+		typing.feed(letter)
+		session.step(1.0 / 60.0)
+	_check(not lesson.ready_to_advance, "shared letters alone do not prove a switch")
+	typing.cycle_target()
+	session.step(1.0 / 60.0)
+	_check(typing.word == "shade" and typing.progress == 3 and lesson.ready_to_advance, "shared-opening switch preserves the actual three typed letters")
+	_continue(lesson, &"switch")
+	typing.feed("f")
+	typing.cycle_target()
+	session.step(1.0 / 60.0)
+	_check(typing.word.begins_with("sha") and not lesson.ready_to_advance, "a different opening cannot bypass cancellation")
+	typing.cancel()
+	typing.feed("f")
+	session.step(1.0 / 60.0)
+	_check(typing.word == "flame" and typing.progress == 1 and lesson.ready_to_advance, "cancellation and a new first letter select the actual different-opening target")
+	_continue(lesson, &"cancel")
+	_check(typing.progress == 0 and typing.target_id == &"", "the next mechanism begins without leftover partial input")
 
 
 func _defense(lesson: TutorialLesson, events: Array[Dictionary]) -> void:
@@ -172,12 +240,19 @@ func _flame(lesson: TutorialLesson, events: Array[Dictionary]) -> void:
 	_word(lesson, 2)
 	_wait(lesson, func() -> bool: return lesson.ready_to_advance, 180)
 	_check(_impact(events, &"flame_burst", blocked_events, session.enemies[0].id) and session.enemies[2].hp_q == rear_hp, "a paid rear-target fireball is genuinely blocked by the front target")
+	# Reading the completed explanation must not make the next exercise unwinnable.
+	_advance(lesson, 1800)
+	_check(session.enemies[0].burn <= 10, "reading delay exhausts the previous fireball's real burn")
 	_continue(lesson, &"block")
+	_check(lesson._progress().contains("点燃") and not lesson.ready_to_advance, "expired residual burn asks for new input instead of waiting forever")
+	_word(lesson)
 	var burn_events := events.size()
 	var manual := session.manual_characters
 	_wait(lesson, func() -> bool: return lesson.ready_to_advance, 180)
 	_check(_impact(events, &"flame_burn", burn_events) and session.manual_characters == manual, "flame residual burn damages after input stops")
+	_check(lesson._burn_ticks >= 3 and session.enemies[0].hp_q < session.enemies[0].max_hp_q * 0.95, "burn practice waits for multiple real health losses on a readable scale")
 	_continue(lesson, &"burn")
+	_check(session.enemies[0].max_hp_q == TutorialLesson.TRAINING_HEALTH * BattleSession.Q, "later mechanics restore the durable practice target")
 	_mist(lesson, events, &"fire_field")
 
 
@@ -245,7 +320,12 @@ func _spirit(lesson: TutorialLesson, events: Array[Dictionary]) -> void:
 	_word(lesson)
 	_wait(lesson, func() -> bool: return lesson.ready_to_advance, 240)
 	_check(_impact(events, &"spirit_mark", mark_events) and _impact(events, &"spirit_blade", mark_events) and session.enemies[0].vulnerability > 0, "spirit marking raises vulnerability and guides actual autonomous hits")
+	_advance(lesson, 1500)
+	_check(session.spirit_blade_count() == 0, "reading delay lets all the actual spirits fall asleep")
 	_continue(lesson, &"mark")
+	_check(lesson._progress().contains("先唤醒") and not lesson.ready_to_advance, "sleeping flock on entry asks for a real summon before observing sleep")
+	_word(lesson)
+	_check(session.spirit_blade_count() > 0 and not lesson.ready_to_advance, "restarting the sleep example summons spirits without fabricating sleep or completion")
 	var peak := session.spirit_blade_count()
 	var manual := session.manual_characters
 	_wait(lesson, func() -> bool: return session.spirit_blade_count() < peak, 900)

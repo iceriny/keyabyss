@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R004"
 title = "冰裂残页"
+choice_role = &"mechanism"
 description = "冻裂额外造成 {damage} 点伤害，半径增加 {radius}；最多连锁3代。"
 stage = &"M3"
 supported = true

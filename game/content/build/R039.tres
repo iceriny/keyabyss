@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R039"
 title = "护页结界"
+choice_role = &"defense"
 description = "每完成 {interval} 次词咒，获得 {shield} 点护盾。"
 stage = &"M3"
 supported = true

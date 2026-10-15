@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"P009"
 title = "快笔抄本"
+choice_role = &"power"
 description = "纸灵游击命中后的等待缩短 {spirit_cooldown_pct}%。"
-modifiers = {&"spirit_cooldown_pct": 6}
+modifiers = {&"spirit_cooldown_pct": 12}
 tags = PackedStringArray("spirit")
 max_stacks = 2
 rarity = &"common"

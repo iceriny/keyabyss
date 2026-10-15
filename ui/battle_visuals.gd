@@ -9,7 +9,8 @@ const ENEMY_COLORS := {
 	&"mirror": Color("c0cce2"), &"mortar": Color("c7aa8a"), &"priest": Color("a4cbbb"),
 	&"reaper": Color("b7a8b6"), &"scribe": Color("d1b298"), &"sentinel": Color("b5c0ca"),
 	&"split": Color("c4c1a4"), &"tower": Color("c5afe0"), &"vortex": Color("b2a7d6"),
-	&"echo-archivist": Color("b4c9eb"), &"final-editor": Color("d8adab")
+	&"echo-archivist": Color("b4c9eb"), &"final-editor": Color("d8adab"),
+	&"pin-archer": Color("d4b78e"), &"refrain": Color("b9bfd3"), &"folio-warden": Color("b1c5ab")
 }
 
 var session: BattleSession
@@ -40,6 +41,7 @@ var fluid_quality: int = 2
 var fluid_material: FluidMedium
 var fluid_effects: Dictionary[StringName, FluidEffectProfile] = {}
 var rule_visuals: BattleRuleVisuals
+@onready var threat_glow: BattleThreatGlow = $ThreatGlow
 
 
 func configure(battle: BattleSession, tint: Color, visual_quality: int, less_motion: bool) -> void:
@@ -82,6 +84,9 @@ func set_options(detail: int, less_motion: bool) -> void:
 
 
 func _ready() -> void:
+	threat_glow.session = session
+	threat_glow.quality = quality
+	threat_glow.reduced_motion = reduced_motion
 	var clock := BattleVisualClock.new()
 	clock.session = session
 	add_child(clock)
@@ -123,6 +128,8 @@ func _create_actor(enemy: BattleEnemy) -> void:
 
 func _process(delta: float) -> void:
 	var started := DebugLog.begin()
+	threat_glow.quality = quality
+	threat_glow.reduced_motion = reduced_motion
 	delta = session.world_delta(delta)
 	rule_visuals.size = size
 	rule_visuals.quality = quality
@@ -328,6 +335,7 @@ func _draw() -> void:
 	for enemy in session.enemies:
 		var point := enemy.previous_position.lerp(enemy.position, Engine.get_physics_interpolation_fraction()) * size
 		if enemy.alive():
+			if enemy.behavior == &"ward": _draw_ward(point, enemy)
 			_draw_enemy(point, enemy)
 			if session.typing.target_id == enemy.id and BattleSession.enemy_in_combat(enemy):
 				var from := session.player_position * size
@@ -352,6 +360,28 @@ func _draw_edge_seal(center: Vector2, radius: float, phase: float) -> void:
 	draw_set_transform(center, phase)
 	draw_texture_rect(ArcanaRunes.seal(session.book_id, radius * 2.0), Rect2(-Vector2.ONE * radius, Vector2.ONE * radius * 2.0), false, Color("b6ad87", .052))
 	draw_set_transform(Vector2.ZERO)
+
+
+func _draw_ward(point: Vector2, source: BattleEnemy) -> void:
+	var target := session.ward_target(source)
+	if target == null: return
+	var endpoint := target.previous_position.lerp(target.position, Engine.get_physics_interpolation_fraction()) * size
+	var axis := endpoint - point
+	var bow := axis.orthogonal().normalized() * minf(22.0, axis.length() * 0.12)
+	var curve := PackedVector2Array()
+	for index in 17:
+		var fraction := float(index) / 16.0
+		curve.append(point.lerp(endpoint, fraction) + bow * sin(fraction * PI))
+	draw_polyline(curve, Color("a7c6b3", 0.10), 4.0, true)
+	draw_polyline(curve, Color("c9cead", 0.62), 1.1, true)
+	var radius := target.radius + 9.0
+	for side: float in [-1.0, 1.0]:
+		var angle := side * PI * 0.5
+		draw_arc(endpoint, radius, angle - 0.5, angle + 0.5, 16, Color("c9cead", 0.75), 1.8, true)
+	var bud := point.lerp(endpoint, 0.52) + bow
+	var tangent := axis.normalized()
+	var leaf := PackedVector2Array([bud - tangent * 7.0, bud + tangent.orthogonal() * 3.5, bud + tangent * 7.0, bud - tangent.orthogonal() * 3.5])
+	draw_colored_polygon(leaf, Color("b6c7a6", 0.6))
 
 
 func _draw_enemy(point: Vector2, enemy: BattleEnemy) -> void:

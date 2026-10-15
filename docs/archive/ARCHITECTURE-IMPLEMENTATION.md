@@ -99,11 +99,11 @@ exits: [
 
 ### 战斗组合与场外天赋
 
-`WeaveSystem` 负责人工字符供给、主术根来源、命中回执、有限载体与热量回收。它通过窄 `WeaveContext` 使用公共能力，不反向依赖模拟宿主。命中先取得后效资格，再提交伤害和死亡，最后从回执兑现后效；残响保留输入并通过同一入口释放。具体顺序、资源上限和清理规则见 [战斗组合规则](COMBAT-RULES.md)。
+`WeaveSystem` 负责人工字符供给、主术根来源、命中回执、有限载体与热量回收。它通过窄 `WeaveContext` 使用公共能力，不反向依赖模拟宿主。命中先取得后效资格，再提交伤害和死亡，最后从回执兑现后效；残响保留输入并通过同一入口释放。具体顺序、资源上限和清理规则见 战斗组合规则。
 
-法书声明元素及能力，遗物以 `provides / needs / modifies / excludes / requiresLevels` 表达供给、关联和结构分支；候选权重保留探索机会。`shared/combat-capabilities.ts` 合并不同来源，模拟结算读取 `stats` 与来源信息，不添加书对书配方。详见 [遗物能力图](RELIC-GRAPH.md)。
+法书声明元素及能力，遗物以 `provides / needs / modifies / excludes / requiresLevels` 表达供给、关联和结构分支；候选权重保留探索机会。`shared/combat-capabilities.ts` 合并不同来源，模拟结算读取 `stats` 与来源信息，不添加书对书配方。详见 遗物能力图。
 
-`content/talents.ts` 定义统一连通图；`shared/talents.ts` 在 UI 和模拟入口共享预算、连通、互斥与副书校验。`application/talentProgression.ts` 按局累计有效字符结算点数，God 配置及职业累计独立保存，清理不改普通存档。详见 [书脉天赋](TALENTS.md)。
+`content/talents.ts` 定义统一连通图；`shared/talents.ts` 在 UI 和模拟入口共享预算、连通、互斥与副书校验。`application/talentProgression.ts` 按局累计有效字符结算点数，God 配置及职业累计独立保存，清理不改普通存档。详见 书脉天赋。
 
 新增纸页、散字与字母标记通过只读显示契约交给渲染器。攻击轮换仍由内容行为和来源受控的调度执行；词条偏好使用所选词库的缓存子池。详见 [敌人变化](ENEMY-VARIETY.md)与[战斗表现](COMBAT-VISUALS.md)。
 

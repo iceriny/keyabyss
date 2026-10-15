@@ -1,0 +1,17 @@
+{
+  "name": "interaction",
+  "started_utc": "2026-10-13T16:39:48.259848+00:00",
+  "finished_utc": "2026-10-13T16:40:02.609452+00:00",
+  "wall_seconds": 14.34960167500003,
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "workers": 4,
+  "planned_sessions": 320,
+  "executed_sessions": 320,
+  "sessions_with_recognition_failure": 0,
+  "total_simulated_seconds": 11200.0,
+  "seed": 20261014,
+  "config_manifest": "results/sensitivity/interaction_jobs.jsonl.gz",
+  "output": "results/sensitivity/interaction_sessions.csv",
+  "output_sha256": "34f5b159f66d5a374ac39b3ed87a40b15d1e593d0910ed8b372e9409e43f79e8"
+}

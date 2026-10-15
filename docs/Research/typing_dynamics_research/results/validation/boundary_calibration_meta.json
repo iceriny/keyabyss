@@ -1,0 +1,17 @@
+{
+  "name": "boundary_calibration",
+  "started_utc": "2026-10-13T16:33:18.531051+00:00",
+  "finished_utc": "2026-10-13T16:33:42.407180+00:00",
+  "wall_seconds": 23.87612560100024,
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "workers": 4,
+  "planned_sessions": 1152,
+  "executed_sessions": 1152,
+  "sessions_with_recognition_failure": 0,
+  "total_simulated_seconds": 69120.0,
+  "seed": 20261014,
+  "config_manifest": "results/validation/boundary_calibration_jobs.jsonl.gz",
+  "output": "results/validation/boundary_calibration_sessions.csv",
+  "output_sha256": "41d1b1c2a3cc956b1664ae066e3ed9bef8352c8050bfe37c85f7dba7063a6432"
+}

@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R036"
 title = "背水誓书"
+choice_role = &"power"
 description = "生命不足 {threshold_pct}% 时，施法与纸灵伤害提高 {damage_pct}%。"
 stage = &"M3"
 supported = true

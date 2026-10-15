@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R029"
 title = "完美段落"
+choice_role = &"mechanism"
 description = "连续完成 {interval} 个无错字词咒，在自身周围清弹并造成 {damage} 点伤害。"
 stage = &"M3"
 supported = true

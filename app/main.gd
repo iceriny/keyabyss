@@ -8,6 +8,7 @@ const PRIMARY_ACTIONS := {
 	"result": "home", "settings": "back", "words": "use", "guide": "back",
 	"profile": "back", "history": "back", "about": "back", "import": "preview",
 	"settlement": "retry", "room_error": "retry", "calibration": "ready",
+	"tutorial_invitation": "tutorial",
 	"relics": "relic001", "build": "relic001",
 }
 
@@ -71,6 +72,7 @@ var _calibration_return := "home"
 var _calibration_archive_visible := true
 var tutorial: TutorialLesson
 var tutorial_overlay: TutorialOverlay
+var _completed_lessons: Array[StringName] = []
 
 
 func _enter_tree() -> void:
@@ -197,6 +199,7 @@ func _apply_visual_settings() -> void:
 	get_tree().call_group("crystal_motion_controls", "set_motion_reduced", settings.reduce_motion)
 	if is_instance_valid(page):
 		page.reduced_motion = settings.reduce_motion
+		page.set_reading_quality(settings.quality)
 	sound.enabled = settings.sound
 	sound.effects_volume = settings.effects_volume
 	sound.set_ambience(settings.ambience and settings.sound)
@@ -335,6 +338,7 @@ func _open(next_route: String, title: String, subtitle: String, audible: bool = 
 	page.seal_texture = ArchiveHome.BOOKS[archive.selected].seal
 	page.name = next_route.capitalize()
 	root.add_child(page)
+	page.set_reading_style(next_route, settings.quality)
 	archive.set_interactive(false)
 	page.close_button.pressed.connect(_back)
 	_bind_control_command(page.close_button, "back")
@@ -1217,8 +1221,23 @@ func _complete_first_setup() -> void:
 	archive.visible = _calibration_archive_visible
 	if _calibration_return == "settings":
 		_settings_page(settings_return)
+	elif not was_complete:
+		_first_tutorial_invitation()
 	else:
 		_home(false)
+
+
+func _first_tutorial_invitation() -> void:
+	archive.show()
+	_open("tutorial_invitation", "画面已就绪，先练习施法吧", "先学基础操作，再试试不同法书。")
+	page.set_width(820)
+	page.compact_height = 430.0
+	PageShell.label(page.body, "跟着练习学会打字施法、换目标、防御和闪避。", 22)
+	PageShell.label(page.body, "稍后也可从书库的「教学练习」进入。", 18, Color("a7b8bb"))
+	page.status.hide()
+	_button(page.footer, "进入教学练习", "tutorial", _tutorial_menu)
+	_button(page.footer, "稍后再练", "back", _home)
+	page.center_heading()
 
 
 func _clear_tutorial() -> void:
@@ -1236,19 +1255,32 @@ func _tutorial_menu() -> void:
 	battle = null
 	router.typing = null
 	archive.show()
-	var menu := TutorialMenu.create_menu(settings.reduce_motion)
+	var menu := TutorialMenu.create_menu(settings.reduce_motion, _completed_lessons)
 	_open("tutorial", "", "", true, menu)
 	menu.lesson_requested.connect(_start_tutorial)
 	for id in menu.lesson_buttons:
 		_bind_control_command(menu.lesson_buttons[id], str(id))
 	_button(page.footer, "返回书库", "back", _home)
-	menu_navigation.select_word("basics")
+	var suggested: StringName = &"basics"
+	for id: StringName in TutorialLesson.LESSON_IDS:
+		if not id in _completed_lessons:
+			suggested = id
+			break
+	menu_navigation.select_word(str(suggested))
+
+
+func _advance_tutorial() -> void:
+	tutorial.advance()
+	if tutorial.completed:
+		if not tutorial.lesson_id in _completed_lessons:
+			_completed_lessons.append(tutorial.lesson_id)
+		_tutorial_menu()
 
 
 func _start_tutorial(id: StringName) -> void:
 	var title := "落笔入门" if id == &"basics" else ""
 	for book: BookPresentation in ArchiveHome.BOOKS:
-		if book.id == id: title = book.title + " · 习术"
+		if book.id == id: title = book.title + " · 练习"
 	_begin_practice_entrance(&"frost" if id == &"basics" else id, title, _enter_tutorial.bind(id))
 
 
@@ -1284,14 +1316,18 @@ func _begin_practice_entrance(book_id: StringName, title: String, enter: Callabl
 	root.add_child(practice_entrance)
 
 
-func _enter_tutorial(id: StringName) -> void:
+func _retry_tutorial() -> void:
+	_enter_tutorial(tutorial.lesson_id, tutorial.step_index)
+
+
+func _enter_tutorial(id: StringName, initial_step: int = 0) -> void:
 	get_tree().paused = false
 	_clear_tutorial()
 	if is_instance_valid(page): page.queue_free()
 	page = null
 	if is_instance_valid(battle): battle.queue_free()
 	commands.clear()
-	tutorial = TutorialLesson.create_lesson(id)
+	tutorial = TutorialLesson.create_lesson(id, initial_step)
 	add_child(tutorial)
 	var book: BookPresentation
 	for candidate: BookPresentation in ArchiveHome.BOOKS:
@@ -1300,21 +1336,30 @@ func _enter_tutorial(id: StringName) -> void:
 	battle.theme = _archive_theme
 	root.add_child(battle)
 	tutorial_overlay = TutorialOverlay.create_overlay(book, settings.reduce_motion)
+	if id == &"basics":
+		(tutorial_overlay.get_node("Content/Book") as Label).text = "基础操作"
 	battle.add_child(tutorial_overlay)
-	tutorial_overlay._content.resized.connect(func() -> void:
+	tutorial_overlay._content.item_rect_changed.connect(func() -> void:
 		battle.word_exclusions.assign([tutorial_overlay.get_reserved_rect()]))
 	tutorial.step_changed.connect(tutorial_overlay.show_step)
 	tutorial.goal_changed.connect(tutorial_overlay.set_goal_ready)
-	tutorial_overlay.next_requested.connect(tutorial.advance)
+	tutorial_overlay.next_requested.connect(_advance_tutorial)
 	tutorial.step_changed.connect(func(_index: int, _total: int, _title: String, _instruction: String, _progress: String, _complete: bool) -> void:
+		tutorial_overlay.avoid_player(BattleStage.arena_point(tutorial.session.player_position, battle.size))
 		battle.word_exclusions.assign([tutorial_overlay.get_reserved_rect()]))
+	tutorial.session.event_committed.connect(func(event: Dictionary) -> void:
+		if event.kind == &"dodge":
+			tutorial_overlay.avoid_player.call_deferred(BattleStage.arena_point(event.target, battle.size)))
 	tutorial_overlay.exit_requested.connect(_tutorial_menu)
-	tutorial_overlay.retry_requested.connect(_start_tutorial.bind(id))
+	tutorial_overlay.retry_requested.connect(_retry_tutorial)
 	tutorial.session.finished.connect(func(_victory: bool) -> void:
-		tutorial_overlay.show_step(tutorial.step_index, tutorial.step_count(), "重新落笔", "点击重新练习，再试一次。", "生命耗尽", false))
+		tutorial_overlay.show_step(tutorial.step_index, tutorial.step_count(), "再试一次", "点击重试本步，重新摆好练习场地。", "生命耗尽", false))
 	battle.pause_requested.connect(_pause)
 	battle.chapter_label.text = "基础教学" if id == &"basics" else "法书教学"
 	battle.bottom_label.text = "独立练习 · 不计入远征与成长"
+	# The encounter's wave, arrival direction and kill count do not describe practice.
+	for control: CanvasItem in [battle.chapter_label, battle.room_dots, battle.wave_label, battle.timer_label, battle.get_node("BattleCompass")]:
+		control.hide()
 	archive.hide()
 	archive.set_interactive(false)
 	route = "battle"
@@ -1344,8 +1389,10 @@ func _enter_practice(entries: Array[VocabularyEntry]) -> void:
 	practice.typing.feedback_requested.connect(func(cue: StringName) -> void:
 		sound.play_cue("ui.tab" if cue == &"target" else "ui.close" if cue == &"cancel" else "ui.invalid"))
 	practice.theme = _archive_theme
+	practice.reduced_motion = settings.reduce_motion
 	practice.name = "Practice"
 	root.add_child(practice)
+	practice.set_reading_style("words", settings.quality)
 	page = practice
 	route = "practice"
 	practice.set_width(1160)
@@ -1755,6 +1802,7 @@ func _show_run_stage(audible: bool = true) -> void:
 		choices.name = "RewardChoices"
 		choices.add_theme_constant_override("separation", 28)
 		page.body.add_child(choices)
+		var ornament_variants := RelicOrnaments.for_offer(run.offer.candidates)
 		for id: String in run.offer.candidates:
 			var definition := run.compiler.catalog.get_definition(StringName(id))
 			var choice := load("res://ui/scenes/relic_reward_choice.tscn").instantiate() as RelicRewardChoice
@@ -1763,6 +1811,8 @@ func _show_run_stage(audible: bool = true) -> void:
 			choice.build = reading_build
 			choice.reduced_motion = settings.reduce_motion
 			choice.shortcut = str(run.offer.candidates.find(id) + 1)
+			choice.ornament_index = ornament_variants[run.offer.candidates.find(id)]
+			choice.backdrop_material = page.wash.material
 			choices.add_child(choice)
 			var column := choice.content
 			var parent: OptionButton
@@ -1885,6 +1935,7 @@ func _show_reward_detail(definition: CombatContentDefinition) -> void:
 	detail.accent = archive.accent
 	detail.compact_height = 690
 	page.add_child(detail)
+	detail.set_reading_quality(settings.quality)
 	detail.set_width(740)
 	detail.command_hint.text = "Esc 返回"
 	PageShell.label(detail.body, ContentDescription.text(definition, run.compiler.catalog, _reading_build(), true), 21)

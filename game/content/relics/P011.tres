@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"P011"
 title = "守夜纸鹤"
-description = "符文纸鹤保留时间延长 {crane_ms_s} 秒。"
-modifiers = {&"crane_ms": 500}
+description = "符文纸鹤拦截敌弹后，唤醒一只纸灵，并以 {power} 点基础威力命令全体纸灵交叉斩来袭者；来袭者已死亡时改攻最近敌人。纸灵数量仍受上限限制。"
+numbers = {&"power": 60}
+stack_values = PackedStringArray("power")
+choice_role = &"mechanism"
 tags = PackedStringArray("crane")
 max_stacks = 2
 rarity = &"common"

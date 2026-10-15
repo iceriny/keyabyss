@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R037"
 title = "折返墨涡"
+choice_role = &"mechanism"
 description = "闪避起点短暂牵引附近敌人，落点清除附近敌弹。"
 stage = &"M3"
 supported = true

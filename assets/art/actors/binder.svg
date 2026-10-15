@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="208" height="208" viewBox="0 0 104 104"><path d="M18 20L49 13L52 22L55 13L86 20L89 79L56 90L52 84L48 90L15 79Z" fill="#344e51" stroke="#a9bba1" stroke-width="1.5"/><path d="M52 24V79M25 30L44 26M25 40L43 36M61 26L79 30M61 36L79 40" stroke="#c4c7a0" fill="none"/><path d="M11 52Q52 32 93 52Q52 76 11 52Z" fill="none" stroke="#b4d9b5" stroke-width="2"/><path d="M44 48L50 52L44 56M60 48L54 52L60 56" fill="none" stroke="#e2e6c2" stroke-width="2"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="208" height="208" viewBox="0 0 104 104">
+ <defs>
+  <linearGradient id="cover" x2=".8" y2="1"><stop stop-color="#9aafa0"/><stop offset=".4" stop-color="#405e5b"/><stop offset="1" stop-color="#172e38"/></linearGradient>
+  <linearGradient id="paper" x2=".2" y2="1"><stop stop-color="#b4c2b0"/><stop offset=".45" stop-color="#66847a"/><stop offset="1" stop-color="#314e50"/></linearGradient>
+  <linearGradient id="gold"><stop stop-color="#766546"/><stop offset=".45" stop-color="#e5d5a6"/><stop offset="1" stop-color="#96845d"/></linearGradient>
+ </defs>
+ <path d="M18 20Q36 12 49 16L52 23L55 16Q69 12 86 20L89 79Q68 79 56 90L52 85L48 90Q35 81 15 79Z" fill="url(#cover)" stroke="url(#gold)" stroke-width="1.5"/>
+ <path d="M22 22Q39 15 49 23L50 79Q36 72 20 76ZM55 23Q68 15 82 22L84 76Q67 73 54 79Z" fill="url(#paper)" stroke="#bac9b1" stroke-width=".9"/>
+ <path d="M24 25Q38 21 46 26L47 70Q35 63 23 67ZM58 26Q68 21 79 24L81 67Q68 64 57 70Z" fill="#d2d7b9" opacity=".12"/>
+ <path d="M22 79Q37 77 48 84M56 84Q69 77 84 79M52 26V81M27 32Q36 29 43 33M61 33Q69 29 77 32M27 38Q35 35 43 39M61 39Q69 35 77 38" fill="none" stroke="#b8c2a4" stroke-width="1"/>
+ <path d="M16 45Q34 46 45 56M88 45Q70 46 59 56M19 68Q34 67 45 58M85 68Q70 67 59 58" fill="none" stroke="#182f33" stroke-width="6"/>
+ <path d="M16 45Q34 46 45 56M88 45Q70 46 59 56M19 68Q34 67 45 58M85 68Q70 67 59 58" fill="none" stroke="url(#gold)" stroke-width="2"/>
+ <path d="M52 43L63 55L52 69L41 55Z" fill="#233d40" stroke="url(#gold)" stroke-width="1.5"/>
+ <path d="M52 48Q43 55 52 63Q61 55 52 48Z" fill="#adcfb8"/><path d="M52 51V60" stroke="#f2e5b7" stroke-width="1.5"/>
+ <path d="M29 44Q31 53 39 53M75 44Q73 53 65 53M28 59Q32 54 36 60M76 59Q72 54 68 60" fill="none" stroke="#b8be90" stroke-width=".9"/>
+ <path d="M47 83L45 95L52 91L58 95L56 83" fill="#45645b" stroke="#bbae7f" stroke-width=".9"/>
+</svg>

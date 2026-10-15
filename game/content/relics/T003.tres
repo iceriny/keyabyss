@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"T003"
 title = "续雷纸"
-description = "主电链末段伤害提高 {chain_tail_pct}%。"
-modifiers = {&"chain_tail_pct": 6}
+description = "亲手施放的电链结束时，在半径 {radius} 内造成基础威力 {damage_pct}% 的伤害；每剩余一次跳跃再加一份，最多计 {max_unused} 次。"
+numbers = {&"damage_pct": 18, &"max_unused": 3, &"radius": 140}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("chain")
 max_stacks = 2
 rarity = &"common"

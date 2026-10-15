@@ -6,11 +6,12 @@
 script = ExtResource("1")
 id = &"G027"
 title = "双色合订本"
-description = "对同时带有至少两种元素状态的敌人，施法伤害提高 {mixed_pct}%。"
-modifiers = {&"mixed_pct": 12}
+description = "亲手施法命中时，若已有两种足量元素状态，消耗各 {consume} 点，在半径 {radius} 内造成基础威力 {damage_pct}% 的伤害。依次取寒气、灼烧、感电、易伤；灼烧保留10点。"
+numbers = {&"consume": 20, &"damage_pct": 50, &"radius": 150}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("hybrid")
 max_stacks = 2
 rarity = &"rare"
-requires_all = PackedStringArray("G024", "G025")
 supported = true
 stage = &"relics-3"

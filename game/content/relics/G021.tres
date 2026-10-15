@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"G021"
 title = "纸封袋"
+choice_role = &"recovery"
 description = "完成道具词咒时，恢复 {pickup_heal} 点生命。"
-modifiers = {&"pickup_heal": 2}
+modifiers = {&"pickup_heal": 3}
 tags = PackedStringArray("pickup", "healing")
 max_stacks = 2
 rarity = &"common"

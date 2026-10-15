@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R057"
 title = "回批铭文"
+choice_role = &"mechanism"
 description = "完美御术反击附带本书效果：寒气、感电、灼烧，或标记并唤醒纸灵。"
 stage = &"M3"
 supported = true

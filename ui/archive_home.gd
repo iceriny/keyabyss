@@ -289,6 +289,7 @@ func _blend_theme(progress: float, start: Color, target: Color, start_weights: P
 
 func _set_accent(value: Color) -> void:
 	accent = value
+	(stage.get_node("CrystalEdges") as CrystalEdges).configure(quality, reduced_motion, accent)
 	fluid.fog_color = Color("668b9b").lerp(accent, .25)
 	fluid.light_color = accent
 	fluid.update_appearance()
@@ -341,7 +342,7 @@ func _difficulty(index: int, notify: bool = true) -> void:
 	for i in difficulty_buttons.size():
 		difficulty_buttons[i].add_theme_color_override("font_color", accent.lerp(Color.WHITE,.4) if i == index else Color("788a8c"))
 		(difficulty_buttons[i] as OpenButton).set_selected_visual(i == index)
-	difficulty_text.text = ["宽裕预警与生命，适合初次落笔。", "从容开场，逐波迎接完整挑战。", "更快攻势，考验处置顺序与御术时机。", "精英围猎，考验持续输入与防御。", "敌人耐久、攻势密集、伤害极高。适合保留遗物升档挑战。"] [index]
+	difficulty_text.text = ["生命宽裕，来敌较少，适合初次落笔。", "从容开场，逐段迎接完整挑战。", "敌人更加耐打，考验处置顺序与御术时机。", "精英更耐打，考验持续输入与防御。", "敌人耐久与伤害极高。适合保留遗物升档挑战。"] [index]
 	if notify:
 		preparation_changed.emit()
 		if changed:
@@ -414,6 +415,7 @@ func _layout() -> void:
 	var safe_width := _safe_width()
 	var safe_left := _safe_left()
 	stage.configure(quality, reduced_motion)
+	(stage.get_node("CrystalEdges") as CrystalEdges).configure(quality, reduced_motion, accent)
 	(paper.material as ShaderMaterial).set_shader_parameter("worldSpan", Vector2(800.*size.x/maxf(size.y,1.),800.))
 	title_group.position = Vector2(safe_left + safe_width * .05, (size.y-64) * .065)
 	title_group.size.x = 340
@@ -566,6 +568,7 @@ func _text(parent: Node, value: String, font_size: int, color: Color) -> Label:
 
 func set_interactive(value: bool) -> void:
 	interactive = value
+	stage.get_node("CrystalEdges").visible = value
 	_apply_interaction()
 
 

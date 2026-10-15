@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R002"
 title = "导电墨水"
+choice_role = &"mechanism"
 description = "电链多命中 {jumps} 个目标；其他法书的直接施法也能引出电链。"
 stage = &"M3"
 supported = true

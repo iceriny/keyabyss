@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R041"
 title = "停笔书签"
+choice_role = &"mechanism"
 description = "闪避后，战场放慢 {duration} 秒；仍可正常输入。"
 stage = &"M3"
 supported = true

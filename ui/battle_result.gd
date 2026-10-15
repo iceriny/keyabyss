@@ -21,7 +21,7 @@ func configure(session: BattleSession, book: BookPresentation, abandoned: bool, 
 	var boss: BattleEnemy
 	for enemy in session.enemies:
 		if enemy.boss: boss = enemy
-	stage += " · 首领阶段 %d" % boss.phase if boss != null else " · 第 %d / %d 波" % [session.wave, session.encounter.wave_count]
+	stage += " · 首领阶段 %d" % boss.phase if boss != null else " · 第 %d / %d 段" % [session.wave, session.encounter.wave_count]
 	$Stage.text = stage
 	var correct := int(stats.get("manual_characters", 0))
 	var mistakes := int(stats.get("mistakes", 0))

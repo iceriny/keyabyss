@@ -6,8 +6,11 @@
 script = ExtResource("1")
 id = &"T016"
 title = "回锋雷笔"
-description = "完美御术反击命中时，附加 {parry_shock} 点感电。"
+description = "完美御术反击命中时，附加 {parry_shock} 点感电，并引出至多 {targets} 跳电链。首跳造成 {damage} 点基础伤害，后续递减。"
 modifiers = {&"parry_shock": 16}
+numbers = {&"damage": 24, &"targets": 2}
+stack_values = PackedStringArray("damage")
+choice_role = &"mechanism"
 tags = PackedStringArray("parry", "shock")
 max_stacks = 2
 rarity = &"common"

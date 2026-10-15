@@ -37,18 +37,22 @@ void fragment() {
 		normal = normalize(vec2(-slope,1.0));
 	}
 	float thickness = exp(-ridge*ridge*3.2) * ends;
-	vec2 ray = normal * ridge * thickness;
+	float flow = 0.5 + 0.5*sin(UV.x*7.5 - clock*0.65 + phase*6.283);
+	float clear = exp(-pow((UV.x-0.5-0.65*sin(clock*0.24+phase*6.283))*2.4, 2.0));
+	normal += vec2(sin(UV.x*5.0-clock*0.3), cos(UV.x*4.0-clock*0.4))*0.10*thickness;
+	vec2 ray = normal * ridge * thickness * (0.85+flow*0.3);
 	vec2 offset = ray * SCREEN_PIXEL_SIZE * (5.0 + activity*5.0);
-	vec3 scenery = textureLod(screen_texture, SCREEN_UV + offset, 1.2).rgb;
+	float roughness = mix(0.45, 2.1, flow) * (1.0-clear*0.42);
+	vec3 scenery = textureLod(screen_texture, SCREEN_UV + offset, roughness).rgb;
 	// Tiny dispersion is confined to the facet, not applied to foreground type.
-	scenery.r = textureLod(screen_texture, SCREEN_UV + offset*1.08, 1.2).r;
-	scenery.b = textureLod(screen_texture, SCREEN_UV + offset*0.92, 1.2).b;
+	scenery.r = textureLod(screen_texture, SCREEN_UV + offset*1.10, roughness).r;
+	scenery.b = textureLod(screen_texture, SCREEN_UV + offset*0.90, roughness).b;
 	float proximity = exp(-dot((UV-light_center)*vec2(1.4,1.0), (UV-light_center)*vec2(1.4,1.0))*12.0);
 	float travel = fract(clock*mix(0.035,0.048,phase)+phase) * 1.8 - 0.4;
 	float beam = exp(-pow((UV.x + UV.y*0.18 - travel)/0.20, 2.0));
 	float moving_light = beam * smoothstep(0.01, 0.4, clock) * (control_surface ? 0.55+activity*0.45 : 0.45);
 	float illumination = 0.16 + moving_light*0.55 + proximity*activity*0.35 + pulse*0.18;
-	float catch_light = exp(-pow((UV.x-0.34)/0.17,2.0)) + 0.35*exp(-pow((UV.x-0.76)/0.11,2.0));
+	float catch_light = exp(-pow((UV.x-0.34-0.12*sin(clock*0.24+phase))/0.17,2.0)) + 0.35*exp(-pow((UV.x-0.76+0.10*sin(clock*0.19+phase))/0.11,2.0));
 	float face = exp(-pow((ridge+0.20)/0.025,2.0)) * edge * catch_light;
 	float caustic = exp(-pow((ridge-0.12)/0.18,2.0)) * edge * (catch_light*0.35+moving_light);
 	float gold_alpha = 0.0;
@@ -58,7 +62,7 @@ void fragment() {
 	if (!control_surface) {
 		vec2 submerged_uv = UV + ray*TEXTURE_PIXEL_SIZE*3.0;
 		vec4 thread = texture(TEXTURE, submerged_uv);
-		float buried = smoothstep(-0.1, 0.45, ridge)*0.65;
+		float buried = smoothstep(-0.1, 0.45, ridge)*mix(0.35,0.85,flow);
 		float soft_thread = (texture(TEXTURE, submerged_uv + TEXTURE_PIXEL_SIZE*1.3).a + texture(TEXTURE, submerged_uv - TEXTURE_PIXEL_SIZE*1.3).a)*0.5;
 		gold_alpha = mix(thread.a, soft_thread, buried*0.65) * edge;
 		gold_alpha *= (0.22 + illumination*0.7) * (1.0-buried*0.6);

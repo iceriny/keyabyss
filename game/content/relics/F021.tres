@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"F021"
 title = "飞雪笔"
+choice_role = &"power"
 description = "冰锥飞行速度提高 {frost_flight_pct}%。"
-modifiers = {&"frost_flight_pct": 10}
+modifiers = {&"frost_flight_pct": 12}
 tags = PackedStringArray("pierce")
 max_stacks = 2
 rarity = &"common"

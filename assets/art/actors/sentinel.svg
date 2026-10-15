@@ -1,1 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="216" height="216" viewBox="0 0 108 108"><path d="M33 14L75 14L91 45L84 87L54 101L24 87L17 45Z" fill="#495969" stroke="#b8c2bc" stroke-width="1.6"/><path d="M35 25H73L80 46L54 57L28 46Z" fill="#273541"/><path d="M37 38L47 40M61 40L71 38" stroke="#e9d4a7" stroke-width="2.2"/><path d="M36 59L54 66L72 59L68 83L54 89L40 83Z" fill="#7b8c96" stroke="#c6bca2"/><path d="M12 38L8 74M96 38L100 74" stroke="#b9b39e" stroke-width="3"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="216" height="216" viewBox="0 0 108 108">
+ <defs><linearGradient id="plate" x2=".85" y2="1"><stop stop-color="#b7c7ca"/><stop offset=".3" stop-color="#657b8a"/><stop offset=".68" stop-color="#293d51"/><stop offset="1" stop-color="#859aa4"/></linearGradient><linearGradient id="trim"><stop stop-color="#738080"/><stop offset=".45" stop-color="#ded4af"/><stop offset="1" stop-color="#8c937f"/></linearGradient></defs>
+ <path d="M35 18L54 12L73 18L85 47L79 82L67 89L54 101L41 89L29 82L23 47Z" fill="url(#plate)" stroke="url(#trim)" stroke-width="1.6"/>
+ <path d="M21 34L34 40L29 68L15 77L10 68L13 45ZM87 34L74 40L79 68L93 77L98 68L95 45Z" fill="url(#plate)" stroke="#b0bab8" stroke-width="1.3"/>
+ <path d="M15 44L23 48L19 67L13 70ZM93 44L85 48L89 67L95 70Z" fill="#1a2d3b"/><path d="M17 47L15 63M91 47L93 63" stroke="#d8c9a0" stroke-width="1.3"/>
+ <path d="M35 25L54 20L73 25L78 44L54 57L30 44Z" fill="#203344" stroke="#b3bdb6"/>
+ <path d="M35 26L54 22L54 33L33 36ZM54 22L72 27L75 36L54 33Z" fill="url(#plate)"/>
+ <path d="M36 39L47 41M61 41L72 39" stroke="#efdeaf" stroke-width="2.2"/>
+ <path d="M49 35L54 32L59 35L58 47L54 51L50 47Z" fill="url(#trim)"/>
+ <path d="M35 58L54 66L73 58L69 82L54 92L39 82Z" fill="url(#plate)" stroke="url(#trim)" stroke-width="1.2"/>
+ <path d="M40 64L50 69L50 84L42 79ZM58 69L68 64L66 79L58 84Z" fill="#bcced0" opacity=".2"/>
+ <path d="M54 66V89M34 51L40 55M68 55L74 51M37 85L44 91M64 91L71 85" stroke="#d4c39a" stroke-width="1"/>
+ <path d="M44 70Q44 77 49 78M64 70Q64 77 59 78" fill="none" stroke="#c5c9ae"/>
+</svg>

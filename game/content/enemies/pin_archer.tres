@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyCombatDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+kind = &"pin-archer"
+behavior = &"snipe"
+encounter_role = &"precision"
+health = 55
+speed = 39.0
+radius = 19.0
+mass = 1.0
+experience = 9
+attack_damage = 11
+attack_interval = 4.8
+warning_time = 1.2
+spawn_limit = 1

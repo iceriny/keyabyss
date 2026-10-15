@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R014"
 title = "短咒连珠"
+choice_role = &"mechanism"
 description = "不超过4个字母的词咒伤害提高 {damage_pct}%，并恢复少量闪避充能。"
 stage = &"M3"
 supported = true

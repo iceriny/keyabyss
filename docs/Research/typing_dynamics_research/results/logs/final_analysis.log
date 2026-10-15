@@ -1,0 +1,25 @@
+BEGIN uncertainty: 2560 sessions
+uncertainty: 256/2560 (7.5s)
+uncertainty: 512/2560 (8.9s)
+uncertainty: 768/2560 (11.7s)
+uncertainty: 1024/2560 (13.9s)
+uncertainty: 1280/2560 (21.8s)
+uncertainty: 1536/2560 (28.4s)
+uncertainty: 1792/2560 (31.8s)
+uncertainty: 2048/2560 (35.5s)
+uncertainty: 2304/2560 (39.3s)
+uncertainty: 2560/2560 (43.2s)
+END uncertainty: 44.2s
+{
+  "executed_sessions": 18192,
+  "simulated_hours": 268.73333333333335,
+  "batch_compute_wall_seconds": 474.9539177520014,
+  "failure_sessions": 26,
+  "baseline_people": 354,
+  "baseline_sessions": 2832,
+  "baseline_completed_words": 165297
+}
+references 17 parameters 175
+..............................                                           [100%]
+30 passed in 1.33s
+{'checked_sessions': 20, 'passed': 20, 'seconds': 1.8205035979999593, 'scope': 'fresh-interpreter local replay against retained outputs; not another person or another machine'}

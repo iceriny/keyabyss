@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"G017"
 title = "蘸水笔"
+choice_role = &"defense"
 description = "完美御术成功时，获得 {parry_shield} 点护盾。"
-modifiers = {&"parry_shield": 2}
+modifiers = {&"parry_shield": 3}
 tags = PackedStringArray("parry", "shield")
 max_stacks = 2
 rarity = &"common"

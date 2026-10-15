@@ -1,0 +1,40 @@
+\usepackage{caption}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{fancyhdr}
+\usepackage{fvextra}
+\captionsetup{labelformat=empty,font=small}
+\floatplacement{figure}{H}
+\setlength{\emergencystretch}{3em}
+\setlength{\parskip}{0.55em}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small 动态随机词打字 · 计算研究}
+\fancyhead[R]{\small 2026.10}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\AtBeginDocument{\renewcommand{\figurename}{图}\renewcommand{\tablename}{表}}
+\renewcommand{\maketitle}{%
+\begin{titlepage}\thispagestyle{empty}\centering
+\vspace*{25mm}
+{\small 计算行为科学研究\par}
+\vspace{15mm}
+{\huge\bfseries 动态随机英文单词打字\par}
+\vspace{6mm}
+{\Large 视觉—认知—十指运动的耦合建模与仿真\par}
+\vspace{15mm}
+\rule{0.68\textwidth}{0.4pt}\par
+\vspace{7mm}
+{\large 数学模型 · 公开证据 · 可复现计算\par}
+\vfill
+{\large 18,192场计算会话\quad 31张研究图\par}
+\vspace{4mm}
+{\normalsize 模型实现、数据与执行记录随项目交付\par}
+\vspace{14mm}
+{\normalsize 2026年10月13日\par}
+\vspace*{16mm}
+\end{titlepage}}
+\let\originaltableofcontents\tableofcontents
+\renewcommand{\tableofcontents}{\originaltableofcontents\clearpage}

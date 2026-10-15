@@ -14,6 +14,8 @@ var _accent := Color("8bdeff")
 var _step := -1
 var _total := 1
 var _complete := false
+var _goal_ready := false
+var _at_bottom := false
 var _feedback: Tween
 var _content: Control
 var _title: Label
@@ -28,8 +30,8 @@ static func create_overlay(book: BookPresentation, motion_reduced: bool) -> Tuto
 	overlay.reduced_motion = motion_reduced
 	overlay._accent = book.color
 	overlay._bind_nodes()
-	(overlay.get_node("Content/Book") as Label).text = book.title + " · 习术"
-	(overlay.get_node("Content/Seal") as TextureRect).texture = book.seal
+	(overlay.get_node("Content/Book") as Label).text = book.title + " · 练习"
+	(overlay.get_node("Content/Seal") as TextureRect).texture = ArcanaRunes.seal(book.id, 30.0)
 	(overlay.get_node("Content/Seal") as TextureRect).modulate = Color(book.color, 0.55)
 	return overlay
 
@@ -67,15 +69,15 @@ func show_step(index: int, total: int, title: String, instruction: String, progr
 	_step = index
 	_total = total
 	_complete = complete
+	if changed: _at_bottom = false
 	_title.text = title
 	_instruction.text = instruction
 	_progress.text = progress
 	_layout()
 	_counter.text = "练习完成" if complete else "第 %02d / %02d 步" % [index + 1, total]
 	_counter.add_theme_color_override("font_color", Color("f0ddae") if complete else _accent)
-	_progress.add_theme_color_override("font_color", Color("f0ddae") if complete else Color("e8e4d8"))
 	exit_button.set_caption("返回教学" if complete else "退出练习")
-	next_button.set_caption("完成练习" if index == total - 1 else "下一步")
+	next_button.set_caption("完成并返回" if index == total - 1 else "下一步")
 	next_button.visible = not complete
 	_steps.queue_redraw()
 	if changed and is_inside_tree():
@@ -89,6 +91,14 @@ func show_step(index: int, total: int, title: String, instruction: String, progr
 
 func set_goal_ready(achieved: bool) -> void:
 	next_button.disabled = not achieved
+	next_button.set_selected_visual(achieved)
+	_progress.add_theme_color_override("font_color", Color("f0ddae") if achieved else Color("e8e4d8"))
+	($Content/GoalMark as ColorRect).color = Color("f0ddae") if achieved else _accent
+	if achieved and not _goal_ready and not reduced_motion:
+		var feedback := create_tween()
+		_progress.modulate.a = 0.5
+		feedback.tween_property(_progress, "modulate:a", 1.0, 0.2)
+	_goal_ready = achieved
 
 
 ## BattlePage-local bounds, available to the host's word placement algorithm.
@@ -96,14 +106,19 @@ func get_reserved_rect() -> Rect2:
 	return Rect2(position + _content.position, _content.size * _content.scale)
 
 
+## Move only when the player would enter the reading area, before a dodge arrives.
+func avoid_player(at: Vector2) -> void:
+	if not get_reserved_rect().grow(64.0).has_point(at): return
+	_at_bottom = not _at_bottom
+	_layout()
+
+
 func _layout() -> void:
 	# GameDisplay already owns UI scaling; keep the same coordinate space as HUD.
-	_content.position = Vector2(54.0, 204.0)
-	_progress.position.y = maxf(351.0, _instruction.position.y + _instruction.get_minimum_size().y + 12.0)
-	var actions := $Content/Actions as HBoxContainer
-	actions.position.y = maxf(399.0, _progress.position.y + maxf(_progress.size.y, _progress.get_minimum_size().y) + 11.0)
-	_content.size.y = actions.position.y + actions.size.y
-	($Content/Veil as TextureRect).size.y = _content.size.y + 43.0
+	# Keep reading directly above the practice scene, with a stable goal and action row.
+	var top := maxf(70.0, size.y * 0.5 - _content.size.y - 98.0)
+	var left := maxf(54.0, size.x * 0.5 - _content.size.x - 96.0) if _at_bottom else (size.x - _content.size.x) * 0.5
+	_content.position = Vector2(roundf(left), size.y - _content.size.y - 132.0 if _at_bottom else top)
 
 
 func _draw_steps() -> void:

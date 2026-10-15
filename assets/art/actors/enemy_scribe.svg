@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="208" height="232" viewBox="0 0 104 116"><path d="M43 11L68 20L64 46L79 98L48 105L20 94L33 45L30 26Z" fill="#65534e" stroke="#c0ad98" stroke-width="1.4"/><path d="M38 29L59 26L60 43L38 43Z" fill="#27313c"/><path d="M42 34H48M53 34H58" stroke="#ebd6b2" stroke-width="2"/><path d="M85 16L77 97M75 17L91 12L85 38Z" fill="#b8b6a4" stroke="#e0cba5"/><path d="M27 63L49 57L62 67L41 76Z" fill="#a6a898" stroke="#d0c1a0"/><path d="M34 65L43 63M40 69L50 67" stroke="#4d5456"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="208" height="232" viewBox="0 0 104 116">
+ <defs><linearGradient id="robe" x2=".9" y2="1"><stop stop-color="#c4b6a1"/><stop offset=".3" stop-color="#8b7167"/><stop offset=".7" stop-color="#3a3542"/><stop offset="1" stop-color="#8c7b78"/></linearGradient><linearGradient id="paper" x2=".3" y2="1"><stop stop-color="#e2dcc4"/><stop offset="1" stop-color="#929681"/></linearGradient></defs>
+ <path d="M35 43L61 41Q66 67 79 98L60 100L48 106L20 94L27 73Z" fill="url(#robe)" stroke="#bba793" stroke-width="1.3"/>
+ <path d="M47 47L48 86L39 99L51 101L66 95L56 46Z" fill="#292e3b"/>
+ <path d="M34 51Q28 70 25 88L35 91L39 56M61 54L72 91L64 89L56 59" fill="#d7c1a5" opacity=".14"/>
+ <path d="M43 11Q56 18 68 20L64 45L49 51L31 45L30 27Z" fill="url(#robe)" stroke="#c6b399" stroke-width="1.4"/>
+ <path d="M39 28L59 26L60 42L47 45L37 40Z" fill="#1e2c37"/><path d="M42 34H48M53 33L58 32" stroke="#f1dfba" stroke-width="2"/>
+ <path d="M35 25L47 19L61 23M35 46L47 54L47 60M60 45L53 53M28 89Q36 87 36 80M63 78Q63 91 71 94" fill="none" stroke="#cfba8f" stroke-width="1"/>
+ <path d="M62 53L80 59L79 68L63 64M33 54L25 61L32 70L42 61" fill="url(#robe)" stroke="#a79786"/>
+ <path d="M84 23L77 98" stroke="#c9b48a" stroke-width="2"/>
+ <path d="M79 36Q69 19 92 10Q94 29 84 37L86 28L79 36Z" fill="url(#paper)" stroke="#d3c4a3"/><path d="M81 36L90 14M80 25L86 24M83 18L88 20" stroke="#788278" stroke-width=".8"/>
+ <path d="M24 64L44 56L62 65L43 79L25 73Q19 71 24 64Z" fill="url(#paper)" stroke="#d5c6a4" stroke-width="1.2"/>
+ <path d="M24 65Q31 64 30 70L26 73M44 59L56 66L42 75M33 65L42 62M37 69L49 64M41 72L52 67" fill="none" stroke="#6c7267" stroke-width=".9"/>
+ <path d="M42 83L44 89L40 95L37 89Z" fill="#b4bca8" stroke="#d0b88b"/>
+</svg>

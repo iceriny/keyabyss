@@ -1,0 +1,11 @@
+{
+  "source": "TextBlob 0.19.0 packaged en-spelling.txt",
+  "source_url": "https://raw.githubusercontent.com/sloria/TextBlob/dev/src/textblob/en/en-spelling.txt",
+  "header_provenance": "Project Gutenberg public domain books; Wiktionary and British National Corpus frequency lists; Norvig big.txt",
+  "sha256": "eade91558167fe09a481abf59e176af8643ad78678cc53dd5aeaf2a8b30fa332",
+  "tokens": 1105285,
+  "types": 29157,
+  "logfreq_definition": "9 + log10(count / total corpus counts)",
+  "limitation": "Historical mixed corpus; not SUBTLEX, not wordfreq Zipf scores, includes names and archaic forms.",
+  "main_pool_size": 5875
+}

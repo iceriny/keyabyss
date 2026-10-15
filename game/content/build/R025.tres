@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R025"
 title = "鲸骨笔杆"
+choice_role = &"mechanism"
 description = "法术击退提高 {push_pct}%，碰撞伤害翻倍。"
 stage = &"M3"
 supported = true

@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"A007"
 title = "宽幅火纸"
+choice_role = &"power"
 description = "焰印火雾半径增加 {fire_field_radius}。"
-modifiers = {&"fire_field_radius": 10}
+modifiers = {&"fire_field_radius": 15}
 tags = PackedStringArray("fire_field")
 max_stacks = 2
 rarity = &"common"

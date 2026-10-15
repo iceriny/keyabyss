@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R026"
 title = "牵引墨"
+choice_role = &"mechanism"
 description = "直接施法命中时，牵引附近敌人靠近落点。"
 stage = &"M3"
 supported = true

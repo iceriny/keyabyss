@@ -4,6 +4,7 @@
 script = ExtResource("1")
 kind = &"binder"
 behavior = &"bind"
+encounter_role = &"support"
 health = 103
 speed = 31.5
 radius = 23.76

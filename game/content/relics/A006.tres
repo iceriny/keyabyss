@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"A006"
 title = "慢燃纸"
-description = "焰印留下的火雾延长 {fire_field_ms_s} 秒。"
-modifiers = {&"fire_field_ms": 300}
+description = "亲手施放的火弹命中火雾中的敌人时，消耗该处一片火雾，在半径 {radius} 内引爆基础威力 {damage_pct}% 的伤害。本次命中新生的火雾不会被消耗。"
+numbers = {&"damage_pct": 60, &"radius": 145}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("fire_field")
 max_stacks = 2
 rarity = &"common"

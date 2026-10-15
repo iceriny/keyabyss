@@ -46,7 +46,8 @@ func _run() -> void:
 		for definition in room.enemies: kinds[definition.kind] = true
 		if room.reinforcement != null: kinds[room.reinforcement.kind] = true
 	kinds[&"tower"] = true
-	_check(kinds.size() == 20, "seventeen ordinary kinds and three Bosses are referenced")
+	var expected: Array[StringName] = [&"nib", &"quill", &"guard", &"wisp", &"ram", &"split", &"scribe", &"mirror", &"leech", &"mortar", &"priest", &"sentinel", &"brood", &"binder", &"vortex", &"reaper", &"tower", &"pin-archer", &"refrain", &"folio-warden", &"ink-colossus", &"echo-archivist", &"final-editor"]
+	_check(kinds.size() == expected.size() and expected.all(func(kind: StringName) -> bool: return kinds.has(kind)), "twenty ordinary kinds and three Bosses are referenced by the formal itinerary")
 	var words: Array[VocabularyEntry] = [VocabularyEntry.new("abcdef", "测试"), VocabularyEntry.new("ghijkl", "测试"), VocabularyEntry.new("mnopqr", "测试"), VocabularyEntry.new("stuvwx", "测试")]
 	var battle := BattleSession.new()
 	battle.encounter = itinerary.encounters[8]

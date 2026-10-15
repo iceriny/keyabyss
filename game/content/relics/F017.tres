@@ -6,8 +6,11 @@
 script = ExtResource("1")
 id = &"F017"
 title = "回锋冰笔"
-description = "完美御术反击命中时，附加 {parry_cold} 点寒气。"
+description = "完美御术反击命中时，附加 {parry_cold} 点寒气，并在落点留下半径 {radius}、持续 {duration} 秒的寒气场。"
 modifiers = {&"parry_cold": 18}
+numbers = {&"radius": 100, &"duration": 2}
+stack_values = PackedStringArray("duration")
+choice_role = &"mechanism"
 tags = PackedStringArray("parry", "cold")
 max_stacks = 2
 rarity = &"common"

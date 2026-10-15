@@ -4,7 +4,7 @@ extends Node
 
 const CONFIG_PATH := "user://development/build-lab.json"
 const CHOICE_SCENARIOS := ["priority", "escort", "waves"]
-const SCENARIO_NAMES := {"neutral": "中性基线", "dense": "密集", "spread": "分散", "durable": "耐久", "barrage": "弹幕", "resistance": "抗性与弱点", "successive": "连续房间", "priority": "近敌与后排", "escort": "弱敌与要害", "waves": "连续三波"}
+const SCENARIO_NAMES := {"neutral": "中性基线", "dense": "密集", "spread": "分散", "durable": "耐久", "barrage": "弹幕", "resistance": "抗性与弱点", "successive": "连续页", "priority": "近敌与后排", "escort": "弱敌与要害", "waves": "连续三段"}
 const BOOK_PRESENTATIONS := {
 	&"frost": preload("res://game/content/books/frost.tres"),
 	&"flame": preload("res://game/content/books/flame.tres"),
@@ -234,7 +234,7 @@ func _show_inspector() -> void:
 	host.add_child(shell)
 	inspector = PageShell.label(shell.body, "", 17, Color("e8e4d8"))
 	var runtime := session.runtime
-	var lines: PackedStringArray = ["房间 %s · 人工字符 %s · 人工完词 %s" % [session.ledger.room_id, session.manual_characters, session.completed_words], "实际扣血 %.2f · 过量伤害 %.2f · 未用完便结束 %.2f" % [runtime.actual_damage_q / 1024.0, runtime.overkill_damage_q / 1024.0, runtime.unused_power_q / 1024.0], "护页／纸灵挡伤 %.2f（%d 次）· 实际治疗 %.2f · 冻结触发 %d 次" % [runtime.guarded_damage_q / 1024.0, runtime.guarded_hits, runtime.healed_q / 1024.0, runtime.freezes]]
+	var lines: PackedStringArray = ["页 %s · 人工字符 %s · 人工完词 %s" % [session.ledger.room_id, session.manual_characters, session.completed_words], "实际扣血 %.2f · 过量伤害 %.2f · 未用完便结束 %.2f" % [runtime.actual_damage_q / 1024.0, runtime.overkill_damage_q / 1024.0, runtime.unused_power_q / 1024.0], "护页／纸灵挡伤 %.2f（%d 次）· 实际治疗 %.2f · 冻结触发 %d 次" % [runtime.guarded_damage_q / 1024.0, runtime.guarded_hits, runtime.healed_q / 1024.0, runtime.freezes]]
 	var sources := runtime.damage_by_source.keys()
 	sources.sort()
 	var source_names := {&"frost_spear": "冰矛", &"frost_fragment": "冰片", &"flame_burst": "火弹", &"flame_burn": "持续作用", &"flame_splash": "溅射", &"storm_arc": "电弧", &"storm_beam": "束雷", &"spirit_mark": "纸灵", &"spirit_blade": "纸刃", &"counter": "反击", &"counter-followup": "后续反击"}
@@ -250,7 +250,7 @@ func _show_inspector() -> void:
 	inspector.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_button(shell.footer, "调整构筑", show_configuration)
 	if session.result == 0: _button(shell.footer, "继续", _resume)
-	elif session.result == 1 and scenario == "successive": _button(shell.footer, "下一房", _start_battle)
+	elif session.result == 1 and scenario == "successive": _button(shell.footer, "下一页", _start_battle)
 	else: _button(shell.footer, "重新试战", func() -> void:
 		run = RunCombatState.new()
 		_start_battle())

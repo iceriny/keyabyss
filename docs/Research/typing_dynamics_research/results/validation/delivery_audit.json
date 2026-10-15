@@ -1,0 +1,17 @@
+{
+  "automated_tests": 30,
+  "tests_passed": 30,
+  "local_fresh_interpreter_replays": 20,
+  "replays_passed": 20,
+  "report_pages": 33,
+  "figure_count": 31,
+  "figure_formats": [
+    "PNG",
+    "SVG",
+    "PDF"
+  ],
+  "parameter_rows": 177,
+  "reference_records": 17,
+  "review": "All report pages rendered and visually inspected in contact sheets; final cover, contents and representative formula/table pages checked at higher resolution.",
+  "validation_scope": "Computational verification and aggregate calibration, not an independent human experiment or a different-machine reproduction."
+}

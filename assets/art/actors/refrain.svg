@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="224" height="184" viewBox="0 0 112 92">
+ <defs><linearGradient id="paper" x2=".2" y2="1"><stop stop-color="#a9bdcc"/><stop offset=".5" stop-color="#5d7184"/><stop offset="1" stop-color="#293747"/></linearGradient><linearGradient id="edge"><stop stop-color="#9b8867"/><stop offset=".5" stop-color="#ead4aa"/><stop offset="1" stop-color="#918479"/></linearGradient></defs>
+ <path d="M56 29Q34 8 10 17L17 66Q38 61 56 78Q74 61 95 66L102 17Q78 8 56 29Z" fill="#233543" stroke="url(#edge)" stroke-width="1.8"/>
+ <path d="M54 29Q36 15 18 20L23 58Q39 55 54 70ZM58 29Q76 15 94 20L89 58Q73 55 58 70Z" fill="url(#paper)"/>
+ <path d="M29 26Q37 34 44 50Q39 37 26 40M27 48Q36 47 48 59M83 26Q75 34 68 50Q73 37 86 40M85 48Q76 47 64 59" fill="none" stroke="#cbb891" stroke-width="1" opacity=".8"/>
+ <path d="M56 25V76M17 66L20 73Q41 68 56 84Q71 68 92 73L95 66" fill="none" stroke="url(#edge)" stroke-width="1.4"/>
+ <path d="M47 34L51 42L47 50L43 42ZM65 34L69 42L65 50L61 42Z" fill="#e8d4b0"/>
+ <path d="M40 13L46 7L51 19M61 19L66 7L72 13" fill="none" stroke="#b6b5b1" stroke-width="1.3"/>
+</svg>

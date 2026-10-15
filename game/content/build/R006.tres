@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R006"
 title = "双生笔尖"
+choice_role = &"mechanism"
 description = "每第 {interval} 次完词，向另一个敌人复制 {damage_pct}% 伤害的法术。"
 stage = &"M3"
 supported = true

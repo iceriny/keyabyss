@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1")
 id = &"G026"
+choice_role = &"mechanism"
 title = "纸鹤书签"
 description = "直接施法命中时，附加 {cross_mark_hit} 点易伤；此书签最多累积至 {mark_limit} 点。"
 modifiers = {&"cross_mark_hit": 5}

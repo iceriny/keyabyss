@@ -1,0 +1,48 @@
+{
+  "schema": "crystal_half_fields_v2",
+  "name": "river",
+  "source": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\source\\river.png",
+  "source_sha256": "7920231597207861ecfe4e68e3a39fec2506a9785a9a6d7b6c654bd199c5fa02",
+  "size": [
+    1672,
+    941
+  ],
+  "source_size": [
+    1672,
+    941
+  ],
+  "black_padding_ltrb": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "content_edge_feather_px": [
+    0.0,
+    0.0
+  ],
+  "seed": 2,
+  "guide_count": 18,
+  "max_guides": 18,
+  "baseline_linear_rgb": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "decoded_broad_max": 0.9480840563774109,
+  "decoded_ridge_max": 0.610695481300354,
+  "flow_mask_mean": 0.07479222863912582,
+  "flow_mask_max": 0.9962554574012756,
+  "gradient_abs_max": 0.6860000491142273,
+  "authored_height_scale": 0.6088108730987967,
+  "files": {
+    "structure": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\river_structure.exr",
+    "flow": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\river_flow.exr",
+    "gradient": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\river_gradient.exr"
+  },
+  "linear_data": true,
+  "storage": "RGBA16F",
+  "premultiplied": false,
+  "source_rgb_is_base_color": false,
+  "geometry": "independently authored fold height along image-guided 2-D curves; not physical reconstruction"
+}

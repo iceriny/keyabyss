@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R019"
 title = "硬壳书封"
+choice_role = &"defense"
 description = "受到的生命伤害减少 {damage_pct_abs}%。"
 stage = &"M3"
 supported = true

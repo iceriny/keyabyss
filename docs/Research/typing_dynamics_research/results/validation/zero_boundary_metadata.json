@@ -1,0 +1,7 @@
+{
+  "role": "structural diagnostic: no word-boundary commitment delay",
+  "replication": "use final population profiles with boundary_delay_multiplier=0; source within-word parameters otherwise unchanged",
+  "seed": 20261014,
+  "n_sessions": 4120,
+  "not_final_model": true
+}

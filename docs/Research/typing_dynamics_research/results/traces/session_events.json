@@ -1,0 +1,1877 @@
+[
+  {
+    "time": 0.0,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 0,
+      "word": "war"
+    }
+  },
+  {
+    "time": 0.46569977835151277,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 0,
+      "word": "war",
+      "success": 1
+    }
+  },
+  {
+    "time": 0.6073976137025844,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 0.6073976137025844,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 0.6073976137025844,
+      "plan_start": 0.46569977835151277,
+      "plan_end": 0.6073976137025844,
+      "word_index": 0
+    }
+  },
+  {
+    "time": 0.6894449815458732,
+    "kind": "letter",
+    "payload": {
+      "time": 0.6894449815458732,
+      "release": 0.7929016882082327,
+      "key": "w",
+      "kind": "letter",
+      "finger": 1,
+      "hand": 0,
+      "plan_start": 0.6073976137025844,
+      "plan_end": 0.6173976137025844,
+      "move_start": 0.6173976137025844,
+      "arrival": 0.6894449815458732,
+      "transition": "alternation",
+      "bottleneck": "movement",
+      "x": 1.0,
+      "y": 0.0,
+      "word_index": 0
+    }
+  },
+  {
+    "time": 0.6894449815458732,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 1,
+      "word": "methods"
+    }
+  },
+  {
+    "time": 0.7747086572260793,
+    "kind": "letter",
+    "payload": {
+      "time": 0.7747086572260793,
+      "release": 0.9241242391000584,
+      "key": "a",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 0.6173976137025844,
+      "plan_end": 0.6273976137025844,
+      "move_start": 0.6273976137025844,
+      "arrival": 0.6553976137025844,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 0.25,
+      "y": 1.0,
+      "word_index": 0
+    }
+  },
+  {
+    "time": 0.8466566756327639,
+    "kind": "letter",
+    "payload": {
+      "time": 0.8466566756327639,
+      "release": 0.9609406789130772,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 0.6273976137025844,
+      "plan_end": 0.6373976137025844,
+      "move_start": 0.6373976137025844,
+      "arrival": 0.7094449815458732,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 0
+    }
+  },
+  {
+    "time": 0.9335320616894144,
+    "kind": "submit",
+    "payload": {
+      "time": 0.9335320616894144,
+      "release": 1.01319564033273,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 0.6373976137025844,
+      "plan_end": 0.6473976137025844,
+      "move_start": 0.6473976137025844,
+      "arrival": 0.6773539977218223,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 0
+    }
+  },
+  {
+    "time": 1.1670541594118173,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 1,
+      "word": "methods",
+      "success": 1
+    }
+  },
+  {
+    "time": 1.2748956706644194,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 1.2748956706644194,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 1.2748956706644194,
+      "plan_start": 1.1670541594118173,
+      "plan_end": 1.2748956706644194,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.3594907918749175,
+    "kind": "letter",
+    "payload": {
+      "time": 1.3594907918749175,
+      "release": 1.477988527260255,
+      "key": "m",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 1.2748956706644194,
+      "plan_end": 1.2848953135103296,
+      "move_start": 1.2848953135103296,
+      "arrival": 1.3594907918749175,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 6.75,
+      "y": 2.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.3594907918749175,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 2,
+      "word": "april"
+    }
+  },
+  {
+    "time": 1.439452493082846,
+    "kind": "letter",
+    "payload": {
+      "time": 1.439452493082846,
+      "release": 1.5156590966908077,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 1.2848953135103296,
+      "plan_end": 1.2948949563562397,
+      "move_start": 1.2948949563562397,
+      "arrival": 1.3669397509983199,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.5389454699286773,
+    "kind": "letter",
+    "payload": {
+      "time": 1.5389454699286773,
+      "release": 1.6332925877857427,
+      "key": "t",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 1.2948949563562397,
+      "plan_end": 1.30489459920215,
+      "move_start": 1.30489459920215,
+      "arrival": 1.3760121595987254,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 4.0,
+      "y": 0.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.6495931042315806,
+    "kind": "letter",
+    "payload": {
+      "time": 1.6495931042315806,
+      "release": 1.7485842951866946,
+      "key": "h",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 1.30489459920215,
+      "plan_end": 1.31489424204806,
+      "move_start": 1.477988527260255,
+      "arrival": 1.569443054790834,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 5.25,
+      "y": 1.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.7655162266098503,
+    "kind": "letter",
+    "payload": {
+      "time": 1.7655162266098503,
+      "release": 1.874279700077626,
+      "key": "o",
+      "kind": "letter",
+      "finger": 8,
+      "hand": 1,
+      "plan_start": 1.3594907918749175,
+      "plan_end": 1.3694904347208277,
+      "move_start": 1.3694904347208277,
+      "arrival": 1.4415352293629078,
+      "transition": "right",
+      "bottleneck": "sequence",
+      "x": 8.0,
+      "y": 0.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.8606846626117663,
+    "kind": "letter",
+    "payload": {
+      "time": 1.8606846626117663,
+      "release": 1.9550587156452204,
+      "key": "d",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 1.439452493082846,
+      "plan_end": 1.4494521359287562,
+      "move_start": 1.5156590966908077,
+      "arrival": 1.5877038913328878,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.25,
+      "y": 1.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 1.9632456093676125,
+    "kind": "letter",
+    "payload": {
+      "time": 1.9632456093676125,
+      "release": 2.061722865596,
+      "key": "s",
+      "kind": "letter",
+      "finger": 1,
+      "hand": 0,
+      "plan_start": 1.5389454699286773,
+      "plan_end": 1.5489451127745875,
+      "move_start": 1.5489451127745875,
+      "arrival": 1.6209899074166676,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 1.25,
+      "y": 1.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 2.0562582833780447,
+    "kind": "submit",
+    "payload": {
+      "time": 2.0562582833780447,
+      "release": 2.167767164918406,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 1.6495931042315806,
+      "plan_end": 1.6595927470774907,
+      "move_start": 1.6595927470774907,
+      "arrival": 1.6875917470460393,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 1
+    }
+  },
+  {
+    "time": 2.491221276472416,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 2,
+      "word": "april",
+      "success": 1
+    }
+  },
+  {
+    "time": 2.6175833864644797,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 2.6175833864644797,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 2.6175833864644797,
+      "plan_start": 2.491221276472416,
+      "plan_end": 2.6175833864644797,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 2.6555807444774335,
+    "kind": "letter",
+    "payload": {
+      "time": 2.6555807444774335,
+      "release": 2.7502164951550556,
+      "key": "a",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 2.6175833864644797,
+      "plan_end": 2.6275826912047306,
+      "move_start": 2.6275826912047306,
+      "arrival": 2.6555807444774335,
+      "transition": "alternation",
+      "bottleneck": "movement",
+      "x": 0.25,
+      "y": 1.0,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 2.6555807444774335,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 3,
+      "word": "killed"
+    }
+  },
+  {
+    "time": 2.7353158310601624,
+    "kind": "letter",
+    "payload": {
+      "time": 2.7353158310601624,
+      "release": 2.8490542350638917,
+      "key": "p",
+      "kind": "letter",
+      "finger": 9,
+      "hand": 1,
+      "plan_start": 2.6275826912047306,
+      "plan_end": 2.6375819959449815,
+      "move_start": 2.6375819959449815,
+      "arrival": 2.7096243546247822,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 9.0,
+      "y": 0.0,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 2.8602466890106397,
+    "kind": "letter",
+    "payload": {
+      "time": 2.8602466890106397,
+      "release": 2.9476706591086477,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 2.6375819959449815,
+      "plan_end": 2.6475813006852325,
+      "move_start": 2.6475813006852325,
+      "arrival": 2.718696456470963,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 2.953919182471112,
+    "kind": "letter",
+    "payload": {
+      "time": 2.953919182471112,
+      "release": 3.057163297160093,
+      "key": "i",
+      "kind": "letter",
+      "finger": 7,
+      "hand": 1,
+      "plan_start": 2.6475813006852325,
+      "plan_end": 2.6575806054254834,
+      "move_start": 2.6575806054254834,
+      "arrival": 2.729622964105284,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 7.0,
+      "y": 0.0,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 3.072867215790167,
+    "kind": "letter",
+    "payload": {
+      "time": 3.072867215790167,
+      "release": 3.178846154798541,
+      "key": "l",
+      "kind": "letter",
+      "finger": 8,
+      "hand": 1,
+      "plan_start": 2.6575806054254834,
+      "plan_end": 2.6675799101657343,
+      "move_start": 2.6675799101657343,
+      "arrival": 2.739622268845535,
+      "transition": "right",
+      "bottleneck": "sequence",
+      "x": 8.25,
+      "y": 1.0,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 3.1580488434228227,
+    "kind": "submit",
+    "payload": {
+      "time": 3.1580488434228227,
+      "release": 3.274258807627715,
+      "key": " ",
+      "kind": "submit",
+      "finger": 4,
+      "hand": 0,
+      "plan_start": 2.7353158310601624,
+      "plan_end": 2.7453151358004133,
+      "move_start": 2.7453151358004133,
+      "arrival": 2.7807691956201834,
+      "transition": "right",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 2
+    }
+  },
+  {
+    "time": 3.1992368945050926,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 3,
+      "word": "killed",
+      "success": 1
+    }
+  },
+  {
+    "time": 3.310302970843385,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 3.310302970843385,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 3.310302970843385,
+      "plan_start": 3.1992368945050926,
+      "plan_end": 3.310302970843385,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 3.3923426468359255,
+    "kind": "letter",
+    "payload": {
+      "time": 3.3923426468359255,
+      "release": 3.480229797407289,
+      "key": "k",
+      "kind": "letter",
+      "finger": 7,
+      "hand": 1,
+      "plan_start": 3.310302970843385,
+      "plan_end": 3.3203020333543525,
+      "move_start": 3.3203020333543525,
+      "arrival": 3.3923426468359255,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 7.25,
+      "y": 1.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 3.3923426468359255,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 4,
+      "word": "papers"
+    }
+  },
+  {
+    "time": 3.552270410888862,
+    "kind": "letter",
+    "payload": {
+      "time": 3.552270410888862,
+      "release": 3.669261008950442,
+      "key": "i",
+      "kind": "letter",
+      "finger": 7,
+      "hand": 1,
+      "plan_start": 3.3203020333543525,
+      "plan_end": 3.33030109586532,
+      "move_start": 3.480229797407289,
+      "arrival": 3.552270410888862,
+      "transition": "same_finger",
+      "bottleneck": "movement",
+      "x": 7.0,
+      "y": 0.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 3.655547587915182,
+    "kind": "letter",
+    "payload": {
+      "time": 3.655547587915182,
+      "release": 3.723754340526887,
+      "key": "l",
+      "kind": "letter",
+      "finger": 8,
+      "hand": 1,
+      "plan_start": 3.33030109586532,
+      "plan_end": 3.3403001583762877,
+      "move_start": 3.3403001583762877,
+      "arrival": 3.3682975334069973,
+      "transition": "right",
+      "bottleneck": "sequence",
+      "x": 8.25,
+      "y": 1.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 3.7607265380319292,
+    "kind": "letter",
+    "payload": {
+      "time": 3.7607265380319292,
+      "release": 3.8586541914462966,
+      "key": "l",
+      "kind": "letter",
+      "finger": 8,
+      "hand": 1,
+      "plan_start": 3.3403001583762877,
+      "plan_end": 3.3502992208872553,
+      "move_start": 3.723754340526887,
+      "arrival": 3.751751715557597,
+      "transition": "repeat",
+      "bottleneck": "sequence",
+      "x": 8.25,
+      "y": 1.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 3.83827014216071,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 4,
+      "word": "papers",
+      "success": 1
+    }
+  },
+  {
+    "time": 3.8687419880156804,
+    "kind": "letter",
+    "payload": {
+      "time": 3.8687419880156804,
+      "release": 3.9636677798094353,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 3.3923426468359255,
+      "plan_end": 3.402341709346893,
+      "move_start": 3.402341709346893,
+      "arrival": 3.474382322828466,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 4.035708393291008,
+    "kind": "letter",
+    "payload": {
+      "time": 4.035708393291008,
+      "release": 4.125597853391939,
+      "key": "d",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 3.552270410888862,
+      "plan_end": 3.5622694733998297,
+      "move_start": 3.9636677798094353,
+      "arrival": 4.035708393291008,
+      "transition": "same_finger",
+      "bottleneck": "movement",
+      "x": 2.25,
+      "y": 1.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 4.113108145725114,
+    "kind": "submit",
+    "payload": {
+      "time": 4.113108145725114,
+      "release": 4.23734940109832,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 3.655547587915182,
+      "plan_end": 3.66554665042615,
+      "move_start": 3.66554665042615,
+      "arrival": 3.6935440254568594,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 3
+    }
+  },
+  {
+    "time": 4.178556343926137,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 4.178556343926137,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 4.178556343926137,
+      "plan_start": 4.113108145725114,
+      "plan_end": 4.178556343926137,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.216552233633337,
+    "kind": "letter",
+    "payload": {
+      "time": 4.216552233633337,
+      "release": 4.2905059545126765,
+      "key": "p",
+      "kind": "letter",
+      "finger": 9,
+      "hand": 1,
+      "plan_start": 4.178556343926137,
+      "plan_end": 4.188555262270137,
+      "move_start": 4.188555262270137,
+      "arrival": 4.216552233633337,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 9.0,
+      "y": 0.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.216552233633337,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 5,
+      "word": "tide"
+    }
+  },
+  {
+    "time": 4.306930574182137,
+    "kind": "letter",
+    "payload": {
+      "time": 4.306930574182137,
+      "release": 4.391929196424296,
+      "key": "a",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 4.188555262270137,
+      "plan_end": 4.1985541806141375,
+      "move_start": 4.1985541806141375,
+      "arrival": 4.226551151977337,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 0.25,
+      "y": 1.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.400804996576911,
+    "kind": "letter",
+    "payload": {
+      "time": 4.400804996576911,
+      "release": 4.4789555702015225,
+      "key": "p",
+      "kind": "letter",
+      "finger": 9,
+      "hand": 1,
+      "plan_start": 4.1985541806141375,
+      "plan_end": 4.208553098958138,
+      "move_start": 4.2905059545126765,
+      "arrival": 4.318502925875876,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 9.0,
+      "y": 0.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.5312023739447245,
+    "kind": "letter",
+    "payload": {
+      "time": 4.5312023739447245,
+      "release": 4.6300662294381905,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 4.208553098958138,
+      "plan_end": 4.218552017302138,
+      "move_start": 4.218552017302138,
+      "arrival": 4.2905915920986555,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.627605527448948,
+    "kind": "letter",
+    "payload": {
+      "time": 4.627605527448948,
+      "release": 4.741149386528848,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 4.218552017302138,
+      "plan_end": 4.228550935646139,
+      "move_start": 4.228550935646139,
+      "arrival": 4.256547907009338,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.7170123243668005,
+    "kind": "letter",
+    "payload": {
+      "time": 4.7170123243668005,
+      "release": 4.859324236208069,
+      "key": "s",
+      "kind": "letter",
+      "finger": 1,
+      "hand": 0,
+      "plan_start": 4.306930574182137,
+      "plan_end": 4.316929492526137,
+      "move_start": 4.316929492526137,
+      "arrival": 4.344926463889337,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 1.25,
+      "y": 1.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.717509107465914,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 5,
+      "word": "tide",
+      "success": 1
+    }
+  },
+  {
+    "time": 4.8197922504774295,
+    "kind": "submit",
+    "payload": {
+      "time": 4.8197922504774295,
+      "release": 4.949926779472802,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 4.400804996576911,
+      "plan_end": 4.410803914920911,
+      "move_start": 4.410803914920911,
+      "arrival": 4.438800886284111,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 4
+    }
+  },
+  {
+    "time": 4.9328109136996385,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 4.9328109136996385,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 4.9328109136996385,
+      "plan_start": 4.8197922504774295,
+      "plan_end": 4.9328109136996385,
+      "word_index": 5
+    }
+  },
+  {
+    "time": 5.013921668558529,
+    "kind": "letter",
+    "payload": {
+      "time": 5.013921668558529,
+      "release": 5.130984874818735,
+      "key": "t",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 4.9328109136996385,
+      "plan_end": 4.942809761627451,
+      "move_start": 4.942809761627451,
+      "arrival": 5.013921668558529,
+      "transition": "alternation",
+      "bottleneck": "movement",
+      "x": 4.0,
+      "y": 0.0,
+      "word_index": 5
+    }
+  },
+  {
+    "time": 5.013921668558529,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 6,
+      "word": "quiet"
+    }
+  },
+  {
+    "time": 5.1081676737564266,
+    "kind": "letter",
+    "payload": {
+      "time": 5.1081676737564266,
+      "release": 5.231557096380974,
+      "key": "i",
+      "kind": "letter",
+      "finger": 7,
+      "hand": 1,
+      "plan_start": 4.942809761627451,
+      "plan_end": 4.952808609555264,
+      "move_start": 4.952808609555264,
+      "arrival": 4.98080538375314,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 7.0,
+      "y": 0.0,
+      "word_index": 5
+    }
+  },
+  {
+    "time": 5.20881915258196,
+    "kind": "letter",
+    "payload": {
+      "time": 5.20881915258196,
+      "release": 5.300719265342702,
+      "key": "d",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 4.952808609555264,
+      "plan_end": 4.962807457483077,
+      "move_start": 4.962807457483077,
+      "arrival": 5.034846524949498,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.25,
+      "y": 1.0,
+      "word_index": 5
+    }
+  },
+  {
+    "time": 5.3727583328091235,
+    "kind": "letter",
+    "payload": {
+      "time": 5.3727583328091235,
+      "release": 5.467152087806785,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 4.962807457483077,
+      "plan_end": 4.97280630541089,
+      "move_start": 5.300719265342702,
+      "arrival": 5.3727583328091235,
+      "transition": "same_finger",
+      "bottleneck": "movement",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 5
+    }
+  },
+  {
+    "time": 5.454637224242881,
+    "kind": "submit",
+    "payload": {
+      "time": 5.454637224242881,
+      "release": 5.547805449011439,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 5.013921668558529,
+      "plan_end": 5.023920516486342,
+      "move_start": 5.023920516486342,
+      "arrival": 5.051917290684218,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 5
+    }
+  },
+  {
+    "time": 5.860037683008034,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 6,
+      "word": "quiet",
+      "success": 1
+    }
+  },
+  {
+    "time": 5.958113143915579,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 5.958113143915579,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 5.958113143915579,
+      "plan_start": 5.860037683008034,
+      "plan_end": 5.958113143915579,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.040150740965295,
+    "kind": "letter",
+    "payload": {
+      "time": 6.040150740965295,
+      "release": 6.151895119444963,
+      "key": "q",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 5.958113143915579,
+      "plan_end": 5.968111953043302,
+      "move_start": 5.968111953043302,
+      "arrival": 6.040150740965295,
+      "transition": "alternation",
+      "bottleneck": "movement",
+      "x": 0.0,
+      "y": 0.0,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.040150740965295,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 7,
+      "word": "here"
+    }
+  },
+  {
+    "time": 6.130032269654874,
+    "kind": "letter",
+    "payload": {
+      "time": 6.130032269654874,
+      "release": 6.241099506277801,
+      "key": "u",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 5.968111953043302,
+      "plan_end": 5.978110762171026,
+      "move_start": 5.978110762171026,
+      "arrival": 6.056355033298314,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 6.0,
+      "y": 0.0,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.211921551699206,
+    "kind": "letter",
+    "payload": {
+      "time": 6.211921551699206,
+      "release": 6.327693295657311,
+      "key": "i",
+      "kind": "letter",
+      "finger": 7,
+      "hand": 1,
+      "plan_start": 5.978110762171026,
+      "plan_end": 5.988109571298749,
+      "move_start": 5.988109571298749,
+      "arrival": 6.016106236856375,
+      "transition": "right",
+      "bottleneck": "sequence",
+      "x": 7.0,
+      "y": 0.0,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.311058316263557,
+    "kind": "letter",
+    "payload": {
+      "time": 6.311058316263557,
+      "release": 6.418811824961047,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 5.988109571298749,
+      "plan_end": 5.998108380426473,
+      "move_start": 5.998108380426473,
+      "arrival": 6.026105045984099,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.410932169028598,
+    "kind": "letter",
+    "payload": {
+      "time": 6.410932169028598,
+      "release": 6.513935665934204,
+      "key": "t",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 6.040150740965295,
+      "plan_end": 6.0501495500930185,
+      "move_start": 6.0501495500930185,
+      "arrival": 6.078146215650644,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 4.0,
+      "y": 0.0,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.5072892020783755,
+    "kind": "submit",
+    "payload": {
+      "time": 6.5072892020783755,
+      "release": 6.60295352137761,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 6.130032269654874,
+      "plan_end": 6.140031078782598,
+      "move_start": 6.140031078782598,
+      "arrival": 6.168027744340224,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 6
+    }
+  },
+  {
+    "time": 6.542274450293515,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 7,
+      "word": "here",
+      "success": 1
+    }
+  },
+  {
+    "time": 6.636640662189292,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 6.636640662189292,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 6.636640662189292,
+      "plan_start": 6.542274450293515,
+      "plan_end": 6.636640662189292,
+      "word_index": 7
+    }
+  },
+  {
+    "time": 6.724883589946122,
+    "kind": "letter",
+    "payload": {
+      "time": 6.724883589946122,
+      "release": 6.802836936443967,
+      "key": "h",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 6.636640662189292,
+      "plan_end": 6.646639454037471,
+      "move_start": 6.646639454037471,
+      "arrival": 6.724883589946122,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 5.25,
+      "y": 1.0,
+      "word_index": 7
+    }
+  },
+  {
+    "time": 6.724883589946122,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 8,
+      "word": "herself"
+    }
+  },
+  {
+    "time": 6.802930987472302,
+    "kind": "letter",
+    "payload": {
+      "time": 6.802930987472302,
+      "release": 6.884622910778532,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 6.646639454037471,
+      "plan_end": 6.656638245885651,
+      "move_start": 6.656638245885651,
+      "arrival": 6.684634863060552,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 7
+    }
+  },
+  {
+    "time": 6.901621382938899,
+    "kind": "letter",
+    "payload": {
+      "time": 6.901621382938899,
+      "release": 7.015839800113654,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 6.656638245885651,
+      "plan_end": 6.66663703773383,
+      "move_start": 6.66663703773383,
+      "arrival": 6.737748545825991,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 7
+    }
+  },
+  {
+    "time": 6.997827629466276,
+    "kind": "letter",
+    "payload": {
+      "time": 6.997827629466276,
+      "release": 7.090292362742557,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 6.66663703773383,
+      "plan_end": 6.676635829582009,
+      "move_start": 6.884622910778532,
+      "arrival": 6.912619527953433,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 7
+    }
+  },
+  {
+    "time": 7.070587808737062,
+    "kind": "submit",
+    "payload": {
+      "time": 7.070587808737062,
+      "release": 7.175532614592973,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 6.724883589946122,
+      "plan_end": 6.734882381794302,
+      "move_start": 6.734882381794302,
+      "arrival": 6.762878998969203,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 7
+    }
+  },
+  {
+    "time": 7.5388596420326675,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 8,
+      "word": "herself",
+      "success": 1
+    }
+  },
+  {
+    "time": 7.6560556762707375,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 7.6560556762707375,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 7.6560556762707375,
+      "plan_start": 7.5388596420326675,
+      "plan_end": 7.6560556762707375,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 7.6940511346091345,
+    "kind": "letter",
+    "payload": {
+      "time": 7.6940511346091345,
+      "release": 7.827441033908378,
+      "key": "h",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 7.6560556762707375,
+      "plan_end": 7.666054481096632,
+      "move_start": 7.666054481096632,
+      "arrival": 7.6940511346091345,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 5.25,
+      "y": 1.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 7.6940511346091345,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 9,
+      "word": "hearty"
+    }
+  },
+  {
+    "time": 7.7676311136959235,
+    "kind": "letter",
+    "payload": {
+      "time": 7.7676311136959235,
+      "release": 7.856433319274948,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 7.666054481096632,
+      "plan_end": 7.676053285922526,
+      "move_start": 7.676053285922526,
+      "arrival": 7.704049939435029,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 7.853246544260886,
+    "kind": "letter",
+    "payload": {
+      "time": 7.853246544260886,
+      "release": 7.929578166168956,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 7.676053285922526,
+      "plan_end": 7.68605209074842,
+      "move_start": 7.68605209074842,
+      "arrival": 7.714048744260923,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 7.9406021131110816,
+    "kind": "letter",
+    "payload": {
+      "time": 7.9406021131110816,
+      "release": 8.037787466260587,
+      "key": "s",
+      "kind": "letter",
+      "finger": 1,
+      "hand": 0,
+      "plan_start": 7.68605209074842,
+      "plan_end": 7.696050895574315,
+      "move_start": 7.696050895574315,
+      "arrival": 7.7240475490868175,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 1.25,
+      "y": 1.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 8.02283913133004,
+    "kind": "letter",
+    "payload": {
+      "time": 8.02283913133004,
+      "release": 8.1488471860105,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 7.696050895574315,
+      "plan_end": 7.706049700400209,
+      "move_start": 7.856433319274948,
+      "arrival": 7.8844299727874505,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 8.086100535040488,
+    "kind": "letter",
+    "payload": {
+      "time": 8.086100535040488,
+      "release": 8.216140375854568,
+      "key": "l",
+      "kind": "letter",
+      "finger": 8,
+      "hand": 1,
+      "plan_start": 7.7676311136959235,
+      "plan_end": 7.777629918521818,
+      "move_start": 7.777629918521818,
+      "arrival": 7.8056265720343205,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 8.25,
+      "y": 1.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 8.144916588539607,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 9,
+      "word": "hearty",
+      "success": 1
+    }
+  },
+  {
+    "time": 8.166498412336082,
+    "kind": "letter",
+    "payload": {
+      "time": 8.166498412336082,
+      "release": 8.270011452738235,
+      "key": "f",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 7.853246544260886,
+      "plan_end": 7.86324534908678,
+      "move_start": 7.929578166168956,
+      "arrival": 8.0016169230974,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 3.25,
+      "y": 1.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 8.23903573709525,
+    "kind": "submit",
+    "payload": {
+      "time": 8.23903573709525,
+      "release": 8.353705987715449,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 7.9406021131110816,
+      "plan_end": 7.950600917936976,
+      "move_start": 7.950600917936976,
+      "arrival": 7.978597571449479,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 8
+    }
+  },
+  {
+    "time": 8.341731193872656,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 8.341731193872656,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 8.341731193872656,
+      "plan_start": 8.23903573709525,
+      "plan_end": 8.341731193872656,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.379726922722602,
+    "kind": "letter",
+    "payload": {
+      "time": 8.379726922722602,
+      "release": 8.48902704639622,
+      "key": "h",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 8.341731193872656,
+      "plan_end": 8.3517300698858,
+      "move_start": 8.3517300698858,
+      "arrival": 8.379726922722602,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 5.25,
+      "y": 1.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.379726922722602,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 10,
+      "word": "leave"
+    }
+  },
+  {
+    "time": 8.467972655036704,
+    "kind": "letter",
+    "payload": {
+      "time": 8.467972655036704,
+      "release": 8.551752992920118,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 8.3517300698858,
+      "plan_end": 8.361728945898944,
+      "move_start": 8.361728945898944,
+      "arrival": 8.389725798735746,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.55626256490833,
+    "kind": "letter",
+    "payload": {
+      "time": 8.55626256490833,
+      "release": 8.659229289735032,
+      "key": "a",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 8.361728945898944,
+      "plan_end": 8.371727821912089,
+      "move_start": 8.371727821912089,
+      "arrival": 8.443767091725928,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 0.25,
+      "y": 1.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.65292044753365,
+    "kind": "letter",
+    "payload": {
+      "time": 8.65292044753365,
+      "release": 8.759970785328765,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 8.371727821912089,
+      "plan_end": 8.381726697925233,
+      "move_start": 8.381726697925233,
+      "arrival": 8.453765967739072,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.831082892002998,
+    "kind": "letter",
+    "payload": {
+      "time": 8.831082892002998,
+      "release": 8.917936253084434,
+      "key": "t",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 8.381726697925233,
+      "plan_end": 8.391725573938377,
+      "move_start": 8.759970785328765,
+      "arrival": 8.831082892002998,
+      "transition": "same_finger",
+      "bottleneck": "movement",
+      "x": 4.0,
+      "y": 0.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.846537490994084,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 10,
+      "word": "leave",
+      "success": 1
+    }
+  },
+  {
+    "time": 8.92069236491465,
+    "kind": "letter",
+    "payload": {
+      "time": 8.92069236491465,
+      "release": 9.033496173019605,
+      "key": "y",
+      "kind": "letter",
+      "finger": 6,
+      "hand": 1,
+      "plan_start": 8.467972655036704,
+      "plan_end": 8.477971531049848,
+      "move_start": 8.48902704639622,
+      "arrival": 8.56106631621006,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 5.0,
+      "y": 0.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 8.99870564419014,
+    "kind": "submit",
+    "payload": {
+      "time": 8.99870564419014,
+      "release": 9.119870461966991,
+      "key": " ",
+      "kind": "submit",
+      "finger": 4,
+      "hand": 0,
+      "plan_start": 8.55626256490833,
+      "plan_end": 8.566261440921474,
+      "move_start": 8.566261440921474,
+      "arrival": 8.594258293758276,
+      "transition": "right",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 9
+    }
+  },
+  {
+    "time": 9.12764909263427,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 9.12764909263427,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 9.12764909263427,
+      "plan_start": 8.99870564419014,
+      "plan_end": 9.12764909263427,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.165645106639333,
+    "kind": "letter",
+    "payload": {
+      "time": 9.165645106639333,
+      "release": 9.267956988508862,
+      "key": "l",
+      "kind": "letter",
+      "finger": 8,
+      "hand": 1,
+      "plan_start": 9.12764909263427,
+      "plan_end": 9.137648043688234,
+      "move_start": 9.137648043688234,
+      "arrival": 9.165645106639333,
+      "transition": "right",
+      "bottleneck": "movement",
+      "x": 8.25,
+      "y": 1.0,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.165645106639333,
+    "kind": "target_appear",
+    "payload": {
+      "word_index": 11,
+      "word": "are"
+    }
+  },
+  {
+    "time": 9.279301743268078,
+    "kind": "letter",
+    "payload": {
+      "time": 9.279301743268078,
+      "release": 9.393359613618086,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 9.137648043688234,
+      "plan_end": 9.147646994742198,
+      "move_start": 9.147646994742198,
+      "arrival": 9.175644057693297,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.36247840844346,
+    "kind": "letter",
+    "payload": {
+      "time": 9.36247840844346,
+      "release": 9.450489461656659,
+      "key": "a",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 9.147646994742198,
+      "plan_end": 9.157645945796162,
+      "move_start": 9.157645945796162,
+      "arrival": 9.185643008747261,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 0.25,
+      "y": 1.0,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.434733323569583,
+    "kind": "letter",
+    "payload": {
+      "time": 9.434733323569583,
+      "release": 9.527723284046576,
+      "key": "v",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 9.157645945796162,
+      "plan_end": 9.167644896850126,
+      "move_start": 9.167644896850126,
+      "arrival": 9.263465976747643,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.75,
+      "y": 2.0,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.516858812153853,
+    "kind": "letter",
+    "payload": {
+      "time": 9.516858812153853,
+      "release": 9.606197111431948,
+      "key": "e",
+      "kind": "letter",
+      "finger": 2,
+      "hand": 0,
+      "plan_start": 9.167644896850126,
+      "plan_end": 9.17764384790409,
+      "move_start": 9.393359613618086,
+      "arrival": 9.421356676569186,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 2.0,
+      "y": 0.0,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.63324293945319,
+    "kind": "submit",
+    "payload": {
+      "time": 9.63324293945319,
+      "release": 9.719898937116886,
+      "key": " ",
+      "kind": "submit",
+      "finger": 5,
+      "hand": 1,
+      "plan_start": 9.279301743268078,
+      "plan_end": 9.289300694322042,
+      "move_start": 9.289300694322042,
+      "arrival": 9.317297757273142,
+      "transition": "alternation",
+      "bottleneck": "sequence",
+      "x": 4.8,
+      "y": 3.0,
+      "word_index": 10
+    }
+  },
+  {
+    "time": 9.691674877104568,
+    "kind": "recognition_complete",
+    "payload": {
+      "word_index": 11,
+      "word": "are",
+      "success": 1
+    }
+  },
+  {
+    "time": 9.758448159337036,
+    "kind": "word_program_commit",
+    "payload": {
+      "time": 9.758448159337036,
+      "kind": "word_program_commit",
+      "key": "",
+      "finger": -1,
+      "hand": -1,
+      "release": 9.758448159337036,
+      "plan_start": 9.691674877104568,
+      "plan_end": 9.758448159337036,
+      "word_index": 11
+    }
+  },
+  {
+    "time": 9.79644446986029,
+    "kind": "letter",
+    "payload": {
+      "time": 9.79644446986029,
+      "release": 9.88721500230712,
+      "key": "a",
+      "kind": "letter",
+      "finger": 0,
+      "hand": 0,
+      "plan_start": 9.758448159337036,
+      "plan_end": 9.768447188422103,
+      "move_start": 9.768447188422103,
+      "arrival": 9.79644446986029,
+      "transition": "alternation",
+      "bottleneck": "movement",
+      "x": 0.25,
+      "y": 1.0,
+      "word_index": 11
+    }
+  },
+  {
+    "time": 9.91407189162765,
+    "kind": "letter",
+    "payload": {
+      "time": 9.91407189162765,
+      "release": 10.043027035374116,
+      "key": "r",
+      "kind": "letter",
+      "finger": 3,
+      "hand": 0,
+      "plan_start": 9.768447188422103,
+      "plan_end": 9.77844621750717,
+      "move_start": 9.77844621750717,
+      "arrival": 9.876603699490802,
+      "transition": "left",
+      "bottleneck": "sequence",
+      "x": 3.0,
+      "y": 0.0,
+      "word_index": 11
+    }
+  }
+]

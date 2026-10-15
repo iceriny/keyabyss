@@ -1,0 +1,4 @@
+group,reference_population,source_wpm5,model_A_wpm5,relative_discrepancy_percent,same_stimuli,same_timing,interpretation
+beginner,slow,20.91,31.2921875,49.651781444285035,False,False,descriptive transfer check only; source values not used to fit WPM
+ordinary,all,51.56,64.7923076923077,25.663901653040533,False,False,descriptive transfer check only; source values not used to fit WPM
+expert,fast,89.56,103.590625,15.666173514962045,False,False,descriptive transfer check only; source values not used to fit WPM

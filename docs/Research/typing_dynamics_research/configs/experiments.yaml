@@ -1,0 +1,13 @@
+pilot_people_per_group: 24
+repetitions: 2
+main_duration_s: 60
+target_mc_halfwidth_wpm: 1.5
+min_people_per_group: 64
+max_people_per_group: 192
+sensitivity_people: 24
+sensitivity_duration_s: 35
+ablation_people: 32
+ablation_duration_s: 45
+uncertainty_lhs_draws: 128
+uncertainty_people_per_draw: 4
+step_sizes_s: [0.001, 0.002, 0.005, 0.010]

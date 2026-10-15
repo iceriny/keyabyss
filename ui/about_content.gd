@@ -5,12 +5,6 @@ const PROJECT := "https://github.com/iceriny/keyabyss"
 
 
 static func populate(parent: VBoxContainer) -> void:
-	var ancestor: Node = parent
-	while not ancestor is PageShell: ancestor = ancestor.get_parent()
-	var shell := ancestor as PageShell
-	var reading := preload("res://ui/materials/about_reading.tres").duplicate() as ShaderMaterial
-	shell.wash.material = reading
-	shell._layout_panel()
 	var title := PageShell.label(parent, "键渊 · 失控咒典", 30, Color("eee0b9"))
 	title.custom_minimum_size.y = 54
 	PageShell.label(parent, "词令共鸣", 18, Color("9eb5b3"))

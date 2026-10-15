@@ -6,13 +6,13 @@
 script = ExtResource("1")
 id = &"F014"
 title = "霜花护页"
-description = "冻结敌人时，获得 {freeze_shield} 点护盾。"
-modifiers = {&"freeze_shield": 1}
+choice_role = &"defense"
+description = "冻结敌人时，获得 {freeze_shield} 点护盾和 {freeze_resonance} 点共鸣。"
+modifiers = {&"freeze_shield": 1, &"freeze_resonance": 1}
 tags = PackedStringArray("freeze", "shield")
 max_stacks = 2
 rarity = &"uncommon"
 allowed_books = PackedStringArray("frost")
-requires_all = PackedStringArray("F004")
 grants_capabilities = PackedStringArray("shield")
 supported = true
 stage = &"relics-3"

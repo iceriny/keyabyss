@@ -126,5 +126,7 @@ func show_action(action: StringName) -> void:
 
 
 func refresh_options() -> void:
+	reduced_motion = settings.reduce_motion
+	set_reading_quality(settings.quality)
 	for meaning in _meanings:
 		meaning.visible = settings.show_meaning

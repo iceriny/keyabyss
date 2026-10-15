@@ -6,8 +6,11 @@
 script = ExtResource("1")
 id = &"A017"
 title = "回锋火笔"
-description = "完美御术反击命中时，附加 {parry_burn} 点灼烧。"
+description = "完美御术反击命中时，附加 {parry_burn} 点灼烧，并在落点留下半径 {radius}、持续 {duration} 秒的火雾。"
 modifiers = {&"parry_burn": 12}
+numbers = {&"radius": 100, &"duration": 2}
+stack_values = PackedStringArray("duration")
+choice_role = &"mechanism"
 tags = PackedStringArray("parry", "burn")
 max_stacks = 2
 rarity = &"common"

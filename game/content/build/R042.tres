@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R042"
 title = "血字契约"
+choice_role = &"power"
 description = "伤害提高 {damage_pct}%；取得时损失 {cost} 点生命，每次进入新的一页损失 {room_cost} 点生命，不会致死。"
 stage = &"M3"
 supported = true

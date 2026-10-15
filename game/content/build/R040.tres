@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R040"
 title = "共鸣墨晶"
+choice_role = &"power"
 description = "获得的共鸣提高 {resonance_pct}%。"
 stage = &"M3"
 supported = true

@@ -6,12 +6,12 @@
 script = ExtResource("1")
 id = &"P007"
 title = "伴读小册"
-description = "纸灵上限增加 {spirit_capacity}。"
-modifiers = {&"spirit_capacity": 1}
-tags = PackedStringArray("spirit")
+description = "亲手完成至少7字母的词咒时，在目标处召出一只符文纸鹤，拦弹半径 {radius}，保留 {duration} 秒。"
+numbers = {&"radius": 26, &"duration": 4}
+choice_role = &"mechanism"
+tags = PackedStringArray("crane", "long_word")
 max_stacks = 1
 rarity = &"rare"
 allowed_books = PackedStringArray("spirit")
-requires_all = PackedStringArray("P001")
 supported = true
 stage = &"relics-3"

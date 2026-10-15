@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R051"
 title = "松脂印章"
+choice_role = &"power"
 description = "施加的灼烧点数提高 {points_pct}%。"
 stage = &"M3"
 supported = true

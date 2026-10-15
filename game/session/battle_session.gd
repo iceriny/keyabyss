@@ -22,12 +22,17 @@ const SPIRIT_MOVEMENT_SCALE := 0.75
 # 0.06 + 0.94 * smoothstep(0, 1, (age - 0.06) / 0.46) == 0.1.
 const COUNTER_PRECISION_CROSSOVER := 0.11720807774452963
 const MAIN_SPELL_CYCLES := {&"frost": 3, &"flame": 3, &"storm": 3, &"spirit": 3}
-const MODE_SPEED := [0.68, 0.9, 1.22, 1.48, 1.76]
-const MODE_HEALTH := [0.72, 0.9, 1.12, 1.28, 4.8]
-const MODE_DAMAGE := [0.55, 0.85, 1.1, 1.3, 6.0]
-const MODE_WINDOW := [1.6, 1.3, 1.08, 0.94, 0.84]
-const MODE_SPAWN := [4.3, 3.25, 2.25, 1.8, 0.55]
+# Midpoint of the former normal/hard pace; difficulty, chapters and loops
+# change pressure and durability without changing learned motion or timing.
+const ENEMY_SPEED_SCALE := 1.06
+const ENEMY_ATTACK_SCALE := 1.19
+const MODE_HEALTH := [0.72, 0.9, 1.24, 1.42, 5.3]
+const MODE_DAMAGE := [0.55, 0.85, 1.1, 1.3, 2.4]
+const MODE_SPAWN := [4.3, 3.25, 2.25, 1.8, 1.2]
 const MODE_CAP := [6, 8, 11, 14, 17]
+# Limit concurrent bodies, including summoned children, without reducing the
+# room workload or delaying replenishment once the player clears a slot.
+const MODE_ACTIVE_CAP := [6, 8, 8, 12, 14]
 const MODE_DODGE_CD := [3.6, 4.2, 4.8, 5.3, 5.8]
 const MODE_IFRAME := [1.0, 0.85, 0.72, 0.62, 0.54]
 
@@ -41,6 +46,7 @@ var ultimates: Array[BattleUltimate] = []
 var ultimate_time := 0.0
 var projectiles: Array[BattleProjectile] = []
 var threats: Array[BattleThreat] = []
+var _advancing_threats: bool = false
 var hazards: Array[BattleHazard] = []
 var pickups: Array[BattlePickup] = []
 var _pickup_clock: float = 6.0
@@ -87,8 +93,6 @@ var intermission: float = -1.0
 var arrival_direction: String = "东"
 var _pressure: float = 1.0
 var _enemy_health_scale: float = 1.0
-var _enemy_speed_scale: float = 1.0
-var _enemy_attack_scale: float = 1.0
 var _spawn_clock: float = 0.0
 var _spawned: int = 0
 var _room_quota: int = 0
@@ -96,6 +100,8 @@ var _enemy_cap: int = 8
 var _dodge_recovery_seconds: float = 4.2
 var _hurt_iframe: float = 0.85
 var _room_world_time: float = 0.0
+var _opening_grace: float = 3.0
+var _enemy_serial: int = 0
 var _difficulty_rank: int = 1
 
 var _word_meanings: Dictionary[String, String] = {}
@@ -217,9 +223,19 @@ func start(request: BattleStartRequest, state: RunCombatState = null) -> void:
 	while _shortest_length < _maximum_length and prepared.count(0, request.minimum_length, _shortest_length) == 0:
 		_shortest_length += 1
 	_retained_word_id = &""
+	_enemy_serial = 0
 	_start_room(request.build.book(), request.vocabulary, request.difficulty, request.seed_text, request.progressive, request.minimum_length)
+	if not request.flight_continuation.is_empty(): ledger = request.flight_continuation.ledger
+	# Move live ownership to this page without changing paid roots or claim history.
+	for lot in ledger.active_lots(): lot.room_id = run_state.room_serial
 	ledger.room_id = run_state.room_serial
 	runtime = SpellRuntime.new(self, compiled_build, run_state)
+	if not request.flight_continuation.is_empty():
+		for property: String in request.flight_continuation.world:
+			set(property, request.flight_continuation.world[property])
+		for property: String in request.flight_continuation.runtime:
+			runtime.set(property, request.flight_continuation.runtime[property])
+		previous_player_position = player_position
 	if statistics != null: statistics.detach()
 	statistics = BattleStatistics.new(self)
 	typing.assisted_authorizer = runtime.consume_assist
@@ -359,14 +375,13 @@ func _start_room(selected_book: StringName, entries: Array[VocabularyEntry], sel
 	var damage_depth := mini(depth, 2) if _difficulty_rank == 4 else depth
 	_pressure = MODE_DAMAGE[_difficulty_rank] * (1.0 + damage_depth * 0.045) * (1.0 + 0.08 * loop_index)
 	_enemy_health_scale = MODE_HEALTH[_difficulty_rank] * (1.0 + depth * (0.065 + _difficulty_rank * 0.009) + depth * depth * 0.0025) * pow(1.18, loop_index)
-	_enemy_speed_scale = minf(4.8, MODE_SPEED[_difficulty_rank] * (1.0 + depth * (0.028 + _difficulty_rank * 0.004)))
-	_enemy_attack_scale = maxf(0.42, MODE_WINDOW[_difficulty_rank] / (1.0 + depth * (0.018 + _difficulty_rank * 0.004))) / (1.0 + 0.04 * loop_index)
 	_dodge_recovery_seconds = MODE_DODGE_CD[_difficulty_rank] * (1.0 - compiled_build.relic_number(&"R009", &"recovery_pct") / 100.0)
 	_hurt_iframe = MODE_IFRAME[_difficulty_rank]
 	_spawned = 0
 	_room_world_time = 0.0
+	_opening_grace = 3.0
 	_room_quota = encounter.enemies.size() * encounter.wave_count if encounter.room_id == &"" else 18 + _difficulty_rank * 6 + (_physical_chapter() - 1) * 8 + encounter.room_number * 4
-	_enemy_cap = MODE_CAP[_difficulty_rank] - 2
+	_enemy_cap = mini(MODE_CAP[_difficulty_rank] - 2, MODE_ACTIVE_CAP[_difficulty_rank])
 	typing.set_targets({})
 	# Resetting a reused typing session may abandon the previous room's prefix.
 	_abandoned.clear()
@@ -383,9 +398,11 @@ func _spawn_wave() -> void:
 		_room_quota = 0
 	else:
 		var opening_count := encounter.enemies.size() if encounter.room_id == &"" else (1 if _difficulty_rank < 2 else mini(3, _difficulty_rank))
+		var opening_pool := encounter.enemies if encounter.opening_enemies.is_empty() else encounter.opening_enemies
+		if not encounter.opening_enemies.is_empty(): opening_count = mini(opening_count, opening_pool.size())
 		if wave == 1:
 			for index in opening_count:
-				_spawn_enemy(encounter.enemies[index % encounter.enemies.size()], _arrival_position(arrival_direction), index)
+				_spawn_enemy(opening_pool[index % opening_pool.size()], _arrival_position(arrival_direction), index)
 				_spawned += 1
 		_spawn_clock = 3.6 if wave == 1 and _physical_chapter() == 1 and encounter.room_number == 1 else (2.4 if wave == 1 else 0.8)
 	event_committed.emit({"kind": &"wave", "wave": wave, "direction": arrival_direction, "at": Vector2(0.5, 0.5)})
@@ -405,16 +422,18 @@ func _arrival_position(direction: String) -> Vector2:
 
 func _spawn_enemy(definition: EnemyCombatDefinition, at: Vector2, _index: int = 0) -> BattleEnemy:
 	var enemy := BattleEnemy.new()
-	enemy.id = StringName("enemy_%d" % enemies.size())
+	var local_id := "enemy_%d" % _enemy_serial
+	enemy.id = StringName(local_id if run_state.room_serial == 1 else "page%d:%s" % [run_state.room_serial, local_id])
+	_enemy_serial += 1
 	_enemy_definitions[enemy.id] = definition
 	enemy.kind = definition.kind
 	enemy.behavior = definition.behavior
-	enemy.speed = definition.speed * _enemy_speed_scale
+	enemy.speed = definition.speed * ENEMY_SPEED_SCALE
 	enemy.boss = definition.boss
 	enemy.long_word = definition.long_word
 	enemy.stationary = definition.stationary
 	enemy.weave = definition.weave
-	enemy.charge_speed = definition.charge_speed * minf(1.35, _enemy_speed_scale)
+	enemy.charge_speed = definition.charge_speed * ENEMY_SPEED_SCALE
 	enemy.aura = definition.aura
 	enemy.aura_radius = definition.aura_radius
 	enemy.mirror_ready = definition.mirror
@@ -428,11 +447,15 @@ func _spawn_enemy(definition: EnemyCombatDefinition, at: Vector2, _index: int = 
 		enemy.max_hp_q = roundi(enemy.max_hp_q * pow(1.18, loop_index))
 	enemy.hp_q = enemy.max_hp_q
 	enemy.attack_damage_q = roundi(definition.attack_damage * _pressure * Q)
-	enemy.attack_interval = definition.attack_interval * _enemy_attack_scale
-	enemy.attack_clock = (2.6 if enemy.boss else (0.72 + _rng.randf() * 0.6) * MODE_WINDOW[_difficulty_rank])
+	enemy.attack_interval = definition.attack_interval * ENEMY_ATTACK_SCALE
+	enemy.warning_time = definition.warning_time
+	if enemy.behavior in [&"snipe", &"refrain", &"ward"]:
+		enemy.attack_interval = maxf(2.0, enemy.attack_interval)
+	enemy.attack_clock = (2.6 if enemy.boss else (0.72 + _rng.randf() * 0.6) * ENEMY_ATTACK_SCALE)
+	if enemy.behavior in [&"snipe", &"refrain", &"ward"]:
+		enemy.attack_clock = maxf(enemy.attack_clock, enemy.warning_time + 0.4)
 	if enemy.behavior == &"charge":
-		var depth := (_physical_chapter() - 1) * 3 + encounter.room_number - 1
-		enemy.warning_time = maxf(0.75, 1.12 * MODE_WINDOW[_difficulty_rank] / (1.0 + depth * 0.02))
+		enemy.warning_time = 1.12 * ENEMY_ATTACK_SCALE
 	for feature in encounter.element_traits:
 		if feature.enemy_kind == enemy.kind: feature.apply(enemy)
 	# Cold arrivals become word targets only after entering the clear battlefield.
@@ -474,7 +497,7 @@ func step(delta: float) -> void:
 	for command in _commands:
 		if command.build != null:
 			if command.build.book() != book_id:
-				event_committed.emit({"kind": &"build_rejected", "reason": "主书变化需要房间边界"})
+				event_committed.emit({"kind": &"build_rejected", "reason": "主书变化需要页边界"})
 				continue
 			_install_build(command.build)
 		elif command.action == &"assist":
@@ -574,12 +597,11 @@ func step(delta: float) -> void:
 				break
 	if player_hp_q <= 0:
 		_end(false)
-	elif not _has_living() and effects.is_empty() and projectiles.is_empty() and _spawned >= ceili(float(_room_quota * wave) / encounter.wave_count):
+	elif not _has_living() and _spawned >= ceili(float(_room_quota * wave) / encounter.wave_count):
 		if wave == encounter.wave_count:
 			_end(true)
 		elif intermission < 0.0:
 			intermission = encounter.wave_interval if encounter.room_id == &"" else maxf(1.8, 4.0 - _difficulty_rank * 0.5)
-			threats.clear()
 		else:
 			intermission = maxf(0.0, intermission - world_step)
 			if intermission == 0.0:
@@ -592,9 +614,18 @@ func _advance_encounter(delta: float) -> void:
 	if _room_quota == 0 or intermission >= 0.0: return
 	_room_world_time += delta
 	_spawn_clock -= delta
+	if not encounter.opening_enemies.is_empty() and _spawned == encounter.opening_enemies.size() and _opening_grace > 0.0:
+		var opening_alive := 0
+		for index in encounter.opening_enemies.size():
+			var enemy := enemies[index]
+			if not enemy.alive(): continue
+			opening_alive += 1
+			if not enemy_in_combat(enemy): return
+		_opening_grace = maxf(0.0, _opening_grace - delta) if opening_alive > 0 else 0.0
+		if _opening_grace > 0.0: return
 	var depth := (_physical_chapter() - 1) * 3 + encounter.room_number - 1
-	var progress := clampf(_room_world_time / 55.0, 0.0, 1.0)
-	_enemy_cap = mini(24, MODE_CAP[_difficulty_rank] - 2 + floori(depth * 0.65) + floori(progress * 2.0))
+	var progress := float(wave - 1) / maxf(1.0, encounter.wave_count - 1)
+	_enemy_cap = mini(MODE_ACTIVE_CAP[_difficulty_rank], MODE_CAP[_difficulty_rank] - 2 + floori(depth * 0.65) + floori(progress * 2.0))
 	var wave_limit := ceili(float(_room_quota * wave) / encounter.wave_count)
 	var alive_count := 0
 	for enemy in enemies:
@@ -602,21 +633,32 @@ func _advance_encounter(delta: float) -> void:
 	if alive_count == 0 and _room_world_time > 4.0: _spawn_clock = minf(_spawn_clock, 0.8)
 	if _spawn_clock > 0.0 or _spawned >= wave_limit or alive_count >= _enemy_cap: return
 	var kind_counts: Dictionary[StringName, int] = {}
+	var role_counts: Dictionary[StringName, int] = {}
 	for enemy in enemies:
-		if enemy.alive(): kind_counts[enemy.kind] = kind_counts.get(enemy.kind, 0) + 1
+		if enemy.alive():
+			kind_counts[enemy.kind] = kind_counts.get(enemy.kind, 0) + 1
+			var role: StringName = _enemy_definitions[enemy.id].encounter_role
+			role_counts[role] = role_counts.get(role, 0) + 1
 	var batch := 1 + (1 if _difficulty_rank >= 2 and wave >= 2 else 0) + (1 if _physical_chapter() >= 2 and _difficulty_rank >= 1 else 0) + (1 if _physical_chapter() >= 3 and _difficulty_rank >= 3 else 0) + (1 if wave == encounter.wave_count and _difficulty_rank >= 3 else 0)
 	for index in mini(batch, wave_limit - _spawned):
 		if alive_count >= _enemy_cap: break
 		var allowed: Array[EnemyCombatDefinition] = []
 		for definition in encounter.enemies:
-			if kind_counts.get(definition.kind, 0) < definition.spawn_limit:
+			if kind_counts.get(definition.kind, 0) < definition.spawn_limit and role_counts.get(definition.encounter_role, 0) < encounter.role_limits.get(definition.encounter_role, 99):
 				allowed.append(definition)
 		if allowed.is_empty(): break
-		var definition := allowed[_rng.randi_range(0, allowed.size() - 1)]
+		var definition: EnemyCombatDefinition
+		if _spawned < encounter.opening_enemies.size():
+			definition = encounter.opening_enemies[_spawned]
+			if definition not in allowed: break
+		else:
+			definition = allowed[_rng.randi_range(0, allowed.size() - 1)]
 		_spawn_enemy(definition, _arrival_position(arrival_direction), index)
 		alive_count += 1
 		kind_counts[definition.kind] = kind_counts.get(definition.kind, 0) + 1
+		role_counts[definition.encounter_role] = role_counts.get(definition.encounter_role, 0) + 1
 		_spawned += 1
+		if _spawned == encounter.opening_enemies.size(): break
 	var opening := 1.0 + 0.3 * maxf(0.0, 1.0 - depth / 3.0) * (1.0 - progress)
 	_spawn_clock = maxf(0.55, MODE_SPAWN[_difficulty_rank] * opening / (1.0 + depth * (0.025 + _difficulty_rank * 0.004) + progress * 0.12))
 
@@ -695,7 +737,7 @@ func _commit_word(completion: WordCompletion) -> void:
 		word_owner.word_pending = true
 	var primary := runtime.assemble(paid, completion, target, empowered)
 	effects.append(primary)
-	event_committed.emit({"kind": &"cast", "book": book_id, "at": cast_origin, "target": target.position, "power_q": power_q, "empowered": empowered})
+	event_committed.emit({"kind": &"cast", "book": book_id, "at": cast_origin, "target": target.position, "power_q": power_q, "empowered": primary.empowered})
 	# The paid primary owns renewal even when its homing target changes later.
 	if word_owner != null and word_owner.alive():
 		typing.retire_target(word_owner.id)
@@ -736,7 +778,7 @@ func _advance_effects(delta: float) -> void:
 		effects.remove_at(index)
 		var target := enemy_by_id(effect.target_id)
 		if target == null or not target.alive():
-			if effect.kind == &"storm_ultimate_word":
+			if effect.kind == &"storm_ultimate_word" or not effect.retargetable:
 				runtime.retire(effect)
 				continue
 			if effect.kind == &"storm_arc" and effect.arc_index > 0:
@@ -744,6 +786,9 @@ func _advance_effects(delta: float) -> void:
 			else:
 				target = _nearest_living(effect.origin, effect.visited)
 		if target == null:
+			if effect.kind == &"storm_arc" and effect.arc_index > 0:
+				# This scheduled hop never landed; finish at the last real contact.
+				runtime.finish_arc(effect, effect.origin, effect.jumps + 1)
 			_release_word(effect, false)
 			runtime.retire(effect)
 			continue
@@ -770,14 +815,13 @@ func _advance_projectiles(delta: float) -> void:
 			if target == null or not target.alive():
 				target = runtime.retarget(projectile.effect, projectile.position, projectile.hit_ids)
 				if target == null:
-					_release_word(projectile.effect, false)
-					runtime.retire(projectile.effect)
-					projectiles.remove_at(index)
-					continue
-				projectile.effect.target_id = target.id
-			var desired := ((target.position - projectile.position) * ARENA_SIZE).angle()
-			var turn := 17.0 if str(projectile.effect.kind).begins_with("frost") else 12.0
-			projectile.velocity = Vector2.from_angle(lerp_angle(projectile.velocity.angle(), desired, 1.0 - exp(-delta * turn))) * projectile.speed
+					projectile.homing = false
+				else:
+					projectile.effect.target_id = target.id
+			if projectile.homing:
+				var desired := ((target.position - projectile.position) * ARENA_SIZE).angle()
+				var turn := 17.0 if str(projectile.effect.kind).begins_with("frost") else 12.0
+				projectile.velocity = Vector2.from_angle(lerp_angle(projectile.velocity.angle(), desired, 1.0 - exp(-delta * turn))) * projectile.speed
 		projectile.velocity += projectile.attraction_impulse
 		projectile.attraction_impulse = Vector2.ZERO
 		projectile.position += projectile.velocity * delta / ARENA_SIZE
@@ -990,13 +1034,13 @@ func _advance_enemy_motion(delta: float) -> void:
 		var toward := (approach - enemy.position) * ARENA_SIZE
 		var distance := toward.length()
 		var desired := Vector2.ZERO
-		if enemy.frozen_time <= 0.0 and enemy.stagger_time <= 0.0 and not enemy.aiming and enemy.melee_strike <= 0.0 and enemy.melee_recovery <= 0.0:
+		if enemy.frozen_time <= 0.0 and enemy.stagger_time <= 0.0 and not enemy.aiming and enemy.followup_time <= 0.0 and enemy.melee_strike <= 0.0 and enemy.melee_recovery <= 0.0:
 			var speed := enemy.speed
 			var direction := (1.0 if distance > 82.0 else 0.0) if enemy.behavior in [&"melee", &"charge"] else (1.0 if distance > 385.0 else (-0.6 if distance < 265.0 else 0.0))
 			if entering or obscured:
 				direction = 1.0 if distance > 4.0 else 0.0
 			if distance > 480.0:
-				speed = maxf(enemy.speed, 97.5 * _enemy_speed_scale)
+				speed = maxf(enemy.speed, 97.5 * ENEMY_SPEED_SCALE)
 			desired = toward.normalized() * speed * direction
 			if not obscured and (enemy.behavior == &"weave" or enemy.weave):
 				desired += toward.normalized().orthogonal() * sin(enemy.age * 2.3) * speed * 0.75
@@ -1055,6 +1099,8 @@ func _advance_enemies(delta: float) -> void:
 		if not enemy_in_combat(enemy):
 			typing.retire_target(enemy.id)
 			enemy.word_age = 0.0
+			enemy.followup_time = 0.0
+			if enemy.ward_remaining > 0.0: _end_ward(enemy)
 			if enemy.frozen_time <= 0.0:
 				enemy.aiming = false
 				enemy.melee_strike = 0.0
@@ -1065,6 +1111,16 @@ func _advance_enemies(delta: float) -> void:
 			enemy.word_age = 0.0
 			if not enemy.word.is_empty(): typing.upsert_target(enemy.id, enemy.word)
 		var distance := ((player_position - enemy.position) * ARENA_SIZE).length()
+		if enemy.behavior == &"ward":
+			_advance_ward(enemy, delta)
+			continue
+		if enemy.followup_time > 0.0:
+			if enemy.stagger_time > 0.0 or ((enemy.position - enemy.volley_origin) * ARENA_SIZE).length() > 26.0:
+				enemy.followup_time = 0.0
+			else:
+				enemy.followup_time = maxf(0.0, enemy.followup_time - delta * enemy.cold_attack_scale())
+				if enemy.followup_time == 0.0: _emit_precision_volley(enemy)
+			continue
 		if enemy.boss and enemy.frozen_time <= 0.0:
 			var phase := 1 if enemy.hp_q > enemy.max_hp_q * 0.67 else (2 if enemy.hp_q > enemy.max_hp_q * 0.34 else 3)
 			if phase != enemy.phase:
@@ -1095,7 +1151,7 @@ func _advance_enemies(delta: float) -> void:
 						_emit_pattern(enemy, delayed["pattern"], delayed.get("curve", 0.0), delayed.get("speed", 1.0))
 					enemy.delayed_attacks.remove_at(index)
 		if enemy.aura == &"pull":
-			runtime.pull_environment(enemy.position, enemy.aura_radius, delta * 67.5, false)
+			runtime.pull_environment(enemy.position, enemy.aura_radius, delta * 67.5, false, enemy.id)
 			if distance < enemy.aura_radius and dodge_window <= 0.0:
 				player_impulse += ((enemy.position - player_position) * ARENA_SIZE).normalized() * delta * 67.5
 		if enemy.kind == &"leech" and distance < enemy.radius + 32.0 and dodge_window <= 0.0:
@@ -1105,6 +1161,8 @@ func _advance_enemies(delta: float) -> void:
 			continue
 		if enemy.frozen_time > 0.0 or enemy.stagger_time > 0.0 or enemy.charge_time > 0.0 or (not enemy.boss and not enemy.aiming and distance > 480.0):
 			continue
+		if enemy.behavior in [&"snipe", &"refrain"] and (enemy.word.is_empty() or (not enemy.aiming and distance < 180.0)):
+			continue
 		var needs_aim := enemy.boss or enemy.behavior not in [&"heal", &"brood", &"ring", &"bind"]
 		enemy.attack_clock -= attack_delta
 		if not enemy.aiming and needs_aim and runtime.obscures(enemy):
@@ -1113,11 +1171,14 @@ func _advance_enemies(delta: float) -> void:
 			continue
 		if not enemy.aiming and enemy.attack_clock <= enemy.warning_time:
 			enemy.aiming = true
+			if enemy.behavior in [&"snipe", &"refrain"]:
+				enemy.attack_clock = enemy.warning_time
+				enemy.velocity = Vector2.ZERO
 			enemy.aimed_position = player_position
 			event_committed.emit({"kind": &"warning", "at": enemy.position, "target": enemy.aimed_position, "enemy": enemy.id})
 		if enemy.attack_clock <= 0.0:
 			_resolve_attack(enemy)
-			enemy.attack_clock = (2.5 if enemy.phase == 3 else 3.2) * _enemy_attack_scale if enemy.boss else enemy.attack_interval
+			enemy.attack_clock = (2.5 if enemy.phase == 3 else 3.2) * ENEMY_ATTACK_SCALE if enemy.boss else enemy.attack_interval
 			enemy.aiming = false
 
 
@@ -1170,6 +1231,13 @@ func _advance_melee(enemy: BattleEnemy, delta: float, distance: float) -> void:
 
 func _resolve_attack(enemy: BattleEnemy) -> void:
 	enemy.attack_serial += 1
+	if enemy.behavior in [&"snipe", &"refrain"]:
+		_emit_precision_volley(enemy)
+		if enemy.behavior == &"refrain":
+			enemy.velocity = Vector2.ZERO
+			enemy.volley_origin = enemy.position
+			enemy.followup_time = BattleEnemy.REFRAIN_DELAY
+		return
 	if enemy.behavior == &"charge":
 		var path := (enemy.aimed_position - enemy.position) * ARENA_SIZE
 		enemy.charge_direction = path.normalized()
@@ -1191,7 +1259,7 @@ func _resolve_attack(enemy: BattleEnemy) -> void:
 			event_committed.emit({"kind": &"enemy_heal", "from": enemy.position, "at": ally.position})
 		return
 	if enemy.behavior == &"brood":
-		if enemy.spawn_count < 5:
+		if enemy.spawn_count < 5 and _living().size() < _enemy_cap:
 			var kind := &"wisp" if enemy.spawn_count % 2 else &"leech"
 			var child := _spawn_enemy(load("res://game/content/enemies/%s.tres" % kind), enemy.position + Vector2(0.025, 0.04))
 			_make_small(child)
@@ -1229,9 +1297,81 @@ func _resolve_attack(enemy: BattleEnemy) -> void:
 		return
 
 
+func _emit_precision_volley(enemy: BattleEnemy) -> void:
+	var offset := (enemy.aimed_position - enemy.position) * ARENA_SIZE
+	var needle := enemy.behavior == &"snipe"
+	# A displaced muzzle must not create a point-blank projectile at the marked spot.
+	if offset.length() < 90.0: return
+	var speed := minf((440.0 if needle else 205.0) * ENEMY_SPEED_SCALE, (offset.length() - 28.0) / 0.65)
+	for lane in (1 if needle else 2):
+		var angle := offset.angle() + (0.0 if needle else (float(lane) - 0.5) * 0.12)
+		_emit_enemy_threat(enemy, angle, lane, speed, 6.75)
+		threats[-1].visual_style = &"needle" if needle else &"refrain"
+		threats[-1].life = maxf(6.0, offset.length() / speed + 0.5)
+	event_committed.emit({"kind": &"enemy_shot", "at": enemy.position, "target": enemy.aimed_position})
+
+
+func _advance_ward(enemy: BattleEnemy, delta: float) -> void:
+	if enemy.ward_remaining > 0.0:
+		if ward_target(enemy) == null:
+			_end_ward(enemy)
+		else:
+			enemy.ward_remaining = maxf(0.0, enemy.ward_remaining - delta)
+			if enemy.ward_remaining == 0.0: _end_ward(enemy)
+		return
+	if enemy.frozen_time > 0.0 or enemy.stagger_time > 0.0 or enemy.word.is_empty():
+		enemy.aiming = false
+		return
+	enemy.attack_clock -= delta * enemy.cold_attack_scale()
+	enemy.aiming = enemy.attack_clock <= enemy.warning_time
+	if enemy.attack_clock > 0.0: return
+	var selected: BattleEnemy
+	var closest := BattleEnemy.WARD_RANGE
+	for ally in enemies:
+		if not ally.alive() or not enemy_in_combat(ally) or ally.boss or ally.behavior == &"ward" or ally.kind == &"tower" or ally.word.is_empty() or is_warded(ally): continue
+		var distance := ((ally.position - enemy.position) * ARENA_SIZE).length()
+		if distance < closest:
+			closest = distance
+			selected = ally
+	enemy.aiming = false
+	enemy.attack_clock = enemy.attack_interval
+	if selected != null:
+		enemy.ward_target_id = selected.id
+		enemy.ward_remaining = BattleEnemy.WARD_DURATION
+		selected.ward_source_id = enemy.id
+		event_committed.emit({"kind": &"enemy_ward", "enemy": enemy.id, "target": selected.id, "at": selected.position})
+
+
+func ward_target(source: BattleEnemy) -> BattleEnemy:
+	# Current state is read at damage time, including control applied earlier this step.
+	if not source.alive() or source.ward_remaining <= 0.0 or source.frozen_time > 0.0 or source.stagger_time > 0.0 or not enemy_in_combat(source): return null
+	var target := enemy_by_id(source.ward_target_id)
+	if target == null or not target.alive() or not enemy_in_combat(target): return null
+	if ((target.position - source.position) * ARENA_SIZE).length() > BattleEnemy.WARD_RANGE: return null
+	return target
+
+
+func is_warded(enemy: BattleEnemy) -> bool:
+	var source := enemy_by_id(enemy.ward_source_id)
+	return source != null and ward_target(source) == enemy
+
+
+func _end_ward(source: BattleEnemy) -> void:
+	var target := enemy_by_id(source.ward_target_id)
+	if target != null and target.ward_source_id == source.id: target.ward_source_id = &""
+	source.ward_target_id = &""
+	source.ward_remaining = 0.0
+
+
 func _emit_enemy_threat(enemy: BattleEnemy, angle: float, lane: int, speed: float, radius: float) -> void:
 	var threat := BattleThreat.new()
 	threat.source_id = enemy.id
+	match enemy.kind:
+		&"quill", &"sentinel": threat.visual_style = &"quill"
+		&"wisp": threat.visual_style = &"wisp"
+		&"binder", &"echo-archivist": threat.visual_style = &"rune"
+		&"vortex": threat.visual_style = &"vortex"
+		&"mirror", &"scribe", &"tower", &"final-editor": threat.visual_style = &"shard"
 	_attack_serial += 1
 	threat.attack_id = "%s:%s:%s:%s:%s" % [ledger.room_id, enemy.id, enemy.attack_serial, lane, _attack_serial]
 	threat.position = enemy.position
@@ -1249,7 +1389,7 @@ func _emit_pattern(enemy: BattleEnemy, pattern: StringName, curve: float = 0.0, 
 	for index in count:
 		if pattern == &"ring" and index in [gap, (gap + 1) % count]: continue
 		var angle := index * TAU / count + enemy.age * 0.14 if pattern == &"ring" else aim + (index - (count - 1) * 0.5) * 0.145
-		_emit_enemy_threat(enemy, angle, enemy.attack_serial * 100 + threats.size(), (83.0 + (_physical_chapter() - 1) * 12.0) * 1.5 * _enemy_speed_scale * speed_scale, 6.0)
+		_emit_enemy_threat(enemy, angle, enemy.attack_serial * 100 + threats.size(), 83.0 * 1.5 * ENEMY_SPEED_SCALE * speed_scale, 6.0)
 		threats[-1].curvature = curve
 		threats[-1].acceleration = 0.12 if pattern == &"single" and curve != 0.0 else 0.0
 		if curve != 0.0 and pattern != &"ring":
@@ -1387,7 +1527,7 @@ func _advance_hazards(delta: float) -> void:
 			event_committed.emit({"kind": &"hazard_active", "at": hazard.center, "hazard": hazard.kind, "radius": hazard.radius})
 			if hazard.ring:
 				for lane in 10:
-					_emit_enemy_threat(source, lane * TAU / 10.0, 1000 + lane, 142.5 * _enemy_speed_scale, 6.0)
+					_emit_enemy_threat(source, lane * TAU / 10.0, 1000 + lane, 142.5 * ENEMY_SPEED_SCALE, 6.0)
 					threats[-1].position = hazard.center
 					threats[-1].previous_position = hazard.center
 		hazard.active_remaining = maxf(0.0, hazard.active_remaining - delta)
@@ -1420,20 +1560,20 @@ func _resolve_melee(enemy: BattleEnemy) -> void:
 
 
 func _advance_threats(delta: float) -> void:
+	_advancing_threats = true
 	for index in range(threats.size() - 1, -1, -1):
 		var threat := threats[index]
+		if threat.cleared: continue
 		threat.previous_position = threat.position
 		threat.position += BattleThreat.flight_displacement(threat.velocity, threat.curvature, threat.acceleration, delta) / ARENA_SIZE
 		threat.velocity = BattleThreat.flight_velocity(threat.velocity, threat.curvature, threat.acceleration, delta)
 		threat.life -= delta
 		if ((threat.position - player_position) * ARENA_SIZE).length() <= 75.0 and dodge_window > 0.0: runtime.graze(threat)
-		if threat.curvature != 0.0:
-			if threat.trail.is_empty(): threat.trail.append(threat.previous_position)
-			if ((threat.position - threat.trail[-1]) * ARENA_SIZE).length() >= 6.0:
-				threat.trail.append(threat.position)
-		else:
+		# Display history follows distance, so slow straight shots retain a full tail.
+		if threat.trail.is_empty(): threat.trail.append(threat.previous_position)
+		if ((threat.position - threat.trail[-1]) * ARENA_SIZE).length() >= (6.0 if threat.curvature != 0.0 else 4.0):
 			threat.trail.append(threat.position)
-		if threat.trail.size() > (32 if threat.curvature != 0.0 else 12):
+		if threat.trail.size() > 32:
 			threat.trail.remove_at(0)
 		if threat.reflected:
 			var hit: BattleEnemy
@@ -1490,6 +1630,18 @@ func _advance_threats(delta: float) -> void:
 				threats.remove_at(index)
 		elif threat.life <= 0.0 or not Rect2(Vector2(-0.05, -0.05), Vector2(1.1, 1.1)).has_point(threat.position):
 			threats.remove_at(index)
+	_advancing_threats = false
+	_flush_cleared_threats()
+
+
+func _flush_cleared_threats() -> void:
+	var write_index := 0
+	for read_index in threats.size():
+		var threat := threats[read_index]
+		if threat.cleared: continue
+		threats[write_index] = threat
+		write_index += 1
+	threats.resize(write_index)
 
 
 func _commit_action(action: StringName) -> void:
@@ -1645,6 +1797,8 @@ func _interrupt_enemy(enemy: BattleEnemy) -> void:
 	enemy.charge_time = 0.0
 	enemy.melee_strike = 0.0
 	enemy.delayed_attacks.clear()
+	enemy.followup_time = 0.0
+	if enemy.ward_remaining > 0.0: _end_ward(enemy)
 	enemy.stagger_time = maxf(enemy.stagger_time, 0.4 if enemy.boss else 0.85)
 	enemy.attack_clock = maxf(enemy.attack_clock, enemy.warning_time + 0.4)
 	enemy.velocity = Vector2.ZERO
@@ -1682,6 +1836,8 @@ func _parry_feedback(source_id: StringName, grade: StringName = &"perfect") -> v
 			enemy.charge_time = 0.0
 			enemy.melee_strike = 0.0
 			enemy.delayed_attacks.clear()
+			enemy.followup_time = 0.0
+			if enemy.ward_remaining > 0.0: _end_ward(enemy)
 			enemy.stagger_time = maxf(enemy.stagger_time, 1.2 if direct else 0.7)
 			enemy.attack_clock = maxf(enemy.attack_clock, 1.4)
 	for threat in threats:
@@ -1992,6 +2148,7 @@ func commit_damage(enemy: BattleEnemy, damage_q: int, raw_q: int, source: String
 		var attack_side := ((origin - enemy.position) * ARENA_SIZE).normalized()
 		var front := ((player_position - enemy.position) * ARENA_SIZE).normalized()
 		if attack_side.dot(front) > 0.2: damage_q = roundi(damage_q * 0.7)
+	if is_warded(enemy): damage_q = roundi(damage_q * BattleEnemy.WARD_DAMAGE_SCALE)
 	var applied_q := mini(enemy.hp_q, damage_q)
 	enemy.hp_q = maxi(0, enemy.hp_q - damage_q)
 	var direction := ((enemy.position - origin) * ARENA_SIZE).normalized()
@@ -2002,16 +2159,19 @@ func commit_damage(enemy: BattleEnemy, damage_q: int, raw_q: int, source: String
 	event_committed.emit({"kind": &"impact", "source": source, "from": origin, "at": enemy.position, "contact": enemy.position if contact == Vector2.INF else contact, "direction": direction, "enemy": enemy.id, "damage_q": damage_q, "applied_q": applied_q, "overkill_q": damage_q - applied_q, "raw_q": raw_q, "resistance": damage_q < raw_q, "weakness": damage_q > raw_q, "empowered": empowered})
 	if not enemy.alive():
 		enemy.aiming = false
+		enemy.followup_time = 0.0
+		if enemy.ward_remaining > 0.0: _end_ward(enemy)
 		if enemy.marked_time > 0.0 and compiled_build.asset_stacks(&"R049") > 0:
 			add_resonance(roundi(Q * compiled_build.relic_number(&"R049", &"resonance")))
 		runtime.on_enemy_death(enemy, source, 0)
 		var death_definition: EnemyCombatDefinition = _enemy_definitions[enemy.id]
 		if death_definition.death_spawn_kind != &"" and not enemy.small:
 			for side in [-1, 1]:
+				if _living().size() >= _enemy_cap: break
 				var child := _spawn_enemy(load("res://game/content/enemies/%s.tres" % death_definition.death_spawn_kind), enemy.position + Vector2(side * 0.025, 0.01))
 				_make_small(child)
 		if death_definition.death_pull:
-			runtime.pull_environment(enemy.position, 367.5, 705.0)
+			runtime.pull_environment(enemy.position, 367.5, 705.0, true, enemy.id)
 			for other in _living():
 				var offset := (enemy.position - other.position) * ARENA_SIZE
 				if offset.length() < 367.5:
@@ -2061,29 +2221,29 @@ func _nearest_living(origin: Vector2, excluded: PackedStringArray = []) -> Battl
 func _end(victory: bool) -> void:
 	finish_room(&"victory" if victory else (&"abandon" if abandoned_run else &"defeat"))
 	result = 1 if victory else -1
-	effects.clear()
-	projectiles.clear()
-	threats.clear()
-	hazards.clear()
+	if not victory:
+		effects.clear()
+		projectiles.clear()
+		threats.clear()
+		hazards.clear()
+		spirits.clear()
+		ultimates.clear()
 	for pickup in pickups: typing.retire_target(pickup.id)
 	pickups.clear()
-	spirits.clear()
-	ultimates.clear()
 	_word_sampler.selected.clear()
 	_word_sampler.used = 0
 	_retained_word_id = &""
-	ultimate_time = 0.0
-	spirit_time = 0.0
 	finished.emit(victory)
 
 
 func finish_room(reason: StringName) -> RoomCombatResult:
 	if room_result != null: return room_result
-	for effect in effects: runtime.retire(effect)
-	for projectile in projectiles: runtime.retire(projectile.effect)
-	for spirit in spirits:
-		if spirit.effect != null: runtime.retire(spirit.effect)
-	room_result = runtime.finish(reason)
+	if reason != &"victory":
+		for effect in effects: runtime.retire(effect)
+		for projectile in projectiles: runtime.retire(projectile.effect)
+		for spirit in spirits:
+			if spirit.effect != null: runtime.retire(spirit.effect)
+	room_result = runtime.finish(reason, reason == &"victory")
 	room_result.manual_characters = manual_characters
 	room_result.manual_words = completed_words + _pickup_words
 	room_result.elapsed = elapsed
@@ -2092,6 +2252,19 @@ func finish_room(reason: StringName) -> RoomCombatResult:
 		room_result.reward_facts.append(RewardFact.new(fact.fact_id, fact.base_experience, fact.chapter, fact.r021_active))
 	room_result.facts = {"has_created_redeemable_mark": has_created_redeemable_mark, "has_input_interruption": has_input_interruption, "has_same_root_lots": has_same_root_lots}
 	return room_result
+
+
+func capture_flight() -> Dictionary:
+	# Only value/ref-counted flight state crosses a page; no previous scene survives.
+	var world_state: Dictionary = {}
+	for property: String in ["effects", "projectiles", "threats", "hazards", "spirits", "spirit_time", "ultimates", "ultimate_time", "world_time", "player_position", "_settled_player_attacks"]:
+		var value: Variant = get(property)
+		world_state[property] = value.duplicate() if value is Array or value is Dictionary else value
+	var runtime_state: Dictionary = {}
+	for property: String in ["clock", "_serial", "ongoing", "fields", "spirit_attacks", "_spirit_letters"]:
+		var value: Variant = runtime.get(property)
+		runtime_state[property] = value.duplicate() if value is Array or value is Dictionary else value
+	return {"ledger": ledger, "world": world_state, "runtime": runtime_state}
 
 
 func _take_player_damage(amount: int, attack_id: String) -> void:

@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R027"
 title = "终止符"
+choice_role = &"power"
 description = "直接施法处决生命低于 {threshold_pct}% 的普通敌人；对首领伤害提高 {boss_pct}%。"
 stage = &"M3"
 supported = true

@@ -1,0 +1,48 @@
+{
+  "schema": "crystal_half_fields_v2",
+  "name": "branch_fan",
+  "source": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\source\\branch_fan.png",
+  "source_sha256": "1aefa5f3cda15c2458721992ed85570beee6547e44578c9ef0e38400952f178d",
+  "size": [
+    1672,
+    941
+  ],
+  "source_size": [
+    1672,
+    941
+  ],
+  "black_padding_ltrb": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "content_edge_feather_px": [
+    0.0,
+    0.0
+  ],
+  "seed": 1,
+  "guide_count": 18,
+  "max_guides": 18,
+  "baseline_linear_rgb": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "decoded_broad_max": 0.8676134347915649,
+  "decoded_ridge_max": 0.5493349432945251,
+  "flow_mask_mean": 0.1185493990778923,
+  "flow_mask_max": 0.999388575553894,
+  "gradient_abs_max": 0.6859999895095825,
+  "authored_height_scale": 0.9537560041653386,
+  "files": {
+    "structure": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\branch_fan_structure.exr",
+    "flow": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\branch_fan_flow.exr",
+    "gradient": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\branch_fan_gradient.exr"
+  },
+  "linear_data": true,
+  "storage": "RGBA16F",
+  "premultiplied": false,
+  "source_rgb_is_base_color": false,
+  "geometry": "independently authored fold height along image-guided 2-D curves; not physical reconstruction"
+}

@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="224" viewBox="0 0 96 112"><path d="M48 8L78 25L85 72L48 102L11 72L18 25Z" fill="#455772" stroke="#c1cad7" stroke-width="1.7"/><path d="M48 18L69 31L74 68L48 89L22 68L27 31Z" fill="#7c92a6" stroke="#cbb995"/><path d="M29 34L46 23L42 79L26 64Z" fill="#d5e3e2" opacity=".32"/><path d="M34 49L42 52M54 52L62 49" stroke="#f0e9ce" stroke-width="2"/><path d="M43 14L48 23L53 14M43 95L48 88L53 95" fill="none" stroke="#dbcdac"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="224" viewBox="0 0 96 112">
+ <defs><linearGradient id="frame" x2=".9" y2="1"><stop stop-color="#bdcbd2"/><stop offset=".32" stop-color="#5e748a"/><stop offset=".65" stop-color="#28394d"/><stop offset="1" stop-color="#a1b2bd"/></linearGradient><linearGradient id="glass" x2=".9" y2=".6"><stop stop-color="#b9d8de"/><stop offset=".35" stop-color="#658b9c"/><stop offset=".5" stop-color="#d2e4e4"/><stop offset=".53" stop-color="#647d97"/><stop offset="1" stop-color="#30465d"/></linearGradient></defs>
+ <path d="M48 8L59 18Q72 17 78 25L85 72Q72 81 62 86L48 102L34 86Q24 81 11 72L18 25Q24 17 37 18Z" fill="url(#frame)" stroke="#bbc7cf" stroke-width="1.5"/>
+ <path d="M48 20Q60 29 69 31L74 67L48 90L22 67L27 31Q38 27 48 20Z" fill="url(#glass)" stroke="#d3c5a3" stroke-width="1.4"/>
+ <path d="M48 23L31 34L28 61L37 69L40 43Z" fill="#e2eef0" opacity=".25"/>
+ <path d="M48 31L47 53L33 64M47 53L62 60L66 73M47 53L60 42" fill="none" stroke="#dce7df" stroke-opacity=".55" stroke-width=".8"/>
+ <path d="M32 48Q39 44 44 49L41 53L35 52ZM52 49Q57 44 64 48L61 52L55 53Z" fill="#233c51"/><path d="M35 48L41 49M55 49L61 48" stroke="#e8e6cf" stroke-width="1.5"/>
+ <path d="M37 19Q22 21 23 34Q14 46 19 60M59 19Q74 21 73 34Q82 46 77 60M21 70Q30 70 34 81M75 70Q66 70 62 81" fill="none" stroke="#c8b990" stroke-width="1.1"/>
+ <path d="M21 36Q29 34 23 26M75 36Q67 34 73 26M35 85Q41 79 41 91M61 85Q55 79 55 91" fill="none" stroke="#c8b990" stroke-width="1"/>
+ <path d="M48 11L52 17L48 23L44 17ZM48 90L52 95L48 100L44 95Z" fill="#d1d7c7"/>
+</svg>

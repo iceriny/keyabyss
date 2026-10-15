@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1")
 id = &"G024"
+choice_role = &"mechanism"
 title = "火漆批注"
 description = "直接施法命中时，附加 {burn_hit} 点灼烧。"
 modifiers = {&"burn_hit": 8}

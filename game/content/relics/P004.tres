@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"P004"
 title = "留名书签"
-description = "易伤开始自然流失前，额外保留 {mark_grace_ms_s} 秒。"
-modifiers = {&"mark_grace_ms": 300}
+description = "带易伤的敌人死亡时，将其至多 {mark} 点易伤传给半径 {radius} 内最近的 {targets} 名敌人。"
+numbers = {&"mark": 40, &"targets": 2, &"radius": 260}
+stack_values = PackedStringArray("mark")
+choice_role = &"mechanism"
 tags = PackedStringArray("mark")
 max_stacks = 2
 rarity = &"common"

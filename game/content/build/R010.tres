@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R010"
 title = "留白短札"
+choice_role = &"mechanism"
 description = "闪避落点清除半径 {radius} 内的敌弹，并推开附近敌人。"
 stage = &"M3"
 supported = true

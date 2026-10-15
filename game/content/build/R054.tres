@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R054"
 title = "炽炭书封"
+choice_role = &"defense"
 description = "每次焰印施法获得 {shield} 点护盾。"
 stage = &"M3"
 supported = true

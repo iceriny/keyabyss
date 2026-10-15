@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R032"
 title = "永冻墨池"
+choice_role = &"mechanism"
 description = "直接施法命中后留下寒气区域，持续 {duration} 秒；普通／强化半径为 {radius}／{empowered_radius}。"
 stage = &"M3"
 supported = true

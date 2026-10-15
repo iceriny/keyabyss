@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R038"
 title = "飞白笔锋"
+choice_role = &"mechanism"
 description = "擦弹获得双倍共鸣，并获得 {shield} 点护盾。"
 stage = &"M3"
 supported = true

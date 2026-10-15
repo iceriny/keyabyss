@@ -1,0 +1,194 @@
+[
+  {
+    "source": "crescent.png",
+    "sha256": "e6226d57680f0ae28b507df42684099d19aeba2c918fba6603a99128a0569274",
+    "field": "crescent_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "fan.png",
+    "sha256": "ef4df3a399cfdbf86bce9aa8c0e4603bf5c2a74a0cdcec00feb4488c92142f22",
+    "field": "fan_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "fern.png",
+    "sha256": "65c33fb64aa925609c6198862c6904b954d74cb063f77ed295ba320cdd43d671",
+    "field": "fern_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "fold.png",
+    "sha256": "341adec7dcc445ab9a3a129eb9ccfb04013293cc04b6e77470e39deafeace11f",
+    "field": "fold_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "petals.png",
+    "sha256": "ae5787cd8c6e55a6acaa0ad9c8f5904e9489bb74219774b134a8328dc74015b4",
+    "field": "petals_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "quartz.png",
+    "sha256": "f632e63d2cc32cd8cf45ec5ea68829193d17aef9b3719beb956286ce20d1ac92",
+    "field": "quartz_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "ribbon.png",
+    "sha256": "60ae121189214ed3512aecc26103cf74f3a928d247c5f2411fc05860fd555ea1",
+    "field": "ribbon_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "sail.png",
+    "sha256": "16d7f6f90a2819ee80b32c6d9b50333cc81fb76c41df4de616db5d78723ea285",
+    "field": "sail_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "shards.png",
+    "sha256": "40b89293f132d9c93bf87923394493f66056681f718422c284d0d756cc8b3ed6",
+    "field": "shards_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "shell.png",
+    "sha256": "2a77100375d6bdfa43746bed9599b1df385b02496a78d13991b0f2e734051f94",
+    "field": "shell_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "tide.png",
+    "sha256": "904795338132d27f0aa9df8689da5adac103e21bf49bf9c9ffc6c3f2f6648021",
+    "field": "tide_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  },
+  {
+    "source": "wing.png",
+    "sha256": "39f12f4426566c34ff9051f5df4126dc65760c635b7bcc86566d4f33f27779ab",
+    "field": "wing_optics.exr",
+    "size": [
+      512,
+      512
+    ],
+    "storage": "linear RGBA16F",
+    "channels": [
+      "slope_x * .5 + .5",
+      "slope_y * .5 + .5",
+      "thickness",
+      "roughness"
+    ]
+  }
+]

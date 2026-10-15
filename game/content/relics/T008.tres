@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"T008"
 title = "宽幅雷纸"
+choice_role = &"power"
 description = "电爆半径增加 {storm_burst_radius}。"
-modifiers = {&"storm_burst_radius": 12}
+modifiers = {&"storm_burst_radius": 16}
 tags = PackedStringArray("empowered")
 max_stacks = 2
 rarity = &"common"

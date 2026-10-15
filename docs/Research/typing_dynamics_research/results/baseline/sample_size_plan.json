@@ -1,0 +1,47 @@
+{
+  "beginner": {
+    "pilot_sd": 3.468593562864901,
+    "target_halfwidth": 1.5,
+    "unconstrained_n": 21,
+    "n_people": 64,
+    "repetitions": 2,
+    "session_seconds": 60,
+    "main_person_offset": 1000
+  },
+  "ordinary": {
+    "pilot_sd": 6.248234533258871,
+    "target_halfwidth": 1.5,
+    "unconstrained_n": 67,
+    "n_people": 67,
+    "repetitions": 2,
+    "session_seconds": 60,
+    "main_person_offset": 1000
+  },
+  "skilled": {
+    "pilot_sd": 5.991828674917637,
+    "target_halfwidth": 1.5,
+    "unconstrained_n": 62,
+    "n_people": 64,
+    "repetitions": 2,
+    "session_seconds": 60,
+    "main_person_offset": 1000
+  },
+  "expert": {
+    "pilot_sd": 5.673666286488376,
+    "target_halfwidth": 1.5,
+    "unconstrained_n": 55,
+    "n_people": 64,
+    "repetitions": 2,
+    "session_seconds": 60,
+    "main_person_offset": 1000
+  },
+  "elite": {
+    "pilot_sd": 7.428002247664196,
+    "target_halfwidth": 1.5,
+    "unconstrained_n": 95,
+    "n_people": 95,
+    "repetitions": 2,
+    "session_seconds": 60,
+    "main_person_offset": 1000
+  }
+}

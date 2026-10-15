@@ -1,0 +1,189 @@
+[
+  {
+    "id": "R01",
+    "authors": "Dhakal, Vivek; Feit, Anna; Kristensson, Per Ola; Oulasvirta, Antti",
+    "year": 2018,
+    "title": "Observations on Typing from 136 Million Keystrokes",
+    "doi": "10.1145/3173574.3174220",
+    "url": "https://userinterfaces.aalto.fi/136Mkeystrokes/",
+    "verification": "Full author PDF read; Table 3 visually checked on PDF page 5; Table 2 categories checked. Raw 1.4 GB archive not downloaded.",
+    "use": "Empirical category-mean IKI constraints and key-hold inputs; WPM summaries constrain a separate whole-task boundary residual; error summaries are descriptive only.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R02",
+    "authors": "Feit, Anna; Weir, Daryl; Oulasvirta, Antti",
+    "year": 2016,
+    "title": "How We Type: Movement Strategies and Performance in Everyday Typing",
+    "doi": "",
+    "url": "https://userinterfaces.aalto.fi/how-we-type/",
+    "verification": "Official research page/abstract checked.",
+    "use": "Motivates explicit preparation, mapping consistency and overlapping finger actions; no numerical parameters fitted.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R03",
+    "authors": "Pinet, Stéphanie et al.",
+    "year": 2022,
+    "title": "Typing expertise in a large student population",
+    "doi": "10.1186/s41235-022-00424-3",
+    "url": "https://link.springer.com/article/10.1186/s41235-022-00424-3",
+    "verification": "Publisher full text examined; 1301 students; French/AZERTY context.",
+    "use": "Continuous expertise and paradigm dependence; not quantitative independent validation of English/QWERTY predictions.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R04",
+    "authors": "Logan, Gordon D.",
+    "year": 2018,
+    "title": "Automatic control: How experts act without thinking",
+    "doi": "10.1037/rev0000100",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29952620/",
+    "verification": "Primary bibliographic record/abstract checked.",
+    "use": "Hierarchical control motivation, not calibration of recognition or attention constants.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R05",
+    "authors": "Logan, Gordon D.; Crump, Matthew J. C.",
+    "year": 2010,
+    "title": "Cognitive illusions of authorship reveal hierarchical error detection in skilled typists",
+    "doi": "",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21030660/",
+    "verification": "Primary abstract checked.",
+    "use": "Distinguishes motor/feedback error monitoring; our detection probability and latency remain priors.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R06",
+    "authors": "Wolfe, Jeremy M.",
+    "year": 2021,
+    "title": "Guided Search 6.0: An updated model of visual search",
+    "doi": "10.3758/s13423-020-01859-9",
+    "url": "https://link.springer.com/article/10.3758/s13423-020-01859-9",
+    "verification": "Publisher/primary record consulted.",
+    "use": "Mechanistic context for salience-weighted attention and serial selections; simplified implementation is not Guided Search 6 itself.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R07",
+    "authors": "Bouma, Herman",
+    "year": 1970,
+    "title": "Interaction effects in parafoveal letter recognition",
+    "doi": "10.1038/226177a0",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/5437004/",
+    "verification": "Primary record checked.",
+    "use": "Eccentricity-linked interference motivates spatial kernel; 0.45 coefficient is an explicit word-task prior, not a universal empirical constant.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R08",
+    "authors": "Gibaldi, Agostino; Sabatini, Silvio P.",
+    "year": 2021,
+    "title": "The saccade main sequence revised: A fast and repeatable tool for oculomotor analysis",
+    "doi": "10.3758/s13428-020-01388-2",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7880984/",
+    "verification": "Primary full-text page consulted.",
+    "use": "Amplitude-dependent saccade dynamics; numerical linear-duration coefficients here are priors.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R09",
+    "authors": "de Xivry, Jean-Jacques Orban et al.",
+    "year": 2009,
+    "title": "Smooth pursuit performance during target blanking does not influence the triggering of predictive saccades",
+    "doi": "",
+    "url": "https://jov.arvojournals.org/article.aspx?articleid=2203981",
+    "verification": "Primary journal abstract and author-hosted record checked.",
+    "use": "Predictive tracking and catch-up distinctions under blanking; not direct typing-task evidence.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R10",
+    "authors": "Lencer, Rebekka et al.",
+    "year": 2004,
+    "title": "Cortical mechanisms of smooth pursuit eye movements with target blanking. An fMRI study.",
+    "doi": "10.1111/j.1460-9568.2004.03229.x",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/15016102/",
+    "verification": "Primary journal bibliographic record consulted.",
+    "use": "Motivates continued prediction during blanking; no numerical calibration.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R11",
+    "authors": "Niehorster, Diederick C. et al.",
+    "year": 2015,
+    "title": "Manual tracking enhances smooth pursuit eye movements",
+    "doi": "",
+    "url": "https://jov.arvojournals.org/article.aspx?articleid=2474042",
+    "verification": "Primary journal abstract checked.",
+    "use": "Eye-hand task interactions; moving a hand-held tracker is not a typing experiment.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R12",
+    "authors": "Rayner, Keith et al.",
+    "year": 2010,
+    "title": "Eye movements, the perceptual span, and reading speed",
+    "doi": "10.3758/PBR.17.6.834",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3075059/",
+    "verification": "Primary study consulted.",
+    "use": "Preview/perceptual span motivation; reading ability is not assumed to equal typing expertise.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R13",
+    "authors": "Fitts, Paul M.",
+    "year": 1954,
+    "title": "The information capacity of the human motor system in controlling the amplitude of movement",
+    "doi": "10.1037/h0055392",
+    "url": "https://doi.org/10.1037/h0055392",
+    "verification": "Original research identified; source task is aimed movement, not general typing.",
+    "use": "Geometry-related lower constraint only, not an additive universal IKI law.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R14",
+    "authors": "MacKenzie, I. Scott",
+    "year": 1989,
+    "title": "A note on the information-theoretic basis for Fitts’ law",
+    "doi": "10.1080/00222895.1989.10735486",
+    "url": "https://www.yorku.ca/mack/JMB89.html",
+    "verification": "Full author-hosted text examined.",
+    "use": "Source of Shannon-form log2(1+D/W); its use for finger travel here remains a model assumption.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R15",
+    "authors": "TextBlob contributors; Norvig, Peter",
+    "year": "n.d.",
+    "title": "TextBlob 0.19.0 packaged English spelling count lexicon",
+    "doi": "",
+    "url": "https://raw.githubusercontent.com/sloria/TextBlob/dev/src/textblob/en/en-spelling.txt",
+    "verification": "Local installed version copied, original header retained, SHA-256 recorded; upstream text checked online. Version year not a new study date.",
+    "use": "Actual count lexicon, within-word n-gram frequencies and dictionary-neighbor preprocessing.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R16",
+    "authors": "Norvig, Peter",
+    "year": 2007,
+    "title": "How to Write a Spelling Corrector",
+    "doi": "",
+    "url": "https://www.norvig.com/spell-correct.html",
+    "verification": "Author page checked.",
+    "use": "Corpus provenance context; not a contemporary representative language frequency norm.",
+    "accessed": "2026-10-13"
+  },
+  {
+    "id": "R17",
+    "authors": "Balota, David A. et al.",
+    "year": 2007,
+    "title": "The English Lexicon Project",
+    "doi": "10.3758/BF03193014",
+    "url": "https://elexicon.wustl.edu/",
+    "verification": "Official project and dataset description located; trial-level data not downloaded.",
+    "use": "Future lexical calibration candidate only; no ELP reaction times were used or fitted.",
+    "accessed": "2026-10-13"
+  }
+]

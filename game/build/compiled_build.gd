@@ -3,7 +3,7 @@ extends RefCounted
 ## Installed snapshots are private. Readers receive values or copies.
 
 ## Included in the compiled identity; this is not a save schema version.
-const PARAMETER_VERSION := "relics-3"
+const PARAMETER_VERSION := "relics-5"
 var _id: String
 var _book: StringName
 var _rules: Dictionary[StringName, bool] = {}

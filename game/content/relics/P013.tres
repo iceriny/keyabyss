@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"P013"
 title = "护名纸"
+choice_role = &"defense"
 description = "纸灵标记命中时，获得 {mark_shield} 点护盾。"
-modifiers = {&"mark_shield": 1}
+modifiers = {&"mark_shield": 2}
 tags = PackedStringArray("mark", "shield")
 max_stacks = 2
 rarity = &"common"

@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="BattleEncounter" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="BattleEncounter" load_steps=8 format=3]
 [ext_resource type="Script" path="res://game/content/battle_encounter.gd" id="1"]
 [ext_resource type="Script" path="res://game/content/enemy_combat_definition.gd" id="2"]
 [ext_resource type="Resource" path="res://game/content/enemies/guard.tres" id="3"]
 [ext_resource type="Resource" path="res://game/content/enemies/wisp.tres" id="4"]
 [ext_resource type="Resource" path="res://game/content/enemies/ram.tres" id="5"]
+[ext_resource type="Resource" path="res://game/content/enemies/pin_archer.tres" id="6"]
+[ext_resource type="Resource" path="res://game/content/enemies/nib.tres" id="7"]
 [resource]
 script = ExtResource("1")
 room_id = &"lost-library-2"
@@ -11,4 +13,6 @@ display_name = "失落书库 · 深处"
 wave_count = 3
 room_number = 2
 ambush_chance = 0.18
-enemies = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5")])
+enemies = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7")])
+opening_enemies = Array[ExtResource("2")]([ExtResource("6"), ExtResource("7")])
+role_limits = Dictionary[StringName, int]({&"precision": 1})

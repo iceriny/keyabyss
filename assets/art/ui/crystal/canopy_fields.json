@@ -1,0 +1,48 @@
+{
+  "schema": "crystal_half_fields_v2",
+  "name": "canopy",
+  "source": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\source\\canopy.png",
+  "source_sha256": "0371d10d07eb731f83e6673c0683adca1d3269e92c4d8bf250273ff3322614ae",
+  "size": [
+    1672,
+    941
+  ],
+  "source_size": [
+    1672,
+    941
+  ],
+  "black_padding_ltrb": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "content_edge_feather_px": [
+    0.0,
+    0.0
+  ],
+  "seed": 4,
+  "guide_count": 18,
+  "max_guides": 18,
+  "baseline_linear_rgb": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "decoded_broad_max": 0.7660054564476013,
+  "decoded_ridge_max": 0.675313413143158,
+  "flow_mask_mean": 0.08395858108997345,
+  "flow_mask_max": 0.9980710744857788,
+  "gradient_abs_max": 0.6859999895095825,
+  "authored_height_scale": 0.9167285371087961,
+  "files": {
+    "structure": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\canopy_structure.exr",
+    "flow": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\canopy_flow.exr",
+    "gradient": "F:\\Workshop\\game\\keyabyss\\assets\\art\\ui\\crystal\\canopy_gradient.exr"
+  },
+  "linear_data": true,
+  "storage": "RGBA16F",
+  "premultiplied": false,
+  "source_rgb_is_base_color": false,
+  "geometry": "independently authored fold height along image-guided 2-D curves; not physical reconstruction"
+}

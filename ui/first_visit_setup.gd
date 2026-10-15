@@ -243,4 +243,5 @@ func _layout_panel() -> void:
 	var caption := $ContentLayer/PreviewCaption as Control
 	caption.position = Vector2(size.x * .57, 56.0)
 	caption.size.x = size.x * .36
-	(wash.material as ShaderMaterial).set_shader_parameter("reading_rect", Vector4(panel.position.x / size.x, panel.position.y / size.y, panel.size.x / size.x, panel.size.y / size.y))
+	if not reading_style.is_empty():
+		_layout_reading_crystal()

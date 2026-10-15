@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R052"
 title = "野火书签"
+choice_role = &"mechanism"
 description = "燃烧敌人死亡时，向附近目标传播灼烧；传播目标增加 {targets} 个，范围增加 {radius}，最多传播两代。"
 stage = &"M3"
 supported = true

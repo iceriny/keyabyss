@@ -6,12 +6,13 @@
 script = ExtResource("1")
 id = &"A009"
 title = "传火书线"
-description = "野火书签的灼烧传播范围增加 {burn_spread_radius}。"
-modifiers = {&"burn_spread_radius": 16}
+description = "亲手施放的火弹命中尚未燃烧的敌人时，给半径 {radius} 内最近的另外 {targets} 名敌人各附加 {burn} 点灼烧。"
+numbers = {&"burn": 35, &"targets": 2, &"radius": 200}
+stack_values = PackedStringArray("burn")
+choice_role = &"mechanism"
 tags = PackedStringArray("burn", "spread")
 max_stacks = 2
 rarity = &"uncommon"
 allowed_books = PackedStringArray("flame")
-requires_all = PackedStringArray("R052")
 supported = true
 stage = &"relics-3"

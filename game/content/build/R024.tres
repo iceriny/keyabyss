@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R024"
 title = "未完待续"
+choice_role = &"mechanism"
 description = "本次远征首次受到致命伤时，恢复 {heal_pct}% 生命并清弹。"
 stage = &"M3"
 supported = true

@@ -6,7 +6,7 @@
 
 | 要了解什么 | 入口 | 职责 |
 | --- | --- | --- |
-| 下一位实施者从哪里开始 | [实施交接](migration/AGENT-HANDOFF.md) | 已定范围、准确 Web 基线、当前依赖、S1 操作顺序与后续边界 |
+| 下一位实施者从哪里开始 | [实施交接](migration/AGENT-HANDOFF.md) | 已定范围、准确 Web 基线、当前源码入口与保存／继承边界 |
 | 游戏应该是什么 | [产品设计](PRODUCT-DESIGN.md) | 打字、四书、局内遗物、线性成长、最高档与保留遗物升档 |
 | 四书怎样战斗与成长 | [四书战斗机制](FOUR-BOOKS-DESIGN.md) | 直接施法、第三次强化、闪避、终极、状态点数、场景优势与首轮定参 |
 | 当前实际做到哪里 | [阶段总结](STAGE-SUMMARY.md) | 收缩后的正式流程、验证证据及尚未完成的体验与发行边界 |
@@ -15,7 +15,8 @@
 | 当前源码入口 | [实现快照](TECHNICAL-SNAPSHOT.md) | 实際文件与职责，不规定全部继续保留 |
 | 怎样核对旧玩法和素材 | [数据与素材映射](migration/DATA-AND-ASSETS.md)、[体验映射](migration/EXPERIENCE-MAP.md) | Git 基线、旧入口、素材来源与体验边界 |
 | 怎样启动和观察 | [工具链](migration/TOOLCHAIN.md) | 引擎锁、CLI、生成预览与导出 |
-| 怎样选择验证 | [TESTING](TESTING.md)、[收益与难度评估](COMBAT-BALANCE-DESIGN.md) | 保留行为的最小检查、完整内容评估和最高档门槛 |
+| 怎样发布测试包与正式包 | [Windows 发布流程](RELEASING.md) | 版本与资产锁、导出、成品验收、分发校验、反馈与回退 |
+| 怎样选择验证 | [TESTING](TESTING.md)、[测试入口索引](../tests/README.md)、[收益与难度评估](COMBAT-BALANCE-DESIGN.md) | 按行为选择最小检查、完整内容评估和最高档门槛 |
 
 ## 专题规范与工具
 
@@ -23,10 +24,11 @@
 | --- | --- |
 | [金丝水晶](ART-DIRECTION.md)、[开放 UI](OPEN-UI.md) | 材质、画面层级、固定操作与内部滚动 |
 | [文案规范](CONTENT-STYLE.md) | 词咒、条件、效果、代价和玩家可读说明 |
-| [遗物与阅读系统](RELIC-SYSTEM.md) | 四书各106件可用池、资格拓扑、稀有度、共享数值、术语与Alt详情 |
+| [遗物与阅读系统](RELIC-SYSTEM.md) | 97件正式池及内容比例、人工触发与状态取舍、资格与奖励用途、共享说明、术语与Alt详情 |
 | [四书实施](migration/PLAN.md#四书战斗机制实施) | 输入契约、分书接入、遗物与正式流程、场景校准的依赖与出口 |
+| [敌人与弹幕](ENEMY-AND-BARRAGE-RESEARCH.md) | 源码与外部灵感、首批三敌规则、后续候选与性能采用条件；实体交互、造型辨识、HDR／流体分工及动态验证的通用经验 |
 | [四书遥测参考](COMBAT-TELEMETRY.md) | 未来可选的玩法事件、观察问题与指标口径 |
-| [UI 实践](migration/UI-IMPLEMENTATION-LESSONS.md)、[M2 实施经验](migration/M2-IMPLEMENTATION-LESSONS.md) | 已遇到的问题、原生取舍和历史证据边界 |
+| [UI 实践](migration/UI-IMPLEMENTATION-LESSONS.md)、[战斗实施经验](migration/M2-IMPLEMENTATION-LESSONS.md) | 输入、接触、表现与工具实践；第12节整理模型评估、状态交接、回调重入和验证判定的通用方法 |
 | [流体工具](FLUID-EFFECTS.md) | 当前原生流体、预设、照明和质量成本 |
 | [渲染准备方案](migration/PLAN.md#渲染准备与原生资源实施方案) | 首屏反馈、原生场景／材质、计算管线复用、Shader Baker 与必要验收 |
 | [战斗算法优化](migration/PLAN.md#战斗算法优化)、[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md) | 查询、首击选择与 .NET 闪避评分核；保留碰撞／视觉语义，记录性能取舍及验证 |
@@ -34,9 +36,15 @@
 | [音频库](../development/audio_library/README.md)、[音频接线](audio/README.md) | Agent 按描述、时长和变体组选择已切好的 WAV；原件映射与实际事件接线 |
 | [Git 与资产开发](GIT-AND-ASSETS.md)、[实施记录](migration/ASSET-UPLOAD-IMPLEMENTATION.md) | 双仓版本锁、完整资产、单命令交接与实际恢复证据 |
 
+## 候选研究
+
+| 资料 | 职责 |
+| --- | --- |
+| [星空之书](STARRY-SKY-BOOK-RESEARCH.md) | 梦幻星海、引力吞噬、恒星轨道、观测预言的灵感与视效研究，三条身份候选及遗物联动；尚未定案或实施 |
+
 ## 历史资料
 
-[2026-10-08 构筑体系归档](archive/2026-10-08-build-system/README.md)保留被取消的天赋／加工／事件设计、旧阶段计划、M3／M4 验收以及整理前文档。更早资料见[历史总入口](archive/README.md)。
+[历史总入口](archive/README.md)保留有取证价值的实施、失败与验收记录；[2026-10-08 构筑体系记录](archive/2026-10-08-build-system/README.md)用于解释旧接线和范围收缩。已取消的候选设计、重复规范与旧待办不再维护，原文可从 Git 历史查询。
 
 归档中的候选数量、路径算法、参数、失败和“下一步”属于当时状态，不构成当前完成义务。当前 `legacy/web/` 也已经含构筑重构；玩法恢复以交接中锁定的 Git 提交为准。
 

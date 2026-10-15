@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"G013"
 title = "初版书"
-description = "对满生命敌人的施法伤害提高 {fresh_pct}%。"
-modifiers = {&"fresh_pct": 12}
+description = "每个敌人每页首次被亲手施法命中时，引发半径 {radius} 的爆发，造成该词咒基础威力 {damage_pct}% 的伤害。"
+numbers = {&"damage_pct": 30, &"radius": 120}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("opening")
 max_stacks = 2
 rarity = &"common"

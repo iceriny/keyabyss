@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R031"
 title = "脆裂书页"
+choice_role = &"power"
 description = "对冻结敌人的施法伤害额外提高 {damage_pct}%。"
 stage = &"M3"
 supported = true

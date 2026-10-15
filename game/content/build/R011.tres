@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R011"
 title = "残句书签"
+choice_role = &"defense"
 description = "输入中的目标被击杀时，获得 {shield} 点护盾。"
 stage = &"M3"
 supported = true

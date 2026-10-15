@@ -6,6 +6,7 @@
 script = ExtResource("1")
 id = &"P025"
 title = "银墨折纸"
+choice_role = &"mechanism"
 description = "纸灵命中时，附加 {spirit_shock_hit} 点感电。"
 modifiers = {&"spirit_shock_hit": 4}
 tags = PackedStringArray("spirit", "shock")

@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R017"
 title = "通灵羽毛笔"
+choice_role = &"mechanism"
 description = "每亲手完成 {interval} 次词咒，获得一次主动补全机会。"
 stage = &"M3"
 supported = true

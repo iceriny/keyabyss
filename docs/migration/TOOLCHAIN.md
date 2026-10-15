@@ -2,6 +2,8 @@
 
 核查日期：2026-09-27。公共版本和哈希固定在 [toolchain.json](../../tools/godot/toolchain.json)，本机路径位于忽略的 `tools/godot/local.paths.json`。当前配置已落地；更换机器时按本页恢复，不下载浮动 latest。
 
+测试包与正式包的版本冻结、成品验收、分发和回退见 [Windows 发布流程](../RELEASING.md)。本页维护引擎与命令细节。
+
 ## 已安装与接入状态
 
 | 组件 | 当前值 | 用途及边界 |

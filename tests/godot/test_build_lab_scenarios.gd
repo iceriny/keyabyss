@@ -53,13 +53,13 @@ func _run() -> void:
 		check(BattleSession.enemy_in_combat(weak) and not weak.combat_locked and weak.frozen_time == 0.0, "小怪使用正式可见战斗行为")
 	check(escort.enemies[3].max_hp_q == 90 * 1024, "耐久目标仍为有限生命")
 	var waves := start("waves")
-	check(waves.encounter.wave_count == 3 and waves.encounter.wave_interval == 1.6 and waves.wave == 1, "三波沿用正式间歇配置")
-	check(waves.enemies.size() == 3 and waves.enemies[0].max_hp_q == nib_hp * 1024, "波次使用普通敌人生命")
+	check(waves.encounter.wave_count == 3 and waves.encounter.wave_interval == 1.6 and waves.wave == 1, "三段沿用正式间歇配置")
+	check(waves.enemies.size() == 3 and waves.enemies[0].max_hp_q == nib_hp * 1024, "段使用普通敌人生命")
 	var entry := waves.enemies[0].position
 	BuildLabScenarios.arrange(waves, "waves")
-	check(waves.enemies[0].position == entry and not BattleSession.enemy_in_combat(waves.enemies[0]), "波次使用正式边缘入场，不布置后续波")
+	check(waves.enemies[0].position == entry and not BattleSession.enemy_in_combat(waves.enemies[0]), "段使用正式边缘入场，不布置后续段")
 	waves._physics_process(0.2)
-	check(waves.wave == 1 and waves.enemies[0].alive(), "未清敌不绕过正式波次出口")
+	check(waves.wave == 1 and waves.enemies[0].alive(), "未清敌不绕过正式段出口")
 	check(nib.health == nib_hp and quill.health == quill_hp, "共享敌人资源未污染")
 	for scenario in ["priority", "escort", "waves"]:
 		check(not BuildLabScenarios.description(scenario).is_empty(), "每个情境都有决策说明")

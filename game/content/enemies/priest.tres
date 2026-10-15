@@ -4,6 +4,7 @@
 script = ExtResource("1")
 kind = &"priest"
 behavior = &"heal"
+encounter_role = &"support"
 health = 74
 speed = 36
 radius = 20.79

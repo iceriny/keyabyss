@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R001"
 title = "锋利笔尖"
+choice_role = &"power"
 description = "施法与纸灵伤害提高 {damage_pct}%。"
 stage = &"M3"
 supported = true

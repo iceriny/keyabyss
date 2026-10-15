@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R050"
 title = "余烬墨水"
+choice_role = &"power"
 description = "灼烧每跳伤害提高 {damage_pct}%。"
 stage = &"M3"
 supported = true

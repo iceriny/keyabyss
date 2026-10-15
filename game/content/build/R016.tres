@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R016"
 title = "无瑕落款"
+choice_role = &"power"
 description = "没有错字的词咒，额外获得 {damage_pct}% 伤害加成。"
 stage = &"M3"
 supported = true

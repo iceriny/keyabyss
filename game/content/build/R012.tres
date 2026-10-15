@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R012"
 title = "生命页签"
+choice_role = &"recovery"
 description = "生命上限增加 {hp}，每次取得时恢复 {heal} 点生命。"
 stage = &"M3"
 supported = true

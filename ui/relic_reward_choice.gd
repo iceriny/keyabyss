@@ -9,12 +9,15 @@ var catalog: BuildCatalog
 var build: CompiledBuild
 var reduced_motion := false
 var shortcut := ""
+var ornament_index := -1
+var backdrop_material: ShaderMaterial
 var detail_mode := false
 var keyboard_selected := false
 var _summary := ""
 var _details := ""
 var _surface: ShaderMaterial
 var _hover := 0.0
+var _hover_light := 0.0
 var _clock := 0.0
 
 
@@ -25,11 +28,12 @@ func _ready() -> void:
 	var relic := definition as RelicDefinition
 	var color: Color = ContentDescription.COLORS[str(relic.rarity)]
 	_surface.set_shader_parameter("rarity_color", color)
-	_surface.set_shader_parameter("awakening", relic.rarity == &"awakening")
 	_surface.set_shader_parameter("signature", float(posmod(hash(relic.id), 101)) / 100.0)
-	_surface.set_shader_parameter("school", ["frost", "flame", "storm", "spirit"].find(str(build.book())) if build != null else 0)
-	$Content/ReadingArea/Pedestal/Glyph.definition = definition
-	$Content/ReadingArea/Pedestal/Glyph.tint = color
+	if ornament_index < 0:
+		ornament_index = posmod(hash(relic.id), RelicOrnaments.NAMES.size())
+	set_ornament(ornament_index)
+	$GlyphMask/Glyph.definition = definition
+	_surface.set_shader_parameter("glyph_mask", $GlyphMask.get_texture())
 	var owned := build.asset_stacks(relic.id) if build != null else 0
 	$Content/Meta/Category.text = ContentDescription.RARITIES[str(relic.rarity)] + (" · 通用" if relic.allowed_books.is_empty() else " · 专属")
 	$Content/Meta/Category.add_theme_color_override("font_color", color)
@@ -45,6 +49,12 @@ func _ready() -> void:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			accept_event()
 			picked.emit())
+
+
+func set_ornament(index: int) -> void:
+	ornament_index = index
+	_surface.set_shader_parameter("ornament", RelicOrnaments.texture(index))
+	_surface.set_shader_parameter("optics", RelicOrnaments.optics(index))
 
 
 func set_detail_mode(value: bool) -> void:
@@ -71,10 +81,16 @@ func _notification(what: int) -> void:
 
 
 func _process(delta: float) -> void:
-	_clock += delta
-	_surface.set_shader_parameter("clock", 0.0 if reduced_motion else _clock)
-	# Pixel-sized facets stay around the glyph at every card height and UI scale.
+	if not reduced_motion:
+		_clock += delta
+	_surface.set_shader_parameter("clock", _clock)
+	if backdrop_material != null:
+		_surface.set_shader_parameter("backdrop_clock", backdrop_material.get_shader_parameter("clock"))
+		_surface.set_shader_parameter("quality", backdrop_material.get_shader_parameter("quality"))
+	# The ornament surrounds the glyph, independent of the description's height.
 	_surface.set_shader_parameter("canvas_size", $Wash.size)
 	_surface.set_shader_parameter("glyph_center", ($Content/ReadingArea.position + $Content/ReadingArea/Pedestal.position + $Content/ReadingArea/Pedestal.size * 0.5) / content.size)
-	_surface.set_shader_parameter("hover", maxf(_hover, 1.0 if keyboard_selected else 0.0))
+	var target := maxf(_hover, 1.0 if keyboard_selected else 0.0)
+	_hover_light = target if reduced_motion else move_toward(_hover_light, target, delta * 4.0)
+	_surface.set_shader_parameter("hover", _hover_light)
 	_surface.set_shader_parameter("selected", keyboard_selected)

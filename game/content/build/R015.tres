@@ -16,6 +16,7 @@ parameters = {
 script = ExtResource("1")
 id = &"R015"
 title = "长句回响"
+choice_role = &"mechanism"
 description = "至少7个字母的词咒伤害提高 {damage_pct}%，并清除目标周围敌弹。"
 stage = &"M3"
 supported = true

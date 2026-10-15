@@ -6,8 +6,10 @@
 script = ExtResource("1")
 id = &"P010"
 title = "鹤翼纸"
-description = "符文纸鹤的反击伤害提高 {crane_pct}%。"
-modifiers = {&"crane_pct": 15}
+description = "亲手完成词咒时，消耗场上一只符文纸鹤，给目标附加 {mark} 点易伤并造成 {damage} 点伤害。"
+numbers = {&"mark": 20, &"damage": 35}
+stack_values = PackedStringArray("damage")
+choice_role = &"mechanism"
 tags = PackedStringArray("crane")
 max_stacks = 2
 rarity = &"common"

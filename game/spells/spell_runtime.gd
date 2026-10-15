@@ -42,6 +42,11 @@ var _pending_death_depth: Dictionary[StringName, int] = {}
 var _conduct_counts: Dictionary[StringName, int] = {}
 var _collision_times: Dictionary[String, float] = {}
 var _spirit_letters: int = 0
+var _length_class: int = 0
+var _dodge_script_ready: bool = false
+var _last_manual_target: StringName
+var _introduced_targets: Dictionary[StringName, bool] = {}
+var _raw_spent_start: int = 0
 
 
 func _init(session: BattleSession, combat_build: CompiledBuild, state: RunCombatState) -> void:
@@ -49,6 +54,7 @@ func _init(session: BattleSession, combat_build: CompiledBuild, state: RunCombat
 	build = combat_build
 	run = state
 	ledger = session.ledger
+	_raw_spent_start = ledger.raw_spent_q
 	_cast_count = int(state.relic_counters.get("casts", 0))
 	_book_cast_count = int(state.relic_counters.get("book", 0))
 	_combo = int(state.relic_counters.get("combo", 0))
@@ -56,6 +62,8 @@ func _init(session: BattleSession, combat_build: CompiledBuild, state: RunCombat
 	_manual_words = int(state.relic_counters.get("manual", 0))
 	_assist_tokens = int(state.relic_counters.get("assist", 0))
 	_reflection_boost = int(state.relic_counters.get("boost", 0)) > 0
+	_length_class = int(state.relic_counters.get("length_class", 0))
+	_dodge_script_ready = int(state.relic_counters.get("dodge_script", 0)) > 0
 
 
 func install(next_build: CompiledBuild) -> void:
@@ -65,6 +73,18 @@ func install(next_build: CompiledBuild) -> void:
 func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empowered: bool) -> BattleEffect:
 	_book_cast_count += 1
 	_record_word(fact)
+	var dodge_script := fact.fully_manual() and _dodge_script_ready and build.asset_stacks(&"T009") > 0
+	if fact.fully_manual():
+		var length_class := 1 if fact.word.length() <= 4 else (2 if fact.word.length() >= 7 else 0)
+		if build.asset_stacks(&"G006") > 0 and length_class > 0 and _length_class > 0 and length_class != _length_class:
+			empowered = true
+			add_shield(roundi(Q * build.relic_number(&"G006", &"shield")))
+		_length_class = length_class
+	else:
+		_length_class = 0
+	if dodge_script:
+		empowered = true
+		_dodge_script_ready = false
 	var multiplier := damage_multiplier() * (1.0 + mini(10, _combo) * (build.relic_number(&"R030", &"step_pct") / 100.0 if build.asset_stacks(&"R030") > 0 else 0.025))
 	var word_bonus := build.modifier(&"empowered_pct") if empowered else 0
 	word_bonus += build.modifier(&"perfect_pct") if fact.mistakes == 0 else build.modifier(&"imperfect_pct")
@@ -93,6 +113,13 @@ func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empow
 	var effect := _effect(power, KINDS[build.book()], target.id, world.player_position, build)
 	effect.base_power_q = base_power
 	effect.manual_count = fact.manual_positions.size()
+	effect.manual_cast = fact.fully_manual()
+	effect.bonus_shock = roundi(build.relic_number(&"T009", &"shock")) if dodge_script else 0
+	if effect.manual_cast and build.asset_stacks(&"F009") > 0:
+		for field in fields:
+			if field.effect.kind == &"ice_mist" and field.expires_at > clock:
+				effect.mist_cast = true
+				break
 	effect.empowered = empowered or (build.book() == &"storm" and world.ultimate_time > 0.0)
 	effect.word_owner = fact.target_id
 	work_bank.append(ledger.earn(root, build.book(), build.identity(), SpellLot.Kind.WORK, int(paid.work_q), &"active-completion"))
@@ -108,6 +135,14 @@ func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empow
 	dispatch(effect, target)
 	_configure_shape(effect)
 	if build.asset_stacks(&"R006") > 0 and _cast_count % roundi(build.relic_number(&"R006", &"interval")) == 0: _periodic_copy(effect)
+	if fact.fully_manual():
+		if build.asset_stacks(&"G016") > 0 and _last_manual_target != &"" and _last_manual_target != target.id:
+			var previous := world.enemy_by_id(_last_manual_target)
+			_copy_to(effect, previous if previous != null and previous.alive() and BattleSession.enemy_in_combat(previous) else target)
+		_last_manual_target = target.id
+		if build.asset_stacks(&"P010") > 0: _crane_followup(target)
+		if build.asset_stacks(&"P007") > 0 and fact.word.length() >= 7:
+			_region(target.position, build.relic_number(&"P007", &"radius") + build.modifier(&"crane_radius"), build.relic_number(&"P007", &"duration") + RelicParameters.seconds(build, &"crane_ms"), &"paper_crane")
 	_save_counters()
 	return effect
 
@@ -121,7 +156,9 @@ func dispatch(effect: BattleEffect, target: BattleEnemy) -> void:
 
 func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary: bool = true, contact_at: Vector2 = Vector2.INF) -> void:
 	if effect.lot == null or effect.lot.amount_q <= 0 or not target.alive() or effect.expires_at <= clock: return
+	if effect.kind == &"storm_arc" and effect.arc_index == 0: effect.arc_anchor = target.id
 	var direct := primary and (effect.word_owner != &"" or effect.kind in [&"frost_spear", &"flame_burst", &"spirit_mark"])
+	var relic_hit := _prepare_relic_hit(effect, target) if direct and effect.manual_cast and effect.depth == 0 else {}
 	var amount := effect.lot.amount_q
 	if effect.primary_share_q > 0:
 		amount = effect.primary_share_q
@@ -166,6 +203,9 @@ func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary
 	elif effect.build.asset_stacks(&"R003") > 0:
 		_apply_cold(target, roundi(Q * effect.build.relic_number(&"R003", &"cold")), effect.build)
 	if direct:
+		if effect.bonus_shock > 0:
+			add_shock(target, effect.bonus_shock, effect.build)
+			effect.bonus_shock = 0
 		_apply_cold(target, (effect.build.modifier(&"cold_hit") + (effect.build.modifier(&"empowered_cold") if effect.empowered else 0)) * Q, effect.build)
 		if effect.build.modifier(&"burn_hit") > 0: add_burn(target, effect.build.modifier(&"burn_hit"), effect.lot.root_id, effect.depth, effect.build)
 		if effect.build.modifier(&"shock_hit") > 0: add_shock(target, effect.build.modifier(&"shock_hit"), effect.build)
@@ -185,6 +225,7 @@ func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary
 	_pending_death_depth[target.id] = effect.depth
 	var packet := ledger.spend(_tx("hit"), effect.lot, mini(amount, effect.lot.amount_q))
 	_commit_damage(target, packet, effect.kind, origin, effect.empowered, contact_at, direct)
+	if not relic_hit.is_empty(): _resolve_relic_hit(effect, target, relic_hit)
 	if effect.kind == &"storm_arc" and effect.arc_index < 3 and world.ultimate_time > 0.0 and effect.build.asset_stacks(&"R047") > 0:
 		add_shield(roundi(Q * effect.build.relic_number(&"R047", &"shield")))
 	_impulse(target, origin, (530.0 if effect.empowered else 300.0) if effect.kind == &"frost_spear" else 150.0)
@@ -221,6 +262,93 @@ func contact(effect: BattleEffect, target: BattleEnemy, origin: Vector2, primary
 	if not target.alive(): on_enemy_death(target, effect.kind, effect.depth)
 	effect.damage_q = effect.lot.amount_q
 	if effect.applications > 1: effect.applications -= 1
+
+
+## Only a paid, fully manual primary can spend status or start these reactions.
+## Capture conditions before this hit supplies its own element points.
+func _prepare_relic_hit(effect: BattleEffect, target: BattleEnemy) -> Dictionary:
+	var snapshot := effect.build
+	var facts := {"frozen": target.frozen_time > 0.0, "ignite": target.burn <= 10, "opening": false, "reaction": false, "burn": 0, "discharge": false, "fire_field": false}
+	if effect.kind == &"flame_burst" and snapshot.asset_stacks(&"A006") > 0:
+		for field in fields:
+			if field.effect.kind == &"fire_field" and field.expires_at > clock and field.contains(target.position):
+				fields.erase(field)
+				facts.fire_field = true
+				break
+	if snapshot.asset_stacks(&"G013") > 0 and not _introduced_targets.has(target.id):
+		_introduced_targets[target.id] = true
+		facts.opening = true
+	if snapshot.asset_stacks(&"G027") > 0:
+		var cost := roundi(snapshot.relic_number(&"G027", &"consume"))
+		var states: Array[StringName] = []
+		for key in [&"cold", &"burn", &"shock", &"vulnerability"]:
+			if int(target.get(key)) >= cost + (10 if key == &"burn" else 0): states.append(key)
+		if states.size() >= 2:
+			for key in states.slice(0, 2): target.set(key, int(target.get(key)) - cost)
+			facts.reaction = true
+	if effect.kind == &"flame_burst" and snapshot.asset_stacks(&"A004") > 0 and target.burn >= snapshot.relic_number(&"A004", &"threshold"):
+		facts.burn = mini(target.burn - 10, roundi(snapshot.relic_number(&"A004", &"consume")))
+		target.burn -= int(facts.burn)
+	if snapshot.book() != &"storm" and snapshot.asset_stacks(&"G025") > 0 and target.shock > snapshot.relic_number(&"G025", &"threshold"):
+		target.shock -= roundi(snapshot.relic_number(&"G025", &"consume"))
+		facts.discharge = true
+	return facts
+
+
+func _resolve_relic_hit(effect: BattleEffect, target: BattleEnemy, facts: Dictionary) -> void:
+	var snapshot := effect.build
+	if facts.frozen and target.alive() and effect.kind == &"frost_spear" and snapshot.asset_stacks(&"F006") > 0:
+		target.frozen_time = 0.0
+		target.freeze_cooldown = 3.0 if target.boss else 1.0
+		_relic_burst(effect, target, &"F006")
+	if facts.opening: _relic_burst(effect, target, &"G013")
+	if facts.reaction: _relic_burst(effect, target, &"G027")
+	if facts.discharge: _relic_burst(effect, target, &"G025")
+	if facts.fire_field: _relic_burst(effect, target, &"A006")
+	if int(facts.burn) > 0:
+		_burst(target.position, snapshot.relic_number(&"A004", &"radius"), roundi(int(facts.burn) * Q * snapshot.relic_number(&"A004", &"damage_per_point")), &"A004", &"", 1)
+	if facts.ignite and effect.kind == &"flame_burst" and snapshot.asset_stacks(&"A009") > 0:
+		for next in _nearby(target.position, snapshot.relic_number(&"A009", &"radius"), target.id).slice(0, roundi(snapshot.relic_number(&"A009", &"targets"))):
+			add_burn(next, snapshot.relic_number(&"A009", &"burn"), effect.lot.root_id, 1, snapshot)
+	if effect.mist_cast and effect.kind == &"frost_spear":
+		_region(target.position, snapshot.relic_number(&"F009", &"radius"), snapshot.relic_number(&"F009", &"duration"), &"cold_field")
+	if effect.kind == &"frost_spear" and effect.empowered and not effect.split_released and snapshot.asset_stacks(&"F003") > 0:
+		effect.split_released = true
+		for next in _nearby(target.position, snapshot.relic_number(&"F003", &"radius"), target.id).slice(0, roundi(snapshot.relic_number(&"F003", &"targets"))):
+			var lot := ledger.earn(effect.lot.root_id, StringName("F003:" + str(next.id)), snapshot.identity(), SpellLot.Kind.POWER, roundi(effect.base_power_q * snapshot.relic_number(&"F003", &"damage_pct") / 100.0), &"split", DamagePacket.Element.ICE)
+			var shard := _effect(lot, &"frost_fragment", next.id, target.position, snapshot)
+			shard.depth = 1
+			shard.manual_count = 0
+			world.effects.append(shard)
+
+
+func _relic_burst(effect: BattleEffect, target: BattleEnemy, id: StringName) -> void:
+	_burst(target.position, effect.build.relic_number(id, &"radius"), roundi(effect.base_power_q * effect.build.relic_number(id, &"damage_pct") / 100.0), id, &"", 1)
+
+
+func _copy_to(template: BattleEffect, target: BattleEnemy) -> void:
+	var lot := ledger.earn(template.lot.root_id, &"G016", template.build.identity(), SpellLot.Kind.POWER, roundi(template.base_power_q * template.build.relic_number(&"G016", &"damage_pct") / 100.0), &"copy", ELEMENTS[template.build.book()])
+	lot.claims[&"copied"] = true
+	var copy := _effect(lot, &"echo", target.id, template.origin, template.build)
+	copy.depth = 1
+	copy.manual_count = 0
+	world.effects.append(copy)
+
+
+func _crane_followup(target: BattleEnemy) -> void:
+	var crane: SpellField = null
+	var distance := INF
+	for field in fields:
+		if field.effect.kind != &"paper_crane" or field.expires_at <= clock: continue
+		var next_distance := ((field.center - target.position) * BattleSession.ARENA_SIZE).length_squared()
+		if next_distance < distance:
+			crane = field
+			distance = next_distance
+	if crane == null: return
+	fields.erase(crane)
+	add_mark(target, roundi(build.relic_number(&"P010", &"mark")))
+	_deal(target, roundi(Q * build.relic_number(&"P010", &"damage")), &"paper_crane", crane.center, 1)
+	world.event_committed.emit({"kind": &"spirit_intercept", "at": crane.center})
 
 
 func advance(delta: float) -> void:
@@ -309,7 +437,7 @@ func assist_ready() -> bool:
 	return build.has(&"assist") and _assist_tokens > 0
 
 
-func finish(reason: StringName) -> RoomCombatResult:
+func finish(reason: StringName, preserve_flight: bool = false) -> RoomCombatResult:
 	_save_counters()
 	var result := RoomCombatResult.new()
 	result.room_id = ledger.room_id
@@ -319,12 +447,17 @@ func finish(reason: StringName) -> RoomCombatResult:
 	run.hp_q = world.player_hp_q
 	run.resonance_q = world.resonance_q
 	run.reserve = []
-	for lot in ledger.active_lots():
-		if lot.material == SpellLot.Kind.POWER: unused_power_q += lot.amount_q
-		ledger.spend(_tx("room-loss"), lot, lot.amount_q)
-	ongoing.clear()
-	fields.clear()
-	spirit_attacks.clear()
+	if preserve_flight:
+		# Unspent work is not a launched attack; active paid flight keeps its ledger.
+		for lot in work_bank: ledger.spend(_tx("page-work-loss"), lot, lot.amount_q)
+		work_bank.clear()
+	else:
+		for lot in ledger.active_lots():
+			if lot.material == SpellLot.Kind.POWER: unused_power_q += lot.amount_q
+			ledger.spend(_tx("room-loss"), lot, lot.amount_q)
+		ongoing.clear()
+		fields.clear()
+		spirit_attacks.clear()
 	result.overkill_damage_q = overkill_damage_q
 	result.unused_power_q = unused_power_q
 	result.healed_q = healed_q
@@ -333,7 +466,7 @@ func finish(reason: StringName) -> RoomCombatResult:
 	result.freezes = freezes
 	result.damage_by_source = damage_by_source.duplicate()
 	result.kills_by_source = kills_by_source.duplicate()
-	result.raw_spent_q = ledger.raw_spent_q
+	result.raw_spent_q = ledger.raw_spent_q - _raw_spent_start
 	return result
 
 
@@ -552,9 +685,10 @@ func arc_target(effect: BattleEffect, origin: Vector2) -> BattleEnemy:
 
 
 func _continue_arc(effect: BattleEffect, target: BattleEnemy) -> void:
-	if effect.jumps <= 0: return
-	var next := arc_target(effect, target.position)
-	if next == null: return
+	var next := arc_target(effect, target.position) if effect.jumps > 0 else null
+	if next == null:
+		finish_arc(effect, target.position, effect.jumps)
+		return
 	# Retain the former absolute tail while lowering the head of the chain.
 	var floor_ratio := 0.18 * (1.0 + effect.build.relic_number(&"R033", &"tail_pct") / 100.0)
 	floor_ratio *= RelicParameters.ratio(effect.build, &"chain_tail_pct")
@@ -568,11 +702,31 @@ func _continue_arc(effect: BattleEffect, target: BattleEnemy) -> void:
 	arc.delay = 0.08
 	arc.depth = 1
 	arc.manual_count = effect.manual_count
+	arc.manual_cast = effect.manual_cast
 	arc.base_power_q = effect.base_power_q
 	arc.arc_base_hits = effect.arc_base_hits
 	arc.arc_index = effect.arc_index + 1
 	arc.arc_charge = effect.arc_charge
+	arc.arc_anchor = effect.arc_anchor
 	world.effects.append(arc)
+
+
+func finish_arc(effect: BattleEffect, at: Vector2, unused_jumps: int) -> void:
+	if not effect.manual_cast: return
+	if effect.build.asset_stacks(&"T003") > 0:
+		var scale := 1.0 + mini(unused_jumps, roundi(effect.build.relic_number(&"T003", &"max_unused")))
+		var radius := effect.build.relic_number(&"T003", &"radius")
+		_burst(at, radius, roundi(effect.base_power_q * effect.build.relic_number(&"T003", &"damage_pct") / 100.0 * scale), &"T003", &"", 1)
+		world.event_committed.emit({"kind": &"field", "source": &"overload", "at": at, "radius": radius})
+	var anchor := world.enemy_by_id(effect.arc_anchor)
+	if effect.build.asset_stacks(&"T004") > 0 and anchor != null and anchor.alive() and BattleSession.enemy_in_combat(anchor):
+		var lot := ledger.earn(effect.lot.root_id, &"T004", effect.build.identity(), SpellLot.Kind.POWER, roundi(effect.base_power_q * effect.build.relic_number(&"T004", &"damage_pct") / 100.0), &"return", DamagePacket.Element.LIGHTNING)
+		var returning := _effect(lot, &"storm_chain", anchor.id, at, effect.build)
+		returning.depth = 1
+		returning.manual_count = 0
+		returning.retargetable = false
+		returning.delay = 0.08
+		world.effects.append(returning)
 
 
 
@@ -683,6 +837,9 @@ func graze(threat: BattleThreat) -> void:
 
 
 func on_dodge(origin: Vector2, destination: Vector2) -> void:
+	if build.asset_stacks(&"T009") > 0:
+		_dodge_script_ready = true
+		_save_counters()
 	world.add_resonance(build.modifier(&"dodge_resonance") * Q)
 	if build.modifier(&"dodge_cold") > 0:
 		for enemy in _nearby(origin, 105.0): _apply_cold(enemy, build.modifier(&"dodge_cold") * Q, build)
@@ -718,6 +875,15 @@ func intercept_crane(threat: BattleThreat) -> bool:
 		if target != null: _deal(target, roundi(24 * Q * damage_multiplier() * RelicParameters.ratio(build, &"crane_pct")), &"paper_crane", field.center, 1)
 		world.event_committed.emit({"kind": &"spirit_intercept", "at": field.center})
 		fields.erase(field)
+		if build.asset_stacks(&"P011") > 0:
+			world._summon_spirit()
+			world.spirit_time = RelicParameters.spirit_duration(build)
+			if target == null or not target.alive(): target = world._nearest_living(field.center)
+			if target != null:
+				var lot := ledger.earn(_tx("crane-cross"), &"P011", build.identity(), SpellLot.Kind.POWER, 0, &"crane-cross")
+				var command := _effect(lot, &"spirit_mark", target.id, field.center, build)
+				command.base_power_q = roundi(Q * build.relic_number(&"P011", &"power") * damage_multiplier())
+				world.command_spirit_cross(command, target)
 		return true
 	return false
 
@@ -761,13 +927,12 @@ func add_shield(amount: int) -> void:
 
 
 func clear_radius(at: Vector2, radius: float, source: StringName = &"clear") -> void:
-	var write_index := 0
-	for read_index in world.threats.size():
-		var threat := world.threats[read_index]
-		if not threat.reflected and ((threat.position - at) * BattleSession.ARENA_SIZE).length() <= radius: continue
-		world.threats[write_index] = threat
-		write_index += 1
-	world.threats.resize(write_index)
+	for threat in world.threats:
+		if not threat.reflected and ((threat.position - at) * BattleSession.ARENA_SIZE).length() <= radius:
+			threat.cleared = true
+	# A reflected hit can trigger overload while the world iterates this array.
+	# Commit removal after that pass, rather than invalidating its live indices.
+	if not world._advancing_threats: world._flush_cleared_threats()
 	world.event_committed.emit({"kind": &"clear_pulse", "at": at, "radius": radius, "source": source})
 
 
@@ -794,14 +959,15 @@ func _pull(at: Vector2, radius: float, force: float, pulse: bool = true) -> void
 	pull_environment(at, radius, force, pulse)
 
 
-func pull_environment(at: Vector2, radius: float, force: float, pulse: bool = true) -> void:
-	# Both allegiances use the same physical attraction; rendering never decides
-	# trajectories. Keep the existing swept collision and homing rules downstream.
+func pull_environment(at: Vector2, radius: float, force: float, pulse: bool = true, source_id: StringName = &"") -> void:
+	# Enemy gravity releases its own outgoing shots; reflected shots are hostile
+	# to their former source and remain affected. Player gravity has no exemption.
 	for projectile in world.projectiles:
 		var offset := (at - projectile.position) * BattleSession.ARENA_SIZE
 		if offset.length_squared() < radius * radius:
 			projectile.attraction_impulse += offset.normalized() * force
 	for threat in world.threats:
+		if source_id != &"" and threat.source_id == source_id and not threat.reflected: continue
 		var offset := (at - threat.position) * BattleSession.ARENA_SIZE
 		if offset.length_squared() < radius * radius:
 			threat.velocity += offset.normalized() * force
@@ -869,7 +1035,7 @@ func _status(target: BattleEnemy, kind: StringName, added_stacks: int, spread_de
 	ongoing.append(status)
 
 
-func _chain(target: BattleEnemy, amount: int, count: int) -> void:
+func _chain(target: BattleEnemy, amount: int, count: int, source: StringName = &"R002") -> void:
 	var seen: Dictionary[StringName, bool] = {target.id: true}
 	var origin := target.position
 	var radius := 265.0 + build.relic_number(&"R023", &"chain_range") + build.modifier(&"chain_range")
@@ -886,7 +1052,7 @@ func _chain(target: BattleEnemy, amount: int, count: int) -> void:
 				best_distance = distance
 		if next == null: break
 		seen[next.id] = true
-		var lot := ledger.earn(_tx("extra-chain"), &"R002", build.identity(), SpellLot.Kind.POWER, amount, &"chain", DamagePacket.Element.LIGHTNING)
+		var lot := ledger.earn(_tx("extra-chain"), source, build.identity(), SpellLot.Kind.POWER, amount, &"chain", DamagePacket.Element.LIGHTNING)
 		var effect := _effect(lot, &"storm_chain", next.id, origin, build)
 		effect.depth = 1
 		contact(effect, next, origin)
@@ -932,6 +1098,9 @@ func on_player_hurt() -> void:
 func on_enemy_death(target: BattleEnemy, _kind: StringName, depth: int = 0) -> void:
 	if _settled_deaths.has(target.id): return
 	_settled_deaths[target.id] = true
+	if target.vulnerability > 0 and build.asset_stacks(&"P004") > 0:
+		for next in _nearby(target.position, build.relic_number(&"P004", &"radius"), target.id).slice(0, roundi(build.relic_number(&"P004", &"targets"))):
+			add_mark(next, mini(target.vulnerability, roundi(build.relic_number(&"P004", &"mark"))))
 	add_shield(build.modifier(&"kill_shield") * Q)
 	world.add_resonance(build.modifier(&"kill_resonance") * Q)
 	if target.burn > 10:
@@ -965,6 +1134,9 @@ func counter_contact(target: BattleEnemy) -> void:
 	if build.modifier(&"parry_burn") > 0: add_burn(target, build.modifier(&"parry_burn"), _tx("parry-burn"), 1)
 	if build.modifier(&"parry_shock") > 0: add_shock(target, build.modifier(&"parry_shock"))
 	if build.modifier(&"parry_mark") > 0: add_mark(target, build.modifier(&"parry_mark"))
+	if build.asset_stacks(&"F017") > 0: _region(target.position, build.relic_number(&"F017", &"radius"), build.relic_number(&"F017", &"duration"), &"cold_field")
+	if build.asset_stacks(&"A017") > 0: _region(target.position, build.relic_number(&"A017", &"radius"), build.relic_number(&"A017", &"duration"), &"fire_field")
+	if build.asset_stacks(&"T016") > 0: _chain(target, roundi(Q * build.relic_number(&"T016", &"damage") * damage_multiplier()), roundi(build.relic_number(&"T016", &"targets")), &"T016")
 	if build.asset_stacks(&"R057") == 0: return
 	match build.book():
 		&"frost": _apply_cold(target, 100 * Q, build)
@@ -1011,6 +1183,7 @@ func _after_cast(fact: WordCompletion) -> void:
 
 
 func on_pickup_completed(pickup: BattlePickup, _reflected: int, fact: WordCompletion, paid: Dictionary) -> void:
+	_length_class = 0
 	_record_word(fact)
 	heal(build.modifier(&"pickup_heal") * Q)
 	work_bank.append(ledger.earn(fact.attempt_id, build.book(), build.identity(), SpellLot.Kind.WORK, int(paid.work_q), &"active-completion"))
@@ -1043,7 +1216,7 @@ func rescue_burst() -> void:
 
 
 func _save_counters() -> void:
-	run.relic_counters = {"casts": _cast_count, "book": _book_cast_count, "combo": _combo, "perfect": _perfect_words, "manual": _manual_words, "assist": _assist_tokens, "boost": int(_reflection_boost)}
+	run.relic_counters = {"casts": _cast_count, "book": _book_cast_count, "combo": _combo, "perfect": _perfect_words, "manual": _manual_words, "assist": _assist_tokens, "boost": int(_reflection_boost), "length_class": _length_class, "dodge_script": int(_dodge_script_ready)}
 
 
 func _tx(kind: String) -> String:

@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"A008"
 title = "踏火行草"
+choice_role = &"power"
 description = "闪避火场延长 {dodge_flame_ms_s} 秒，半径增加 {dodge_flame_radius}。"
-modifiers = {&"dodge_flame_ms": 500, &"dodge_flame_radius": 8}
+modifiers = {&"dodge_flame_ms": 750, &"dodge_flame_radius": 12}
 tags = PackedStringArray("dodge", "fire_field")
 max_stacks = 2
 rarity = &"common"

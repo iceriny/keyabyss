@@ -6,12 +6,13 @@
 script = ExtResource("1")
 id = &"F006"
 title = "碎冰批注"
-description = "对冻结敌人的施法伤害提高 {frozen_pct}%。"
-modifiers = {&"frozen_pct": 12}
+description = "亲手施放的冰锥命中已冻结且仍存活的敌人时，提前打破冻结，在半径 {radius} 内造成基础威力 {damage_pct}% 的伤害。"
+numbers = {&"damage_pct": 60, &"radius": 150}
+stack_values = PackedStringArray("damage_pct")
+choice_role = &"mechanism"
 tags = PackedStringArray("freeze", "damage")
 max_stacks = 2
 rarity = &"uncommon"
 allowed_books = PackedStringArray("frost")
-requires_all = PackedStringArray("F001")
 supported = true
 stage = &"relics-3"

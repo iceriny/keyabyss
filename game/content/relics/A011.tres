@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"A011"
 title = "火浪长诗"
+choice_role = &"power"
 description = "焚世余烬的起手火浪伤害提高 {flame_wave_pct}%。"
-modifiers = {&"flame_wave_pct": 12}
+modifiers = {&"flame_wave_pct": 20}
 tags = PackedStringArray("ultimate")
 max_stacks = 2
 rarity = &"common"

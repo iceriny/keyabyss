@@ -69,6 +69,7 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	slow_lens.capture = $SlowCapture
 	stage._bind_scene()
 	stage.set_quality(settings.quality)
+	(stage.get_node("CrystalEdges") as CrystalEdges).configure(settings.quality, settings.reduce_motion, school_color)
 	var background := stage.scenery.get_node("Atmosphere") as ColorRect
 	background.light_mask = 2
 	(background.material as ShaderMaterial).set_shader_parameter("school_color", school_color)
@@ -195,6 +196,7 @@ func apply_options() -> void:
 	audio.enabled = settings.sound
 	audio.effects_volume = settings.effects_volume
 	stage.set_quality(settings.quality)
+	(stage.get_node("CrystalEdges") as CrystalEdges).configure(settings.quality, settings.reduce_motion, school_color)
 	visuals.set_options(settings.quality, settings.reduce_motion)
 	visuals.fluid.set_options(settings.fluid_quality, settings.reduce_motion)
 	$BattleCompass.reduced_motion = settings.reduce_motion
@@ -251,7 +253,7 @@ func _refresh() -> void:
 		if enemy.alive():
 			living += 1
 	timer_label.text = "%02d:%02d  ·  %d 击破" % [floori(session.elapsed / 60.0), floori(fmod(session.elapsed, 60.0)), session.enemies.size() - living]
-	wave_label.text = "下一波 · %.1f 秒" % session.intermission if session.intermission >= 0.0 else "第 %d / %d 波 · %s侧来袭 · 存活 %d" % [session.wave, session.encounter.wave_count, session.arrival_direction, living]
+	wave_label.text = "下一段 · %.1f 秒" % session.intermission if session.intermission >= 0.0 else "第 %d / %d 段 · %s侧来袭 · 存活 %d" % [session.wave, session.encounter.wave_count, session.arrival_direction, living]
 	var selected_enemy := session.enemy_by_id(session.typing.target_id)
 	cast_label.text = ("残响续写" if selected_enemy != null and not selected_enemy.alive() else "正在施法") if session.typing.target_id != &"" else "输入词咒"
 	if session.typing.target_id != &"":
@@ -430,9 +432,10 @@ func _draw_details() -> void:
 	for i in cycle:
 		var at := cadence_label.position + Vector2(i * 18, 24)
 		hud_details.draw_line(at, at + Vector2(13, 0), school_color if i < session.runtime.book_cast_count() % cycle else Color("4b595e", 0.6), 2.0, true)
-	for i in session.encounter.wave_count:
-		var at := Vector2(hud.size.x * 0.5 - 36 + i * 28, 65)
-		hud_details.draw_line(at, at + Vector2(19, 0), Color("dec692") if i < session.wave else Color("48575e"), 3.0, true)
+	if room_dots.visible:
+		for i in session.encounter.wave_count:
+			var at := Vector2(hud.size.x * 0.5 - 36 + i * 28, 65)
+			hud_details.draw_line(at, at + Vector2(19, 0), Color("dec692") if i < session.wave else Color("48575e"), 3.0, true)
 	for enemy in _word_targets():
 		var word := enemy_words[enemy.id]
 		if word.visible:

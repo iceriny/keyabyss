@@ -6,7 +6,7 @@
 
 仓库使用 TypeScript、React 和 Vite；战场采用 Three.js、实例化几何、postprocessing 和 three.quarks，文字及危险提示另行绘制。菜单与战场共用背景表达。`NativeBattleRenderer`、`NativeSpellBattle` 中的 Native 是现有模块命名，不构成桌面原生发行已经完成的声明。
 
-当前运行与打包方法见[贡献指南](../../../legacy/web/CONTRIBUTING.md)。其浏览器、离线包、CSS 视口和资源加载说明只适用于现有程序。历史画面使用过多组设计坐标、世界距离与纹理尺寸，详见[渲染归档](../ART-DIRECTION.md)，这些数值不作为统一视觉规范。
+当前运行与打包方法见[贡献指南](../../../legacy/web/CONTRIBUTING.md)。其浏览器、离线包、CSS 视口和资源加载说明只适用于现有程序。历史画面使用过多组设计坐标、世界距离与纹理尺寸，详见渲染归档，这些数值不作为统一视觉规范。
 
 ## 主要入口
 

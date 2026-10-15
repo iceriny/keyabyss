@@ -1,0 +1,4 @@
+group,reference_population,source_wpm5,model_A_wpm5,relative_discrepancy_percent,same_stimuli,same_timing,interpretation
+beginner,slow,20.91,20.2078125,-3.358142037302725,False,False,aggregate WPM calibration check in new simulated individuals; not independent human validation
+ordinary,all,51.56,52.36417910447762,1.5596957030209913,False,False,aggregate WPM calibration check in new simulated individuals; not independent human validation
+expert,fast,89.56,89.5578125,-0.0024424966503011625,False,False,aggregate WPM calibration check in new simulated individuals; not independent human validation

@@ -6,8 +6,9 @@
 script = ExtResource("1")
 id = &"P008"
 title = "飞页札"
+choice_role = &"power"
 description = "纸灵飞行速度提高 {spirit_speed_pct}%。"
-modifiers = {&"spirit_speed_pct": 8}
+modifiers = {&"spirit_speed_pct": 12}
 tags = PackedStringArray("spirit")
 max_stacks = 2
 rarity = &"common"

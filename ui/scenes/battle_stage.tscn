@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://ui/battle_stage.gd" id="1"]
 [ext_resource type="Shader" path="res://ui/materials/battle_periphery.gdshader" id="2"]
 [ext_resource type="Shader" path="res://ui/materials/battle_atmosphere.gdshader" id="3"]
 [ext_resource type="Texture2D" path="res://ui/effects/paper_noise.tres" id="4"]
 [ext_resource type="Script" path="res://ui/viewport_output.gd" id="5_output"]
+[ext_resource type="PackedScene" path="res://ui/scenes/crystal_edges.tscn" id="crystal"]
 
 [sub_resource type="Environment" id="Environment_world"]
 resource_local_to_scene = true
@@ -83,3 +84,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
+
+[node name="CrystalEdges" parent="." instance=ExtResource("crystal")]
+battle = true
