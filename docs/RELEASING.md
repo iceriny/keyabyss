@@ -99,22 +99,21 @@ pwsh -NoProfile -File tools/godot/godot.ps1 run --headless --debug --check-only 
 
 ## 5. 导出测试包或正式包
 
-每次只选择本轮需要的配置。在独立 PowerShell 会话中用 transcript 保存完整构建输出，路径名称替换为本次版本：
+每次只选择本轮需要的配置。在独立 PowerShell 会话中直接捕获原生命令输出，路径名称替换为本次版本：
 
 ```powershell
 $releaseId = '0.7.0-test.20261015'
 $evidenceDir = Join-Path (Get-Location) ".temp/releases/$releaseId"
 New-Item -ItemType Directory -Path $evidenceDir -ErrorAction Stop | Out-Null
-Start-Transcript -Path (Join-Path $evidenceDir 'build.log') -ErrorAction Stop
-try {
-    pwsh -NoProfile -File tools/godot/godot.ps1 export
-    if ($LASTEXITCODE -ne 0) { throw '导出失败，停止发布。' }
-} finally {
-    Stop-Transcript
-}
+pwsh -NoProfile -File tools/godot/godot.ps1 export *> (Join-Path $evidenceDir 'build.log')
+$exportExitCode = $LASTEXITCODE
+Get-Content -LiteralPath (Join-Path $evidenceDir 'build.log') -Tail 30
+if ($exportExitCode -ne 0) { throw '导出失败，停止发布。' }
 ```
 
 正式包或 Release 候选包将 `releaseId` 换为对应版本，将 `export` 换为 `export-release`。同一版本需要重试时使用新的证据子目录，保留失败日志，不能覆盖后只留下成功结果。
+
+不要仅用 `Start-Transcript` 记录嵌套 `pwsh` 的原生输出；当前管道环境可能只保存转录头尾。若 .NET publish 已结束而导出控制台仍等待，检查本次创建的编译服务器；可用 `dotnet build-server shutdown --vbcscompiler` 正常关闭并保留原始现象。需要避免该等待时，仅为本次导出临时设置 `UseSharedCompilation=false`，完成后恢复原环境值。
 
 导出脚本已经执行：
 
