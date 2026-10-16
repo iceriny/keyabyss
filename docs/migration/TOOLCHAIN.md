@@ -12,7 +12,7 @@
 | 引擎目录 | `F:\Program Files\Godot\Godot_v4.7.2-stable_mono_win64` | 原位置使用，未复制或覆盖引擎 |
 | Windows 模板 | `%APPDATA%\Godot\export_templates\4.7.2.stable.mono` | 已安装 x86_64 Debug、Release、console wrappers、version.txt 和 ICU；不安装其他平台 |
 | Node.js | `v24.19.0` | 只用于 MCP 与保留的资产工具 |
-| .NET SDK | `9.0.201` | `global.json` 精确锁定；`Keyabyss.sln` 提供 `Debug`／`ExportDebug`／`ExportRelease` 配置；`Keyabyss.csproj` 使用 `Godot.NET.Sdk/4.7.2`、`net8.0`，只编译 `game/algorithms/*.cs` |
+| .NET SDK | `9.0.201` | `global.json` 精确锁定；`Keyabyss.sln` 提供 `Debug`／`ExportDebug`／`ExportRelease` 配置；`Keyabyss.csproj` 使用 `Godot.NET.Sdk/4.7.2`、`net8.0`，编译 `game/algorithms/*.cs` 与 `ui/effects/ThreatRibbonGeometry.cs` |
 | 主 MCP | `@tugcantopaloglu/godot-mcp` 3.1.0 | 提交 `fcbc29e03297900b9a1fcc6c7cbae116fe9d532a`，本地 `.tools/godot-mcp/` |
 | Codex 配置 | `.codex/config.toml` | 项目配置已被 CLI 识别；保持其他全局服务器原样 |
 | 项目 Skill | `.agents/skills/` | 原生开发、视觉与工具三类；未批量引入第三方架构偏好 |

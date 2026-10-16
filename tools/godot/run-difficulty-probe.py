@@ -31,7 +31,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
         hashes[relative.as_posix()] = hashlib.sha256(source.read_bytes()).hexdigest()
-    engine_args = ["--headless", "--debug", "--script", "res://tests/godot/difficulty_probe.gd", "--", f"--out={output.as_posix()}", f"--seed={args.seed}", f"--vocabulary={args.vocabulary}"]
+    engine_args = ["--headless", "--debug", "--ignore-error-breaks", "--script", "res://tests/godot/difficulty_probe.gd", "--", f"--out={output.as_posix()}", f"--seed={args.seed}", f"--vocabulary={args.vocabulary}"]
     for option in ("book", "scenario"):
         if getattr(args, option):
             engine_args.append(f"--{option}={getattr(args, option)}")

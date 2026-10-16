@@ -55,6 +55,8 @@ var caption: VBoxContainer
 var title_group: VBoxContainer
 var archive_label: Label
 var menu: GridContainer
+var right_menu: GridContainer
+var menu_buttons: Array[OpenButton] = []
 var prepare_button: OpenButton
 var back_button: OpenButton
 var left_wing: VBoxContainer
@@ -86,6 +88,10 @@ func _ready() -> void:
 	archive_label = $ArchiveLabel
 	counter = $Counter
 	menu = $Menu
+	right_menu = $RightMenu
+	for column: GridContainer in [menu, right_menu]:
+		for button: OpenButton in column.get_children():
+			menu_buttons.append(button)
 	prepare_button = $PrepareButton
 	back_button = $BackButton
 	left_wing = $LeftWingLayer/LeftWing
@@ -166,7 +172,7 @@ func _ready() -> void:
 		(artwork.material as ShaderMaterial).set_shader_parameter("artwork", BOOKS[i].artwork)
 		(artwork.material as ShaderMaterial).set_shader_parameter("school_color", BOOKS[i].color)
 		artworks.append(artwork)
-	for button: OpenButton in menu.get_children():
+	for button: OpenButton in menu_buttons:
 		var destination := button.name.to_lower()
 		button.pressed.connect(func() -> void: navigate.emit(destination))
 		_connect_action_cues(button)
@@ -174,7 +180,7 @@ func _ready() -> void:
 		if prepared:
 			navigate.emit("battle")
 		else:
-			set_prepared(true)
+			request_preparation()
 	)
 	_connect_action_cues(prepare_button)
 	back_button.pressed.connect(func() -> void: set_prepared(false))
@@ -250,6 +256,7 @@ func select_book(index: int, notify: bool = true) -> void:
 	$CaptionLayer/Caption/Traits.text = book.description
 	counter.text = "%02d / 04" % (selected + 1)
 	settings.book_id = str(book.id)
+	refresh_book_access()
 	_transition_accent(book.color, notify)
 	if notify:
 		book_selected.emit(book.id)
@@ -296,7 +303,7 @@ func _set_accent(value: Color) -> void:
 	title_accent.add_theme_color_override("font_color", accent)
 	for i in seal_layers.size():
 		seal_layers[i].modulate = Color(1,1,1,.045 * seal_weights[i])
-		seal_layers[i].visible = seal_weights[i] > 0.0001
+		seal_layers[i].visible = seal_weights[i] > 0.0001 and settings.book_unlocked(BOOKS[i].id)
 	(floor_plane.material as ShaderMaterial).set_shader_parameter("school_color", accent)
 	portal.set("tint", accent)
 	effects.set_accent(accent)
@@ -312,6 +319,23 @@ func _set_accent(value: Color) -> void:
 	stage.request_render()
 
 
+func request_preparation() -> void:
+	if settings.book_unlocked(BOOKS[selected].id):
+		set_prepared(true)
+	else:
+		navigate.emit("learn")
+
+
+func refresh_book_access() -> void:
+	var unlocked := settings.book_unlocked(BOOKS[selected].id)
+	var access := $CaptionLayer/Caption/Access as Label
+	access.visible = not unlocked
+	access.text = "完成本书练习后解锁出征" if settings.lesson_available(BOOKS[selected].id) else "完成基础操作与本书练习后解锁出征"
+	prepare_button.set_caption("进入咒典" if prepared else ("准备出征  →" if unlocked else "练习此书  →"))
+	var key_row := bottom_hint.get_child(0)
+	(key_row.get_child(1) as KeyHint).description = "出征" if prepared else ("准备" if unlocked else "练习")
+
+
 func set_prepared(value: bool, audible: bool = true) -> void:
 	var changed := prepared != value
 	prepared = value
@@ -323,11 +347,10 @@ func set_prepared(value: bool, audible: bool = true) -> void:
 	_layout_books()
 	stage.request_render()
 	back_button.visible = value
-	prepare_button.set_caption("进入咒典" if value else "准备出征  →")
+	refresh_book_access()
 	var key_row := bottom_hint.get_child(0)
 	(key_row.get_child(0) as KeyHint).key_text = "← / → · 1–5" if value else "← / → · 1–4"
 	(key_row.get_child(0) as KeyHint).description = "难度" if value else "选书"
-	(key_row.get_child(1) as KeyHint).description = "出征" if value else "准备"
 	prepare_button.disabled = not interactive
 	navigate.emit("prepared" if value else "archive")
 	_apply_interaction()
@@ -419,11 +442,11 @@ func _layout() -> void:
 	(paper.material as ShaderMaterial).set_shader_parameter("worldSpan", Vector2(800.*size.x/maxf(size.y,1.),800.))
 	title_group.position = Vector2(safe_left + safe_width * .05, (size.y-64) * .065)
 	title_group.size.x = 340
-	archive_label.position = Vector2(safe_left + safe_width * .95 - 320, (size.y-64) * .07)
-	archive_label.size = Vector2(210, 70)
-	counter.position = Vector2(safe_left + safe_width * .95 - 100, (size.y-64) * .08)
-	counter.size.x = 100
 	var content_height := size.y - 64.0
+	archive_label.position = Vector2(size.x * .5 - 140, content_height * .085)
+	archive_label.size = Vector2(280, 26)
+	counter.position = archive_label.position + Vector2(0, 32)
+	counter.size = Vector2(280, 24)
 	var sigil_center := Vector2(size.x * .5, content_height * .465)
 	fluid.position = Vector2.ZERO
 	fluid.size = size
@@ -431,7 +454,7 @@ func _layout() -> void:
 	var card_width := minf(390, minf(safe_width*.25, size.y*.37))
 	var card_height := minf(440, size.y*.42)
 	var front_bottom := content_height - clampf(size.y*.14,100,170) - 128 - 38
-	effects.set_anchors(sigil_center,minf(safe_width*.51,content_height*.46),Vector2(size.x*.5,front_bottom-card_height*.56),maxf(card_width,card_height*.88)*.86)
+	effects.set_anchors(sigil_center,minf(safe_width*.51,content_height*.46),Vector2(size.x*.5,front_bottom-card_height*.56),maxf(card_width,card_height*.88)*.86 if settings.book_unlocked(BOOKS[selected].id) else 0.0)
 	portal.size = Vector2.ONE * minf(safe_width * .68, content_height * .85)
 	portal.position = sigil_center - portal.size * .5
 	for emblem in seal_layers:
@@ -440,15 +463,18 @@ func _layout() -> void:
 	floor_plane.size = Vector2(minf(safe_width * .85, 1200), content_height * .35)
 	floor_plane.position = Vector2(size.x*.5, content_height*.62) - floor_plane.size*.5
 	caption.size.x = minf(470.0, safe_width * .44)
-	menu.position = Vector2(safe_left + safe_width * .05, content_height - 42 - menu.get_combined_minimum_size().y)
-	menu.size.x = 390
+	menu.size.x = 240
+	right_menu.size.x = 240
+	menu.position = Vector2(safe_left + safe_width * .05, content_height - 106 - menu.get_combined_minimum_size().y)
+	right_menu.position = Vector2(safe_left + safe_width * .95 - right_menu.size.x, menu.position.y)
 	prepare_button.position = Vector2(size.x * .5 - 130, content_height - 96)
 	prepare_button.size = Vector2(260, 52)
 	back_button.position = Vector2(safe_left + safe_width * .05, 85)
 	left_wing.size.x = minf(390, safe_width * .26)
 	right_wing.size.x = minf(390, safe_width * .26)
-	bottom_hint.position = Vector2(safe_left + safe_width * .95 - 470, size.y - 44)
-	bottom_hint.size = Vector2(470, 32)
+	var keys_width := (bottom_hint.get_child(0) as HBoxContainer).get_combined_minimum_size().x
+	bottom_hint.position = Vector2(size.x - 32 - keys_width, size.y - 44)
+	bottom_hint.size = Vector2(keys_width, 32)
 	command_label.position = Vector2(safe_left + safe_width*.05, size.y - 44)
 	command_label.size = Vector2(650, 38)
 	book_command.hide()
@@ -478,6 +504,7 @@ func _layout_books() -> void:
 		cards[i].rotation = sin(angle)*deg_to_rad(-13)
 		cards[i].z_index = int(depth * 10.0) + 1
 		var hover := hover_amount[i]
+		var unlocked := settings.book_unlocked(BOOKS[i].id)
 		cards[i].modulate.a = pow(lerpf(.48+depth*.52,1.0,hover) * lerpf(1.0, .08, deployment*(1.0-seal_weights[i])),2.2)
 		var visual := book_visuals[i]
 		visual.size = cards[i].size
@@ -489,7 +516,7 @@ func _layout_books() -> void:
 		visual.modulate = cards[i].modulate
 		var float_phase := (1.0-cos(clock*TAU/7.0))*.5 if not reduced_motion else 0.0
 		var center := visual.get_transform() * Vector2(card_width * .5, card_height * .45 - 12 * float_phase)
-		fluid.track_body(StringName("book_%d" % i), center - fluid.position, Vector2(card_width * .40, card_height * .43) * book_scale, visual.rotation + deg_to_rad(2) * float_phase, BOOKS[i].color, (.7 if i == selected else .3) + hover * .25, true, 24.0, visual.modulate.a)
+		fluid.track_body(StringName("book_%d" % i), center - fluid.position, Vector2(card_width * .40, card_height * .43) * book_scale, visual.rotation + deg_to_rad(2) * float_phase, BOOKS[i].color, ((.7 if i == selected else .3) + hover * .25) if unlocked else 0.0, true, 24.0, visual.modulate.a)
 		var art_size := Vector2(card_width,card_height*.88)
 		artworks[i].size = art_size * 1.4
 		artworks[i].position = -art_size*.2 + Vector2(0,-12*float_phase)
@@ -498,30 +525,33 @@ func _layout_books() -> void:
 		var mat := artworks[i].material as ShaderMaterial
 		mat.set_shader_parameter("artwork_size", card_width)
 		mat.set_shader_parameter("blur_pixels", lerpf(pow(1.0-depth,1.5)*8.5*(1.0-hover),12.0,deployment*(1.0-seal_weights[i])))
-		mat.set_shader_parameter("brightness", lerpf(.48+depth*.52,1.08,hover))
+		mat.set_shader_parameter("brightness", lerpf(.48+depth*.52,1.08,hover) * (1.0 if unlocked else 0.36))
+		mat.set_shader_parameter("awakening", 1.0 if unlocked else 0.0)
 		mat.set_shader_parameter("hover", hover)
 		patterns[i].size = art_size * 1.08
+		patterns[i].visible = unlocked
 		patterns[i].position = -art_size*.04
 		patterns[i].modulate = Color(BOOKS[i].color,pow(lerpf(.14,.55,seal_weights[i]),2.2))
 		auras[i].position = -art_size*.2
+		auras[i].visible = unlocked
 		auras[i].size = art_size*1.4
 		var aura := auras[i].material as ShaderMaterial
 		aura.set_shader_parameter("clock",clock if not reduced_motion else 0.)
 		aura.set_shader_parameter("canvas_size",auras[i].size)
 		aura.set_shader_parameter("density",4 if quality==0 else 12)
-		book_titles[i].position = bottom-Vector2(card_width*.5,52*book_scale)
+		book_titles[i].position = bottom-Vector2(card_width*.5,34.0 if i == selected else 52*book_scale)
 		book_titles[i].size = Vector2(card_width,48)
 		var font_size := 30 if i == selected else 16
 		if book_titles[i].get_theme_font_size("font_size") != font_size:
 			book_titles[i].add_theme_font_size_override("font_size", font_size)
-		var font_color := accent if i == selected else BOOKS[i].color
+		var font_color := (accent if i == selected else BOOKS[i].color) if unlocked else Color("768087")
 		if book_titles[i].get_theme_color("font_color") != font_color:
 			book_titles[i].add_theme_color_override("font_color", font_color)
 		book_titles[i].modulate.a = (1.-deployment)*(.48+depth*.52)*smoothstep(.05,.3,depth)
 		book_titles[i].z_index = cards[i].z_index+1
 		card_commands[i].position = bottom+Vector2(-card_width*.5,2 if i==selected else 0)
 		card_commands[i].size = Vector2(card_width,24)
-		card_commands[i].modulate.a = (1.-deployment)*.7*smoothstep(.05,.3,depth)
+		card_commands[i].modulate.a = 0.0 if i == selected else (1.-deployment)*.7*smoothstep(.05,.3,depth)
 		card_commands[i].z_index = cards[i].z_index+1
 	# GUI hit order follows tree order, independently of CanvasItem z_index.
 	var ordered: Array[Button] = cards.duplicate()
@@ -536,10 +566,12 @@ func _layout_motion() -> void:
 		return
 	var safe_width := _safe_width()
 	var arrival := 1.0 if reduced_motion else MotionCurve.cubic(caption_elapsed,Vector2(0,.0),Vector2(.58,1))
-	caption.position = Vector2(size.x * .5 - caption.size.x * .5,size.y-64-clampf(size.y*.14,100,170)-128+8+5*(1.-arrival))
+	# Wrapped text may initially measure at zero width; keep the final bounds fitted.
+	caption.size.y = caption.get_combined_minimum_size().y
+	caption.position = Vector2(size.x * .5 - caption.size.x * .5,size.y-64-clampf(size.y*.14,100,170)-128-38+28+5*(1.-arrival))
 	caption_layer.modulate.a = arrival*(1.-deployment)
 	var safe_left := _safe_left()
-	for control: Control in [menu,title_group,archive_label]:
+	for control: Control in [menu,right_menu,title_group,archive_label,counter]:
 		control.modulate.a = 1.-deployment
 	left_wing.position = Vector2(lerpf(size.x*.5-left_wing.size.x, safe_left + safe_width*.05, deployment), (size.y-64)*.23).round()
 	right_wing.position = Vector2(lerpf(size.x*.5, safe_left + safe_width*.95-right_wing.size.x, deployment),(size.y-64)*.23).round()
@@ -580,9 +612,10 @@ func _apply_interaction() -> void:
 	for card in cards:
 		card.focus_mode = Control.FOCUS_NONE
 		card.mouse_filter = Control.MOUSE_FILTER_STOP if interactive and not prepared else Control.MOUSE_FILTER_IGNORE
-	for button: Button in menu.get_children():
+	for button: OpenButton in menu_buttons:
 		button.disabled = prepared or not interactive
 	menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _connect_action_cues(button: OpenButton) -> void:

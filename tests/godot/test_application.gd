@@ -17,6 +17,7 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+	app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
 	app.presentation_enabled = false
 	root.add_child(app)
@@ -224,7 +225,7 @@ func _run() -> void:
 	await _settle()
 	_check(app.settings.reduce_motion and app.settings.vocabulary_id == book_id and app.vocabulary.load_entries(book_id).size() == 2 and app.settings.book_id == "flame" and app.settings.difficulty == "hard" and app.settings.run_seed == "arc123", "application restart restores preparation, settings and custom library")
 	var vocab_button := app.archive.menu.find_child("Vocab", true, false) as Button
-	var help_button := app.archive.menu.find_child("Help", true, false) as Button
+	var help_button := app.archive.right_menu.find_child("Help", true, false) as Button
 	_check(vocab_button != null and help_button != null and vocab_button.focus_mode == Control.FOCUS_NONE and help_button.focus_mode == Control.FOCUS_NONE, "menu controls have no keyboard focus navigation")
 	if vocab_button != null and help_button != null:
 		await _key(KEY_TAB)

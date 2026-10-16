@@ -39,12 +39,15 @@ func _run() -> void:
 	root.add_child(router)
 	router.action_requested.connect(func(action: StringName) -> void: battle.queue_action(action))
 	var valid_scenarios: Array = SCENARIOS.map(func(item: Array) -> String: return item[0])
-	if not WORDS.has(vocabulary_kind) or (not sampling_book.is_empty() and StringName(sampling_book) not in BOOKS) or (not chosen_scenario.is_empty() and chosen_scenario not in valid_scenarios):
+	var invalid_scenario := false
+	for scenario_id in chosen_scenario.split(",", false):
+		invalid_scenario = invalid_scenario or scenario_id not in valid_scenarios
+	if not WORDS.has(vocabulary_kind) or (not sampling_book.is_empty() and StringName(sampling_book) not in BOOKS) or invalid_scenario:
 		_check(false, "invalid probe arguments")
 	else:
 		_calibrate_actor()
 		for scenario: Array in SCENARIOS:
-			if not chosen_scenario.is_empty() and chosen_scenario != scenario[0]: continue
+			if not chosen_scenario.is_empty() and scenario[0] not in chosen_scenario.split(","): continue
 			for book: StringName in BOOKS:
 				if not sampling_book.is_empty() and sampling_book != str(book): continue
 				_probe(scenario, book)
@@ -169,12 +172,13 @@ func _probe_round(session: RunSession, entries: Array[VocabularyEntry], prepared
 		var result_name := "flow_error" if failures > start_failures else "victory" if battle.result == 1 else "defeat" if battle.result == -1 else "timeout"
 		var remaining: Array[Dictionary] = []
 		for enemy in battle._living():
-			remaining.append({"kind": str(enemy.kind), "hp": float(enemy.hp_q) / Q, "phase": enemy.phase, "mark": enemy.vulnerability})
+			remaining.append({"id": str(enemy.id), "kind": str(enemy.kind), "hp": float(enemy.hp_q) / Q, "phase": enemy.phase, "mark": enemy.vulnerability, "position": [enemy.position.x, enemy.position.y], "word": enemy.word, "word_pending": enemy.word_pending, "registered": battle.typing._targets.has(enemy.id), "combat_locked": enemy.combat_locked, "in_combat": BattleSession.enemy_in_combat(enemy), "frozen": enemy.frozen_time, "stagger": enemy.stagger_time, "speed": enemy.velocity.length()})
 		var report := {"scenario": label, "book": str(session.selection.book_id), "profile": profile_name, "seed": chosen_seed, "vocabulary": vocabulary_kind, "difficulty": session.options.difficulty, "round": session.facts.get("round_index", 0), "room": serial + 1, "result": result_name, "seconds": battle.elapsed, "world_seconds": battle.world_time, "hp": float(battle.player_hp_q) / Q, "maximum_hp": float(battle.player_max_hp_q) / Q, "departure_hp": departure_hp, "growth_hp": session.selection.growth_hp, "characters": battle.manual_characters, "words": battle.completed_words, "errors": battle.typing.mistakes, "accepted_cps": battle.manual_characters / maxf(0.01, battle.elapsed), "peak_enemies": peak_enemies, "peak_threats": peak_threats, "mean_enemies": enemy_sum / maxi(1, samples), "hp_lost": float(hp_trace.lost_q) / Q, "hp_restored": float(hp_trace.restored_q) / Q, "events": events, "actor": actor.metrics(), "departure_relics": departure_assets, "remaining": remaining, "timeline": timeline, "wall_seconds": (Time.get_ticks_usec() - wall_start) / 1000000.0}
 		report.world_seconds = battle.world_time - departure_world_time
 		report["damage_by_source"] = battle.runtime.damage_by_source.duplicate()
 		report["kills_by_source"] = battle.runtime.kills_by_source.duplicate()
 		report["peak_spirits"] = peak_spirits
+		report["terminal_state"] = {"player": [battle.player_position.x, battle.player_position.y], "word_reservations": battle._word_sampler.selected.duplicate(), "effects": battle.effects.map(func(effect: BattleEffect) -> Dictionary: return {"kind": str(effect.kind), "target": str(effect.target_id), "word_owner": str(effect.word_owner), "delay": effect.delay}), "projectiles": battle.projectiles.size(), "targets": battle.typing._targets.duplicate()}
 		report["spirit_flight_seconds"] = spirit_flight_seconds
 		_check(battle.typing.mistakes == actor.injected_errors, "only planned typo events occur")
 		_check(battle.manual_characters == actor.submitted - actor.injected_errors, "all correct physical characters committed once")

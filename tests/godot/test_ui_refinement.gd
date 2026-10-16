@@ -22,16 +22,38 @@ func _run() -> void:
 	app.settings.sound = false
 	app.settings.ambience = false
 	app.settings.reduce_motion = true
+	if not "--archive-tutorial" in OS.get_cmdline_user_args() and not "--setup-feedback" in OS.get_cmdline_user_args():
+		# Existing feature reviews start with explicitly completed onboarding.
+		app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.profile_base_path = evidence.path_join("profiles")
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
 	app.presentation_enabled = "--setup-feedback" in OS.get_cmdline_user_args()
 	root.add_child(app)
 	await _settle()
+	if "--archive-tutorial" in OS.get_cmdline_user_args():
+		await _review_archive_tutorial()
+		return
+	if "--combat-revision" in OS.get_cmdline_user_args():
+		await _review_combat_revision()
+		print("Combat revision UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+		var revision_report := FileAccess.open(evidence.path_join("combat-revision-checks.json"), FileAccess.WRITE)
+		revision_report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+		revision_report.close()
+		app.queue_free()
+		await process_frame
+		quit(1 if failures else 0)
+		return
 	if "--screen-capture" in OS.get_cmdline_user_args():
 		root.grab_focus()
 		await process_frame
 	if "--tutorial-mechanics" in OS.get_cmdline_user_args():
 		await _review_tutorial_mechanics()
+		return
+	if "--tutorial-shortcuts" in OS.get_cmdline_user_args():
+		await _review_tutorial_shortcuts()
+		return
+	if "--tutorial-navigation" in OS.get_cmdline_user_args():
+		await _review_tutorial_navigation()
 		return
 	if "--teaching-copy" in OS.get_cmdline_user_args():
 		await _review_teaching_copy()
@@ -355,7 +377,7 @@ func _review_menu_layout() -> void:
 	_check(app.commands.has("translation") and app.commands.has("effects") and app.commands.has("volume"), "calibration controls retain their own commands")
 	await _capture("menu-calibration")
 	await _key(KEY_SPACE)
-	_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete, "calibration primary saves before inviting the new player to practice")
+	_check(app.route == "tutorial" and app.settings.first_setup_complete, "calibration primary saves before entering tutorial selection")
 	var report := FileAccess.open(evidence.path_join("menu-results.json"), FileAccess.WRITE)
 	report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
 	report.close()
@@ -691,7 +713,7 @@ func _review_setup_feedback() -> void:
 		var centered_pressure: WeakRef = weakref(setup.preview)
 		await _click(setup.confirm_button)
 		await create_timer(0.35).timeout
-		_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete and centered_pressure.get_ref() == null, "centered save action opens the first tutorial invitation and frees its pressure scene")
+		_check(app.route == "tutorial" and app.settings.first_setup_complete and centered_pressure.get_ref() == null, "centered save action opens tutorial selection and frees its pressure scene")
 		print("Setup layout: %d checks, %d failed | %s" % [checks.size(), failures, evidence])
 		app._quit_game()
 		if failures > 0: quit(1)
@@ -727,7 +749,7 @@ func _review_setup_feedback() -> void:
 	var pressure_ref: WeakRef = weakref(setup.preview)
 	await _click(setup.confirm_button)
 	await create_timer(0.35).timeout
-	_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "confirm saves calibration, opens the tutorial invitation and frees the pressure scene")
+	_check(app.route == "tutorial" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "confirm saves calibration, opens tutorial selection and frees the pressure scene")
 	await _click(app.page.footer.get_node("Back"))
 	var frame_started := Time.get_ticks_usec()
 	var frame_count := 0
@@ -791,20 +813,18 @@ func _review_setup_invitation(setup: FirstVisitSetup) -> void:
 	var pressure_ref: WeakRef = weakref(setup.preview)
 	await _click(setup.confirm_button)
 	await _settle()
-	_check(app.route == "tutorial_invitation" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "first save opens the invitation and releases the pressure encounter")
-	_check(app.menu_navigation.selected_word() == "tutorial" and app.router.context == InputRouter.Context.MENU, "tutorial is the invitation primary action with menu input")
-	_check(app.page.heading.text.contains("练习施法") and app.page.subtitle_label.text.contains("基础操作"), "invitation explicitly recommends the learning order")
-	_check(Rect2(Vector2.ZERO, app.page.size).encloses(app.page.panel.get_rect()), "invitation stays inside the desktop output")
-	await _capture("first-tutorial-invitation")
+	_check(app.route == "tutorial" and app.settings.first_setup_complete and pressure_ref.get_ref() == null, "first save enters tutorial selection and releases the pressure encounter")
+	_check(app.menu_navigation.selected_word() == "basics" and app.router.context == InputRouter.Context.MENU, "basics is the first tutorial primary action")
+	var menu := app.page as TutorialMenu
+	_check(menu.lesson_buttons[&"frost"].disabled and not app.commands.has("frost"), "book practice requires completing basics")
+	_check(Rect2(Vector2.ZERO, app.page.size).encloses(app.page.panel.get_rect()), "tutorial selection stays inside the desktop output")
+	await _capture("first-tutorial-selection")
 	var restored := AppSettings.new(app.settings.path)
 	restored.load_settings()
-	_check(restored.first_setup_complete, "setup completion is persisted before the invitation")
-	await _click(app.page.footer.get_node("Tutorial"))
-	await _settle()
-	_check(app.route == "tutorial" and app.page is TutorialMenu, "invitation opens the real five-course menu")
+	_check(restored.first_setup_complete, "setup completion is persisted before tutorial selection")
 	await _click((app.page as TutorialMenu).lesson_buttons[&"basics"])
 	await create_timer(1.0).timeout
-	_check(app.route == "battle" and app.tutorial.lesson_id == &"basics", "invited player enters the real basic practice through its entrance")
+	_check(app.route == "battle" and app.tutorial.lesson_id == &"basics", "new player enters the real basic practice through its entrance")
 	await _click(app.tutorial_overlay.exit_button)
 	await _settle()
 	app._home(false)
@@ -815,18 +835,18 @@ func _review_setup_invitation(setup: FirstVisitSetup) -> void:
 	await _settle()
 	await _click(app.page.footer.get_node("Back"))
 	await _settle()
-	_check(app.route == "home" and app.commands.has("tutorial"), "later choice returns to the archive with its teaching entry")
+	_check(app.route == "home" and app.commands.has("tutorial"), "leaving tutorial selection retains its archive entry and book locks")
 	app._first_setup_page()
 	await _settle()
 	await _click((app.page as FirstVisitSetup).confirm_button)
 	await _settle()
-	_check(app.route == "home", "completed users do not receive another invitation")
+	_check(app.route == "home", "repeated calibration does not force tutorial selection again")
 	app._settings_page("home")
 	app._first_setup_page("settings")
 	await _settle()
 	await _click((app.page as FirstVisitSetup).confirm_button)
 	await _settle()
-	_check(app.route == "settings", "recalibration returns to settings without an invitation")
+	_check(app.route == "settings", "recalibration returns to settings")
 	var output := FileAccess.open(evidence.path_join("setup-invitation-checks.json"), FileAccess.WRITE)
 	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
 	output.close()
@@ -889,7 +909,7 @@ func _test_scroll() -> void:
 func _review_tutorial_arc() -> void:
 	var saved_characters := app.profile.manual_characters
 	var saved_checkpoint := app.profile.run_checkpoint.duplicate(true)
-	await _click(app.archive.menu.get_node("Tutorial"))
+	await _click(app.archive.right_menu.get_node("Tutorial"))
 	_check(app.route == "tutorial" and app.page is TutorialMenu, "home tutorial button opens five lessons")
 	var menu := app.page as TutorialMenu
 	_check(menu.lesson_buttons.size() == 5, "basic and four book lessons have visible entrances")
@@ -1043,6 +1063,151 @@ func _review_tutorial_mechanics() -> void:
 	quit(1 if failures else 0)
 
 
+func _review_tutorial_shortcuts() -> void:
+	# Readiness is staged here to isolate native button routing from combat rules.
+	for id: StringName in TutorialLesson.LESSON_IDS:
+		for index in TutorialLesson.STEPS[id].size():
+			app._enter_tutorial(id, index)
+			await _settle()
+			app.tutorial.session.set_physics_process(false)
+			await _key(KEY_ENTER)
+			_check(app.tutorial.step_index == index and not app.tutorial.ready_to_advance and app.tutorial.session.typing.mistakes == 0, "%s/%d Enter cannot skip an unfinished goal or type a wrong character" % [id, index])
+			var overlay := app.tutorial_overlay
+			_check([overlay.next_button, overlay.retry_button, overlay.exit_button].all(func(button: OpenButton) -> bool: return button.get_rect().has_area() and button.get_global_rect().encloses((button.get_node("ShortcutHint") as Control).get_global_rect())), "%s/%d all shortcut hints fit inside their buttons" % [id, index])
+			_check([overlay.next_button, overlay.retry_button, overlay.exit_button].all(func(button: OpenButton) -> bool: return is_equal_approx((button.get_node("ShortcutHint") as Control).position.x, 12.0) and is_equal_approx(button.get_theme_stylebox("normal").get_content_margin(SIDE_LEFT) - ((button.get_node("ShortcutHint/KeyFrame") as Control).get_global_rect().end.x - button.global_position.x), 8.0)), "%s/%d visible key caps lead their captions with an eight-pixel gap" % [id, index])
+			app.tutorial.ready_to_advance = true
+			app.tutorial.refresh()
+			await _key(KEY_ENTER)
+			_check(app.route == "tutorial" if index == TutorialLesson.STEPS[id].size() - 1 else app.tutorial.step_index == index + 1, "%s/%d Enter invokes exactly the available next or finish action" % [id, index])
+		app._enter_tutorial(id, 1)
+		await _settle()
+		var previous := app.tutorial.session.get_instance_id()
+		await _type(app.tutorial.session.enemies[0].word.left(1))
+		await _key(KEY_F1)
+		_check(app.tutorial.step_index == 1 and app.tutorial.session.get_instance_id() != previous and app.tutorial.session.manual_characters == 0, "%s F1 retries the current step and clears prior input" % id)
+		await _key(KEY_F3)
+		_check(app.route == "tutorial" and app.tutorial == null, "%s F3 exits to teaching selection" % id)
+	app._enter_tutorial(&"basics")
+	await _settle()
+	await _type(app.tutorial.session.enemies[0].word)
+	await _wait_tutorial_goal()
+	await _key(KEY_KP_ENTER)
+	_check(app.tutorial.current_step() == &"switch", "keypad Enter advances after a real manually completed goal")
+	await _key(KEY_ESCAPE)
+	await _key(KEY_F1)
+	await _key(KEY_F3)
+	_check(app.route == "pause" and app.tutorial.current_step() == &"switch", "paused lesson shortcuts do not activate hidden battle buttons")
+	await _type("resume")
+	var echo := InputEventKey.new()
+	echo.keycode = KEY_F1
+	echo.pressed = true
+	echo.echo = true
+	var session_id := app.tutorial.session.get_instance_id()
+	Input.parse_input_event(echo)
+	await _settle()
+	_check(app.tutorial.session.get_instance_id() == session_id, "holding a shortcut does not repeatedly restart the step")
+	app.settings.ui_scale = 1.25
+	app.root.refresh()
+	await _settle()
+	await _capture("tutorial-shortcuts")
+	await _key(KEY_F3)
+	await _key(KEY_F1)
+	await _key(KEY_F3)
+	_check(app.route == "tutorial" and app.tutorial == null, "lesson shortcuts stop acting after exit")
+	var output := FileAccess.open(evidence.path_join("tutorial-shortcuts-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Tutorial shortcuts UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+	quit(1 if failures else 0)
+
+
+func _review_tutorial_navigation() -> void:
+	app.settings.completed_lessons.clear()
+	app.settings.completed_steps.clear()
+	app._start_tutorial(&"basics")
+	await _settle()
+	await _type(app.tutorial.session.enemies[0].word)
+	await _wait_tutorial_goal()
+	_check(app.settings.lesson_progress(&"basics") == 1 and not app.tutorial_overlay._step_buttons[1].disabled and app.tutorial_overlay._step_buttons[2].disabled, "a real achieved goal remembers one step and unlocks only the next node")
+	await _key(KEY_F3)
+	app._start_tutorial(&"basics")
+	await _settle()
+	_check(app.tutorial.step_index == 1, "reentering an incomplete course resumes at its first unfinished step")
+	await _move_to(app.tutorial_overlay._step_buttons[3])
+	_check(app.tutorial_overlay._step_name.visible and app.tutorial_overlay._step_name.text == "御术与反弹", "even a locked node reveals its step name on native hover")
+	await _capture("tutorial-node-name")
+	await _click(app.tutorial_overlay._step_buttons[3])
+	app._jump_tutorial(4)
+	_check(app.tutorial.step_index == 1, "neither pointer nor controller can skip unfinished steps")
+	await _click(app.tutorial_overlay._step_buttons[0])
+	_check(app.tutorial.step_index == 0 and app.tutorial.session.manual_characters == 0, "passed node opens a fresh replay of that step")
+	await _click(app.tutorial_overlay._step_buttons[1])
+	_check(app.tutorial.step_index == 1 and app.settings.lesson_progress(&"basics") == 1, "replaying an earlier step keeps access to the unfinished frontier")
+	var restored := AppSettings.new(app.settings.path)
+	restored.load_settings()
+	_check(restored.lesson_progress(&"basics") == 1 and restored.completed_lessons.is_empty(), "partial tutorial progress survives disk reload without unlocking a book")
+	app.queue_free()
+	await _settle()
+	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
+	app.settings = restored
+	app.profile_base_path = evidence.path_join("profiles")
+	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
+	app.presentation_enabled = false
+	root.add_child(app)
+	await _settle()
+	root.grab_focus()
+	app._start_tutorial(&"basics")
+	await _settle()
+	_check(app.tutorial.step_index == 1 and not app.tutorial_overlay._step_buttons[0].disabled, "recreated application restores both resume position and passed-node navigation")
+	app.settings.completed_lessons.assign([&"basics"])
+	# Stage an already dissolved target, then use the real step transition and dodge.
+	for id: StringName in [&"frost", &"flame", &"storm", &"spirit"]:
+		var previous_step := 1 if id == &"storm" else 2
+		app._enter_tutorial(id, previous_step)
+		await _settle()
+		var session := app.tutorial.session
+		session.set_physics_process(false)
+		session.enemies[0].hp_q = 0
+		await create_timer(0.7).timeout
+		var actor := app.battle.visuals._actors[session.enemies[0].id]
+		_check(actor.dead_time > 0.9, "%s fixture reaches a visibly dissolved prior target" % id)
+		app.tutorial.ready_to_advance = true
+		app.tutorial.refresh()
+		await _key(KEY_ENTER)
+		await _settle()
+		_check(session.enemies[0].alive() and actor.dead_time == 0.0 and actor.modulate.a > 0.9 and is_zero_approx(float(actor.surface.get_shader_parameter("dissolve"))), "%s dodge lesson restores the actual target and clears its death presentation" % id)
+		session.set_physics_process(true)
+		if id == &"spirit":
+			var deadline := Time.get_ticks_msec() + 15000
+			while not (session.enemies[0].aiming and session.enemies[0].attack_clock <= 0.3) and Time.get_ticks_msec() < deadline:
+				await process_frame
+			await _key(KEY_DOWN)
+		else:
+			await _key(KEY_RIGHT if id == &"storm" else KEY_LEFT)
+		await _wait_tutorial_goal()
+		_check(app.tutorial.ready_to_advance, "%s restored target supports its real dodge mechanic" % id)
+		if id == &"frost": await _capture("frost-dodge-restored-target")
+	app._home(false)
+	app._select_archive_book(3)
+	await create_timer(ArchiveHome.ACCENT_SECONDS + 0.1).timeout
+	await _settle()
+	var home := app.archive
+	_check(home.auras.all(func(aura: ColorRect) -> bool: return not aura.visible) and home.patterns.all(func(pattern: TextureRect) -> bool: return not pattern.visible) and float((home.artworks[3].material as ShaderMaterial).get_shader_parameter("awakening")) == 0.0, "uncompleted books retain their silhouettes with no aura or rune light")
+	await _capture("archive-book-locked")
+	app.settings.completed_lessons.append(&"flame")
+	app._home(false)
+	app._select_archive_book(3)
+	await create_timer(ArchiveHome.ACCENT_SECONDS + 0.1).timeout
+	await _settle()
+	_check(home.auras[3].visible and not home.auras[0].visible and float((home.artworks[3].material as ShaderMaterial).get_shader_parameter("awakening")) == 1.0, "only the completed book regains color and light")
+	await _capture("archive-book-unlocked")
+	var output := FileAccess.open(evidence.path_join("tutorial-navigation-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Tutorial navigation UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+	quit(1 if failures else 0)
+
+
 func _wait_tutorial_goal() -> void:
 	var deadline := Time.get_ticks_msec() + 6000
 	while not app.tutorial.ready_to_advance and Time.get_ticks_msec() < deadline:
@@ -1078,7 +1243,7 @@ func _exercise_flame_mechanisms() -> void:
 	_check(not app.tutorial.completed and app.tutorial_overlay.next_button.text == "完成并返回", "real ultimate results remain readable until one explicit finish action")
 	await _capture("mechanism-flame-achieved")
 	await _click(app.tutorial_overlay.next_button)
-	_check(app.route == "tutorial" and app.tutorial == null and &"flame" in app._completed_lessons, "one native finish returns to selection with the completed course marked")
+	_check(app.route == "tutorial" and app.tutorial == null and &"flame" in app.settings.completed_lessons, "one native finish returns to selection with the completed course marked")
 	await _capture("mechanism-flame-complete")
 
 
@@ -1166,6 +1331,215 @@ func _review_teaching_copy() -> void:
 	output.close()
 	print("Teaching copy UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
 	quit(1 if failures else 0)
+
+
+func _review_archive_tutorial() -> void:
+	root.grab_focus()
+	await _settle()
+	var home := app.archive
+	_check(home.menu_buttons.size() == 8 and home.menu.get_child_count() == 4 and home.right_menu.get_child_count() == 4, "archive distributes its eight real menu actions between both sides")
+	_check(home.menu.get_rect().end.x < home.size.x * 0.3 and home.right_menu.position.x > home.size.x * 0.7, "menu columns leave the book composition clear")
+	_check(absf(home.archive_label.get_rect().get_center().x - home.size.x * 0.5) < 1 and home.counter.get_rect().get_center().x == home.archive_label.get_rect().get_center().x, "archive heading and book counter align above the selected book")
+	_check(absf(home.size.x - home.bottom_hint.get_rect().end.x - 32) < 1 and absf(home.size.y - home.bottom_hint.get_rect().end.y - 12) < 1 and not home.bottom_hint.get_rect().intersects(home.command_label.get_rect()), "keyboard hints anchor to the actual bottom-right corner with clear word-command space")
+	app._select_archive_book(3)
+	await create_timer(ArchiveHome.ACCENT_SECONDS + 0.1).timeout
+	await _settle()
+	_check(home.caption.position.y > home.book_titles[3].get_rect().end.y + 8 and home.caption.get_rect().end.y < home.prepare_button.position.y - 25, "book introduction has clear spacing from title and primary action: title=%s caption=%s action=%s" % [home.book_titles[3].get_rect(), home.caption.get_rect(), home.prepare_button.get_rect()])
+	await _capture("archive-flame-locked")
+	app.settings.ui_scale = 1.25
+	app._apply_visual_settings()
+	await _settle()
+	_check(home.caption.get_rect().end.y < home.prepare_button.position.y - 25 and home.counter.get_rect().end.y < home.cards[3].position.y, "largest desktop UI scale keeps book copy and heading clear of the artwork and action")
+	await _capture("archive-large-ui")
+	app.settings.ui_scale = 1.0
+	app._apply_visual_settings()
+	await _settle()
+	await _key(KEY_ENTER)
+	_check(app.route == "tutorial" and not app.run.has_pending_run(), "locked book primary enters teaching without creating an expedition")
+	await _key(KEY_ESCAPE)
+	app._first_setup_page()
+	await _settle()
+	var preview_ref: WeakRef = weakref((app.page as FirstVisitSetup).preview)
+	await _click((app.page as FirstVisitSetup).confirm_button)
+	_check(app.route == "tutorial" and app.settings.first_setup_complete and preview_ref.get_ref() == null, "first setup saves directly into tutorial selection and releases the preview")
+	var menu := app.page as TutorialMenu
+	_check(not menu.lesson_buttons[&"basics"].disabled and menu.lesson_buttons.values().filter(func(button: OpenButton) -> bool: return not button.disabled).size() == 1, "initially only basic controls practice is available")
+	_check(not app.commands.has("flame") and not app.commands.has("spirit"), "locked lesson word commands are absent")
+	await _click(menu.lesson_buttons[&"flame"])
+	app._start_tutorial(&"spirit")
+	_check(app.route == "tutorial" and app.tutorial == null, "locked lessons reject both pointer and direct controller requests")
+	await _capture("tutorial-basics-only")
+	await _click(menu.lesson_buttons[&"basics"])
+	app._advance_tutorial()
+	_check(app.settings.completed_lessons.is_empty(), "entering or prematurely advancing a lesson grants no unlock")
+	await _click(app.tutorial_overlay.exit_button)
+	_check(app.settings.completed_lessons.is_empty(), "abandoning practice grants no unlock")
+	await _click((app.page as TutorialMenu).lesson_buttons[&"basics"])
+	await _click(app.battle.enemy_words[app.tutorial.session.enemies[0].id])
+	await _type(app.tutorial.session.typing.word)
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_TAB)
+	await _type("sha")
+	await _key(KEY_TAB)
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_BACKSPACE)
+	await _type("f")
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	var parry_deadline := Time.get_ticks_msec() + 15000
+	while not app.tutorial.ready_to_advance and Time.get_ticks_msec() < parry_deadline:
+		var session := app.tutorial.session
+		for threat: BattleThreat in session.threats:
+			if not threat.reflected and ((threat.position - session.player_position) * BattleSession.ARENA_SIZE).length() < 40 and session.parry_cooldown <= 0:
+				await _key(KEY_SPACE)
+				break
+		await process_frame
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_LEFT)
+	await _wait_tutorial_goal()
+	await _click(app.tutorial_overlay.next_button)
+	await _key(KEY_SHIFT)
+	await _wait_tutorial_goal()
+	# Saving is part of completion; a failed write must remain retryable.
+	var settings_path := app.settings.path
+	app.settings.path = evidence.path_join("blocked-settings")
+	DirAccess.make_dir_absolute(app.settings.path)
+	await _click(app.tutorial_overlay.next_button)
+	_check(app.tutorial != null and not app.tutorial.completed and app.settings.completed_lessons.is_empty() and not app.tutorial_overlay.next_button.disabled, "failed completion save preserves the achieved goal without granting an unlock")
+	app.settings.path = settings_path
+	await _click(app.tutorial_overlay.next_button)
+	menu = app.page as TutorialMenu
+	_check(app.settings.completed_lessons == [&"basics"] and menu.lesson_buttons.values().all(func(button: OpenButton) -> bool: return not button.disabled), "real basic completion opens all four independent book lessons")
+	_check(not app.settings.book_unlocked(&"frost") and not app.settings.book_unlocked(&"flame"), "basic completion alone unlocks no official book")
+	await _capture("tutorial-choose-any-book")
+	# Pick flame first: frost is deliberately incomplete.
+	await _click(menu.lesson_buttons[&"flame"])
+	await _exercise_flame_mechanisms()
+	_check(app.settings.book_unlocked(&"flame") and not app.settings.book_unlocked(&"frost") and not app.settings.book_unlocked(&"spirit"), "finishing flame first unlocks flame alone without requiring the other books")
+	var restored := AppSettings.new(settings_path)
+	restored.load_settings()
+	_check(restored.completed_lessons == app.settings.completed_lessons, "real completed lessons survive a settings reload")
+	app.queue_free()
+	await _settle()
+	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
+	app.settings = restored
+	app.settings_prepared = true
+	app.presentation_enabled = false
+	app.profile_base_path = evidence.path_join("profiles")
+	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
+	root.add_child(app)
+	await _settle()
+	_check(app.settings.book_unlocked(&"flame") and not app.settings.book_unlocked(&"frost"), "a fresh app instance retains only the completed book unlock")
+	app.archive.select_book(0, false)
+	app._launch_prepared()
+	_check(app.route == "tutorial" and not app.run.has_pending_run(), "official controller launch cannot bypass an uncompleted book")
+	app._home(false)
+	app._select_archive_book(3)
+	await create_timer(ArchiveHome.ACCENT_SECONDS + 0.1).timeout
+	await _capture("archive-flame-unlocked")
+	await _key(KEY_ENTER)
+	_check(app.route == "prepare", "the single completed book can enter official preparation")
+	await _capture("archive-preparation")
+	await _key(KEY_ENTER)
+	while is_instance_valid(app.departure): await process_frame
+	_check(app.route == "battle" and app.tutorial == null and app.run.selection.book_id == &"flame", "one completed book enters a real expedition without all-book completion")
+	app.battle.session.set_physics_process(false)
+	app.settings.completed_lessons.erase(&"flame")
+	app._pause()
+	var checkpoint := app.profile.run_checkpoint.duplicate(true)
+	app._resume_run()
+	_check(app.route == "tutorial" and app.profile.run_checkpoint == checkpoint and app.run.has_pending_run(), "a locked resumed book opens teaching while preserving the pending expedition")
+	var output := FileAccess.open(evidence.path_join("archive-tutorial-checks.json"), FileAccess.WRITE)
+	output.store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t"))
+	output.close()
+	print("Archive and tutorial UI: %d checks, %d failures | %s" % [checks.size(), failures, evidence])
+	app.queue_free()
+	await process_frame
+	quit(1 if failures else 0)
+
+
+func _review_combat_revision() -> void:
+	root.grab_focus()
+	app.settings.reduce_motion = false
+	app.settings.run_seed = "combat-revision"
+	app.settings.progressive = false
+	app._start_battle()
+	var entry := app.departure
+	await entry.covered
+	while not is_instance_valid(app.battle) or not entry.ready_to_reveal:
+		await process_frame
+	entry.set_process(false)
+	_check(entry.chapter_entry and entry.get_node("Book").text == "第 1 章 · 第 1 页", "chapter entrance prominently names its actual chapter and page")
+	await _capture("chapter-entrance")
+	entry.set_process(true)
+	await entry.completed
+	app.battle.session.set_physics_process(false)
+	var session := app.battle.session
+	var styles: Array[StringName] = [&"needle", &"quill", &"refrain", &"wisp", &"rune", &"vortex", &"shard", &"heavy", &"orb"]
+	for row in 2:
+		for index in styles.size():
+			var shot := BattleThreat.new()
+			shot.attack_id = "display-%d-%d" % [row, index]
+			shot.visual_style = styles[index]
+			shot.heavy = styles[index] == &"heavy"
+			shot.radius = 9.0
+			shot.position = Vector2(0.17 + index * 0.075, 0.34 + row * 0.2)
+			shot.previous_position = shot.position
+			shot.velocity = Vector2(140, 25)
+			shot.reflected = row == 1
+			for tail in 20: shot.trail.append(shot.position - Vector2(20 - tail, 0) * 6.0 / BattleSession.ARENA_SIZE)
+			session.threats.append(shot)
+	for index in 2:
+		var kind: StringName = &"frost_spear" if index == 0 else &"flame_burst"
+		var lot := session.ledger.earn("display-player-%d" % index, kind, session.compiled_build.identity(), SpellLot.Kind.POWER, BattleSession.Q, &"fixture")
+		var effect := session.runtime._effect(lot, kind, session.enemies[0].id, Vector2(0.4 + index * 0.2, 0.7), session.compiled_build)
+		var shot := BattleProjectile.new(effect)
+		shot.velocity = Vector2.RIGHT * shot.speed
+		for tail in 20: shot.trail.append(shot.position - Vector2(20 - tail, 0) * 6.0 / BattleSession.ARENA_SIZE)
+		session.projectiles.append(shot)
+	await _settle()
+	await _capture("projectile-heads-high")
+	app.settings.quality = 0
+	app.settings.reduce_motion = true
+	app.battle.apply_options()
+	await _capture("projectile-heads-low-reduced")
+	session.threats.clear()
+	app.run.rewards.current = app.run.rewards.next_threshold - 1
+	var target := session.enemies[0]
+	target.position = Vector2(0.5, 0.4)
+	target.previous_position = target.position
+	target.combat_locked = true
+	session.commit_damage(target, target.hp_q, target.hp_q, &"fixture", session.player_position)
+	var reward_started := Time.get_ticks_usec()
+	app._progression_changed()
+	_check(app.route == "reward_wait" and app.run.phase == "BATTLE_REWARD" and not session.is_physics_processing(), "earned reward stops combat before its presentation delay")
+	while app.route == "reward_wait":
+		await process_frame
+	_check(Time.get_ticks_usec() - reward_started >= 200000, "reward waits at least 0.2 real seconds, including frames with expensive work")
+	_check(app.route == "reward" and app.battle.visuals._actors[target.id].dead_time > 0.3, "reward appears after 0.2 seconds while the defeated actor dissolves")
+	await _capture("delayed-reward")
+	app._home()
+	app.archive.set_prepared(true, false)
+	app._pending_run_page(false)
+	await _key(KEY_ESCAPE)
+	await create_timer(0.3).timeout
+	_check(app.route == "home" and not app.archive.prepared, "Escape from unfinished expedition stays in the library without reopening preparation")
+	await _capture("pending-escape-home")
+	var page_entry := preload("res://ui/scenes/departure_ritual.tscn").instantiate() as DepartureRitual
+	page_entry.book = app._run_book()
+	page_entry.chapter_entry = false
+	page_entry.stage_text = "第 1 章 · 第 2 页"
+	app.root.add_child(page_entry)
+	await page_entry.covered
+	page_entry.set_process(false)
+	_check(page_entry.get_node("Book").text == "第 1 章 · 第 2 页" and page_entry.get_node("Seal").size.x == 104, "page entrance uses the actual position and a smaller seal")
+	await _capture("page-entrance")
+	page_entry.release()
+	page_entry.set_process(true)
+	await page_entry.completed
 
 
 func _review_curved_frames() -> void:

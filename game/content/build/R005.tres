@@ -26,6 +26,6 @@ max_stacks = 3
 numbers = {&"damage_pct": 25, &"duration": 1}
 rule_numbers = {&"capacity": &"summon_capacity"}
 stack_values = PackedStringArray("capacity", "damage_pct", "duration")
-grants_capabilities = PackedStringArray("spirit")
+requires_capabilities = PackedStringArray("spirit")
 tags = PackedStringArray("spirit")
 preferred_books = PackedStringArray("spirit")

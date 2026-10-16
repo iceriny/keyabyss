@@ -123,7 +123,7 @@ func assemble(paid: Dictionary, fact: WordCompletion, target: BattleEnemy, empow
 	effect.empowered = empowered or (build.book() == &"storm" and world.ultimate_time > 0.0)
 	effect.word_owner = fact.target_id
 	work_bank.append(ledger.earn(root, build.book(), build.identity(), SpellLot.Kind.WORK, int(paid.work_q), &"active-completion"))
-	if build.book() == &"spirit" or build.asset_stacks(&"R005") > 0 or build.asset_stacks(&"R035") > 0:
+	if build.book() == &"spirit" or build.asset_stacks(&"R035") > 0:
 		world.spirit_focus = target.id
 		_spirit_letters += fact.manual_positions.size()
 		while _spirit_letters >= 5:
@@ -411,7 +411,7 @@ func ultimate(target: BattleEnemy) -> BattleEffect:
 
 
 func take_spirit_attack(target: BattleEnemy, position: Vector2) -> BattleEffect:
-	var amount := roundi(60 * Q * 0.12 * damage_multiplier() * (1.0 + (build.relic_number(&"R005", &"damage_pct") + build.relic_number(&"R035", &"damage_pct")) / 100.0))
+	var amount := roundi(60 * Q * 0.15 * damage_multiplier() * (1.0 + (build.relic_number(&"R005", &"damage_pct") + build.relic_number(&"R035", &"damage_pct")) / 100.0))
 	var bonus := build.modifier(&"spirit_pct")
 	if run.shield_q > 0: bonus += build.modifier(&"shielded_spirit_pct")
 	if world.spirit_blade_count() >= world.spirit_capacity(): bonus += build.modifier(&"full_spirit_pct")
@@ -437,7 +437,7 @@ func assist_ready() -> bool:
 	return build.has(&"assist") and _assist_tokens > 0
 
 
-func finish(reason: StringName, preserve_flight: bool = false) -> RoomCombatResult:
+func finish(reason: StringName) -> RoomCombatResult:
 	_save_counters()
 	var result := RoomCombatResult.new()
 	result.room_id = ledger.room_id
@@ -447,17 +447,13 @@ func finish(reason: StringName, preserve_flight: bool = false) -> RoomCombatResu
 	run.hp_q = world.player_hp_q
 	run.resonance_q = world.resonance_q
 	run.reserve = []
-	if preserve_flight:
-		# Unspent work is not a launched attack; active paid flight keeps its ledger.
-		for lot in work_bank: ledger.spend(_tx("page-work-loss"), lot, lot.amount_q)
-		work_bank.clear()
-	else:
-		for lot in ledger.active_lots():
-			if lot.material == SpellLot.Kind.POWER: unused_power_q += lot.amount_q
-			ledger.spend(_tx("room-loss"), lot, lot.amount_q)
-		ongoing.clear()
-		fields.clear()
-		spirit_attacks.clear()
+	for lot in ledger.active_lots():
+		if lot.material == SpellLot.Kind.POWER: unused_power_q += lot.amount_q
+		ledger.spend(_tx("room-loss"), lot, lot.amount_q)
+	work_bank.clear()
+	ongoing.clear()
+	fields.clear()
+	spirit_attacks.clear()
 	result.overkill_damage_q = overkill_damage_q
 	result.unused_power_q = unused_power_q
 	result.healed_q = healed_q

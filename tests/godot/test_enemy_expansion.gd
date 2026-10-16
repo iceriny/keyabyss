@@ -30,6 +30,7 @@ func _run() -> void:
 		_check_gravity_source()
 		_check_precision()
 		_check_refrain()
+		_check_refrain_center_contact()
 		_check_ward()
 		_check_encounters()
 	print("Enemy expansion: %s failure(s)" % failures)
@@ -145,7 +146,8 @@ func _check_refrain() -> void:
 		battle._advance_enemy_motion(0.1)
 		_check(enemy.position == origin, "refrain holds its firing station between beats")
 		var first_direction := battle.threats[0].velocity.normalized()
-		_check(battle.threats.size() == 2 and enemy.followup_time > 0.0, "refrain starts with exactly two projectiles and a pending beat")
+		_check(battle.threats.size() == 3 and enemy.followup_time > 0.0, "refrain starts with three projectiles and a pending beat")
+		_check(battle.threats[1].velocity.normalized().is_equal_approx(((enemy.aimed_position - enemy.position) * BattleSession.ARENA_SIZE).normalized()), "refrain center lane aims directly at the committed position")
 		battle.player_position += Vector2(0, 240) / BattleSession.ARENA_SIZE
 		battle.previous_player_position = battle.player_position
 		enemy.frozen_time = 1.0
@@ -159,15 +161,25 @@ func _check_refrain() -> void:
 			"displace": enemy.position += Vector2(30, 0) / BattleSession.ARENA_SIZE
 			"death": battle.commit_damage(enemy, 999 * battle.Q, 999 * battle.Q, &"test", battle.player_position)
 		battle._advance_enemies(0.76)
-		_check(battle.threats.size() == (4 if cancellation == "none" else 2), "pending beat has correct %s semantics" % cancellation)
+		_check(battle.threats.size() == (6 if cancellation == "none" else 3), "pending beat has correct %s semantics" % cancellation)
 		if cancellation == "none":
-			_check(battle.threats[2].velocity.normalized().is_equal_approx(first_direction), "second beat retains the first aim after player relocation")
+			_check(battle.threats[3].velocity.normalized().is_equal_approx(first_direction), "second beat retains the first aim after player relocation")
 			var ids: Dictionary[String, bool] = {}
 			for shot in battle.threats: ids[shot.attack_id] = true
-			_check(ids.size() == 4, "each projectile has an independent settlement identity")
+			_check(ids.size() == 6, "each projectile has an independent settlement identity")
 			for tick in 180: battle._advance_threats(1.0 / 60.0)
 			_check(battle.player_hp_q == battle.player_max_hp_q, "one perpendicular 240px relocation clears the whole two-beat group")
 		battle.free()
+
+
+func _check_refrain_center_contact() -> void:
+	var battle := _session("refrain")
+	var enemy := battle.enemies[0]
+	enemy.aimed_position = battle.player_position
+	battle._resolve_attack(enemy)
+	for tick in 240: battle._advance_threats(1.0 / 60.0)
+	_check(battle.player_hp_q < battle.player_max_hp_q, "a stationary player is hit by the real refrain center projectile")
+	battle.free()
 
 
 func _check_ward() -> void:
@@ -301,6 +313,8 @@ func _actor_window() -> void:
 
 func _feedback_window() -> void:
 	assert(DisplayServer.get_name() != "headless")
+	if "--trail-glow" in OS.get_cmdline_user_args():
+		_check_ribbon_geometry()
 	root.size = Vector2i(1920, 1080)
 	var directory := EVIDENCE.path_join("feedback-%s" % Time.get_ticks_usec())
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
@@ -364,6 +378,25 @@ func _feedback_window() -> void:
 	await _advance(0.15)
 	await _capture(directory, "projectiles-high")
 	if "--trail-glow" in OS.get_cmdline_user_args():
+		_check(page.warnings._heads.size() == battle.threats.size(), "high quality retains one cached head per threat")
+		var redraws := {"count": 0}
+		for cached in page.warnings._heads.values():
+			cached.draw.connect(func() -> void: redraws.count += 1)
+		var first := battle.threats[0]
+		var old_position := first.position
+		first.position.x += .01
+		first.previous_position = first.position
+		await _advance(.1)
+		_check(redraws.count == 0, "moving heads reuse drawing commands")
+		first.position = old_position
+		first.previous_position = old_position
+		var old_radius := first.radius
+		first.radius *= 1.5
+		await _advance(.1)
+		_check(redraws.count == 1, "radius change redraws only the affected head")
+		var cached_head: Node2D = page.warnings._heads[first]
+		_check(is_equal_approx(cached_head.edge, maxf(1.0, page.warnings.size.x / BattleSession.ARENA_SIZE.x) / (first.radius * page.warnings.size.x / BattleSession.ARENA_SIZE.x)), "cached outlines retain screen-space width")
+		first.radius = old_radius
 		await _check_trail_glow(battle, page, directory)
 	page.visuals.reduced_motion = true
 	page.visuals.quality = 0
@@ -373,6 +406,7 @@ func _feedback_window() -> void:
 	page.visuals.fluid.set_options(0, true)
 	await _advance(0.15)
 	await _capture(directory, "projectiles-low-reduced")
+	_check(page.warnings._heads.is_empty(), "low quality returns to original interleaved tails and heads")
 	for shot in battle.threats: shot.reflected = true
 	await _advance(0.15)
 	await _capture(directory, "projectiles-reflected")
@@ -389,10 +423,76 @@ func _feedback_window() -> void:
 		await process_frame
 		_check(page.visuals.fluid._motion.keys().all(func(id: StringName) -> bool: return not str(id).begins_with("threat_")), "removed threats release fluid motion and native light inputs")
 		_check(page.visuals.threat_glow.ribbons.mesh == null, "removed threats release their emissive ribbon geometry")
+		_check(page.warnings._heads.is_empty(), "cleared threats release cached head nodes")
 		await _capture(directory, "projectiles-cleared")
 	page.queue_free()
 	await process_frame
 	print("Enemy feedback evidence: ", ProjectSettings.globalize_path(directory))
+
+
+func _check_ribbon_geometry() -> void:
+	var geometry: RefCounted = preload("res://ui/effects/ThreatRibbonGeometry.cs").new()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 60416
+	var maximum_error := 0.0
+	for case_index in 40:
+		var samples := PackedVector2Array([Vector2(320, 200)])
+		for index in case_index % 12:
+			samples.append(samples[-1] + Vector2(rng.randf_range(-20, 30), rng.randf_range(-30, 30)))
+		if case_index % 4 == 0: samples.append(samples[-1])
+		if case_index >= 32:
+			samples = PackedVector2Array([Vector2.ZERO, Vector2(.011, 0), Vector2(.022, .001), Vector2(.025, .002)])
+		var head := samples[-1] + Vector2(3, -2)
+		var limit := 54.0 if case_index % 2 == 0 else 180.0
+		var tail := MotionTrail.build(samples, samples[-1], head, limit, true, 48)
+		var halo := case_index % 3 != 0
+		var actual: ArrayMesh = geometry.call("Build", samples, PackedInt32Array([0, samples.size()]), PackedVector2Array([samples[-1]]), PackedVector2Array([head]), PackedFloat64Array([5.0]), PackedFloat64Array([limit]), PackedColorArray([Color("9cdeff")]), Vector2.ONE, halo)
+		if tail.size() < 2:
+			_check(actual == null, "degenerate tail has no mesh")
+			continue
+		var vertices := PackedVector2Array()
+		var colors := PackedColorArray()
+		var uvs := PackedVector2Array()
+		var indices := PackedInt32Array()
+		var distances := PackedFloat32Array([0.0])
+		for index in range(1, tail.size()): distances.append(distances[-1] + tail[index - 1].distance_to(tail[index]))
+		for layer in (2 if halo else 1):
+			var base := vertices.size()
+			var width := 5.0 * (2.6 if layer == 0 else 7.0)
+			var tint := Color(Color("9cdeff") * (1.75 if layer == 0 else 1.3), .7 if layer == 0 else .13)
+			for index in tail.size():
+				var progress := distances[index] / distances[-1]
+				var side := (tail[mini(tail.size() - 1, index + 1)] - tail[maxi(0, index - 1)]).normalized().orthogonal() * width * lerpf(.08, 1.0, progress)
+				vertices.append_array(PackedVector2Array([tail[index] + side, tail[index] - side]))
+				var fade := Color(tint, tint.a * pow(progress, 1.35))
+				colors.append_array(PackedColorArray([fade, fade]))
+				uvs.append_array(PackedVector2Array([Vector2(progress, 0), Vector2(progress, 1)]))
+				if index < tail.size() - 1:
+					var at := base + index * 2
+					indices.append_array(PackedInt32Array([at, at + 1, at + 2, at + 1, at + 3, at + 2]))
+		var arrays: Array = []
+		arrays.resize(Mesh.ARRAY_MAX)
+		arrays[Mesh.ARRAY_VERTEX] = vertices
+		arrays[Mesh.ARRAY_COLOR] = colors
+		arrays[Mesh.ARRAY_TEX_UV] = uvs
+		arrays[Mesh.ARRAY_INDEX] = indices
+		var reference := ArrayMesh.new()
+		reference.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		var expected := reference.surface_get_arrays(0)
+		var result := actual.surface_get_arrays(0)
+		_check(result[Mesh.ARRAY_INDEX] == expected[Mesh.ARRAY_INDEX], "ribbon topology and narrow/wide ordering match reference")
+		if result[Mesh.ARRAY_VERTEX].size() != vertices.size():
+			_check(false, "ribbon point count matches reference")
+			continue
+		var matches := true
+		for index in vertices.size():
+			var error: float = result[Mesh.ARRAY_VERTEX][index].distance_to(expected[Mesh.ARRAY_VERTEX][index])
+			maximum_error = maxf(maximum_error, error)
+			matches = matches and error < .02 and result[Mesh.ARRAY_TEX_UV][index].distance_to(expected[Mesh.ARRAY_TEX_UV][index]) < .0001
+			var color_error: Color = result[Mesh.ARRAY_COLOR][index] - expected[Mesh.ARRAY_COLOR][index]
+			matches = matches and maxf(absf(color_error.r), maxf(absf(color_error.g), maxf(absf(color_error.b), absf(color_error.a)))) < .004
+		_check(matches, "batched ribbon retains sampled path, width, UV and HDR color")
+	print("Ribbon geometry maximum pixel error: ", maximum_error)
 
 
 func _check_trail_glow(battle: BattleSession, page: BattlePage, directory: String) -> void:

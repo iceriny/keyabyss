@@ -20,21 +20,24 @@ const LESSON_NOTES: Dictionary[StringName, String] = {
 var lesson_buttons: Dictionary[StringName, OpenButton] = {}
 
 
-static func create_menu(motion_reduced: bool, completed_lessons: Array[StringName] = []) -> TutorialMenu:
+static func create_menu(motion_reduced: bool, completed_lessons: Array[StringName] = [], completed_steps: Dictionary[StringName, int] = {}) -> TutorialMenu:
 	var page := load("res://ui/scenes/tutorial_menu.tscn").instantiate() as TutorialMenu
 	page.reduced_motion = motion_reduced
-	page.configure("教学练习", "先学基础操作，再试试不同法书。")
+	page.configure("教学练习", "先完成基础操作，再任选法书练习。完成哪本，就能使用哪本出征。")
 	page.panel_width = 1000.0
-	page._configure_lessons(completed_lessons)
+	page._configure_lessons(completed_lessons, completed_steps)
 	return page
 
 
-func _configure_lessons(completed_lessons: Array[StringName]) -> void:
+func _configure_lessons(completed_lessons: Array[StringName], completed_steps: Dictionary[StringName, int]) -> void:
+	var basics_complete := &"basics" in completed_lessons
 	var basics := body.get_node("Basics/Begin") as OpenButton
 	_bind_lesson(basics, &"basics")
-	if &"basics" in completed_lessons:
+	if basics_complete:
 		(body.get_node("Basics/Copy/Title") as Label).text += " · 已完成"
 		basics.set_caption("再练一次")
+	elif completed_steps.get(&"basics", 0) > 0:
+		basics.set_caption("继续练习")
 	for book: BookPresentation in BOOKS:
 		var row := body.get_node("Books/" + str(book.id)) as HBoxContainer
 		var seal := row.get_node("Seal") as TextureRect
@@ -45,9 +48,16 @@ func _configure_lessons(completed_lessons: Array[StringName]) -> void:
 		title.add_theme_color_override("font_color", book.color)
 		(row.get_node("Copy/Note") as Label).text = LESSON_NOTES[book.id]
 		_bind_lesson(row.get_node("Begin") as OpenButton, book.id)
-		if book.id in completed_lessons:
-			title.text += " · 已完成"
+		lesson_buttons[book.id].disabled = not basics_complete
+		if not basics_complete:
+			row.modulate.a = 0.5
+			lesson_buttons[book.id].set_caption("先完成基础操作")
+			lesson_buttons[book.id].set_command_word("")
+		elif book.id in completed_lessons:
+			title.text += " · 已解锁出征"
 			lesson_buttons[book.id].set_caption("再练一次")
+		elif completed_steps.get(book.id, 0) > 0:
+			lesson_buttons[book.id].set_caption("继续练习")
 	status.hide()
 
 

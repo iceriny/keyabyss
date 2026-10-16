@@ -6,6 +6,10 @@
 
 战斗查询由 `BattleSession` 的页 ID 索引和 `SpellRuntime` 的单目标线性择优处理，范围伤害仍保留排序快照。单命中投射物选最早连续接触，贯穿与实体分离维持原顺序。自动闪避保留 GDScript 预测，以一次 `DodgeScorer.Choose` 调用在 .NET 内完成批量评分；状态与视觉事件仍归 GDScript。窄程序集、构建／预览和代价见[工具链](migration/TOOLCHAIN.md)与[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md)。
 
+敌弹HDR尾迹由`BattleThreatGlow`打包既有轨迹，单次调用`ui/effects/ThreatRibbonGeometry.cs`生成网格；沿用原平滑采样、裁剪、渐细和窄／宽带顺序，复用工作列表与ArrayMesh资源，当前每帧仍上传surface。主术尾迹隐藏时不再计算。流体粒子每次绑定仅初始化新增项，流体过程材质直接创建并引用原shader，避免逐命中复制ShaderMaterial；现有绑定仍逐帧维护形状／坐标／选项。收益与未验收范围见[性能实施记录](migration/PERFORMANCE-IMPLEMENTATION.md)。
+
+中／高画质的危险弹头由`BattleThreatOverlay`维护独立节点，移动／转向只更新变换，形状、反射颜色与轮廓宽度变化才重画；低画质仍逐弹交叠绘制尾迹和弹头。清弹／降画质释放对应节点。`FluidAtmosphere`在场景输入达到求解器既有48项容量后停止准备超额尾流几何，但继续推进所有对象的路径和朝向，并保留截断计数；提交顺序、模拟容量和频率保持不变。
+
 词库抽样由`VocabularyIndex`与`VocabularySampler`共用：前者持有26个按可输入词长排序的索引桶及26×25累计计数，后者只持有按目标ID管理的占用和26位掩码。按合法总词数抽一个整数，再定位桶内词条；在线抽词最多扫描固定26桶，释放按ID常数时间，不遍历词库或全体敌人。战斗与习字均使用它，渐进范围和长词偏好在当前范围上查询，不重新分桶。
 
 `VocabularyRepository`在导入／同步保存后立即预处理并写入`user://vocabulary/indices/<词库ID>.bin`，索引与标准化词形／释义一同持久化。启动加载书库前由Bootstrap后台线程准备目录：已有索引直接还原，源词条记录或索引格式变化才重建。外部编辑在下次启动或打开对应词库时发现，以源记录精确比较判断，不依赖时间戳精度或摘要。正式战斗请求必须传入已准备索引；开始游戏只筛选配置范围并引用索引，不重建。独立规则夹具的`start_baseline`仍可从合成词条建立测试索引。索引为派生文件，保存使用临时文件加替换；源词库和玩家进度分别保存。
@@ -18,9 +22,9 @@
 
 敌人扩充包含狙笔手、复诵者、护卷使。`EnemyCombatDefinition`配置预告时间与遭遇职责；`BattleEncounter.opening_enemies`指定计入原配额的首见组合，入场后展示3秒；`role_limits`限制自然补怪的职责并发。`BattleSession`保存两拍剩余时间、锁定位置与单目标护卫关系；护卫在统一伤害入口按实时来源状态减伤。弹体保存独立视觉类别，来源死亡后已发弹继续飞行；清晰层绘制瞄准、两拍、弹头，世界层绘制无伤护卫连线。实装细则与验证边界见[敌人专题](ENEMY-AND-BARRAGE-RESEARCH.md#11-首批实施记录)，设计、绘制与验证方法见[通用经验](ENEMY-AND-BARRAGE-RESEARCH.md#12-敌人与飞行物开发通用经验)。
 
-`BattleSession.ENEMY_SPEED_SCALE`／`ENEMY_ATTACK_SCALE`统一五档、章节与周目的同类敌人运动和攻击节奏。`MODE_CAP`保留章节增长，页内进度使用已完成段；`MODE_ACTIVE_CAP`将五档普通页在场封顶为6／8／8／12／14，包括孵生与死亡分裂。灭世`MODE_SPAWN`为1.2世界秒、`MODE_DAMAGE`为2.4；页配额、批量、5次孵生、Boss本体／增援及经验保持原规则，普通生命倍率为0.72／0.9／1.24／1.42／5.3。段在全灭后推进，边界不清弹；`BattleStartRequest.flight_continuation`通过`RunSession`把飞行实体、计时与支付账本交接至下一页，菜单期间暂停，跨章相同。存活支付份额在交接处转入当前页所有权，根来源和claim历史保持；敌人身份按页区分，旧弹不会误认新目标。`tests/godot/difficulty_probe.gd`通过正式输入、奖励、休息与连续挑战运行研究驱动的有限输入模型，`tools/godot/run-difficulty-probe.py`冻结源码并保存逐页证据。参数与结果范围见[收益与难度评估](COMBAT-BALANCE-DESIGN.md)。
+`BattleSession.ENEMY_SPEED_SCALE`／`ENEMY_ATTACK_SCALE`统一五档、章节与周目的同类敌人运动和攻击节奏。普通页为两段，总配额为`ceil((18 + rank×6 + (chapter−1)×8 + page×4)×2/3)`；页内进度使用已完成段，孵生与死亡分裂遵守在场上限。段按全灭推进并保留飞行物；页／章结束退休本页攻击、领域和纸灵，结清支付账本，不传递旧弹。遗物与远征资源按正式事务保留。主术投射物首击前追踪，首击后贯穿直行。`tests/godot/difficulty_probe.gd`通过正式输入、奖励、休息与连续挑战运行研究驱动的有限输入模型，`tools/godot/run-difficulty-probe.py`冻结源码并保存逐页证据。五档参数、最新结果和适用范围见[收益与难度评估](COMBAT-BALANCE-DESIGN.md)。
 
-御术按真实玩家碰撞体和至多 0.06 秒来弹轨迹预测判定；持续 0.30 秒，前 0.10 秒为完美，冷却 0.70 秒（R058 为 0.49）。普通防御免除该攻击伤害并轻推周围敌人，力度为完美防御的 15%，保留运动、蓄力、冲锋与待发攻击；已防住的同次冲锋继续穿越且不重复伤害玩家。完美反射敌弹或中断近战／冲锋，区域攻击不反射。两种防御命中后，每次御术产生一次 160 设计像素的周边击退，直接攻击者受力更强，按质量衰减，不附加范围伤害；空按不产生击退，范围不参与来弹拦截。反制道具在 520 设计像素范围内反射敌弹并中断敌人及 Boss，基础伤害为 12 点，不随反射弹数膨胀。普通纸灵移动推进为原来的 0.75，特殊交叉合击、伤害和存续计时不变。
+御术按真实玩家碰撞体和至多 0.06 秒来弹轨迹预测判定；持续 0.30 秒，前 0.10 秒为完美，冷却 0.70 秒（R058 为 0.49）。普通防御免除该攻击伤害并轻推周围敌人，力度为完美防御的 15%，保留运动、蓄力、冲锋与待发攻击；已防住的同次冲锋继续穿越且不重复伤害玩家。完美反射敌弹或中断近战／冲锋，区域攻击不反射。两种防御命中后，每次御术产生一次 160 设计像素的周边击退，直接攻击者受力更强，按质量衰减，不附加范围伤害；空按不产生击退，范围不参与来弹拦截。反制道具在520设计像素内对每枚敌弹独立判定50%摧毁、40%反弹、10%无效，并中断范围内敌人及Boss，基础伤害为 12 点，不随反射弹数膨胀。普通纸灵移动推进为原来的 0.75，特殊交叉合击、伤害和存续计时不变。
 
 首次完美防御成功后开启独立的 0.30 秒连续反弹窗口，按真实时间倒计时，补足御术剩余时长；窗口内将命中的后续攻击继续按完美防御处理。后续命中不刷新窗口，不重复周边冲击、慢时间或蓄能奖励。闪避取消窗口，新页／新御术重置状态；普通防御不会开启该窗口。
 
@@ -63,7 +67,7 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `ui/scenes/term_tooltip.tscn`、`ui/term_tooltips.gd` | 按原生字形命中术语；提示与下拉共用 `popup_depth.tres` 的灰青消隐材质，正文独立清晰绘制，提示不截获输入 |
 | `ui/prose_decoration.gd` | 原Label保留排版尺寸与字形命中，原生RichText子层突出数值；可悬浮术语按跨行字形范围绘制虚线下划线，按钮词令不进入正文标记 |
 | `game/combat/battle_threat.gd`、`ui/battle_threat_overlay.gd` | 补偿发射切线，弧形飞行经过发射时瞄准的PC位置，调整远距离曲率／寿命与靠边弯曲方向；解析位移供固定步与御术／闪避预测使用，前端圆形扫掠负责命中及拦截，真实历史位置绘制细暖金尾迹，保留反弹与低画质／减少动态 |
-| `game/session/tutorial_lesson.gd`、`ui/tutorial_menu.gd`、`ui/tutorial_overlay.gd` | 基础与四书五课，共25步；基础课用shade／shard／flame实操无输入换目标、保留sha切换和取消后换不同开头，同一动作内提示随真实输入更新，机制之间明确点击继续。四书仅说明自身机制，短正文解释效果、目标行提示动作，术语详情按需悬浮；覆盖贯穿／冻结／冻裂／冰雾、阻挡／焰印／余火／火雾、电链／充能／雷径、易伤／纸灵休眠／交叉斩／纸鹤反伤及各书终式。讲解集中在示例上方，按闪避终点切换上下位置并同步词咒避让；按钮不随文本跳动。完成一次点击返回，本次启动内标记已完成课程，练习不连接远征存档和成长 |
+| `game/session/tutorial_lesson.gd`、`ui/tutorial_menu.gd`、`ui/tutorial_overlay.gd` | 基础与四书五课，共25步；基础课用shade／shard／flame实操无输入换目标、保留sha切换和取消后换不同开头，同一动作内提示随真实输入更新，机制之间明确点击继续。四书仅说明自身机制，短正文解释效果、目标行提示动作，术语详情按需悬浮；覆盖贯穿／冻结／冻裂／冰雾、阻挡／焰印／余火／火雾、电链／充能／雷径、易伤／纸灵休眠／交叉斩／纸鹤反伤及各书终式。讲解集中在示例上方，按闪避终点切换上下位置并同步词咒避让；按钮不随文本跳动。初始仅基础课，完成后任选法书，完成一本单独解锁一本正式使用；最后确认先持久保存再返回，保存失败保留目标并允许重试。练习不改变远征档案和成长 |
 | `ui/practice_entrance.gd`、`ui/scenes/practice_entrance.tscn` | 教学和习字共用简短入场，默认0.7秒、减少动态0.2秒；完全遮盖后交接场景，揭示完毕才恢复输入和教学固定步，材质沿用现有金丝并纳入渲染准备 |
 | `ui/scenes/page_shell.tscn`、`practice_page.tscn` | 共用浮层的固定头尾、滚动正文和柔焦层；习字采用继承场景，词库列表与练习词条仍动态填充 |
 | `ui/scenes/battle_page.tscn`、`battle_world.tscn`、`battle_word.tscn` | 战场组合、HUD 锚点／偏移、危险层、世界折射层与无底板词条；词条以字形细衬保证辨识，实时值和防重叠布局由脚本更新 |
@@ -71,7 +75,7 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `game/input/` | InputRouter 上下文归属、TypingSession 词进度、唯一 ManualInputReceipt；下个固定步 drain 一次领取。Tab／Shift+Tab按已有输入前缀正向／反向轮换，空前缀匹配全部；基础课实操保留输入与取消后换不同开头，指南给出相同例子 |
 | `game/combat/battle_enemy.gd`、`game/spells/spell_runtime.gd` | 敌人`cold_grace`随世界时间递减；每次有效寒气施加刷新1秒保留期，跨过期步长仅对过期部分按基础6点／秒及遗物流失倍率扣减，小数余量保留 |
 | `game/vocabulary/` | 具名词条与导入报告、五类外部格式解析、严格选词、用户词表原子保存 |
-| `game/persistence/app_settings.gd` | ConfigFile 设置与备份恢复，分辨率预设、自动输出、窗口／全屏及音量应用 |
+| `game/persistence/app_settings.gd` | ConfigFile 设置与备份恢复，分辨率预设、自动输出、窗口／全屏及音量应用；`tutorial.completed_lessons`持久保存基础及每书完成状态，共用设置存储且不改变远征／成长档案，读取时过滤未知／重复课程 |
 | `ui/game_display.gd` | 1920×1080 设计坐标与实际输出分离，统一游戏像素预算、独立界面缩放和高分辨率字体采样 |
 | `ui/page_shell.gd`、`open_button.gd` | 固定标题／操作、内部滚动、开放按钮柔光、词令使用辅助字体；普通控件无默认焦点或默认Tooltip，正文术语由专用系统解释 |
 | `ui/menu_navigation.gd`、`game/input/input_router.gd` | 按可见控件几何位置选择、具名主要操作、方向／确认／数字快捷键；复用真实控件动作，词令前缀、编辑、滑条与弹层隔离，无原生按钮焦点链 |
@@ -97,7 +101,7 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `game/content/battle_encounter.gd`、`encounters/`、`s2_itinerary.tres` | 三章九页只读定义、各章敌人组合、分批段与 Boss；物理章节、五档压力与后续周目分别计算 |
 | `ui/battle_page.gd`、`battle_stage.gd`、`battle_visuals.gd`、`battle_projectile_visual.gd` | 1920×1080 战场等比映射与统一输出像素密度的 HDR 层；超宽屏 HUD 随战场居中；无按钮焦点的词目标、强化周期与防御 HUD；原生粒子、晶片／折纸、热扰动与有界位移波，暂停返回时应用画质与减少动态 |
 | `ui/battle_actor_visual.gd`、`assets/art/actors/` | 玩家、20 类普通敌人及 3 Boss 的独立矢量轮廓、元素染色、受击、冻结／灼烧与死亡溶解 |
-| `ui/archive_home.gd`、`archive_gate.gd` | 原四书轨道书库、入场仪式、中央向外展开的出征书页；固定法阵骨架、四封印权重交接、可中断主题色与连续悬浮状态 |
+| `ui/archive_home.gd`、`archive_gate.gd` | 四书轨道书库、入场仪式、中央向外展开的出征书页；左右菜单、中央上方书库标题／序号、右下快捷键、按文字自然高度收束的书籍介绍；未解锁主操作转教学，正式流程在App入口核对对应法书完成状态；固定法阵骨架、四封印权重交接、可中断主题色与连续悬浮状态 |
 | `ui/archive_effects.gd`、`startup_sigil.gd`、`archive_cursor.gd` | 双仪式平面、原矢量法印和指针交互 |
 | `ui/effects/` | 可复用 GPUParticles2D 尘埃场景、寿命／纹理渐变、独立实例材质；AnimationPlayer 入场时序资源 |
 | `ui/effects/motion_trail.gd`、`damped_motion.gd` | 插值头尾衔接、弧长裁剪与向心 Catmull–Rom 尾迹；解析临界阻尼回弹供角色与镜头共用，不持有战斗规则状态 |
@@ -132,7 +136,7 @@ MCP 运行在 `.temp/godot-mcp/project` 生成副本；根工程是唯一活动�
 
 `soft_shapes.gdshaderinc` 的距离与宽度使用调用方同一坐标空间，细线函数按 `fwidth` 扩展到像素足迹并补偿亮度，轮廓函数提供导数抗锯齿。元素颜色、发光预算和画质分级仍由各材质负责，共用函数不增加纹理采样或粒子数量。
 
-敌人从八向来袭扇区内的外围冷区分散进入，词咒与目标登记在进入有效战场后出现；有效锁定意图由固定步写入 `BattleEnemy.combat_locked`，`BattleSession.enemy_in_combat()` 保留被击退敌人的交战资格至死亡。三段数量、伤害和经济不因此改变。精灵、词咒、危险层和震屏输出只使用手动插值，词咒不再在物理回调中定位；页面晚于世界层处理，读取本帧相机偏移。固定步继续持有实际位置与碰撞。
+敌人从八向来袭扇区内的外围冷区分散进入，词咒与目标登记在进入有效战场后出现；有效锁定意图由固定步写入 `BattleEnemy.combat_locked`，`BattleSession.enemy_in_combat()` 保留被击退敌人的交战资格至死亡。两段的配额、伤害与经济由正式遭遇配置决定。精灵、词咒、危险层和震屏输出只使用手动插值，词咒不再在物理回调中定位；页面晚于世界层处理，读取本帧相机偏移。固定步继续持有实际位置与碰撞。
 
 `ui/scenes/battle_word.tscn` 以 `BattleWord` 组织英文、可选中文及 `word_reading.gdshader` 羽化阅读层，实际测量完整词咒并限制释义为两行，处理选中游标与色阶。`BattlePage` 统一词条时序、透明度、层级、边缘与 HUD 避让。设置键 `show_meaning` 保留存储兼容，含义为头顶中文释义，词令为 `translation`；底部施法释义不受该开关控制。
 

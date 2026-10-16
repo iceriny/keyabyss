@@ -10,6 +10,7 @@ const RESOLUTIONS: Array[Vector2i] = [
 	Vector2i(1024, 768), Vector2i(1600, 1200), Vector2i(1280, 1024),
 	Vector2i(2560, 1080), Vector2i(3440, 1440), Vector2i(5120, 1440),
 ]
+const TUTORIAL_IDS: Array[StringName] = [&"basics", &"frost", &"flame", &"storm", &"spirit"]
 
 var fullscreen: bool = false
 var resolution := Vector2i.ZERO
@@ -20,6 +21,8 @@ var fluid_quality: int = 2
 var show_fps: bool = false
 var vsync: bool = true
 var first_setup_complete: bool = false
+var completed_lessons: Array[StringName] = []
+var completed_steps: Dictionary[StringName, int] = {}
 var show_meaning: bool = true # Enemy overhead meanings; the bottom cast hint is independent.
 var volume: float = 0.28
 var sound: bool = true
@@ -66,6 +69,18 @@ func load_settings() -> void:
 	vsync = bool(config.get_value("display", "vsync", true))
 	# Existing players keep their choices; new user directories open calibration.
 	first_setup_complete = bool(config.get_value("presentation", "first_setup_complete", true))
+	completed_lessons.clear()
+	var stored_lessons: Variant = config.get_value("tutorial", "completed_lessons", [])
+	if stored_lessons is Array or stored_lessons is PackedStringArray:
+		for id: Variant in stored_lessons:
+			if (id is String or id is StringName) and StringName(id) in TUTORIAL_IDS and not StringName(id) in completed_lessons:
+				completed_lessons.append(StringName(id))
+	completed_steps.clear()
+	var stored_steps: Variant = config.get_value("tutorial", "completed_steps", {})
+	if stored_steps is Dictionary:
+		for id: Variant in stored_steps:
+			if (id is String or id is StringName) and StringName(id) in TUTORIAL_IDS and stored_steps[id] is int:
+				completed_steps[StringName(id)] = clampi(stored_steps[id], 0, TutorialLesson.STEPS[StringName(id)].size())
 	show_meaning = bool(config.get_value("words", "show_meaning", true))
 	volume = clampf(float(config.get_value("audio", "volume", 0.28)), 0.0, 1.0)
 	sound = bool(config.get_value("audio", "sound", true))
@@ -104,6 +119,8 @@ func _save_settings() -> bool:
 	config.set_value("audio", "effects_volume", effects_volume)
 	config.set_value("presentation", "intro_complete", intro_complete)
 	config.set_value("presentation", "first_setup_complete", first_setup_complete)
+	config.set_value("tutorial", "completed_lessons", completed_lessons)
+	config.set_value("tutorial", "completed_steps", completed_steps)
 	for property: String in ["book_id", "difficulty", "run_seed"]:
 		config.set_value("preparation", property, get(property))
 	var error := DirAccess.make_dir_recursive_absolute(path.get_base_dir())
@@ -127,6 +144,18 @@ func _save_settings() -> bool:
 	if error != OK:
 		return _save_error("替换设置文件", error)
 	return true
+
+
+func lesson_available(id: StringName) -> bool:
+	return id in TUTORIAL_IDS and (id == &"basics" or &"basics" in completed_lessons)
+
+
+func lesson_progress(id: StringName) -> int:
+	return TutorialLesson.STEPS[id].size() if id in completed_lessons else completed_steps.get(id, 0)
+
+
+func book_unlocked(id: StringName) -> bool:
+	return id != &"basics" and lesson_available(id) and id in completed_lessons
 
 
 func _save_error(action: String, error: Error) -> bool:

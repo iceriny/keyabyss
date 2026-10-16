@@ -13,17 +13,29 @@ func _run() -> void:
 	var words: Array[VocabularyEntry] = [VocabularyEntry.new("abcdef", "测试"), VocabularyEntry.new("ghijkl", "测试")]
 	if "--flight-boundaries" in OS.get_cmdline_user_args():
 		_check_segment_boundary(words)
-		_check_flight_continuation(words)
+		_check_page_cleanup(words)
 		_check_formal_page_handoff(words)
 		_check_reentrant_clear(words)
 		print("Flight boundaries: %s checks, %s failure(s)" % [checks, failures])
 		quit(1 if failures else 0)
 		return
 	for rank in MODES.size():
+		for chapter_number in [1, 2, 3]:
+			var fan := BattleSession.new()
+			fan.start_baseline(&"storm", words, MODES[rank], "center-lane", false)
+			fan.chapter = chapter_number
+			var caster := fan.enemies[0]
+			caster.position = Vector2(0.5, 0.25)
+			caster.aimed_position = fan.player_position
+			fan._emit_pattern(caster, &"fan")
+			_check(fan.threats.size() % 2 == 1 and fan.threats.size() != 4, "fan has an odd number of lanes in every mode/chapter")
+			var center := fan.threats[floori(fan.threats.size() * 0.5)]
+			_check(center.velocity.normalized().dot(((caster.aimed_position - caster.position) * fan.ARENA_SIZE).normalized()) > 0.9999, "fan center aims at the player")
+			fan.free()
 		var battle := BattleSession.new()
 		battle.encounter = load("res://game/content/encounters/lost_library_1.tres")
 		battle.start_baseline(&"storm", words, MODES[rank], "quota", false)
-		var quota: int = [22, 28, 34, 40, 46][rank]
+		var quota: int = [15, 19, 23, 27, 31][rank]
 		_check(battle._room_quota == quota, "%s uses its finite first-room quota" % MODES[rank])
 		_check(battle.enemies.size() == (1 if rank < 2 else mini(3, rank)), "%s starts with a small batch" % MODES[rank])
 		_check(battle.enemies[0].max_hp_q == roundi(43 * [0.72, 0.9, 1.24, 1.42, 5.3][rank] * battle.Q), "%s ordinary health follows its own mode scale" % MODES[rank])
@@ -43,7 +55,7 @@ func _run() -> void:
 			for enemy in battle._living():
 				if BattleSession.enemy_in_combat(enemy): battle.commit_damage(enemy, 10000 * battle.Q, 10000 * battle.Q, &"fixture", battle.player_position)
 			if battle.result != 0: break
-		_check(battle.result == 1 and battle._spawned == quota and battle.enemies.size() == quota and phases.size() == 3, "%s clears exactly its quota through the actual fixed-step spawner and three waves" % MODES[rank])
+		_check(battle.result == 1 and battle._spawned == quota and battle.enemies.size() == quota and phases.size() == 2, "%s clears exactly its quota through the actual fixed-step spawner and two segments" % MODES[rank])
 		var opening_fact: RewardFact
 		for fact: RewardFact in battle.reward_facts:
 			if JSON.parse_string(fact.fact_id)[3] == "enemy_0":
@@ -66,7 +78,7 @@ func _run() -> void:
 	_check_pace(words)
 	_check_density()
 	_check_segment_boundary(words)
-	_check_flight_continuation(words)
+	_check_page_cleanup(words)
 	_check_formal_page_handoff(words)
 	_check_reentrant_clear(words)
 	print("Encounter pressure: %s checks, %s failure(s)" % [checks, failures])
@@ -114,7 +126,7 @@ func _check_density() -> void:
 		var battle := BattleSession.new()
 		battle.encounter = load("res://game/content/encounters/final_court_2.tres")
 		battle.start_baseline(&"storm", words, MODES[rank], "density", false)
-		_check(battle._room_quota == [42, 48, 54, 60, 66][rank], "third chapter retains the original finite workload")
+		_check(battle._room_quota == [28, 32, 36, 40, 44][rank], "third chapter uses the shorter two-segment workload")
 		var peak := 0
 		var bullet_peak := 0
 		for tick in 5400:
@@ -123,7 +135,7 @@ func _check_density() -> void:
 			battle.step(1.0 / 60.0)
 			peak = maxi(peak, battle._living().size())
 			bullet_peak = maxi(bullet_peak, battle.threats.size())
-			_check(battle._living().size() <= [6, 8, 8, 12, 14][rank], "durable enemies and summoned children respect the late-room ceiling")
+			_check(battle._living().size() <= [6, 8, 8, 10, 14][rank], "durable enemies and summoned children respect the late-room ceiling")
 			_check(battle._spawned - spawned_before <= [1, 2, 3, 5, 5][rank], "replenishment keeps its original wave batch within the alive cap")
 		_check(peak >= 4 and battle.result == 0, "density fixture exercises an uncleared live encounter")
 		print("%s third-chapter idle: quota=%s peak=%s bullets=%s" % [MODES[rank], battle._room_quota, peak, bullet_peak])
@@ -193,57 +205,21 @@ func _check_segment_boundary(words: Array[VocabularyEntry]) -> void:
 	battle.free()
 
 
-func _check_flight_continuation(words: Array[VocabularyEntry]) -> void:
+func _check_page_cleanup(words: Array[VocabularyEntry]) -> void:
 	var previous := BattleSession.new()
 	previous.encounter = load("res://game/content/encounters/lost_library_1.tres")
-	previous.start_baseline(&"spirit", words, "normal", "carry", false)
-	var bullet := BattleThreat.new()
-	bullet.position = Vector2(0.1, 0.1)
-	bullet.velocity = Vector2(30.0, 0.0)
-	bullet.life = 10.0
-	bullet.attack_id = "previous-page-shot"
-	previous.threats.append(bullet)
+	previous.start_baseline(&"spirit", words, "normal", "clear", false)
+	previous.threats.append(BattleThreat.new())
 	var paid := previous.ledger.earn("paid-flight", &"fixture", previous.compiled_build.identity(), SpellLot.Kind.POWER, 10 * previous.Q, &"flight")
 	var effect := previous.runtime._effect(paid, &"frost_spear", previous.enemies[0].id, Vector2(0.2, 0.1), previous.compiled_build)
-	var projectile := BattleProjectile.new(effect)
-	projectile.velocity = Vector2(50, 0)
-	projectile.homing = true
-	previous.projectiles.append(projectile)
+	previous.projectiles.append(BattleProjectile.new(effect))
 	previous._summon_spirit()
-	previous.spirit_time = 4.0
 	previous._end(true)
-	_check(previous.threats.has(bullet) and previous.projectiles.has(projectile) and paid.amount_q > 0, "page victory pauses flight without retiring paid lots")
-	var carry := previous.capture_flight()
-	var state := previous.run_state
-	var request := BattleStartRequest.new()
-	request.build = previous.compiled_build
-	request.vocabulary = words
-	request.vocabulary_index = VocabularyIndex.build(words)
-	request.encounter = load("res://game/content/encounters/echo_gallery_1.tres")
-	request.room_serial = 4 # Cross the chapter boundary as well as the page boundary.
-	request.flight_continuation = carry
-	var next := BattleSession.new()
+	_check(previous.threats.is_empty() and previous.projectiles.is_empty() and previous.effects.is_empty() and previous.spirits.is_empty(), "page victory clears enemy and player flight before the route")
+	_check(paid.amount_q == 0 and previous.runtime.fields.is_empty() and previous.runtime.spirit_attacks.is_empty(), "page cleanup settles paid lots and running fields exactly once")
+	var result := previous.finish_room(&"victory")
+	_check(result == previous.room_result, "repeated settlement keeps its original cleanup receipt")
 	previous.free()
-	next.start(request, state)
-	_check(next.threats[0] == bullet and next.projectiles[0] == projectile and next.spirits.size() == 1, "next chapter adopts the same live flight objects after the former scene is freed")
-	_check(next.enemies[0].id != effect.target_id and next.ledger.get_lot(paid.id) == paid, "old flight keeps its paid ledger and cannot alias a new enemy identity")
-	_check(paid.room_id == next.ledger.room_id and paid.root_id == "paid-flight", "page handoff moves live ledger ownership while retaining provenance")
-	var before := bullet.position
-	next.step(1.0 / 60.0)
-	_check(bullet.position != before and bullet.life < 10.0 and projectile.position.x > 0.2, "carried enemy and player flight resume ordinary motion on the next page")
-	var target := next.enemies[0]
-	target.position = projectile.position
-	target.previous_position = target.position
-	target.combat_locked = true
-	var hp_before := target.hp_q
-	next._advance_projectiles(1.0 / 60.0)
-	_check(target.hp_q < hp_before and paid.amount_q == 0, "an attack launched on the previous page settles its original paid power against a new page target")
-	next._end(true)
-	request.flight_continuation = next.capture_flight()
-	request.room_serial = 5
-	next.start(request, next.run_state)
-	_check(next.threats.has(bullet) and next.spirits.size() == 1, "reusing the same battle session cannot clear its own handoff containers")
-	next.free()
 
 
 func _check_formal_page_handoff(words: Array[VocabularyEntry]) -> void:
@@ -267,15 +243,15 @@ func _check_formal_page_handoff(words: Array[VocabularyEntry]) -> void:
 		current.start(request, run.combat)
 		run.install_room_opening(current)
 		if serial == 0: current.threats.append(bullet)
-		_check(current.threats.has(bullet) and bullet.life == 12.0, "saved route transactions preserve paused flight into page %d" % (serial + 1))
+		_check(current.threats.has(bullet) == (serial == 0), "formal page %d starts without previous-page flight" % (serial + 1))
 		if serial == 3:
-			_check(current.encounter.chapter_number == 2, "formal page handoff reaches the next chapter with the same projectile")
+			_check(current.encounter.chapter_number == 2, "formal next chapter starts with a cleared battlefield")
 			current.free()
 			break
 		current._end(true)
-		_check(run.finish_room(current), "formal page settlement commits with live flight")
+		_check(run.finish_room(current), "formal page settlement commits after clearing flight")
 		current.free()
-		_check(run.take_route("rest"), "formal page rest preserves flight through a copied and saved run")
+		_check(run.take_route("rest"), "formal page rest commits without carrying flight")
 
 
 func _check_reentrant_clear(words: Array[VocabularyEntry]) -> void:

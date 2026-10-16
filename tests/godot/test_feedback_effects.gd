@@ -1,11 +1,14 @@
 extends "res://tests/godot/test_s1_application.gd"
 ## Presentation fixtures use real casts and pickup completions, with a controlled battlefield.
-var _compute_samples: Array[float] = []
 var _gpu_frame := -1
+var _ice_samples: Array[Dictionary] = []
 
 
 func _run() -> void:
 	assert(DisplayServer.get_name() != "headless")
+	if "--measure" in OS.get_cmdline_user_args():
+		await _measure_ice_only()
+		return
 	if "--defense-slow" in OS.get_cmdline_user_args():
 		await _defense_slow()
 		return
@@ -81,8 +84,6 @@ func _run() -> void:
 			for y in gas.get_height():
 				for x in gas.get_width(): peak = maxf(peak, gas.get_pixel(x,y).g)
 			_check(peak > .2 and gas.get_pixel(0,0).g < .001, "fuel generates local heat with a cold exterior")
-		if book_id == &"frost" and "--measure" in OS.get_cmdline_user_args():
-			await _measure_field_cost(page)
 		if book_id == &"frost":
 			for index in 5:
 				var threat := BattleThreat.new()
@@ -165,42 +166,69 @@ func _capture(label: String) -> void:
 	paused = was_paused
 
 
+func _measure_ice_only() -> void:
+	evidence = "res://.temp/performance-research-20261016/ice-%d" % Time.get_ticks_usec()
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
+	root.size = Vector2i(1920, 1080)
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+	Engine.max_fps = 0
+	var session := BattleSession.new()
+	var words: Array[VocabularyEntry] = [VocabularyEntry.new("lumen", "光")]
+	session.start_baseline(&"frost", words, "normal", "ice-cost", false)
+	var options := AppSettings.new(evidence.path_join("unused-settings.cfg"))
+	options.sound = false
+	var page := BattlePage.create(session, options, ArchiveHome.BOOKS[0])
+	root.add_child(page)
+	await process_frame
+	await _measure_field_cost(page)
+	page.queue_free()
+	await process_frame
+	await process_frame
+	print("Ice cost measurement complete: ", evidence)
+	quit()
+
+
 func _measure_field_cost(page: BattlePage) -> void:
 	# GPU timestamps, with frozen gameplay and no capture/readback in the sample window.
 	paused = true
 	var viewport := page.stage.viewport.get_viewport_rid()
 	RenderingServer.viewport_set_measure_render_time(viewport, true)
 	var probes: Array[IcePatch] = []
-	var report := {"device": RenderingServer.get_video_adapter_name(), "viewport": str(root.size), "gpu_ms": {}}
-	for count in [0,1,14]:
-		_compute_samples.clear()
-		for index in count:
-			var patch := IcePatch.new()
-			page.visuals.rule_visuals.add_child(patch)
-			probes.append(patch)
-		var samples: Array[float] = []
-		for frame in 70:
-			RenderingServer.call_on_render_thread(_mark_ice.bind("ice_start"))
-			for index in probes.size():
-				probes[index].sync_patch(Vector2(600+(index%5)*185,300+floori(index/5.0)*190),114.0,frame/60.0,1.0,2,false,index)
-			RenderingServer.call_on_render_thread(_mark_ice.bind("ice_end"))
-			await RenderingServer.frame_post_draw
-			if frame >= 10:
-				samples.append(RenderingServer.viewport_get_measured_render_time_gpu(viewport))
+	var cases: Array[Dictionary] = []
+	for detail in [2, 0, 1]:
+		for count in ([0, 1, 4, 14] if detail == 2 else [4]):
+			cases.append({"count": count, "radius": 114.0, "quality": detail})
+		for count in ([1, 4] if detail == 2 else [1]):
+			cases.append({"count": count, "radius": 420.0, "quality": detail})
+	var frames: Array[Dictionary] = []
+	for repetition in 2:
+		for case_index in cases.size():
+			var config := cases[case_index]
+			for index in int(config.count):
+				var patch := IcePatch.new()
+				page.visuals.rule_visuals.add_child(patch)
+				probes.append(patch)
+			for frame in 100:
+				var label := "%d/%d/%d" % [repetition, case_index, frame]
+				var start := Time.get_ticks_usec()
+				RenderingServer.call_on_render_thread(_mark_ice.bind("ice_start/" + label))
+				for index in probes.size():
+					probes[index].sync_patch(Vector2(600+(index%5)*185,300+floori(index/5.0)*190),config.radius,frame/60.0,1.0,config.quality,false,index)
+				RenderingServer.call_on_render_thread(_mark_ice.bind("ice_end/" + label))
+				var submit_us := Time.get_ticks_usec() - start
+				await RenderingServer.frame_post_draw
+				frames.append({"label": label, "submit_us": submit_us, "world_gpu_ms": RenderingServer.viewport_get_measured_render_time_gpu(viewport), "world_cpu_ms": RenderingServer.viewport_get_measured_render_time_cpu(viewport)})
 				RenderingServer.call_on_render_thread(_read_ice_time)
-		samples.sort()
-		report.gpu_ms[str(count)] = {"median": samples[30], "p95": samples[57]}
-		await process_frame
-		_compute_samples.sort()
-		if not _compute_samples.is_empty():
-			report.gpu_ms[str(count)]["compute_median"] = _compute_samples[floori(_compute_samples.size()/2.0)]
-			report.gpu_ms[str(count)]["compute_p95"] = _compute_samples[int(_compute_samples.size()*.95)]
-		for patch in probes: patch.queue_free()
-		probes.clear()
-		await process_frame
+			for patch in probes: patch.queue_free()
+			probes.clear()
+			for drain in 6:
+				await RenderingServer.frame_post_draw
+				RenderingServer.call_on_render_thread(_read_ice_time)
+	await process_frame
+	var report := {"device": RenderingServer.get_video_adapter_name(), "viewport": str(root.size), "engine": Engine.get_version_info(), "cases": cases, "frames": frames, "compute": _ice_samples, "note": "Paused world. Each sample advances ice age by 1/60s independently of wall time; not whole-game FPS. GPU timestamp ns / 1e6, CPU timestamp us / 1e3. Labels match asynchronous results; frame ids deduplicated. Frames 10..79 cover active growth, 81..99 mainly film. Synthetic concurrency, not proof of reachable builds."}
 	var file := FileAccess.open(evidence.path_join("gpu-cost.json"), FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "\t"))
-	print("Frost material GPU sample: ", JSON.stringify(report))
+	print("Frost GPU cost: ", frames.size(), " submitted frames; ", _ice_samples.size(), " timestamp intervals; ", evidence)
 	RenderingServer.viewport_set_measure_render_time(viewport, false)
 	paused = false
 
@@ -215,15 +243,20 @@ func _read_ice_time() -> void:
 	if frame == _gpu_frame: return
 	_gpu_frame = frame
 	var start := -1
+	var cpu_start := -1
+	var sample_label := ""
 	for index in rd.get_captured_timestamps_count():
 		var label := rd.get_captured_timestamp_name(index)
-		if label == "ice_start": start = rd.get_captured_timestamp_gpu_time(index)
-		elif label == "ice_end" and start >= 0:
-			_record_ice_time.call_deferred(float(rd.get_captured_timestamp_gpu_time(index)-start)/1000000.0)
+		if label.begins_with("ice_start/"):
+			start = rd.get_captured_timestamp_gpu_time(index)
+			cpu_start = rd.get_captured_timestamp_cpu_time(index)
+			sample_label = label.trim_prefix("ice_start/")
+		elif label == "ice_end/" + sample_label and start >= 0:
+			_record_ice_interval.call_deferred({"label": sample_label, "gpu_frame": frame, "gpu_ms": float(rd.get_captured_timestamp_gpu_time(index)-start)/1000000.0, "render_cpu_ms": float(rd.get_captured_timestamp_cpu_time(index)-cpu_start)/1000.0})
 
 
-func _record_ice_time(value: float) -> void:
-	_compute_samples.append(value)
+func _record_ice_interval(sample: Dictionary) -> void:
+	_ice_samples.append(sample)
 
 
 func _defense_slow() -> void:
@@ -288,7 +321,7 @@ func _defense_slow() -> void:
 			maximum_error = maxf(maximum_error, sampled.distance_to(point))
 	_check(maximum_error < .03, "word anchor inverse lens error below .03px: %.5f" % maximum_error)
 	_check(page.get_children().find(page.slow_lens) < page.get_children().find(page.hud), "HUD renders after world lens")
-	page.slow_lens.update_effect(session, .3, true)
+	page.slow_lens.update_effect(session, .3, true, options.quality)
 	_check(page.slow_lens.bend == 0.0 and page.slow_lens.visible, "reduced motion keeps cool tint without lens movement")
 	session.precision_slow_remaining = 0.0
 	await create_timer(.9).timeout

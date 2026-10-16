@@ -20,6 +20,8 @@ func _run() -> void:
 	if "--geometry" in OS.get_cmdline_user_args():
 		var geometry_words: Array[VocabularyEntry] = [VocabularyEntry.new("abc", "测试")]
 		var geometry_sessions: Array[BattleSession] = []
+		_check_homing(geometry_words, geometry_sessions)
+		_check_cold_recovery(geometry_words, geometry_sessions)
 		_check_projectile_geometry(geometry_words, geometry_sessions)
 		_check_piercing_geometry(geometry_words, geometry_sessions)
 		_check_equal_time_hit(geometry_words, geometry_sessions)
@@ -393,6 +395,52 @@ func _run() -> void:
 		session.free()
 
 	call_deferred("_finish")
+
+
+func _check_cold_recovery(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:
+	var battle := BattleSession.new()
+	sessions.append(battle)
+	battle.start_baseline(&"storm", words)
+	for enemy in battle.enemies:
+		enemy.hp_q = 0
+		battle._retire_word(enemy.id)
+	var leech := battle._spawn_enemy(load("res://game/content/enemies/leech.tres"), Vector2(0.54, 0.925))
+	leech.melee_recovery = 0.46
+	leech.attack_clock = 100.0
+	for tick in 180:
+		battle._advance_enemy_motion(1.0 / 60.0)
+		battle._advance_enemies(1.0 / 60.0)
+	_check(BattleSession.enemy_in_combat(leech) and battle.typing._targets.has(leech.id), "a melee enemy pushed out during recovery re-enters and exposes its word")
+	_check(leech.melee_recovery == 0.0, "melee recovery resumes and expires after re-entry")
+
+
+func _check_homing(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:
+	for kind: StringName in [&"frost_spear", &"flame_burst"]:
+		var battle := BattleSession.new()
+		sessions.append(battle)
+		battle.start_baseline(&"frost", words)
+		var target := battle.enemies[0]
+		for enemy in battle.enemies:
+			enemy.position = Vector2(0.95, 0.15)
+			enemy.previous_position = enemy.position
+		target.position = Vector2(0.75, 0.5)
+		target.previous_position = target.position
+		target.combat_locked = true
+		var paid := Fixture.effect(battle, kind, target.id, 4 * BattleSession.Q, 0, Vector2(0.25, 0.5))
+		paid.applications = 2
+		var shot := BattleProjectile.new(paid)
+		shot.velocity = Vector2.LEFT * shot.speed
+		battle.projectiles.append(shot)
+		for tick in 90:
+			target.previous_position = target.position
+			target.position.y = 0.5 + sin(tick * 0.18) * 0.1
+			battle._advance_projectiles(1.0 / 60.0)
+			if not shot.hit_ids.is_empty(): break
+		_check(str(target.id) in shot.hit_ids and not shot.homing, "moving target is tracked until first contact: " + str(kind))
+		var outgoing := shot.velocity
+		target.position = Vector2(0.2, 0.2)
+		battle._advance_projectiles(1.0 / 60.0)
+		_check(shot.velocity == outgoing, "piercing flight remains straight after its first contact: " + str(kind))
 
 
 func _check_projectile_geometry(words: Array[VocabularyEntry], sessions: Array[BattleSession]) -> void:

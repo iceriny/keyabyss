@@ -145,10 +145,21 @@ func _run() -> void:
 	boss.delayed_attacks.append({"remaining": 0.3, "pattern": &"fan"})
 	var nearby := _threat(counter, Vector2(519, 0), Vector2.LEFT * 100, "rune-inside")
 	var outside := _threat(counter, Vector2(521, 0), Vector2.LEFT * 100, "rune-outside")
-	_check(counter.reflect_projectiles_in_radius(counter.player_position, 520.0) == 1, "counter radius includes 519px and excludes 521px")
+	counter.counter_projectiles_in_radius(counter.player_position, 520.0)
 	counter.interrupt_enemies_in_radius(counter.player_position, 520.0)
-	_check(nearby.reflected and not outside.reflected and not boss.aiming and boss.delayed_attacks.is_empty() and boss.charge_time == 0.0, "counter reflects range attacks and interrupts Bosses")
-	_check(counter.reflect_projectiles_in_radius(counter.player_position, 520.0) == 0, "already reflected projectiles cannot create a second counter")
+	_check(not outside.reflected and counter.threats.has(outside) and not boss.aiming and boss.delayed_attacks.is_empty() and boss.charge_time == 0.0, "counter leaves outside shots unchanged and interrupts Bosses independently of its roll")
+	_check(nearby.reflected or nearby.cleared or counter.threats.has(nearby), "counter includes the inside boundary without deleting unaffected shots")
+	counter.threats.clear()
+	counter._rng.seed = 20261015
+	var samples: Array[BattleThreat] = []
+	for index in 2000:
+		samples.append(_threat(counter, Vector2(519, 0), Vector2.LEFT * 100, "probability-%d" % index))
+	var affected := counter.counter_projectiles_in_radius(counter.player_position, 520.0)
+	var destroyed := samples.filter(func(shot: BattleThreat) -> bool: return shot.cleared).size()
+	var reflected := samples.filter(func(shot: BattleThreat) -> bool: return shot.reflected).size()
+	var unaffected := samples.size() - destroyed - reflected
+	_check(absf(destroyed / 2000.0 - 0.5) < 0.04 and absf(reflected / 2000.0 - 0.4) < 0.04 and absf(unaffected / 2000.0 - 0.1) < 0.04, "counter uses 50/40/10 independent projectile outcomes")
+	_check(affected == destroyed + reflected and counter.threats.size() == reflected + unaffected, "counter removes only destroyed shots and counts each affected shot once")
 	counter.threats.clear()
 	counter._emit_enemy_threat(boss, 0.0, 7, 100.0, 6.0)
 	var first_attack_id := counter.threats[0].attack_id
@@ -273,6 +284,17 @@ func _check_curved_trajectory() -> void:
 
 
 func _check_perfect_dodge() -> void:
+	var combined := _session()
+	var selection := BuildSelection.new()
+	selection.assets[&"R041"] = 1
+	combined.install_prepared_build(BuildCompiler.new().compile(selection).build)
+	_threat(combined, Vector2(36, 0), Vector2(-200, 0), "combined-dodge")
+	combined._commit_action(&"dodge_down")
+	_check(is_equal_approx(combined.world_delta(3.0), 0.75), "perfect dodge and bookmark provide 2.5 seconds of slow time")
+	combined.step(0.6)
+	_check(is_equal_approx(combined.perfect_dodge_remaining, 0.4) and combined.precision_slow_remaining == 1.5, "bookmark timer waits while perfect dodge slow time is active")
+	combined.step(0.6)
+	_check(combined.perfect_dodge_remaining == 0.0 and is_equal_approx(combined.precision_slow_remaining, 1.3), "a step spanning both sources consumes only its unused portion from the bookmark")
 	var precise := _session()
 	var events: Array[Dictionary] = []
 	precise.event_committed.connect(func(event: Dictionary) -> void: events.append(event))

@@ -9,7 +9,10 @@ var _sphere_radius := -1.0
 
 
 static func create(motion: ParticleProcessMaterial, coupling: float) -> FluidParticleFlow:
-	var flow := load("res://ui/effects/fluid_particle_flow.tres").duplicate() as FluidParticleFlow
+	# The authored template has no uniform overrides. Cloning ShaderMaterial
+	# enumerates shader properties; a burst needs only a fresh parameter store.
+	var flow := FluidParticleFlow.new()
+	flow.shader = preload("res://ui/effects/fluid_particles.gdshader")
 	flow.set_shader_parameter("coupling", coupling)
 	flow.set_shader_parameter("box_emission", motion.emission_shape == ParticleProcessMaterial.EMISSION_SHAPE_BOX)
 	flow.set_shader_parameter("sphere_radius", motion.emission_sphere_radius)

@@ -8,5 +8,5 @@
 script = ExtResource("1")
 room_id = &"lost-library-1"
 display_name = "失落书库 · 入口"
-wave_count = 3
+wave_count = 2
 enemies = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5")])

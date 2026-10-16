@@ -7,7 +7,7 @@ extends Resource
 @export var reinforcement: EnemyCombatDefinition
 ## Read-only room composition; BattleSession owns every spawned entity and timer.
 
-@export var wave_count: int = 3
+@export var wave_count: int = 2
 @export var wave_interval: float = 1.6
 @export var health_multiplier: float = 1.0
 @export var enemies: Array[EnemyCombatDefinition] = [preload("res://game/content/enemies/nib.tres"), preload("res://game/content/enemies/quill.tres"), preload("res://game/content/enemies/guard.tres")]

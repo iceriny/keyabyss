@@ -6,6 +6,7 @@ uniform vec4 tint : source_color = vec4(0.54,0.8,0.87,1.0);
 uniform float progress = 0.0;
 uniform bool reduced_motion = false;
 uniform bool startup = false;
+uniform float ceremony = 1.0;
 
 void fragment() {
 	vec2 p = (UV-0.5)*canvas_size/min(canvas_size.x,canvas_size.y);
@@ -33,6 +34,7 @@ void fragment() {
 		// The native rune ring carries activity; keep its background softly lit.
 		glow = rhythm * exp(-r*r*13.0) * 0.022;
 	}
+	glow *= ceremony;
 	float alpha = max(veil,clamp(glow*1.8,0.0,0.9));
 	vec3 ink = vec3(0.003,0.009,0.013)*veil;
 	COLOR = vec4((ink+light*glow)/max(alpha,0.0001),alpha);

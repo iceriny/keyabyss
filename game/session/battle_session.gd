@@ -27,12 +27,12 @@ const MAIN_SPELL_CYCLES := {&"frost": 3, &"flame": 3, &"storm": 3, &"spirit": 3}
 const ENEMY_SPEED_SCALE := 1.06
 const ENEMY_ATTACK_SCALE := 1.19
 const MODE_HEALTH := [0.72, 0.9, 1.24, 1.42, 5.3]
-const MODE_DAMAGE := [0.55, 0.85, 1.1, 1.3, 2.4]
-const MODE_SPAWN := [4.3, 3.25, 2.25, 1.8, 1.2]
+const MODE_DAMAGE := [0.55, 0.85, 1.1, 1.2, 2.0]
+const MODE_SPAWN := [4.3, 3.25, 2.25, 2.1, 1.5]
 const MODE_CAP := [6, 8, 11, 14, 17]
 # Limit concurrent bodies, including summoned children, without reducing the
 # room workload or delaying replenishment once the player clears a slot.
-const MODE_ACTIVE_CAP := [6, 8, 8, 12, 14]
+const MODE_ACTIVE_CAP := [6, 8, 8, 10, 14]
 const MODE_DODGE_CD := [3.6, 4.2, 4.8, 5.3, 5.8]
 const MODE_IFRAME := [1.0, 0.85, 0.72, 0.62, 0.54]
 
@@ -86,7 +86,7 @@ var world_time_scale: float:
 		var age := 0.52 - counter_slow_remaining
 		var recovery := clampf((age - 0.06) / 0.46, 0.0, 1.0)
 		var scale := 0.06 + 0.94 * recovery * recovery * (3.0 - 2.0 * recovery)
-		return minf(scale, 0.1) if maxf(precision_slow_remaining, perfect_dodge_remaining) > 0.0 else scale
+		return minf(scale, 0.1) if precision_slow_remaining + perfect_dodge_remaining > 0.0 else scale
 var encounter: BattleEncounter = preload("res://game/content/single_room.tres")
 var wave: int = 0
 var intermission: float = -1.0
@@ -225,17 +225,8 @@ func start(request: BattleStartRequest, state: RunCombatState = null) -> void:
 	_retained_word_id = &""
 	_enemy_serial = 0
 	_start_room(request.build.book(), request.vocabulary, request.difficulty, request.seed_text, request.progressive, request.minimum_length)
-	if not request.flight_continuation.is_empty(): ledger = request.flight_continuation.ledger
-	# Move live ownership to this page without changing paid roots or claim history.
-	for lot in ledger.active_lots(): lot.room_id = run_state.room_serial
 	ledger.room_id = run_state.room_serial
 	runtime = SpellRuntime.new(self, compiled_build, run_state)
-	if not request.flight_continuation.is_empty():
-		for property: String in request.flight_continuation.world:
-			set(property, request.flight_continuation.world[property])
-		for property: String in request.flight_continuation.runtime:
-			runtime.set(property, request.flight_continuation.runtime[property])
-		previous_player_position = player_position
 	if statistics != null: statistics.detach()
 	statistics = BattleStatistics.new(self)
 	typing.assisted_authorizer = runtime.consume_assist
@@ -380,7 +371,7 @@ func _start_room(selected_book: StringName, entries: Array[VocabularyEntry], sel
 	_spawned = 0
 	_room_world_time = 0.0
 	_opening_grace = 3.0
-	_room_quota = encounter.enemies.size() * encounter.wave_count if encounter.room_id == &"" else 18 + _difficulty_rank * 6 + (_physical_chapter() - 1) * 8 + encounter.room_number * 4
+	_room_quota = encounter.enemies.size() * encounter.wave_count if encounter.room_id == &"" else ceili((18 + _difficulty_rank * 6 + (_physical_chapter() - 1) * 8 + encounter.room_number * 4) * 2.0 / 3.0)
 	_enemy_cap = mini(MODE_CAP[_difficulty_rank] - 2, MODE_ACTIVE_CAP[_difficulty_rank])
 	typing.set_targets({})
 	# Resetting a reused typing session may abandon the previous room's prefix.
@@ -551,7 +542,8 @@ func step(delta: float) -> void:
 	dodge_cooldown = maxf(0.0, (1.0 - dodge_charges) * _dodge_recovery_seconds)
 	var world_step := world_delta(delta)
 	counter_slow_remaining = maxf(0.0, counter_slow_remaining - delta)
-	precision_slow_remaining = maxf(0.0, precision_slow_remaining - delta)
+	# Perfect dodge runs first; the bookmark retains its full remaining duration.
+	precision_slow_remaining = maxf(0.0, precision_slow_remaining - maxf(0.0, delta - perfect_dodge_remaining))
 	perfect_dodge_remaining = maxf(0.0, perfect_dodge_remaining - delta)
 	world_time += world_step
 	if intermission < 0.0:
@@ -711,7 +703,7 @@ func _commit_word(completion: WordCompletion) -> void:
 			if completion.fully_manual(): _pickup_words += 1
 			var cleared := 0
 			if pickup.kind == &"rune":
-				cleared = reflect_projectiles_in_radius(pickup.position, 520.0)
+				cleared = counter_projectiles_in_radius(pickup.position, 520.0)
 				interrupt_enemies_in_radius(pickup.position, 520.0)
 				add_resonance(5 * Q)
 			else:
@@ -814,14 +806,10 @@ func _advance_projectiles(delta: float) -> void:
 		if projectile.homing:
 			if target == null or not target.alive():
 				target = runtime.retarget(projectile.effect, projectile.position, projectile.hit_ids)
-				if target == null:
-					projectile.homing = false
-				else:
+				if target != null:
 					projectile.effect.target_id = target.id
-			if projectile.homing:
-				var desired := ((target.position - projectile.position) * ARENA_SIZE).angle()
-				var turn := 17.0 if str(projectile.effect.kind).begins_with("frost") else 12.0
-				projectile.velocity = Vector2.from_angle(lerp_angle(projectile.velocity.angle(), desired, 1.0 - exp(-delta * turn))) * projectile.speed
+			if target != null:
+				projectile.velocity = ((target.position - projectile.position) * ARENA_SIZE).normalized() * projectile.speed
 		projectile.velocity += projectile.attraction_impulse
 		projectile.attraction_impulse = Vector2.ZERO
 		projectile.position += projectile.velocity * delta / ARENA_SIZE
@@ -1034,7 +1022,8 @@ func _advance_enemy_motion(delta: float) -> void:
 		var toward := (approach - enemy.position) * ARENA_SIZE
 		var distance := toward.length()
 		var desired := Vector2.ZERO
-		if enemy.frozen_time <= 0.0 and enemy.stagger_time <= 0.0 and not enemy.aiming and enemy.followup_time <= 0.0 and enemy.melee_strike <= 0.0 and enemy.melee_recovery <= 0.0:
+		# Entry has priority over a recovery whose attack clock is inactive outside.
+		if enemy.frozen_time <= 0.0 and enemy.stagger_time <= 0.0 and not enemy.aiming and enemy.followup_time <= 0.0 and enemy.melee_strike <= 0.0 and (entering or enemy.melee_recovery <= 0.0):
 			var speed := enemy.speed
 			var direction := (1.0 if distance > 82.0 else 0.0) if enemy.behavior in [&"melee", &"charge"] else (1.0 if distance > 385.0 else (-0.6 if distance < 265.0 else 0.0))
 			if entering or obscured:
@@ -1303,8 +1292,8 @@ func _emit_precision_volley(enemy: BattleEnemy) -> void:
 	# A displaced muzzle must not create a point-blank projectile at the marked spot.
 	if offset.length() < 90.0: return
 	var speed := minf((440.0 if needle else 205.0) * ENEMY_SPEED_SCALE, (offset.length() - 28.0) / 0.65)
-	for lane in (1 if needle else 2):
-		var angle := offset.angle() + (0.0 if needle else (float(lane) - 0.5) * 0.12)
+	for lane in (1 if needle else 3):
+		var angle := offset.angle() + (0.0 if needle else (float(lane) - 1.0) * 0.12)
 		_emit_enemy_threat(enemy, angle, lane, speed, 6.75)
 		threats[-1].visual_style = &"needle" if needle else &"refrain"
 		threats[-1].life = maxf(6.0, offset.length() / speed + 0.5)
@@ -1383,7 +1372,7 @@ func _emit_enemy_threat(enemy: BattleEnemy, angle: float, lane: int, speed: floa
 
 
 func _emit_pattern(enemy: BattleEnemy, pattern: StringName, curve: float = 0.0, speed_scale: float = 1.0) -> void:
-	var count := 10 + (_physical_chapter() - 1) * 3 + _difficulty_rank if pattern == &"ring" else (1 if pattern == &"single" else 3 + mini(3, _physical_chapter() - 1 + floori(_difficulty_rank / 2.0)))
+	var count := 10 + (_physical_chapter() - 1) * 3 + _difficulty_rank if pattern == &"ring" else (1 if pattern == &"single" else 3 + 2 * mini(2, _physical_chapter() - 1 + floori(_difficulty_rank / 2.0)))
 	var gap := _rng.randi_range(0, count - 1)
 	var aim := ((enemy.aimed_position - enemy.position) * ARENA_SIZE).angle()
 	for index in count:
@@ -1694,7 +1683,7 @@ func _commit_action(action: StringName) -> void:
 	_perfect_reflect_remaining = 0.0
 	event_committed.emit({"kind": &"dodge", "at": player_position, "target": destination})
 	if perfect_source != &"":
-		perfect_dodge_remaining = dodge_window
+		perfect_dodge_remaining += dodge_window
 		add_resonance(5 * Q)
 		event_committed.emit({"kind": &"perfect_dodge", "at": player_position, "until": dodge_window, "source": perfect_source})
 
@@ -1705,7 +1694,7 @@ func world_delta(real_delta: float) -> float:
 	if result != 0 or real_delta == 0.0: return 0.0
 	if counter_slow_remaining <= 0.0 and precision_slow_remaining <= 0.0 and perfect_dodge_remaining <= 0.0: return real_delta
 	var age := 0.52 - counter_slow_remaining
-	var precision_duration := minf(real_delta, maxf(precision_slow_remaining, perfect_dodge_remaining))
+	var precision_duration := minf(real_delta, precision_slow_remaining + perfect_dodge_remaining)
 	# Integrate the pointwise minimum, splitting at recovery's crossing and
 	# precision expiry. Taking min of whole integrals depends on step size.
 	var counter_duration := minf(precision_duration, maxf(0.0, COUNTER_PRECISION_CROSSOVER - age))
@@ -1776,13 +1765,19 @@ func _reflect_threat(threat: BattleThreat) -> void:
 	threat.trail.clear()
 
 
-func reflect_projectiles_in_radius(origin: Vector2, radius: float) -> int:
-	var reflected := 0
+func counter_projectiles_in_radius(origin: Vector2, radius: float) -> int:
+	var affected := 0
 	for threat in threats:
-		if not threat.reflected and ((threat.position - origin) * ARENA_SIZE).length() <= radius:
+		if threat.reflected or threat.cleared or ((threat.position - origin) * ARENA_SIZE).length() > radius: continue
+		var roll := _rng.randf()
+		if roll < 0.5:
+			threat.cleared = true
+			affected += 1
+		elif roll < 0.9:
 			_reflect_threat(threat)
-			reflected += 1
-	return reflected
+			affected += 1
+	if not _advancing_threats: _flush_cleared_threats()
+	return affected
 
 
 func interrupt_enemies_in_radius(origin: Vector2, radius: float) -> void:
@@ -2221,13 +2216,12 @@ func _nearest_living(origin: Vector2, excluded: PackedStringArray = []) -> Battl
 func _end(victory: bool) -> void:
 	finish_room(&"victory" if victory else (&"abandon" if abandoned_run else &"defeat"))
 	result = 1 if victory else -1
-	if not victory:
-		effects.clear()
-		projectiles.clear()
-		threats.clear()
-		hazards.clear()
-		spirits.clear()
-		ultimates.clear()
+	effects.clear()
+	projectiles.clear()
+	threats.clear()
+	hazards.clear()
+	spirits.clear()
+	ultimates.clear()
 	for pickup in pickups: typing.retire_target(pickup.id)
 	pickups.clear()
 	_word_sampler.selected.clear()
@@ -2238,12 +2232,11 @@ func _end(victory: bool) -> void:
 
 func finish_room(reason: StringName) -> RoomCombatResult:
 	if room_result != null: return room_result
-	if reason != &"victory":
-		for effect in effects: runtime.retire(effect)
-		for projectile in projectiles: runtime.retire(projectile.effect)
-		for spirit in spirits:
-			if spirit.effect != null: runtime.retire(spirit.effect)
-	room_result = runtime.finish(reason, reason == &"victory")
+	for effect in effects: runtime.retire(effect)
+	for projectile in projectiles: runtime.retire(projectile.effect)
+	for spirit in spirits:
+		if spirit.effect != null: runtime.retire(spirit.effect)
+	room_result = runtime.finish(reason)
 	room_result.manual_characters = manual_characters
 	room_result.manual_words = completed_words + _pickup_words
 	room_result.elapsed = elapsed
@@ -2252,19 +2245,6 @@ func finish_room(reason: StringName) -> RoomCombatResult:
 		room_result.reward_facts.append(RewardFact.new(fact.fact_id, fact.base_experience, fact.chapter, fact.r021_active))
 	room_result.facts = {"has_created_redeemable_mark": has_created_redeemable_mark, "has_input_interruption": has_input_interruption, "has_same_root_lots": has_same_root_lots}
 	return room_result
-
-
-func capture_flight() -> Dictionary:
-	# Only value/ref-counted flight state crosses a page; no previous scene survives.
-	var world_state: Dictionary = {}
-	for property: String in ["effects", "projectiles", "threats", "hazards", "spirits", "spirit_time", "ultimates", "ultimate_time", "world_time", "player_position", "_settled_player_attacks"]:
-		var value: Variant = get(property)
-		world_state[property] = value.duplicate() if value is Array or value is Dictionary else value
-	var runtime_state: Dictionary = {}
-	for property: String in ["clock", "_serial", "ongoing", "fields", "spirit_attacks", "_spirit_letters"]:
-		var value: Variant = runtime.get(property)
-		runtime_state[property] = value.duplicate() if value is Array or value is Dictionary else value
-	return {"ledger": ledger, "world": world_state, "runtime": runtime_state}
 
 
 func _take_player_damage(amount: int, attack_id: String) -> void:

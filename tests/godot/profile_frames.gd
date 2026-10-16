@@ -17,6 +17,7 @@ func _run() -> void:
 	root.size = Vector2i(1920, 1080)
 	var app := load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+	app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
 	app.presentation_enabled = false
 	root.add_child(app)

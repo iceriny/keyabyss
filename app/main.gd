@@ -8,7 +8,7 @@ const PRIMARY_ACTIONS := {
 	"result": "home", "settings": "back", "words": "use", "guide": "back",
 	"profile": "back", "history": "back", "about": "back", "import": "preview",
 	"settlement": "retry", "room_error": "retry", "calibration": "ready",
-	"tutorial_invitation": "tutorial",
+	"tutorial": "basics",
 	"relics": "relic001", "build": "relic001",
 }
 
@@ -72,7 +72,6 @@ var _calibration_return := "home"
 var _calibration_archive_visible := true
 var tutorial: TutorialLesson
 var tutorial_overlay: TutorialOverlay
-var _completed_lessons: Array[StringName] = []
 
 
 func _enter_tree() -> void:
@@ -219,6 +218,7 @@ func _archive_navigate(destination: String) -> void:
 		"vocab": _vocabulary_page()
 		"help": _guide()
 		"tutorial": _tutorial_menu()
+		"learn": _tutorial_menu(StringName(settings.book_id))
 		"settings": _settings_page(route)
 		"quit": _quit_game()
 		"battle": _launch_prepared()
@@ -251,10 +251,10 @@ func _configure_archive_commands() -> void:
 	if run != null and run.has_pending_run(): commands["continue"] = _resume_run
 	menu_navigation.register(archive.prepare_button, "start")
 	menu_navigation.register(archive.back_button, "back")
-	for button: OpenButton in archive.menu.get_children():
+	for button: OpenButton in archive.menu_buttons:
 		menu_navigation.register(button, button._command_word)
 	if route == "home":
-		commands["start"] = func() -> void: archive.set_prepared(true)
+		commands["start"] = archive.request_preparation
 		for i in ArchiveHome.BOOKS.size():
 			commands[str(ArchiveHome.BOOKS[i].id)] = _select_archive_book.bind(i)
 			commands[str(i + 1)] = _select_archive_book.bind(i)
@@ -504,6 +504,7 @@ func _home(audible: bool = true) -> void:
 	archive.set_interactive(true)
 	archive.set_prepared(false, false)
 	archive.refresh_vocabulary_choices()
+	archive.refresh_book_access()
 	if returning and audible:
 		sound.play_cue("ui.close")
 	_configure_archive_commands()
@@ -514,7 +515,8 @@ func _back() -> void:
 		_close_reward_detail()
 		return
 	match route:
-		"reward", "reward_error", "settlement": pass
+		"resume_run": _home()
+		"reward", "reward_wait", "reward_error", "settlement": pass
 		"relics", "build":
 			if run != null and run.phase in ["REWARD", "BATTLE_REWARD", "EVENT"]:
 				_show_run_stage()
@@ -1222,22 +1224,9 @@ func _complete_first_setup() -> void:
 	if _calibration_return == "settings":
 		_settings_page(settings_return)
 	elif not was_complete:
-		_first_tutorial_invitation()
+		_tutorial_menu()
 	else:
 		_home(false)
-
-
-func _first_tutorial_invitation() -> void:
-	archive.show()
-	_open("tutorial_invitation", "画面已就绪，先练习施法吧", "先学基础操作，再试试不同法书。")
-	page.set_width(820)
-	page.compact_height = 430.0
-	PageShell.label(page.body, "跟着练习学会打字施法、换目标、防御和闪避。", 22)
-	PageShell.label(page.body, "稍后也可从书库的「教学练习」进入。", 18, Color("a7b8bb"))
-	page.status.hide()
-	_button(page.footer, "进入教学练习", "tutorial", _tutorial_menu)
-	_button(page.footer, "稍后再练", "back", _home)
-	page.center_heading()
 
 
 func _clear_tutorial() -> void:
@@ -1248,40 +1237,44 @@ func _clear_tutorial() -> void:
 	tutorial_overlay = null
 
 
-func _tutorial_menu() -> void:
+func _tutorial_menu(preferred: StringName = &"basics") -> void:
 	get_tree().paused = false
 	_clear_tutorial()
 	if is_instance_valid(battle): battle.queue_free()
 	battle = null
 	router.typing = null
 	archive.show()
-	var menu := TutorialMenu.create_menu(settings.reduce_motion, _completed_lessons)
+	var menu := TutorialMenu.create_menu(settings.reduce_motion, settings.completed_lessons, settings.completed_steps)
 	_open("tutorial", "", "", true, menu)
 	menu.lesson_requested.connect(_start_tutorial)
 	for id in menu.lesson_buttons:
-		_bind_control_command(menu.lesson_buttons[id], str(id))
+		if not menu.lesson_buttons[id].disabled:
+			_bind_control_command(menu.lesson_buttons[id], str(id))
 	_button(page.footer, "返回书库", "back", _home)
-	var suggested: StringName = &"basics"
-	for id: StringName in TutorialLesson.LESSON_IDS:
-		if not id in _completed_lessons:
-			suggested = id
-			break
-	menu_navigation.select_word(str(suggested))
+	menu_navigation.primary_word = str(preferred) if settings.lesson_available(preferred) else "basics"
+	_select_primary.call_deferred()
 
 
 func _advance_tutorial() -> void:
+	if tutorial.ready_to_advance and not _record_tutorial_step(): return
+	if tutorial.ready_to_advance and tutorial.step_index == tutorial.step_count() - 1 and not tutorial.lesson_id in settings.completed_lessons:
+		settings.completed_lessons.append(tutorial.lesson_id)
+		if not settings.save_settings():
+			settings.completed_lessons.erase(tutorial.lesson_id)
+			tutorial_overlay.show_save_error(settings.last_error)
+			return
 	tutorial.advance()
 	if tutorial.completed:
-		if not tutorial.lesson_id in _completed_lessons:
-			_completed_lessons.append(tutorial.lesson_id)
-		_tutorial_menu()
+		_tutorial_menu(tutorial.lesson_id)
 
 
 func _start_tutorial(id: StringName) -> void:
+	if not settings.lesson_available(id): return
 	var title := "落笔入门" if id == &"basics" else ""
 	for book: BookPresentation in ArchiveHome.BOOKS:
 		if book.id == id: title = book.title + " · 练习"
-	_begin_practice_entrance(&"frost" if id == &"basics" else id, title, _enter_tutorial.bind(id))
+	var initial_step := 0 if id in settings.completed_lessons else mini(settings.lesson_progress(id), TutorialLesson.STEPS[id].size() - 1)
+	_begin_practice_entrance(&"frost" if id == &"basics" else id, title, _enter_tutorial.bind(id, initial_step))
 
 
 func _begin_practice_entrance(book_id: StringName, title: String, enter: Callable) -> void:
@@ -1320,6 +1313,24 @@ func _retry_tutorial() -> void:
 	_enter_tutorial(tutorial.lesson_id, tutorial.step_index)
 
 
+func _record_tutorial_step() -> bool:
+	var id := tutorial.lesson_id
+	var previous := settings.lesson_progress(id)
+	if tutorial.step_index < previous: return true
+	settings.completed_steps[id] = tutorial.step_index + 1
+	if not settings.save_settings():
+		settings.completed_steps[id] = previous
+		tutorial_overlay.show_save_error(settings.last_error)
+		return false
+	tutorial_overlay.set_passed_steps(settings.lesson_progress(id))
+	return true
+
+
+func _jump_tutorial(index: int) -> void:
+	if index < 0 or index >= tutorial.step_count() or index > settings.lesson_progress(tutorial.lesson_id): return
+	_enter_tutorial(tutorial.lesson_id, index)
+
+
 func _enter_tutorial(id: StringName, initial_step: int = 0) -> void:
 	get_tree().paused = false
 	_clear_tutorial()
@@ -1339,10 +1350,13 @@ func _enter_tutorial(id: StringName, initial_step: int = 0) -> void:
 	if id == &"basics":
 		(tutorial_overlay.get_node("Content/Book") as Label).text = "基础操作"
 	battle.add_child(tutorial_overlay)
+	tutorial_overlay.configure_steps(tutorial.step_titles(), settings.lesson_progress(id))
 	tutorial_overlay._content.item_rect_changed.connect(func() -> void:
 		battle.word_exclusions.assign([tutorial_overlay.get_reserved_rect()]))
 	tutorial.step_changed.connect(tutorial_overlay.show_step)
 	tutorial.goal_changed.connect(tutorial_overlay.set_goal_ready)
+	tutorial.goal_changed.connect(func(achieved: bool) -> void:
+		if achieved: _record_tutorial_step())
 	tutorial_overlay.next_requested.connect(_advance_tutorial)
 	tutorial.step_changed.connect(func(_index: int, _total: int, _title: String, _instruction: String, _progress: String, _complete: bool) -> void:
 		tutorial_overlay.avoid_player(BattleStage.arena_point(tutorial.session.player_position, battle.size))
@@ -1352,6 +1366,7 @@ func _enter_tutorial(id: StringName, initial_step: int = 0) -> void:
 			tutorial_overlay.avoid_player.call_deferred(BattleStage.arena_point(event.target, battle.size)))
 	tutorial_overlay.exit_requested.connect(_tutorial_menu)
 	tutorial_overlay.retry_requested.connect(_retry_tutorial)
+	tutorial_overlay.step_requested.connect(_jump_tutorial)
 	tutorial.session.finished.connect(func(_victory: bool) -> void:
 		tutorial_overlay.show_step(tutorial.step_index, tutorial.step_count(), "再试一次", "点击重试本步，重新摆好练习场地。", "生命耗尽", false))
 	battle.pause_requested.connect(_pause)
@@ -1409,6 +1424,8 @@ func _enter_practice(entries: Array[VocabularyEntry]) -> void:
 func _start_battle() -> void:
 	if route == "departure":
 		return
+	var book_id := run.selection.book_id if run != null and run.has_pending_run() else StringName(settings.book_id)
+	if not _require_book_tutorial(book_id): return
 	var active_options: Dictionary = run.options if run != null and run.phase == "READY_FOR_ROOM" else {"vocabulary_id": settings.vocabulary_id, "minimum_length": settings.min_length, "maximum_length": settings.max_length}
 	var entries := vocabulary.select_entries(PackedStringArray([str(active_options.vocabulary_id)]), int(active_options.minimum_length), int(active_options.maximum_length))
 	if entries.is_empty():
@@ -1438,6 +1455,7 @@ func _start_battle() -> void:
 	archive.set_interactive(false)
 	departure = preload("res://ui/scenes/departure_ritual.tscn").instantiate() as DepartureRitual
 	departure.book = _run_book()
+	departure.chapter_entry = run.room_serial % run.itinerary.rooms_per_chapter == 0
 	departure.stage_text = "第 %d 章 · 第 %d 页" % [run.itinerary.chapter_of(run.room_serial + 1), run.room_serial % run.itinerary.rooms_per_chapter + 1]
 	departure.reduced_motion = settings.reduce_motion
 	departure.cue_requested.connect(sound.play_cue)
@@ -1458,6 +1476,7 @@ func _start_battle() -> void:
 
 
 func _launch_prepared() -> void:
+	if not _require_book_tutorial(StringName(settings.book_id)): return
 	if run != null and run.has_pending_run():
 		if not _restart_requested:
 			_pending_run_page()
@@ -1502,6 +1521,7 @@ func _pending_run_page(audible: bool = true) -> void:
 
 
 func _resume_run() -> void:
+	if not _require_book_tutorial(run.selection.book_id): return
 	_restart_requested = false
 	if is_instance_valid(battle) and battle.session.result == 0:
 		if run.phase == "BATTLE_REWARD": _show_run_stage()
@@ -1509,6 +1529,14 @@ func _resume_run() -> void:
 	elif run.phase == "READY_FOR_ROOM": _start_battle()
 	elif bool(run.facts.get("victory_pending", false)): _continue_challenge()
 	else: _show_run_stage()
+
+
+func _require_book_tutorial(book_id: StringName) -> bool:
+	if settings.book_unlocked(book_id): return true
+	_tutorial_menu(book_id)
+	page.status.text = "完成基础操作与对应法书练习后，即可使用该法书出征。" if not settings.lesson_available(book_id) else "完成对应法书练习后，即可使用该法书出征。"
+	page.status.show()
+	return false
 
 
 func _activate_god_mode() -> void:
@@ -1600,6 +1628,7 @@ func _battle_finished(victory: bool) -> void:
 		gained_level = TalentProgress.level_for(profile.manual_characters) > previous_level
 		if gained_level:
 			sound.play_cue("ui.level")
+		await _wait_for_battle_feedback()
 		if run.phase != "RESULT":
 			_show_run_stage(not gained_level)
 			return
@@ -1771,7 +1800,19 @@ func _observe_battle_progression() -> void:
 	if gained_level:
 		sound.play_cue("ui.level")
 	if run.phase == "BATTLE_REWARD":
+		await _wait_for_battle_feedback()
 		_show_run_stage(not gained_level)
+
+
+func _wait_for_battle_feedback() -> void:
+	# Settlement is already committed and combat stopped; presentation gets its frame.
+	route = "reward_wait"
+	commands.clear()
+	router.typing = null
+	router.configure(InputRouter.Context.MODAL)
+	var reveal_at := Time.get_ticks_usec() + 200000
+	while Time.get_ticks_usec() < reveal_at:
+		await get_tree().process_frame
 
 
 func _show_run_stage(audible: bool = true) -> void:

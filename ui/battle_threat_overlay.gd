@@ -7,11 +7,16 @@ var quality: int = 2
 var reduced_motion: bool = false
 var _melee_cues: Dictionary[StringName, ColorRect] = {}
 var _orb: GradientTexture2D
+var _head_layer := Node2D.new()
+var _heads: Dictionary[BattleThreat, ThreatHead] = {}
 const MELEE_CUE = preload("res://ui/scenes/melee_attack_visual.tscn")
 
 
 func _ready() -> void:
 	_orb = preload("res://ui/effects/threat_orb.tres")
+	# Parent warnings first, then heads, then the existing melee cue children.
+	add_child(_head_layer)
+	move_child(_head_layer, 0)
 
 
 func _process(_delta: float) -> void:
@@ -36,10 +41,33 @@ func _process(_delta: float) -> void:
 		if session.enemy_by_id(id) == null:
 			_melee_cues[id].queue_free()
 			_melee_cues.erase(id)
+	_sync_heads()
 	queue_redraw()
 
 
+func _sync_heads() -> void:
+	var live: Dictionary[BattleThreat, bool] = {}
+	if quality > 0:
+		var fraction := Engine.get_physics_interpolation_fraction()
+		var scale_factor := size.x / BattleSession.ARENA_SIZE.x
+		for threat in session.threats:
+			live[threat] = true
+			if not _heads.has(threat):
+				var head := ThreatHead.new()
+				head.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+				head.painter = self
+				head.threat = threat
+				_head_layer.add_child(head)
+				_heads[threat] = head
+			_heads[threat].sync(size, fraction, scale_factor)
+	for threat in _heads.keys():
+		if not live.has(threat):
+			_heads[threat].queue_free()
+			_heads.erase(threat)
+
+
 func _draw() -> void:
+	var started := DebugLog.begin()
 	var fraction := Engine.get_physics_interpolation_fraction()
 	var scale_factor := size.x / BattleSession.ARENA_SIZE.x
 	for hazard in session.hazards:
@@ -98,7 +126,7 @@ func _draw() -> void:
 			var angle := (target - from).angle()
 			draw_arc(from, enemy.radius + 12, -PI * 0.5, -PI * 0.5 + TAU * urgency, 64, tint, 1.8, true)
 			draw_arc(from, enemy.radius + 17, angle - 0.32, angle + 0.32, 20, Color("ffdbb0", urgency), 2.0, true)
-	for threat in session.threats:
+	for threat in session.threats if quality == 0 else []:
 		var point := threat.previous_position.lerp(threat.position, fraction) * size
 		var tint := threat_color(threat)
 		var radius := threat.radius * scale_factor
@@ -114,7 +142,8 @@ func _draw() -> void:
 					var strength := float(index) / tail.size()
 					draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.1), radius * 2.2 * strength, true)
 					draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.5), maxf(1.0, radius * 0.5 * strength), true)
-		_draw_threat_head(threat, point, radius, tint, scale_factor)
+			_draw_threat_head(self, threat, point, radius, tint, maxf(1.0, scale_factor) / radius, (threat.velocity * size / BattleSession.ARENA_SIZE).angle())
+	DebugLog.end(&"battle.threat_draw", started)
 
 
 static func threat_color(threat: BattleThreat) -> Color:
@@ -130,69 +159,92 @@ static func threat_color(threat: BattleThreat) -> Color:
 	return Color("efb28d")
 
 
-func _draw_threat_head(threat: BattleThreat, point: Vector2, radius: float, tint: Color, scale_factor: float) -> void:
+func _draw_threat_head(canvas: CanvasItem, threat: BattleThreat, point: Vector2, radius: float, tint: Color, edge: float, heading: float) -> void:
 	# The HDR world owns emission; keep a modest fallback when bloom is disabled.
 	if quality == 0:
-		draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius * 2.5, Vector2.ONE * radius * 5.0), false, Color(tint, 0.26))
-	var heading := (threat.velocity * size / BattleSession.ARENA_SIZE).angle()
-	draw_set_transform(point, heading, Vector2.ONE * radius)
-	var edge := maxf(1.0, scale_factor) / radius
-	var dark := Color("302b35", 0.95)
+		canvas.draw_texture_rect(_orb, Rect2(point - Vector2.ONE * radius * 2.5, Vector2.ONE * radius * 5.0), false, Color(tint, 0.26))
+	canvas.draw_set_transform(point, heading, Vector2.ONE * radius)
+	var body := Color(tint * 0.85, 0.55)
 	var core := Color("fff1d6") if not threat.reflected else Color("e2ffe9")
 	var style := &"heavy" if threat.heavy else threat.visual_style
 	match style:
 		&"needle":
 			var outline := PackedVector2Array([Vector2(1.65, 0), Vector2(-0.65, -0.85), Vector2(-1.2, 0), Vector2(-0.65, 0.85), Vector2(1.65, 0)])
-			draw_colored_polygon(outline, dark)
-			draw_polyline(outline, tint, edge * 1.4, true)
-			draw_line(Vector2(-0.8, 0), Vector2(1.25, 0), core, edge * 1.3, true)
+			canvas.draw_colored_polygon(outline, body)
+			canvas.draw_polyline(outline, tint, edge * 1.4, true)
+			canvas.draw_line(Vector2(-0.8, 0), Vector2(1.25, 0), core, edge * 1.3, true)
 		&"quill":
 			var outline := PackedVector2Array([Vector2(1.3, 0), Vector2(-0.6, -1), Vector2(-0.2, 0), Vector2(-0.6, 1), Vector2(1.3, 0)])
-			draw_colored_polygon(outline, Color(tint, 0.65))
-			draw_polyline(outline, tint, edge, true)
-			draw_line(Vector2(-0.2, 0), Vector2(1.1, 0), core, edge, true)
+			canvas.draw_colored_polygon(outline, Color(tint, 0.65))
+			canvas.draw_polyline(outline, tint, edge, true)
+			canvas.draw_line(Vector2(-0.2, 0), Vector2(1.1, 0), core, edge, true)
 		&"refrain":
 			for side: float in [-1.0, 1.0]:
 				var page := PackedVector2Array([Vector2(0.8, 0), Vector2(0.4, side), Vector2(-1, side * 0.7), Vector2(-0.5, 0), Vector2(0.8, 0)])
-				draw_colored_polygon(page, dark)
-				draw_polyline(page, tint, edge * 1.4, true)
-				draw_line(Vector2(-0.45, side * 0.35), Vector2(0.3, side * 0.45), core, edge, true)
+				canvas.draw_colored_polygon(page, body)
+				canvas.draw_polyline(page, tint, edge * 1.4, true)
+				canvas.draw_line(Vector2(-0.45, side * 0.35), Vector2(0.3, side * 0.45), core, edge, true)
 		&"wisp":
-			draw_arc(Vector2.ZERO, 1.0, -PI * 0.65, PI * 0.65, 20, tint, edge * 2.8, true)
-			draw_arc(Vector2(0.14, 0), 0.65, -PI * 0.6, PI * 0.6, 16, core, edge, true)
+			canvas.draw_arc(Vector2.ZERO, 1.0, -PI * 0.65, PI * 0.65, 20, tint, edge * 2.8, true)
+			canvas.draw_arc(Vector2(0.14, 0), 0.65, -PI * 0.6, PI * 0.6, 16, core, edge, true)
 		&"rune":
 			var diamond := PackedVector2Array([Vector2(1.2, 0), Vector2(0, -1.2), Vector2(-1.2, 0), Vector2(0, 1.2), Vector2(1.2, 0)])
-			draw_colored_polygon(diamond, dark)
-			draw_polyline(diamond, tint, edge * 1.4, true)
-			draw_line(Vector2(-0.4, 0), Vector2(0.4, 0), core, edge, true)
-			draw_line(Vector2(0, -0.4), Vector2(0, 0.4), core, edge, true)
+			canvas.draw_colored_polygon(diamond, body)
+			canvas.draw_polyline(diamond, tint, edge * 1.4, true)
+			canvas.draw_line(Vector2(-0.4, 0), Vector2(0.4, 0), core, edge, true)
+			canvas.draw_line(Vector2(0, -0.4), Vector2(0, 0.4), core, edge, true)
 		&"vortex":
-			draw_circle(Vector2.ZERO, 1.0, dark)
+			canvas.draw_circle(Vector2.ZERO, 1.0, body)
 			for arm in 2:
 				var curve := PackedVector2Array()
 				for index in 17:
 					var fraction := float(index) / 16.0
 					curve.append(Vector2.from_angle(fraction * PI * 1.5 + arm * PI) * lerpf(0.2, 1.1, fraction))
-				draw_polyline(curve, tint, edge * 1.5, true)
+				canvas.draw_polyline(curve, tint, edge * 1.5, true)
 		&"shard":
 			var crystal := PackedVector2Array([Vector2(1.25, 0), Vector2(-0.3, -1), Vector2(-1, -0.45), Vector2(-1, 0.45), Vector2(-0.3, 1), Vector2(1.25, 0)])
-			draw_colored_polygon(crystal, Color(tint, 0.35))
-			draw_polyline(crystal, tint, edge * 1.3, true)
-			draw_line(Vector2(-0.7, 0), Vector2(1.0, 0), core, edge, true)
+			canvas.draw_colored_polygon(crystal, Color(tint, 0.35))
+			canvas.draw_polyline(crystal, tint, edge * 1.3, true)
+			canvas.draw_line(Vector2(-0.7, 0), Vector2(1.0, 0), core, edge, true)
 		&"heavy":
-			draw_circle(Vector2.ZERO, 1.0, dark)
-			draw_arc(Vector2.ZERO, 1.0, 0, TAU, 24, tint, edge * 2, true)
+			canvas.draw_circle(Vector2.ZERO, 1.0, body)
+			canvas.draw_arc(Vector2.ZERO, 1.0, 0, TAU, 24, tint, edge * 2, true)
 			for tooth in 4:
 				var axis := Vector2.from_angle(tooth * PI * 0.5)
-				draw_line(axis * 0.65, axis * 1.2, tint, edge * 2, true)
-			draw_circle(Vector2.ZERO, 0.3, core)
+				canvas.draw_line(axis * 0.65, axis * 1.2, tint, edge * 2, true)
+			canvas.draw_circle(Vector2.ZERO, 0.3, core)
 		_:
-			draw_circle(Vector2.ZERO, 0.9, dark)
-			draw_arc(Vector2.ZERO, 0.9, 0, TAU, 20, tint, edge * 1.4, true)
-			draw_circle(Vector2.ZERO, 0.45, core)
+			canvas.draw_circle(Vector2.ZERO, 0.9, body)
+			canvas.draw_arc(Vector2.ZERO, 0.9, 0, TAU, 20, tint, edge * 1.4, true)
+			canvas.draw_circle(Vector2.ZERO, 0.45, core)
 	if threat.reflected:
-		draw_line(Vector2(-0.3, 0), Vector2(0.6, 0), core, edge * 1.8, true)
-	draw_set_transform(Vector2.ZERO)
+		canvas.draw_line(Vector2(-0.3, 0), Vector2(0.6, 0), core, edge * 1.8, true)
+	canvas.draw_set_transform(Vector2.ZERO)
+
+
+class ThreatHead extends Node2D:
+	var painter: BattleThreatOverlay
+	var threat: BattleThreat
+	var tint := Color.TRANSPARENT
+	var edge := 0.0
+	var style: StringName
+
+	func sync(view_size: Vector2, fraction: float, scale_factor: float) -> void:
+		position = threat.previous_position.lerp(threat.position, fraction) * view_size
+		rotation = (threat.velocity * view_size / BattleSession.ARENA_SIZE).angle()
+		var radius := threat.radius * scale_factor
+		scale = Vector2.ONE * radius
+		var next_tint := BattleThreatOverlay.threat_color(threat)
+		var next_edge := maxf(1.0, scale_factor) / radius
+		var next_style: StringName = &"heavy" if threat.heavy else threat.visual_style
+		if tint != next_tint or edge != next_edge or style != next_style:
+			tint = next_tint
+			edge = next_edge
+			style = next_style
+			queue_redraw()
+
+	func _draw() -> void:
+		painter._draw_threat_head(self, threat, Vector2.ZERO, 1.0, tint, edge, 0.0)
 
 
 func _draw_curved_tail(tail: PackedVector2Array, tint: Color, scale_factor: float) -> void:

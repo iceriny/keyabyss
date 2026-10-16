@@ -111,6 +111,24 @@ func _test_retired_compatibility() -> void:
 func _test_current_qualification() -> void:
 	var catalog := BuildCatalog.new()
 	var service := AcquisitionService.new(BuildCompiler.new(catalog))
+	for book in BuildCompiler.BOOKS:
+		var empty := BuildSelection.new()
+		empty.book_id = book
+		_check(service.evaluate(empty, &"R005", WORD_CONTEXT).eligible == (book == &"spirit"), "paper enhancement requires a real spirit source: " + str(book))
+		_check(service.evaluate(empty, &"R035", WORD_CONTEXT).eligible, "explicit cross-book spirit source remains reachable: " + str(book))
+		empty.assets[&"R035"] = 1
+		_check(service.evaluate(empty, &"R005", WORD_CONTEXT).eligible, "cross-book summoning unlocks its enhancement: " + str(book))
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 20261015
+		for draw in 128:
+			for id in service.offered(empty, WORD_CONTEXT, rng):
+				var item := catalog.get_definition(StringName(id)) as RelicDefinition
+				_check(item.allowed_books.is_empty() or str(book) in item.allowed_books, "actual offer respects its main-book restriction: " + id)
+	var invalid := BuildSelection.new()
+	invalid.assets[&"R005"] = 1
+	_check(not service.compiler.compile(invalid).success(), "direct selection cannot bypass the summoning prerequisite")
+	for id in [&"R053", &"R054", &"A007", &"A021"]:
+		_check(not service.evaluate(BuildSelection.new(), id, WORD_CONTEXT).eligible, "frost cannot acquire flame-seal-only effects: " + str(id))
 	var selection := BuildSelection.new()
 	_check(service.evaluate(selection, &"G006", WORD_CONTEXT).eligible, "Mixed-length relic accepts a vocabulary containing short and long words")
 	var short_only := service.evaluate(selection, &"G006", {"shortest": 3, "longest": 5})

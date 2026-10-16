@@ -5,6 +5,7 @@ uniform float blur_pixels = 0.0;
 uniform float brightness = 1.0;
 uniform float hover = 0.0;
 uniform float artwork_size = 390.0;
+uniform float awakening : hint_range(0.0, 1.0) = 1.0;
 varying vec4 item_modulate;
 void vertex() { item_modulate = COLOR; }
 
@@ -43,10 +44,11 @@ void fragment() {
 	vec4 art = depth_blur(p, blur_pixels, source_scale);
 	float shadow_lod = log2(max(1.,20.*source_scale));
 	float shadow = book(p-vec2(0.,25./artwork_size), shadow_lod).a * .66;
-	float glow = book(p,log2(max(1.,15.*source_scale))).a * (.28+hover*.35);
+	float glow = book(p,log2(max(1.,15.*source_scale))).a * (.28+hover*.35) * awakening;
 	float alpha = art.a + (1.-art.a) * max(shadow,glow);
 	float luminance = dot(art.rgb,vec3(.2126,.7152,.0722));
-	vec3 rgb = art.rgb * pow(brightness,2.2) * (1.0 + smoothstep(.35,.85,luminance)*.15) * art.a + school_color.rgb * pow(glow,2.2) * (1.-art.a);
+	vec3 ink = mix(vec3(luminance), art.rgb, .18 + .82 * awakening);
+	vec3 rgb = ink * pow(brightness,2.2) * (1.0 + smoothstep(.35,.85,luminance)*.15 * awakening) * art.a + school_color.rgb * pow(glow,2.2) * (1.-art.a);
 	COLOR = vec4(rgb / max(alpha,.0001),alpha) * item_modulate;
 }
 

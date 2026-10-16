@@ -24,6 +24,7 @@ func _run() -> void:
 	root.size = Vector2i(1920, 1080)
 	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+	app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.settings.book_id = "frost"
 	app.settings.difficulty = "normal"
 	app.settings.run_seed = "s1-application"

@@ -128,6 +128,7 @@ func _create_actor(enemy: BattleEnemy) -> void:
 
 func _process(delta: float) -> void:
 	var started := DebugLog.begin()
+	var real_delta := delta
 	threat_glow.quality = quality
 	threat_glow.reduced_motion = reduced_motion
 	delta = session.world_delta(delta)
@@ -163,7 +164,7 @@ func _process(delta: float) -> void:
 	for enemy in session.enemies:
 		if not _actors.has(enemy.id):
 			_create_actor(enemy)
-		_actors[enemy.id].sync_enemy(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, session.world_time, delta, reduced_motion, quality)
+		_actors[enemy.id].sync_enemy(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, session.world_time, real_delta if not enemy.alive() else delta, reduced_motion, quality)
 		_actors[enemy.id].modulate.a = (1.0 - _actors[enemy.id].dead_time) * (1.0 if enemy.combat_locked else 0.06 + 0.94 * pow(BattleSession.arena_clarity(enemy.position, enemy.radius), 2.0))
 	var active_projectiles: Dictionary[BattleProjectile, bool] = {}
 	for projectile in session.projectiles:
@@ -658,7 +659,10 @@ func _effect_color(source: StringName) -> Color:
 func _spawn_particles(at: Vector2, tint: Color, intensity: float, burst: bool, source: StringName = &"", direction: Vector2 = Vector2.ZERO) -> void:
 	if reduced_motion or quality == 0:
 		return
+	var started := DebugLog.begin()
 	var particles := preload("res://ui/scenes/spell_motes.tscn").instantiate() as GPUParticles2D
+	DebugLog.end(&"particles.instantiate", started)
+	started = DebugLog.begin()
 	particles.position = at * size
 	particles.amount = (46 if quality == 2 else 23) if burst else (22 if quality == 2 else 11)
 	particles.lifetime = 0.7 * intensity + 0.3
@@ -686,8 +690,13 @@ func _spawn_particles(at: Vector2, tint: Color, intensity: float, burst: bool, s
 		motion.angular_velocity_max = 150
 	motion.scale_min = 0.025 if particles.texture == _spark_texture else 0.3
 	motion.scale_max = 0.06 if particles.texture == _spark_texture else 0.7
+	DebugLog.end(&"particles.configure", started)
+	started = DebugLog.begin()
 	add_child(particles)
+	DebugLog.end(&"particles.attach", started)
+	started = DebugLog.begin()
 	fluid.bind_particles(particles, 1.6)
+	DebugLog.end(&"particles.bind", started)
 	particles.emitting = true
 	# GPU one-shot completion notification does not track changing speed_scale.
 	var retirement := BattleVisualClock.tween_for(particles)

@@ -13,9 +13,13 @@
 | 保存、恢复、成长与重复结算 | `test_profile_save.gd`、`test_single_run_save.gd`、`test_talent_progress.gd`、`test_reward_ledger.gd` |
 | 菜单、窗口、布局和教学 | `test_application.gd`、`test_presentation.gd`、`test_display.gd`、`test_ui_refinement.gd`、`test_tutorial_lesson.gd`；局部参数见验证说明 |
 | 战斗与反馈画面 | `test_battle_presentation.gd`、`test_feedback_effects.gd`、`test_feedback_presentation.gd`、`test_s1_application.gd`；图形运行并审阅画面 |
+| 冰晶GPU成本 | `test_feedback_effects.gd -- --measure`，真实图形窗口；独立于战斗截图夹具，保存标记匹配的GPU／渲染线程CPU原始区间。受控冰龄推进，不代表整帧FPS |
 | 流体、采样、渲染准备和音频 | `test_fluid.gd`、`test_effect_sampling.gd`、`test_render_preparation.gd`、`test_audio.gd` |
 | 算法与性能定位 | `test_combat_algorithms.gd`、`profile_frames.gd`；只在对应问题或算法变化时选用 |
+| 尾迹批量几何与粒子绑定 | `test_enemy_expansion.gd -- --feedback-fixes --trail-glow` 比较原采样几何并观察实际HDR；`test_fluid.gd -- --usage` 验证即时绑定、半径／选项变化与释放。两者为图形窗口，性能采样另用实施记录中的两组夹具 |
 | 开发夹具 | `test_build_lab_scenarios.gd`；验证共享资源隔离与正式段出口 |
+
+书库布局及持久教学解锁另用现有窗口入口：`test_ui_refinement.gd -- --archive-tutorial`。基础真实完成后任选灰烬，验证单书正式入场、重启回读、失败保存重试与未完远征保留；此UI／流程修改不需要重跑整体难度探针。
 
 ## 整体难度探针
 
@@ -25,6 +29,8 @@
 python tools/godot/run-difficulty-probe.py --label local-baseline --seed curve-17
 # 单个场景、法书或词长分布可缩小诊断范围：
 python tools/godot/run-difficulty-probe.py --label targeted-check --scenario retained_ordinary --book frost --seed curve-29 --vocabulary long
+# 逗号分隔可在同一次冻结中复核多组边界：
+python tools/godot/run-difficulty-probe.py --label boundary-check --scenario cold_expert,cold_elite,retained_ordinary --seed curve-29
 ```
 
 运行器通过既有`godot.ps1 run`启动锁定引擎，输出到`.temp/difficulty-probe/<label>/`：源码快照、SHA-256清单、完整日志、逐页JSON、报价／选择流水和摘要。运行中源码发生变化、脚本诊断、流程断言失败或缺少结果均返回失败；玩家战败与600真实秒超时分别记录，不冒充脚本失败或真实通关。
@@ -42,7 +48,8 @@ python tools/godot/run-difficulty-probe.py --label targeted-check --scenario ret
 - `test_s1_rules.gd` 是 `test_s2_rules.gd` 的继承基础，不可按旧阶段名移除。
 - `test_s1_run.gd` 除首章流程外，保留路线保存失败、付款与重复执行边界。
 - `test_s1_encounters.gd` 保留第一位 Boss 攻击组合、冻结中断冲锋和世界减速期间的恢复检查。
-- `test_encounter_pressure.gd` 检查五档生成配额、敌人数上限、三段全灭出口及 Boss 参数；另检查段边界保留飞行物、胜利暂停不耗尽已支付威力、释放旧场景后跨页／章继续真实飞行和账本所有权交接。
+- `test_encounter_pressure.gd` 检查五档生成配额、敌人数上限、两段全灭出口、奇数散射中心弹道及Boss参数；另检查段间保留飞行物、页／章结束清场和支付结清。`--flight-boundaries`仅运行边界与反射重入专项。
+- `test_ui_refinement.gd -- --combat-revision`使用独立Forward+窗口检查章／页入场、敌弹材质、奖励真实时间延迟与未完远征的Esc返回，图像和断言写入隔离证据目录。
 - `test_talent_progress.gd` 保护当前五阶线性成长与字符回执，名称不表示仍有天赋树。
 - `combat_fixture.gd` 是共用夹具，不是独立测试入口。
 

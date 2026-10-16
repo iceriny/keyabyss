@@ -15,6 +15,12 @@ const STEPS := {
 }
 const TRAINING_HEALTH := 1000000
 const WORDS := ["shade", "shard", "shine", "frost", "flame", "storm", "paper", "light", "spell", "bloom"]
+const STEP_TITLES := {
+	&"switch": "换一个目标", &"cancel": "换到不同开头的单词", &"parry": "御术与反弹",
+	&"freeze": "寒气与冻结", &"shatter": "击碎冻住的敌人", &"block": "火弹被谁挡住",
+	&"burn": "停笔后的余火", &"charge": "电链变得更强", &"mark": "让纸灵继续攻击",
+	&"sleep": "停笔与唤醒", &"crane": "纸鹤挡弹反击", &"ultimate": "释放终式",
+}
 
 var session: BattleSession
 var book_id: StringName = &"frost"
@@ -100,6 +106,19 @@ func current_step() -> StringName:
 
 func step_count() -> int:
 	return STEPS[lesson_id].size()
+
+
+func step_titles() -> PackedStringArray:
+	var titles := PackedStringArray()
+	for step: StringName in STEPS[lesson_id]: titles.append(_step_title(step))
+	return titles
+
+
+func _step_title(step: StringName) -> String:
+	if step == &"intro": return "完成词咒" if lesson_id == &"basics" else "施法与强化"
+	if step == &"mist": return "冰雾遮蔽" if book_id == &"frost" else "闪避留下火雾"
+	if step == &"dodge": return "闪避也能攻击" if book_id == &"storm" else "方向闪避"
+	return STEP_TITLES[step]
 
 
 func advance() -> void:
@@ -386,11 +405,10 @@ func _progress() -> String:
 
 
 func _emit_step() -> void:
-	var title := ""
+	var title := _step_title(current_step())
 	var instruction := ""
 	match current_step():
 		&"intro":
-			title = "完成词咒" if lesson_id == &"basics" else "施法与强化"
 			instruction = "词咒就是敌人头顶的单词。输入完整单词，就会向它施法。" if lesson_id == &"basics" else {
 				&"frost": "冰锥会穿过一条线上的敌人。每第三次施法变成更强的冰矛，能穿过更多敌人。",
 				&"flame": "每第三次施法打出焰印，爆炸伤到附近敌人，并留下一团火雾。",
@@ -398,46 +416,32 @@ func _emit_step() -> void:
 				&"spirit": "完成词咒会唤醒纸灵，它们会自动攻击。每第三次施法，它们会一起攻击当前目标。",
 			}[book_id]
 		&"switch":
-			title = "换一个目标"
 			instruction = "还没开始输入时，Tab 可以换到另一个敌人。" if _switch_phase == 0 else "shade 和 shard 都以 sha 开头。切换时，已经输入的 sha 会保留。"
 		&"cancel":
-			title = "换到不同开头的单词"
 			instruction = "flame 不以 sha 开头，Tab 不会切到它。想改选它，需要先取消当前输入。"
 		&"parry":
-			title = "御术与反弹"
 			instruction = "敌弹靠近时按空格，用御术挡住它。赶在碰到你的那一刻防御，还能把敌弹反弹回去。"
 		&"freeze":
-			title = "寒气与冻结"
 			instruction = "连续攻击左边敌人，让寒气积满，它就会冻住。停得太久寒气会减少，所以尽量集中攻击。"
 		&"shatter":
-			title = "击碎冻住的敌人"
 			instruction = "击败冻住的敌人会触发冻裂，伤到旁边的敌人。集中攻击左边的残血敌人，试着把它冻住再击碎。"
 		&"block":
-			title = "火弹被谁挡住"
 			instruction = "火弹飞向你选中的敌人，途中遇到其他敌人，就会先打中它。"
 		&"burn":
-			title = "停笔后的余火"
 			instruction = "燃烧的敌人会持续掉血。血条上的橙色部分表示预计还会烧掉的生命，可以据此决定是否换目标。"
 		&"charge":
-			title = "电链变得更强"
 			instruction = "连续攻击左边敌人，积累感电。感电足够时，再命中的电链会更强，还能多击中一个敌人。"
 		&"mark":
-			title = "让纸灵继续攻击"
 			instruction = "施法会给目标加上易伤，让它受到更多伤害。纸灵会继续自动攻击它，不用反复下令。"
 		&"sleep":
-			title = "停笔与唤醒"
 			instruction = "停笔一段时间，纸灵会逐只睡着。等一只睡着后，再完成一个词咒，把它唤醒。"
 		&"crane":
-			title = "纸鹤挡弹反击"
 			instruction = "闪避会在原地留下符文纸鹤。等敌人瞄准后按 ↓，让它的弹打向纸鹤：纸鹤挡下一颗敌弹，就会反击发射它的敌人。"
 		&"mist":
-			title = "冰雾遮蔽" if book_id == &"frost" else "闪避留下火雾"
 			instruction = "按 ← 闪避，在原地留下冰雾。雾中的敌人会积累寒气，远处敌人也更难瞄准你；已经射来的敌弹仍要躲开。" if book_id == &"frost" else "按 ← 闪避，在原地留下火雾。旁边的敌人会被点燃，离开火雾后也会继续掉血。"
 		&"dodge":
-			title = "闪避也能攻击" if book_id == &"storm" else "方向闪避"
 			instruction = "闪避路径会伤到沿途敌人，并让它们带上感电。" if book_id == &"storm" else "按方向键朝对应方向闪避，闪避后有1秒不会受伤。闪避次数用完后，需要等它恢复。"
 		&"ultimate":
-			title = "释放终式"
 			instruction = ("输入与防御会积累共鸣，积满后按一下 Shift 释放终式。\n" if lesson_id == &"basics" else "") + {
 				&"frost": "你会获得护盾，周围会不断发射冰锥并积累寒气。",
 				&"flame": "火浪伤到全场敌人，随后留下持续伤害敌人的火域。",

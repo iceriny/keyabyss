@@ -16,6 +16,7 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+	app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.settings.sound = false
 	app.settings.ambience = false
 	app.settings.reduce_motion = true

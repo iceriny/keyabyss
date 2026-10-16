@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <!-- This assembly contains only the numeric kernel; exercise optimized math
+    <!-- This assembly contains numeric kernels; exercise optimized math
          in editor, tests and exports alike while retaining debug symbols. -->
     <Optimize>true</Optimize>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
@@ -11,5 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="game/algorithms/*.cs" />
+    <Compile Include="ui/effects/ThreatRibbonGeometry.cs" />
   </ItemGroup>
 </Project>

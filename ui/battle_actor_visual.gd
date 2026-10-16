@@ -104,6 +104,9 @@ func sync_enemy(enemy: BattleEnemy, at: Vector2, time: float, delta: float, redu
 		surface.set_shader_parameter("dissolve", dead_time)
 		modulate.a = 1.0 - dead_time
 		return
+	if dead_time > 0.0:
+		dead_time = 0.0
+		surface.set_shader_parameter("dissolve", 0.0)
 	var bob := 0.0 if reduced or frozen else sin(time * 1.7 + float(str(enemy.id).get_slice("_", 1)) * 2.1) * 2.0
 	body.position = _hit_motion.position + Vector2(0.0, bob)
 	if enemy.behavior == &"melee" and not reduced and not frozen:

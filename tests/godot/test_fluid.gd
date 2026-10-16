@@ -219,12 +219,35 @@ func _run() -> void:
 
 
 func _node_usage() -> void:
+	_check_motion_budget()
 	var field := FluidField2D.new()
 	field.position = Vector2(60, 40)
 	field.size = Vector2(320, 180)
 	field.wind = Vector2.ZERO
 	root.add_child(field)
 	field.set_process(false)
+	var particles := GPUParticles2D.new()
+	var motion := ParticleProcessMaterial.new()
+	motion.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	motion.emission_sphere_radius = 9.0
+	particles.process_material = motion
+	root.add_child(particles)
+	field.bind_particles(particles)
+	var flow := particles.process_material as FluidParticleFlow
+	_check(flow != null and float(flow.get_shader_parameter("sphere_radius")) == 9.0, "new fluid binding is initialized immediately")
+	motion.emission_sphere_radius = 14.0
+	field._sync_particles()
+	_check(float(flow.get_shader_parameter("sphere_radius")) == 14.0, "existing binding tracks paid radius changes")
+	field.set_options(0, false)
+	field._sync_particles()
+	_check(particles.process_material == motion, "fluid off restores the original process material")
+	field.set_options(2, false)
+	field._sync_particles()
+	_check(particles.process_material == flow, "fluid reenable restores the existing flow material")
+	particles.queue_free()
+	await process_frame
+	field._sync_particles()
+	_check(field._particle_bindings.is_empty(), "freed particle bindings retire on normal maintenance")
 	var visual := Node2D.new()
 	visual.position = Vector2(170, 130)
 	root.add_child(visual)
@@ -295,14 +318,39 @@ func _node_usage() -> void:
 	await _settle()
 
 
+func _check_motion_budget() -> void:
+	var field := FluidAtmosphere.new()
+	var battle := BattleSession.new()
+	field.battle = battle
+	field.size = Vector2(960, 540)
+	field._ambient.append(FluidInfluence.new())
+	for tick in 2:
+		for index in 72:
+			field.track_body(StringName(str(index)), Vector2(index * 8.0 + tick * 4.0, 100), Vector2.ONE * 8, 0.0, Color.WHITE, float(index), false)
+		field._scene_sources.clear()
+		field._omitted_scene_sources = 0
+		field._before_step(1.0 / 60.0)
+	_check(field._scene_sources.size() == FluidGPU.MAX_INFLUENCES + 1, "motion geometry stops at solver capacity, retaining the trailing ambient source")
+	_check(field._omitted_scene_sources == 96, "skipped motion inputs retain dropped-source accounting")
+	_check(field._motion.values().all(func(motion: Dictionary) -> bool: return (motion.path as FluidMotionPath).points == PackedVector2Array([motion.point])), "even omitted motion consumes its path each frame")
+	field.track_body(&"0", Vector2(12, 100), Vector2.ONE * 8, 0.0, Color.WHITE, 100.0, false)
+	field._scene_sources.clear()
+	field._before_step(1.0 / 60.0)
+	_check(field._scene_sources[0].center == Vector2(8, 100), "reentering priority uses the latest short sweep instead of accumulated history")
+	field.free()
+	battle.free()
+
+
 func _application() -> void:
 	var app := load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+	app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
 	app.presentation_enabled = false
 	root.add_child(app)
 	await create_timer(8).timeout
 	var home_fog := app.archive.fluid.field_texture().get_image()
+	@warning_ignore("integer_division") # Pixel region uses the whole upper half.
 	var upper_fog := home_fog.get_region(Rect2i(0, 0, home_fog.get_width(), home_fog.get_height() / 2))
 	_check(_density_sum(upper_fog) < _density_sum(home_fog) * .1, "resting home mist occupies the lower room instead of a full-screen veil")
 	await _capture("home")
@@ -427,6 +475,7 @@ func _visual_clip() -> void:
 	var gesture := PackedVector2Array([Vector2(440, 740), Vector2(1450, 740), Vector2(1450, 280), Vector2(470, 280)])
 	var last := gesture[0]
 	for i in 19:
+		@warning_ignore("integer_division") # Six samples per gesture segment.
 		var segment := mini(i / 6, 2)
 		var fraction := float(i - segment * 6) / 6.0
 		var at := gesture[segment].lerp(gesture[segment + 1], fraction)
@@ -974,6 +1023,7 @@ func _smoke_budget() -> void:
 			await _settle()
 			timings.sort()
 			_check(not timings.is_empty(), "GPU compute timestamps available")
+			@warning_ignore("integer_division") # Select the middle recorded sample.
 			var report := {"quality": quality, "sources": count, "samples": timings.size(), "median_ms": timings[timings.size() / 2] / 1000000.0, "p95_ms": timings[int(timings.size() * .95)] / 1000000.0}
 			reports.append(report)
 			print("Fluid smoke budget: ", JSON.stringify(report))
@@ -1019,6 +1069,7 @@ func _expansion_transport() -> void:
 		await RenderingServer.frame_post_draw
 	var after := field.field_texture().get_image()
 	_check(_density_spread(after)>initial_spread*1.5,"blast transports existing compact gas outwards")
+	@warning_ignore("integer_division") # Integer coordinate of the central pixel.
 	var center := Vector2i(field.fog_grid_size/2)
 	var diluted := field.density_texture().get_image().get_pixelv(center)
 	print("Expansion transport: ", {"spread_before":initial_spread,"spread_after":_density_spread(after),"center_density":diluted.r,"center_emission":diluted.a})

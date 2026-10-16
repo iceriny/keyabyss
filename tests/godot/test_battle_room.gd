@@ -21,6 +21,7 @@ func _run() -> void:
 	root.size = Vector2i(1920, 1080)
 	app = load("res://app/main.tscn").instantiate() as KeyabyssApp
 	app.settings = AppSettings.new(evidence.path_join("settings.cfg"))
+	app.settings.completed_lessons.assign(AppSettings.TUTORIAL_IDS)
 	app.settings.sound = DisplayServer.get_name() != "headless"
 	app.settings.ambience = DisplayServer.get_name() != "headless"
 	app.vocabulary = VocabularyRepository.new(evidence.path_join("vocabulary"))
@@ -157,8 +158,8 @@ func _record(event: Dictionary) -> void:
 
 func _key(code: int, unicode: int = 0, pressed: bool = true) -> void:
 	var event := InputEventKey.new()
-	event.keycode = code
-	event.physical_keycode = code
+	event.keycode = code as Key
+	event.physical_keycode = code as Key
 	event.unicode = unicode
 	event.pressed = pressed
 	Input.parse_input_event(event)

@@ -170,7 +170,7 @@ func untrack(id: StringName) -> void:
 
 
 func _sync_battle_motion() -> void:
-	var seen: Array[StringName] = [&"player"]
+	var seen: Dictionary[StringName, bool] = {&"player": true}
 	var fraction := Engine.get_physics_interpolation_fraction()
 	var tint := light_color
 	track_body(&"player", battle.previous_player_position.lerp(battle.player_position, fraction) * size, Vector2.ONE * 24, 0, tint, .25)
@@ -178,19 +178,19 @@ func _sync_battle_motion() -> void:
 		_dodge_trail.position = _motion[&"player"].point
 	for enemy in battle.enemies:
 		if enemy.alive():
-			seen.append(enemy.id)
+			seen[enemy.id] = true
 			track_body(enemy.id, enemy.previous_position.lerp(enemy.position, fraction) * size, Vector2.ONE * enemy.radius, 0, Color("a6bcd9"), 0)
 	for projectile in battle.projectiles:
 		var id := StringName("projectile_%d" % projectile.get_instance_id())
-		seen.append(id)
+		seen[id] = true
 		track_body(id, projectile.previous_position.lerp(projectile.position, fraction) * size, Vector2.ONE * projectile.radius, 0, tint, .8, false, 18.0, 1.0, FluidInfluence.BodyShape.POINTED)
 	for spirit in battle.spirits:
 		var id := StringName("spirit_%d" % spirit.get_instance_id())
-		seen.append(id)
+		seen[id] = true
 		track_body(id, spirit.previous_position.lerp(spirit.position, fraction) * size, Vector2.ONE * 18, 0, tint, .4, false)
 	for threat in battle.threats:
 		var id := StringName("threat_%d" % threat.get_instance_id())
-		seen.append(id)
+		seen[id] = true
 		track_body(id, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), BattleThreatOverlay.threat_color(threat), .5 if threat.heavy else .38, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
 	for id in _motion.keys():
 		if id not in seen:
@@ -224,27 +224,37 @@ func _before_step(delta: float) -> void:
 		var speed := distance / delta
 		var angular := angle_difference(motion.previous_angle, motion.angle) / delta
 		var radius := maxf(extent.x, extent.y)
+		var emits_wake: bool = motion.solid or speed > 1.0 or absf(angular) > .01
+		var emits_plume: bool = battle != null and not motion.solid and speed > 12.0
 		for i in maxi(1, path.points.size() - 1):
-			while motion.wakes.size() <= i:
-				motion.wakes.append(FluidInfluence.new())
-				motion.plumes.append(FluidInfluence.new())
 			var start := path.points[i]
 			var end := path.points[mini(i + 1, path.points.size() - 1)]
 			var segment := end - start
+			if segment.length_squared() > 0.0:
+				motion.flow_angle = segment.angle()
+			# The solver already truncates at this capacity, after higher-priority
+			# emitters. Keep path/heading history and accounting, skip unused geometry.
+			if _scene_sources.size() >= FluidGPU.MAX_INFLUENCES:
+				_omitted_scene_sources += int(emits_wake) + int(emits_plume)
+				continue
+			while motion.wakes.size() <= i:
+				motion.wakes.append(FluidInfluence.new())
+				motion.plumes.append(FluidInfluence.new())
 			var velocity := segment.normalized() * speed
 			var wake := motion.wakes[i] as FluidInfluence
 			FluidMotionPath.sweep(wake, start, end, radius * 3.2)
-			if segment.length_squared() > 0.0:
-				motion.flow_angle = segment.angle()
 			wake.rotation = motion.flow_angle
 			wake.displacement_radius = radius
 			wake.body_shape = motion.body_shape
 			wake.velocity = velocity
 			wake.coupling = motion.gain * FluidMotionPath.exposure(segment.length(), distance, radius)
 			wake.spin = clampf(angular, -4, 4)
-			if motion.solid or speed > 1.0 or absf(angular) > .01:
+			if emits_wake:
 				_scene_sources.append(wake)
-			if battle != null and not motion.solid and speed > 12.0:
+			if emits_plume:
+				if _scene_sources.size() >= FluidGPU.MAX_INFLUENCES:
+					_omitted_scene_sources += 1
+					continue
 				var width := clampf(maxf(extent.x, extent.y) * .8, 18, 80)
 				var plume := motion.plumes[i] as FluidInfluence
 				var rear_length := radius * (wake.body_aspect if wake.body_shape == FluidInfluence.BodyShape.POINTED else 1.0)

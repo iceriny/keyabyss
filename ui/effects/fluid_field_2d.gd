@@ -46,6 +46,7 @@ var _configured_quality := -1
 var _configured_mask: Texture2D
 var _particle_bindings: Array[Dictionary] = []
 var _scene_sources: Array[FluidInfluence] = []
+var _omitted_scene_sources := 0
 var _emitters: Array[FluidEmitter2D] = []
 const LIGHT_BUDGET := [3, 5, 8]
 var scene_quality: int = 2
@@ -147,7 +148,10 @@ func bind_particles(particles: GPUParticles2D, coupling: float = 1.8) -> void:
 	var flow := FluidParticleFlow.create(motion, coupling)
 	flow.set_shader_parameter("field_texture", field_texture())
 	_particle_bindings.append({"node": weakref(particles), "motion": motion, "flow": flow})
-	_sync_particles()
+	# Initialize only this emitter. Existing bindings are maintained once per frame.
+	if quality != Quality.OFF and not reduced_motion:
+		particles.process_material = flow
+		flow.sync(self, motion)
 
 
 func _sync_particles() -> void:
@@ -246,6 +250,7 @@ func _process_field(delta: float) -> void:
 	var dt := minf(delta, 0.05)
 	_clock += dt
 	_scene_sources.clear()
+	_omitted_scene_sources = 0
 	_before_step(dt)
 	var inputs: Array[FluidInfluence] = []
 	for emitter in _emitters:
@@ -266,7 +271,7 @@ func _process_field(delta: float) -> void:
 		packed.append_array(_impulses[i].packed(fog_color))
 	for i in obstacle_count:
 		packed.append_array(obstacles[i].packed(fog_color))
-	dropped_influences += inputs.size() - source_count + _impulses.size() - impulse_count + obstacles.size() - obstacle_count
+	dropped_influences += inputs.size() - source_count + _impulses.size() - impulse_count + obstacles.size() - obstacle_count + _omitted_scene_sources
 	_impulses.clear()
 	var parameters := PackedFloat32Array([size.x, size.y, dt, 0,
 		wind.x, wind.y, buoyancy, vorticity,

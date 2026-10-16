@@ -7,6 +7,7 @@ signal completed
 signal cue_requested(cue: String)
 
 var reduced_motion := false
+var chapter_entry := true
 @export var startup := false
 var ready_to_reveal := false
 @onready var feedback: LoadingFeedback = $LoadingFeedback
@@ -46,12 +47,14 @@ func _ready() -> void:
 		$Seal.texture = book.seal
 		$Seal.material = preload("res://ui/materials/book_seal.tres").duplicate()
 		($Seal.material as ShaderMaterial).set_shader_parameter("tint", book.color)
-		$Book.text = book.title
-		$Chapter.text = stage_text
+		$Book.text = stage_text
+		$Book.add_theme_font_size_override("font_size", 38 if chapter_entry else 26)
+		$Chapter.text = book.title
+		_surface.set_shader_parameter("ceremony", 1.0 if chapter_entry else 0.28)
 	resized.connect(_layout)
 	_layout()
 	if not startup:
-		cue_requested.emit("ui.ritualRise" if not reduced_motion else "ui.confirm")
+		cue_requested.emit("ui.ritualRise" if chapter_entry and not reduced_motion else "ui.confirm")
 
 
 func _layout() -> void:
@@ -65,6 +68,11 @@ func _layout() -> void:
 	$Chapter.size.x = size.x
 	feedback.position = Vector2(size.x * 0.5 - 200.0, size.y * 0.5 + 188.0)
 	feedback.size = Vector2(400, 90)
+	if not startup and not chapter_entry:
+		$Seal.position = size * 0.5 - Vector2(52, 82)
+		$Seal.size = Vector2(104, 104)
+		$Book.position.y = size.y * 0.5 + 38
+		$Chapter.position.y = size.y * 0.5 + 80
 	if startup:
 		var unit := size.y / 1080.0
 		$LoadingRunes.position = Vector2(size.x * 0.5, size.y * 0.385)
@@ -81,7 +89,7 @@ func _layout() -> void:
 
 
 func _process(delta: float) -> void:
-	var duration := 0.36 if reduced_motion else 2.4
+	var duration := 0.36 if reduced_motion else (2.4 if startup else (2.8 if chapter_entry else 1.15))
 	elapsed += delta
 	if not ready_to_reveal:
 		elapsed = minf(elapsed, duration * 0.44)
@@ -112,7 +120,7 @@ func _process(delta: float) -> void:
 		feedback.show()
 		# Present the waiting state before instantiating the battle.
 		_handover.call_deferred()
-		if not reduced_motion:
+		if chapter_entry and not reduced_motion:
 			cue_requested.emit("ui.ritualChime")
 	if progress >= 1.0:
 		set_process(false)

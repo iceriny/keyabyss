@@ -97,10 +97,11 @@ func sync_frame(view_size: Vector2, fraction: float) -> void:
 	var point := projectile.previous_position.lerp(projectile.position, fraction) * world_size
 	head.position = point
 	head.rotation = (projectile.velocity * world_size / BattleSession.ARENA_SIZE).angle()
-	var samples := PackedVector2Array()
-	for at in projectile.trail:
-		samples.append(at * world_size)
-	_set_trail(samples, point)
+	if trail.visible:
+		var samples := PackedVector2Array()
+		for at in projectile.trail:
+			samples.append(at * world_size)
+		_set_trail(samples, point)
 	if embers.visible:
 		embers.position = point
 		embers.rotation = head.rotation
@@ -108,10 +109,11 @@ func sync_frame(view_size: Vector2, fraction: float) -> void:
 
 
 func retire() -> void:
-	var samples := PackedVector2Array()
-	for at in projectile.trail:
-		samples.append(at * world_size)
-	_set_trail(samples, projectile.position * world_size)
+	if trail.visible:
+		var samples := PackedVector2Array()
+		for at in projectile.trail:
+			samples.append(at * world_size)
+		_set_trail(samples, projectile.position * world_size)
 	head.hide()
 	embers.emitting = false
 	var fade := BattleVisualClock.tween_for(self)

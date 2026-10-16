@@ -100,6 +100,9 @@ func _input(event: InputEvent) -> void:
 			back_requested.emit()
 		return
 	if context == Context.TYPING:
+		# Explicit lesson buttons own these shortcuts through native GUI routing.
+		if key.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_F1, KEY_F3]:
+			return
 		get_viewport().set_input_as_handled()
 		if key.keycode == KEY_CTRL and not key.alt_pressed and not key.meta_pressed:
 			action_requested.emit(&"assist")
