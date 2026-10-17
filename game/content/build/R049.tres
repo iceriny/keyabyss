@@ -24,6 +24,7 @@ rules = Array[ExtResource("2")]([SubResource("Rule")])
 permits = PackedStringArray()
 max_stacks = 1
 allowed_books = PackedStringArray("spirit")
+requires_capabilities = PackedStringArray("spirit", "mark")
 requires_all = PackedStringArray("R039", "R011")
 numbers = {&"resonance": 8}
 stack_values = PackedStringArray()

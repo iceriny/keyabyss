@@ -40,7 +40,7 @@ const TEXT := {
 	"雷鸣终章": "雷鸣终式：领域持续施加感电，期间每次施法都附带电爆。",
 	"千纸夜行": "纸灵终式：唤醒纸灵并使其狂暴，提高攻击、飞行速度和攻击频率。",
 }
-const CAPABILITIES := {"cold": "寒气", "freeze": "冻结", "frost_shatter": "冻裂", "burn": "灼烧", "fire_field": "火雾", "chain": "电链", "shock": "感电", "spirit": "纸灵", "mark": "易伤", "shield": "护盾", "overload": "过载", "area": "范围攻击", "copy": "复制"}
+const CAPABILITIES := {"cold": "寒气", "freeze": "冻结", "frost_shatter": "冻裂", "burn": "灼烧", "fire_field": "火雾", "chain": "电链", "shock": "感电", "spirit": "纸灵", "mark": "易伤", "shield": "护盾", "overload": "过载", "area": "范围攻击", "copy": "复制", "frost_projectile": "冰锥", "ice_mist": "闪避冰雾", "frost_ultimate": "冰河纪事", "flame_spell": "火弹", "flame_seal": "焰印", "dodge_flame": "闪避火场", "flame_ultimate": "焚世余烬", "burn_spread": "灼烧传播", "storm_arc": "主电链", "storm_burst": "电爆", "dodge_storm": "闪避雷径", "storm_ultimate": "雷鸣终章", "spirit_mark": "纸灵标记施法", "spirit_cross": "交叉斩", "paper_crane": "符文纸鹤", "spirit_ultimate": "千纸夜行"}
 static var _pattern: RegEx
 
 

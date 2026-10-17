@@ -278,6 +278,10 @@ func _ultimates_and_sources() -> void:
 		session.runtime.contact(effect, session.enemies[0], session.player_position)
 	_check(sourced.runtime.actual_damage_q > source_plain.runtime.actual_damage_q, "legal cross-book source enables real cold-paper synergy")
 	_check(sourced.enemies[0].shock == 4 and source_plain.enemies[0].shock == 0, "legal shock source enables paper attack to apply shock")
+	var new_source := _session(&"spirit", ["P025"])
+	var strike := new_source.runtime.take_spirit_attack(new_source.enemies[0], new_source.player_position)
+	new_source.runtime.contact(strike, new_source.enemies[0], new_source.player_position)
+	_check(new_source.enemies[0].shock == 4 and "shock" in new_source.compiled_build.capabilities(), "paper shock alone supplies and actually applies its state without an older shock relic")
 
 
 func _snapshot_install() -> void:

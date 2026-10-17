@@ -35,11 +35,6 @@ func _diagnose(definition: RelicDefinition, qualification: Dictionary, context: 
 	if content_id == &"G006":
 		if int(context.get("shortest", 0)) < 1 or int(context.get("shortest", 0)) > 4: diagnostics.append("VOCABULARY_NEEDS_SHORT_WORD")
 		if int(context.get("longest", 0)) < 7: diagnostics.append("VOCABULARY_NEEDS_LONG_WORD")
-	if content_id == &"G027":
-		var state_sources := 0
-		for capability in ["cold", "burn", "shock", "mark"]:
-			if capability in qualification.capabilities: state_sources += 1
-		if state_sources < 2: diagnostics.append("MISSING_CAPABILITY:第二种元素状态")
 	return diagnostics
 
 func candidates(selection: BuildSelection, context: Dictionary = {}) -> PackedStringArray:

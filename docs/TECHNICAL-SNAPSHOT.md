@@ -85,7 +85,7 @@ Ctrl 补字只由 R017「通灵羽毛笔」的 `assist` 规则解锁，每 4 个
 | `ui/archive_stage.gd`、`archive_theme.gd` | 场景独立 HDR 合成、WorldEnvironment 柔光与全幅选书折射；原生文字不受模糊；共享 Theme 实例随当前 accent 渐变。减少动态按需刷新一帧并在渲染后停更 |
 | `ui/guide_content.gd` | 输入、防御、道具、远征、成长和连续挑战说明，四条直观遗物示例与词输入练习入口 |
 | `ui/practice_page.gd` | 实际词会话、三词选择、渐进词长、本次人工字符／错字统计；不发成长收入 |
-| `game/build/`、`game/content/build/`、`game/content/relics/` | 四书、97件正式遗物与99件退池兼容定义、能力／层数拓扑、互斥、参数上限、构筑快照、逐份资产；旧字段只供存档解析 |
+| `game/build/`、`game/content/build/`、`game/content/relics/` | 四书、97件正式遗物与99件退池兼容定义；`RelicDefinition`统一效果参数的来源依赖／授予、资源中的特殊机制前置和多来源数量，编译／报价／取得共用拓扑；互斥、参数上限、构筑快照、逐份资产；旧字段只供存档解析 |
 | `game/progression/`、`game/persistence/save_repository.gd` | 自动线性成长、普通／God 隔离、正式获取、经验事实、奖励与保存成功后发布的事务；旧版本首次迁移保留独立原档副本 |
 | `game/session/run_session.gd`、`run_state_codec.gd` | 九页流程、简单路线、保存边界、跨页遗物周期、去重结算、通关保留遗物升档及最高档周目 |
 | `RunSession.suspend_battle`、`restart`、`isolate_to_god` | 单份活动存档、窗口关闭保存、页级恢复、重开原子归档；隐藏 God 接管先保护普通档锁，再写隔离档，失败可重试且不重复成长 |

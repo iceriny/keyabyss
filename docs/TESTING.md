@@ -36,6 +36,8 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 按实际修改选择入口。目录检查覆盖97件正式遗物的独立可达性、全部196件定义读取、99件退池实例／已发报价兼容、前置／互斥、数值双层有效增量、用途差异和单次报价编译；机制检查按效果族通过正式取得、编译、人工输入与真实命中验证，包括状态消费、派生隔离、真实闪避落点、场到期、分裂一次性、电链回击、纸鹤攻防与跨页周期，不逐件建立测试。`test_s2_run.gd`默认分支包含旧构筑拒绝恢复时保留原档、失效奖励免费重建、保存失败与重试及事务去重。
 
+来源前置回归复用`test_relic_catalog.gd -- --expanded`：审计全部正式定义的来源／依赖，逐项去除所需能力，脱离法书限制与标签验证效果参数本身的约束；覆盖同屏未取得来源不能授权、无根循环、不同能力数量、四书各12次连续实际报价／事务取得。每次运行输出`.temp/relic-sources-<PID>.json`供核对全目录；源头与消费方按机制族测试，不为单件另建平衡脚本。`test_relic_effects.gd`包含没有其他感电遗物时纸灵实际附加感电；`test_s2_run.gd`检查含失效觉醒、多状态消费和纸灵增强的旧报价免费重建及重开不二次刷新。
+
 ```powershell
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_catalog.gd', '--', '--expanded')
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_effects.gd')

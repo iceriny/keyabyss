@@ -14,5 +14,7 @@ tags = PackedStringArray("burn", "spread")
 max_stacks = 2
 rarity = &"uncommon"
 allowed_books = PackedStringArray("flame")
+requires_capabilities = PackedStringArray("flame_spell")
+grants_capabilities = PackedStringArray("burn")
 supported = true
 stage = &"relics-3"

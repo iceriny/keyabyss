@@ -14,5 +14,6 @@ tags = PackedStringArray("fire_field")
 max_stacks = 2
 rarity = &"common"
 allowed_books = PackedStringArray("flame")
+requires_capabilities = PackedStringArray("flame_spell", "fire_field")
 supported = true
 stage = &"relics-3"

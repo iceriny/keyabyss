@@ -4,10 +4,10 @@ extends RefCounted
 const BOOKS := [&"frost", &"flame", &"storm", &"spirit"]
 const Q := 1024
 const BOOK_CAPABILITIES := {
-	&"frost": ["cold", "freeze", "frost_shatter", "area"],
-	&"flame": ["burn", "fire_field", "area"],
-	&"storm": ["chain", "shock", "area"],
-	&"spirit": ["spirit", "mark"],
+	&"frost": ["cold", "freeze", "frost_shatter", "area", "frost_projectile", "ice_mist", "frost_ultimate", "shield"],
+	&"flame": ["burn", "fire_field", "area", "flame_spell", "flame_seal", "dodge_flame", "flame_ultimate"],
+	&"storm": ["chain", "shock", "area", "storm_arc", "storm_burst", "dodge_storm", "storm_ultimate"],
+	&"spirit": ["spirit", "mark", "spirit_mark", "spirit_cross", "paper_crane", "spirit_ultimate"],
 }
 const RESTORED_RELICS: Array[StringName] = [&"R001", &"R002", &"R003", &"R004", &"R005", &"R006", &"R007", &"R008", &"R009", &"R010", &"R011", &"R012", &"R013", &"R014", &"R015", &"R016", &"R017", &"R018", &"R019", &"R020", &"R021", &"R022", &"R023", &"R024", &"R025", &"R026", &"R027", &"R028", &"R029", &"R030", &"R031", &"R032", &"R033", &"R034", &"R035", &"R036", &"R037", &"R038", &"R039", &"R040", &"R041", &"R042", &"R043", &"R044", &"R045", &"R046", &"R047", &"R048", &"R049", &"R050", &"R051", &"R052", &"R053", &"R054", &"R055", &"R056", &"R057", &"R058"]
 # Legacy snapshot readers still name these tokens; compilation does not use them.
@@ -71,7 +71,7 @@ func compile(selection: BuildSelection) -> BuildCompileResult:
 			var definition := catalog.get_definition(StringName(id)) as RelicDefinition
 			if not definition.eligibility(selection.book_id, stacks, active_stacks, capabilities, groups).is_empty(): continue
 			active_stacks[definition.id] = stacks[definition.id]
-			for capability in definition.grants_capabilities:
+			for capability in definition.provided_capabilities():
 				if capability not in capabilities: capabilities.append(capability)
 			pending.remove_at(pending.find(id))
 			activated = true

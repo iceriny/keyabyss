@@ -14,5 +14,6 @@ tags = PackedStringArray("mark")
 max_stacks = 2
 rarity = &"common"
 allowed_books = PackedStringArray("spirit")
+requires_capabilities = PackedStringArray("mark")
 supported = true
 stage = &"relics-3"

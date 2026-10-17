@@ -10,6 +10,7 @@ description = "亲手连续完成一个短词咒（不超过4字母）和一个�
 numbers = {&"shield": 2}
 stack_values = PackedStringArray("shield")
 choice_role = &"mechanism"
+grants_capabilities = PackedStringArray("shield")
 tags = PackedStringArray("empowered")
 max_stacks = 2
 rarity = &"common"

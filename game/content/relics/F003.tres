@@ -13,5 +13,6 @@ tags = PackedStringArray("pierce")
 max_stacks = 1
 rarity = &"uncommon"
 allowed_books = PackedStringArray("frost")
+requires_capabilities = PackedStringArray("frost_projectile")
 supported = true
 stage = &"relics-3"

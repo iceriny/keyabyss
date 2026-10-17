@@ -14,5 +14,6 @@ tags = PackedStringArray("chain")
 max_stacks = 2
 rarity = &"common"
 allowed_books = PackedStringArray("storm")
+requires_capabilities = PackedStringArray("storm_arc")
 supported = true
 stage = &"relics-3"

@@ -23,6 +23,7 @@ func _run() -> void:
 	_test_catalog()
 	_test_retired_compatibility()
 	_test_current_qualification()
+	_test_effect_source_contract()
 	_test_qualification()
 	_test_capability_topology()
 	_test_modifiers()
@@ -182,19 +183,19 @@ func _follow_acquisition_plan(selection: BuildSelection, plan: Array[Dictionary]
 		if str(task.capability) in compiled.build.capabilities(): return _follow_acquisition_plan(selection, tail)
 		for id in reach_compiler.catalog.relic_ids(include_retired_sources):
 			var source := reach_compiler.catalog.get_definition(StringName(id)) as RelicDefinition
-			if str(task.capability) not in source.grants_capabilities: continue
+			if str(task.capability) not in source.provided_capabilities(): continue
 			var branch: Array[Dictionary] = [{"kind": "relic", "id": source.id, "wanted": 1, "ancestors": task.ancestors}]
 			branch.append_array(tail)
 			var reached := _follow_acquisition_plan(selection, branch)
 			if reached != null: return reached
 		return null
-	if task.kind == "state_sources":
+	if task.kind == "capability_count":
 		var compiled := reach_compiler.compile(selection)
 		var sources := 0
-		for capability in ["cold", "burn", "shock", "mark"]:
+		for capability: String in task.options:
 			if capability in compiled.build.capabilities(): sources += 1
-		if sources >= 2: return _follow_acquisition_plan(selection, tail)
-		for capability in ["cold", "burn", "shock", "mark"]:
+		if sources >= int(task.minimum): return _follow_acquisition_plan(selection, tail)
+		for capability: String in task.options:
 			if capability in compiled.build.capabilities(): continue
 			var branch: Array[Dictionary] = [{"kind": "capability", "capability": capability, "ancestors": task.ancestors}, task]
 			branch.append_array(tail)
@@ -221,12 +222,110 @@ func _follow_acquisition_plan(selection: BuildSelection, plan: Array[Dictionary]
 		prerequisites.append({"kind": "relic", "id": required, "wanted": definition.required_stacks[required], "ancestors": ancestors})
 	if not definition.requires_any.is_empty():
 		prerequisites.append({"kind": "any", "ids": definition.requires_any, "ancestors": ancestors})
-	for capability in definition.requires_capabilities:
+	for capability in definition.required_capabilities():
 		prerequisites.append({"kind": "capability", "capability": capability, "ancestors": ancestors})
-	if id == &"G027": prerequisites.append({"kind": "state_sources", "ancestors": ancestors})
+	for group in definition.required_capability_groups():
+		prerequisites.append({"kind": "capability_count", "options": group.options, "minimum": group.minimum, "ancestors": ancestors})
 	prerequisites.append({"kind": "acquire", "id": id, "wanted": task.wanted})
 	prerequisites.append_array(tail)
 	return _follow_acquisition_plan(selection, prerequisites)
+
+
+func _test_effect_source_contract() -> void:
+	var catalog := BuildCatalog.new()
+	var service := AcquisitionService.new(BuildCompiler.new(catalog))
+	var empty_stacks: Dictionary[StringName, int] = {}
+	var audit: Array[Dictionary] = []
+	for key in RelicParameters.CAPS:
+		_check(RelicDefinition.SOURCE_REQUIREMENTS.has(key) or RelicDefinition.SOURCE_GRANTS.has(key) or RelicDefinition.SOURCE_GROUPS.has(key) or str(key) in RelicDefinition.SOURCE_INDEPENDENT, "Every supported effect parameter explicitly classifies its source contract: " + str(key))
+	# Ignore book restrictions here on purpose: effect requirements must stand on
+	# their own instead of depending on a matching book ID or a cosmetic tag.
+	for id in catalog.relic_ids():
+		var relic := catalog.get_definition(StringName(id)) as RelicDefinition
+		var requirements := relic.required_capabilities()
+		var sources := relic.provided_capabilities()
+		for key in relic.modifiers:
+			for required: String in RelicDefinition.SOURCE_REQUIREMENTS.get(key, []):
+				_check(required in requirements, "%s/%s inherits its effect source requirement" % [id, key])
+		for required in requirements:
+			var available := requirements.duplicate()
+			for option in relic.requires_any_capabilities:
+				if option != required and option not in available: available.append(option)
+			available.remove_at(available.find(required))
+			var messages := relic.eligibility(&"frost", empty_stacks, empty_stacks, available, {}, true)
+			_check("MISSING_CAPABILITY:" + required in messages, "%s cannot bypass a missing %s effect source" % [id, required])
+			var only_self := sources.duplicate()
+			if required not in only_self:
+				messages = relic.eligibility(&"frost", empty_stacks, empty_stacks, only_self, {}, true)
+				_check("MISSING_CAPABILITY:" + required in messages, "%s output cannot manufacture its unrelated %s input" % [id, required])
+		audit.append({"id": id, "title": relic.title, "requires": requirements, "groups": relic.required_capability_groups(), "provides": sources})
+	for key in RelicDefinition.SOURCE_REQUIREMENTS:
+		var relic := RelicDefinition.new()
+		relic.id = &"FIXTURE_MODIFIER"
+		relic.modifiers[key] = 1
+		var messages := relic.eligibility(&"flame", empty_stacks, empty_stacks, PackedStringArray(), {}, true)
+		for required: String in RelicDefinition.SOURCE_REQUIREMENTS[key]:
+			_check("MISSING_CAPABILITY:" + required in messages, "A new untagged %s modifier still needs %s" % [key, required])
+	# Produce a source through normal acquisition; ownership labels alone do not count.
+	var selection := BuildSelection.new()
+	selection.book_id = &"flame"
+	_check(not service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "Flame starts without a shield source")
+	var acquired := RunTransactionService.new(service.compiler).prepare_acquisition(selection, RunCombatState.new(), &"G006", "source-test:shield", "", WORD_CONTEXT)
+	_check(acquired.diagnostics.is_empty(), "A real self-contained word trigger can be acquired first")
+	_check(service.evaluate(acquired.selection, &"G008", WORD_CONTEXT).eligible, "The acquired word shield unlocks shield enhancements")
+	selection = BuildSelection.new()
+	selection.book_id = &"spirit"
+	acquired = RunTransactionService.new(service.compiler).prepare_acquisition(selection, RunCombatState.new(), &"P025", "source-test:shock", "", WORD_CONTEXT)
+	_check(acquired.diagnostics.is_empty() and "shock" in acquired.build.capabilities(), "Spirit-triggered shock is a source after actual acquisition")
+	_check(service.evaluate(acquired.selection, &"G027", WORD_CONTEXT).eligible, "Spirit mark plus acquired shock unlock a two-state consumer")
+	var invalid := BuildSelection.new()
+	invalid.assets[&"G027"] = 1
+	_check(not service.compiler.compile(invalid).success(), "Direct compilation cannot bypass a two-source consumer")
+	var mixed := RelicDefinition.new()
+	mixed.id = &"FIXTURE_MIXED"
+	mixed.modifiers[&"mixed_pct"] = 10
+	_check(not mixed.eligibility(&"frost", empty_stacks, empty_stacks, PackedStringArray(["cold"]), {}, true).is_empty(), "A new untagged mixed-state modifier still requires two different sources")
+	_check(mixed.eligibility(&"frost", empty_stacks, empty_stacks, PackedStringArray(["cold", "mark"]), {}, true).is_empty(), "Two real sources unlock a mixed-state modifier")
+	mixed.modifiers.clear()
+	mixed.requires_any_capabilities = ["mark", "mark"]
+	mixed.minimum_capabilities = 2
+	_check(not mixed.eligibility(&"spirit", empty_stacks, empty_stacks, PackedStringArray(["mark"]), {}, true).is_empty(), "Repeated capability names cannot pay a two-source prerequisite twice")
+	var source_catalog := _fixture_catalog()
+	var upgrade := _relic(source_catalog, &"XUPGRADE")
+	upgrade.modifiers[&"fire_field_rate_pct"] = 10
+	upgrade.tags = ["fire_field"]
+	var producer := _relic(source_catalog, &"ZSOURCE")
+	producer.grants_capabilities = ["fire_field"]
+	var source_service := AcquisitionService.new(BuildCompiler.new(source_catalog))
+	selection = BuildSelection.new()
+	selection.book_id = &"storm"
+	_check(not source_service.evaluate(selection, upgrade.id, WORD_CONTEXT).eligible and "XUPGRADE" not in source_service.candidates(selection, WORD_CONTEXT), "A fire-fog tag does not grant a fire-fog source")
+	var offer_rng := RandomNumberGenerator.new()
+	offer_rng.seed = 17
+	_check("XUPGRADE" not in source_service.offered(selection, WORD_CONTEXT, offer_rng), "An unowned source offered alongside cannot qualify its enhancement")
+	selection.assets[producer.id] = 1
+	_check(source_service.evaluate(selection, upgrade.id, WORD_CONTEXT).eligible, "A declared provider unlocks a later-sorted enhancement")
+	selection.assets[upgrade.id] = 1
+	producer.requires_capabilities = ["fixture-cycle"]
+	upgrade.grants_capabilities = ["fixture-cycle"]
+	_check(not source_service.compiler.compile(selection).success(), "Implicit modifier requirements also reject source cycles")
+	for book in BuildCompiler.BOOKS:
+		selection = BuildSelection.new()
+		selection.book_id = book
+		for step in 12:
+			var rng := RandomNumberGenerator.new()
+			rng.seed = (str(book) + ":sources:" + str(step)).hash()
+			var offered := service.offered(selection, WORD_CONTEXT, rng)
+			for id in offered:
+				_check(service.evaluate(selection, StringName(id), WORD_CONTEXT).eligible, "Real %s offer %d obeys all effect-source prerequisites: %s" % [book, step, id])
+			if offered.is_empty(): break
+			acquired = RunTransactionService.new(service.compiler).prepare_acquisition(selection, RunCombatState.new(), StringName(offered[0]), "%s:%d" % [book, step], "", WORD_CONTEXT)
+			_check(acquired.diagnostics.is_empty(), "Sequential %s acquisition %d uses the same prerequisite contract" % [book, step])
+			selection = acquired.selection
+	var output_path := "res://.temp/relic-sources-%d.json" % OS.get_process_id()
+	var output := FileAccess.open(output_path, FileAccess.WRITE)
+	output.store_string(JSON.stringify(audit, "\t"))
+	print("RELIC_SOURCE_AUDIT ", output_path)
 
 
 func _test_qualification() -> void:
@@ -445,7 +544,9 @@ func _test_expansion_supply() -> void:
 		var definition := catalog.get_definition(id) as RelicDefinition
 		_check(str(id) in catalog.relic_ids() and definition.choice_role == roles[id], "Expanded reward keeps its actual supply role: " + str(id))
 	var selection := BuildSelection.new()
-	_check(not service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "Shield capacity still needs an actual shield source")
+	_check(service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "Native frost ultimate is an actual shield source")
+	selection.book_id = &"flame"
+	_check(not service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "Shield capacity still needs an actual shield source on other books")
 	selection.assets[&"R039"] = 1
 	_check(service.evaluate(selection, &"G008", WORD_CONTEXT).eligible, "An existing formal shield identity supplies the capacity prerequisite")
 	selection = BuildSelection.new()
@@ -454,7 +555,7 @@ func _test_expansion_supply() -> void:
 	selection.book_id = &"storm"
 	_check(service.evaluate(selection, &"T014", WORD_CONTEXT).eligible, "Native charging can obtain charged shield without retired charge prerequisites")
 	selection.book_id = &"spirit"
-	_check(not service.evaluate(selection, &"P025", WORD_CONTEXT).eligible, "Cross-book paper shock still requires its state source")
+	_check(service.evaluate(selection, &"P025", WORD_CONTEXT).eligible, "Paper shock creates its own shock and only requires actual spirits")
 	selection.assets[&"G025"] = 1
 	_check(service.evaluate(selection, &"P025", WORD_CONTEXT).eligible, "Formal shock annotation unlocks the paper shock synergy")
 	selection.assets[&"P013"] = 2

@@ -14,5 +14,6 @@ tags = PackedStringArray("dodge")
 max_stacks = 2
 rarity = &"common"
 allowed_books = PackedStringArray("storm")
+grants_capabilities = PackedStringArray("shock")
 supported = true
 stage = &"relics-3"

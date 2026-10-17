@@ -66,7 +66,7 @@ static func requirements_text(relic: RelicDefinition, catalog: BuildCatalog) -> 
 		if not relic.required_stacks.has(StringName(id)): required.append(_names(id, catalog))
 	for id in relic.required_stacks:
 		required.append("%s%d层" % [_names(str(id), catalog), relic.required_stacks[id]])
-	for capability in relic.requires_capabilities:
+	for capability in relic.required_capabilities():
 		required.append(GameTerms.CAPABILITIES.get(capability, capability) + "来源")
 	var lines: PackedStringArray = []
 	if not required.is_empty(): lines.append("需要：" + "、".join(required))
@@ -74,6 +74,10 @@ static func requirements_text(relic: RelicDefinition, catalog: BuildCatalog) -> 
 		var any_names: PackedStringArray = []
 		for id in relic.requires_any: any_names.append(_names(id, catalog))
 		lines.append("需要其中一件：" + "、".join(any_names))
+	for group in relic.required_capability_groups():
+		var options: PackedStringArray = []
+		for capability: String in group.options: options.append(GameTerms.CAPABILITIES.get(capability, capability))
+		lines.append("需要至少%d种来源：%s" % [group.minimum, "、".join(options)])
 	return "\n".join(lines)
 
 
@@ -88,6 +92,8 @@ static func diagnostics(messages: PackedStringArray, catalog: BuildCatalog) -> S
 			"MISSING_RELIC_STACKS": line = "需要%s%s层。" % [_names(argument.get_slice(":", 0), catalog), argument.get_slice(":", 1)]
 			"MISSING_CAPABILITY": line = "需要先取得" + GameTerms.CAPABILITIES.get(argument, argument) + "来源。"
 			"MISSING_ANY_RELIC":
+				line = requirements_text(catalog.get_definition(StringName(argument)) as RelicDefinition, catalog)
+			"MISSING_CAPABILITY_OPTIONS":
 				line = requirements_text(catalog.get_definition(StringName(argument)) as RelicDefinition, catalog)
 			"EXCLUSIVE_RELIC": line = "不能与" + _names(argument, catalog) + "同时持有。"
 			"MAX_STACKS": line = _names(argument, catalog) + "已达层数上限。"

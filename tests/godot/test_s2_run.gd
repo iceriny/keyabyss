@@ -268,7 +268,7 @@ func _test_relic_restore_compatibility() -> void:
 		var old := _reward_fixture("compat-offer-" + old_phase)
 		old.phase = old_phase
 		old.attempt_id = "compat-offer:attempt"
-		old.offer.candidates = ["R045"]
+		old.offer.candidates = ["R045", "G027", "R005"]
 		old = _save_legacy_checkpoint(old)
 		var obsolete_id: String = old.profile.run_checkpoint.offer.id
 		var reward_state: Dictionary = old.profile.run_checkpoint.rewards.duplicate(true)

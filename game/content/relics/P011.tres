@@ -14,5 +14,7 @@ tags = PackedStringArray("crane")
 max_stacks = 2
 rarity = &"common"
 allowed_books = PackedStringArray("spirit")
+requires_capabilities = PackedStringArray("paper_crane")
+grants_capabilities = PackedStringArray("spirit", "spirit_cross")
 supported = true
 stage = &"relics-3"
