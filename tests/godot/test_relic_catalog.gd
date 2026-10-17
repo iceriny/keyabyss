@@ -45,6 +45,10 @@ func _test_catalog() -> void:
 	var sorted := ids.duplicate()
 	sorted.sort()
 	_check(ids == sorted, "Relic directory has stable ID ordering")
+	var awakening := catalog.get_definition(&"R048") as RelicDefinition
+	_check(awakening.allowed_books == PackedStringArray(["spirit"]), "Packed resources retain the awakening's book restriction")
+	_check(awakening.requires_all == PackedStringArray(["R005", "R035"]), "Packed resources retain the awakening's required relic identities")
+	_check((catalog.get_definition(&"R039") as RelicDefinition).grants_capabilities == PackedStringArray(["shield"]), "Packed resources retain the acquired shield source")
 	for index in range(1, 59):
 		_check("R%03d" % index in all_ids, "Baseline definition survives: R%03d" % index)
 	reach_compiler = BuildCompiler.new(catalog)

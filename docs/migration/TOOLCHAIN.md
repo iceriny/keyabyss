@@ -39,7 +39,7 @@ Windows 预设已启用 Shader Baker。`export`／`export-release` 使用真实 
 
 独立导出 EXE 从包含同名 PCK 的目录启动；锁定的官方模板不支持 `--script`、`--main-pack` 或 `--path`，这些参数留给编辑器引擎命令。成品验证使用 `keyabyss.console.exe` 捕获输出并等待退出，不以 GUI EXE 调用测试脚本。
 
-导出前把 `.godot/exported/` 的转换缓存移入 `.delete/godot-export-cache/<唯一目录>/`，重新生成二进制资源；导入与 shader 缓存保留。锁定引擎曾将 `PackedInt32Array = []` 的导出属性漏掉，修正声明后旧转换缓存仍会保留坏数据。导出后确认托管目录中的 `Keyabyss.dll` 存在，增量编译当前 `Debug`，再用编辑器引擎加载成品 PCK 执行 Boss 检查脚本，核对三个 Boss 的五档生成和血量。该检查验证打包资源及当前 Debug 程序集，不执行成品发布程序集。
+导出前把 `.godot/exported/` 的转换缓存移入 `.delete/godot-export-cache/<唯一目录>/`，重新生成二进制资源；导入与 shader 缓存保留。锁定引擎曾漏存以 `[]` 初始化的 `PackedInt32Array` 和 `PackedStringArray` 导出属性；内容定义改用隐式空值声明，修正声明后旧转换缓存仍须重建。导出后确认托管目录中的 `Keyabyss.dll` 存在，增量编译当前 `Debug`，再用编辑器引擎加载成品 PCK 执行 Boss 与遗物目录检查，核对三个 Boss 的五档生成／血量，以及遗物法书限制、来源和实际获取。该检查验证打包资源及当前 Debug 程序集，不执行成品发布程序集。
 
 成品另用 `keyabyss.console.exe --quit-after 1800 --max-fps 60 --headless --log-file <绝对日志路径>` 做启动烟测，给首次词库索引的后台准备留出时间；原240帧曾在工作线程完成前退出，不能据此判断成品启动失败。Debug 和 Release 均生成控制台包装器。APPDATA 暂时隔离到 `.temp/export-smoke/<唯一目录>/appdata`，结束后恢复环境变量。检查退出码、输出和日志，要求出现 `Keyabyss ready` 且没有显式引擎错误；日志保留在该证据目录。短时启动通过不等于发布 C# 算法已经执行，仍需相应成品玩法验证。任一检查失败时不将产物视为可分发包。Debug 包附带“启动并记录.cmd”和“无诊断对照.cmd”，可回收目标设备日志。
 

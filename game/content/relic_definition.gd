@@ -52,19 +52,19 @@ const SOURCE_INDEPENDENT: PackedStringArray = [
 @export var opportunity_cost: int = 1
 @export var rarity: StringName = &"common"
 @export var choice_role: StringName = &"power"
-@export var tags: PackedStringArray = []
-@export var preferred_books: PackedStringArray = []
-@export var requires_capabilities: PackedStringArray = []
-@export var requires_any_capabilities: PackedStringArray = []
+@export var tags: PackedStringArray
+@export var preferred_books: PackedStringArray
+@export var requires_capabilities: PackedStringArray
+@export var requires_any_capabilities: PackedStringArray
 @export var minimum_capabilities: int = 1
-@export var grants_capabilities: PackedStringArray = []
+@export var grants_capabilities: PackedStringArray
 @export var required_stacks: Dictionary[StringName, int] = {}
 @export var exclusive_group: StringName
 @export var modifiers: Dictionary[StringName, int] = {}
 @export var numbers: Dictionary[StringName, float] = {}
 @export var rule_numbers: Dictionary[StringName, StringName] = {}
-@export var stack_values: PackedStringArray = []
-@export var compound_values: PackedStringArray = []
+@export var stack_values: PackedStringArray
+@export var compound_values: PackedStringArray
 
 
 func number(key: StringName, stacks: int = 1) -> float:

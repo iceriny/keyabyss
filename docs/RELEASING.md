@@ -121,7 +121,7 @@ if ($exportExitCode -ne 0) { throw '导出失败，停止发布。' }
 2. 拒绝根工程的 MCP Autoload；将 `.godot/exported/` 旧转换缓存移入 `.delete/`，重新导出资源。
 3. 通过真实 RenderingDevice 导出并烘焙 shader。人工核对日志中 `baking_shaders` 完成及 `res://.godot/shader_cache/` 入包记录；当前脚本不把这两项作为独立断言。
 4. 检查 `data_Keyabyss_windows_x86_64/Keyabyss.dll` 存在。
-5. 用编辑器引擎加载成品 PCK，执行三个 Boss、五档生成与血量检查。此项使用当前 Debug 程序集，不证明成品 Release 程序集已执行。
+5. 用编辑器引擎加载成品 PCK，执行三个 Boss 的五档生成／血量检查和遗物目录 `--expanded` 检查，核对法书限制、来源、前置、叠层及实际获取。此项使用当前 Debug 程序集，不证明成品 Release 程序集已执行。
 6. 从输出目录调用 `keyabyss.console.exe`，以隔离 APPDATA 执行 1800 帧 headless 启动烟测；要求正常退出、出现 `Keyabyss ready` 且无显式引擎错误。日志位置会输出为 `.temp/export-smoke/<唯一目录>/`。
 7. 复制 `LICENSE`、`THIRD_PARTY_NOTICES.md`、引擎／.NET／词库许可与词库来源；Debug 包再复制 `tools/godot/playtest/` 中的使用说明与诊断工具。
 

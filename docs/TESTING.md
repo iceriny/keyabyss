@@ -38,6 +38,8 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 来源前置回归复用`test_relic_catalog.gd -- --expanded`：审计全部正式定义的来源／依赖，逐项去除所需能力，脱离法书限制与标签验证效果参数本身的约束；覆盖同屏未取得来源不能授权、无根循环、不同能力数量、四书各12次连续实际报价／事务取得。每次运行输出`.temp/relic-sources-<PID>.json`供核对全目录；源头与消费方按机制族测试，不为单件另建平衡脚本。`test_relic_effects.gd`包含没有其他感电遗物时纸灵实际附加感电；`test_s2_run.gd`检查含失效觉醒、多状态消费和纸灵增强的旧报价免费重建及重开不二次刷新。
 
+`export`／`export-release` 同时用编辑器引擎加载成品PCK执行目录 `--expanded`；其中显式核对千纸军团的法书／前置与行距尺的护盾来源，防止资源转换漏存packed数组。源码通过不能替代这项包内检查；它使用当前Debug程序集，成品EXE仍需独立启动和交互检查。
+
 ```powershell
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_catalog.gd', '--', '--expanded')
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_effects.gd')

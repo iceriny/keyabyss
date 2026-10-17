@@ -173,6 +173,12 @@ if ($Task -in @('import', 'export', 'export-release')) {
         if ($bossExitCode -ne 0 -or ($bossCheck | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
             throw 'Exported Boss resource check failed; this package is not ready to publish.'
         }
+        $relicCheck = & $godotPath --headless --path $projectRoot --main-pack (Join-Path $outputDirectory 'keyabyss.pck') --script (Join-Path $projectRoot 'tests/godot/test_relic_catalog.gd') -- --expanded 2>&1
+        $relicExitCode = $LASTEXITCODE
+        $relicCheck | ForEach-Object { Write-Output $_ }
+        if ($relicExitCode -ne 0 -or ($relicCheck | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
+            throw 'Exported relic resource check failed; this package is not ready to publish.'
+        }
         $consoleWrapper = Join-Path $outputDirectory 'keyabyss.console.exe'
         if (-not (Test-Path -LiteralPath $consoleWrapper -PathType Leaf)) {
             throw "Export smoke check requires the console wrapper: $consoleWrapper"
