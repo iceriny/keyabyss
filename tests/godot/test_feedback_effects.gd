@@ -3,9 +3,38 @@ extends "res://tests/godot/test_s1_application.gd"
 var _gpu_frame := -1
 var _ice_samples: Array[Dictionary] = []
 
+class OriginalGrowth extends FrostGrowth:
+	func step(count: int, delta: float) -> void:
+		if iteration >= max_steps and surface_age >= 10.0: return
+		var list := _rd.compute_list_begin()
+		_rd.compute_list_bind_compute_pipeline(list, _pipeline)
+		for i in mini(count, max_steps - iteration):
+			_dispatch(list, 0, 0)
+			_dispatch(list, 1, 1)
+			iteration += 1
+		_rd.compute_list_bind_compute_pipeline(list, _surface_pipeline)
+		var pairs := maxi(1, ceili(delta * maxf(1.0, pow(float(grid) / GRID, 2.0)) / .05))
+		for part in pairs:
+			_surface_dispatch(list, 0, delta / (pairs * 2.0), false, part == 0)
+			_surface_dispatch(list, 1, delta / (pairs * 2.0), false, false)
+		surface_age += delta
+		_rd.compute_list_end()
+
+class CountedGrowth extends FrostGrowth:
+	var dispatches := 0
+	var enclosure_updates := 0
+	func _surface_dispatch(list: int, side: int, delta: float, resetting: bool, refresh_enclosure: bool = true) -> void:
+		dispatches += 1
+		if refresh_enclosure and not resetting: enclosure_updates += 1
+		super._surface_dispatch(list, side, delta, resetting, refresh_enclosure)
+
 
 func _run() -> void:
 	assert(DisplayServer.get_name() != "headless")
+	if "--growth-reuse" in OS.get_cmdline_user_args():
+		await _check_growth_reuse()
+		quit(0 if failures == 0 else 1)
+		return
 	if "--measure" in OS.get_cmdline_user_args():
 		await _measure_ice_only()
 		return
@@ -22,8 +51,17 @@ func _run() -> void:
 			if argument.begins_with("--book="): filter = argument.trim_prefix("--book=")
 		if not filter.is_empty() and str(book_id) != filter: continue
 		var session := BattleSession.new()
-		var words: Array[VocabularyEntry] = [VocabularyEntry.new("lumen", "光"), VocabularyEntry.new("ember", "余烬"), VocabularyEntry.new("quill", "羽笔")]
+		var words: Array[VocabularyEntry] = []
+		for word: String in FirstVisitSetup.WORDS:
+			words.append(VocabularyEntry.new(word, "表现测试"))
 		session.start_baseline(book_id, words, "normal", "feedback-effects", false)
+		if book_id == &"frost":
+			var selection := BuildSelection.new()
+			selection.book_id = book_id
+			selection.assets[&"R032"] = 1
+			var compiled := BuildCompiler.new().compile(selection)
+			assert(compiled.diagnostics.is_empty(), str(compiled.diagnostics))
+			session.install_prepared_build(compiled.build)
 		for index in session.enemies.size():
 			var enemy := session.enemies[index]
 			enemy.position = Vector2(0.65 + index * 0.07, 0.5)
@@ -86,12 +124,12 @@ func _run() -> void:
 			_check(peak > .2 and gas.get_pixel(0,0).g < .001, "fuel generates local heat with a cold exterior")
 		if book_id == &"frost":
 			for index in 5:
-				var threat := BattleThreat.new()
+				session._emit_enemy_threat(session.enemies[0], 0.0, index, 120.0, 5.0)
+				var threat: BattleThreat = session.threats.back()
 				threat.position = Vector2(0.6 + index * 0.035, 0.2 + index * 0.08)
 				threat.previous_position = threat.position
 				threat.velocity = Vector2(-120, 60)
 				threat.damage_q = 1
-				session.threats.append(threat)
 			await create_timer(0.4).timeout
 			await _capture("hostile-light-tracers")
 			for kind: StringName in [&"rune", &"ink"]:
@@ -100,7 +138,7 @@ func _run() -> void:
 				session.typing.select_target(pickup.id)
 				for character in session.typing.word: session.typing.feed(character)
 				await create_timer(0.05).timeout
-				_check(pickup.consumed and page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"pickup"), "pickup completion emits a visual pulse: " + str(kind))
+				_check(pickup.consumed and page.visuals._pulses.any(func(pulse: Dictionary) -> bool: return pulse.kind == &"item_burst"), "pickup completion emits a visual pulse: " + str(kind))
 				await _capture("pickup-" + str(kind))
 				await create_timer(0.22).timeout
 				await _capture("pickup-" + str(kind) + "-spread")
@@ -151,6 +189,35 @@ func _run() -> void:
 	quit(0 if failures == 0 else 1)
 
 
+func _check_growth_reuse() -> void:
+	for resolution in [128, 384]:
+		var original := OriginalGrowth.new()
+		var current := CountedGrowth.new()
+		root.add_child(original)
+		root.add_child(current)
+		for growth: FrostGrowth in [original, current]:
+			RenderingServer.call_on_render_thread(growth.configure.bind(resolution, 31415, resolution == 384))
+		await RenderingServer.frame_post_draw
+		for phase in 5:
+			var count := 32 if phase in [0, 3] else 0
+			var delta := 0.0 if phase == 2 else 1.0 / 60.0
+			if phase == 4:
+				for growth: FrostGrowth in [original, current]: RenderingServer.call_on_render_thread(growth.reset.bind(false))
+			var previous_dispatches := current.dispatches
+			var previous_enclosures := current.enclosure_updates
+			for tick in 20:
+				for growth: FrostGrowth in [original, current]: RenderingServer.call_on_render_thread(growth.step.bind(count, delta))
+			await RenderingServer.frame_post_draw
+			_check(original.texture.get_image().get_data() == current.texture.get_image().get_data(), "crystal lattice unchanged at %d phase %d" % [resolution, phase])
+			_check(original.surface_texture.get_image().get_data() == current.surface_texture.get_image().get_data(), "film pixels unchanged at %d phase %d" % [resolution, phase])
+			if phase == 1: _check(current.enclosure_updates == previous_enclosures, "unchanged lattice reuses enclosure")
+			if phase == 2: _check(current.dispatches == previous_dispatches, "paused crystal dispatches nothing")
+		original.queue_free()
+		current.queue_free()
+		await _settle()
+	print("Growth reuse: %d checks, %d failures" % [checks.size(), failures])
+
+
 func _capture(label: String) -> void:
 	# Freeze at the requested effect age; the UI capture helper waits through short impacts.
 	var was_paused := paused
@@ -163,6 +230,8 @@ func _capture(label: String) -> void:
 			picture.set_pixel(x, y, source.get_pixel(x, y).linear_to_srgb())
 	picture.save_png(evidence.path_join(label + ".png"))
 	pictures.append(label)
+	# Consume synchronous readback/conversion time while combat remains paused.
+	await RenderingServer.frame_post_draw
 	paused = was_paused
 
 

@@ -1,6 +1,7 @@
 shader_type canvas_item;
 render_mode unshaded;
 #include "res://ui/materials/element_medium.gdshaderinc"
+#include "res://ui/materials/fire_fallback.gdshaderinc"
 
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear;
 uniform vec2 extent;
@@ -10,6 +11,7 @@ uniform float radius;
 uniform bool cold = true;
 uniform bool mist = false;
 uniform bool gravity = false;
+uniform bool fire_fallback = false;
 uniform float age = 0.0;
 uniform float clock = 0.0;
 uniform float motion = 1.0;
@@ -60,6 +62,10 @@ void fragment() {
 			float spiral = sin(atan(local.y,local.x)*3.0 + dist*0.07 + clock*0.6);
 			detail = pow(max(spiral,0.0),8.0)*core*0.15;
 			tint = vec3(0.46,0.6,1.05);
+		} else if (fire_fallback) {
+			vec4 fire = field_fire(local / radius, clock);
+			tint = fire.rgb;
+			haze = fire.a * strength;
 		}
 	}
 	float alpha = mask*life*(haze+detail);

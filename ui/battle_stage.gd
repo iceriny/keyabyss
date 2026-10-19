@@ -38,6 +38,7 @@ static func arena_point(at: Vector2, view_size: Vector2) -> Vector2:
 
 
 func set_quality(quality: int) -> void:
+	periphery.set_shader_parameter("quality", quality)
 	periphery.set_shader_parameter("softness", [8.0, 13.0, 18.0][quality])
 	output.material = periphery
 	environment.glow_enabled = quality > 0

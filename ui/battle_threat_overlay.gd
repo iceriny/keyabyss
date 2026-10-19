@@ -8,15 +8,23 @@ var reduced_motion: bool = false
 var _melee_cues: Dictionary[StringName, ColorRect] = {}
 var _orb: GradientTexture2D
 var _head_layer := Node2D.new()
+var low_ribbons := MeshInstance2D.new()
 var _heads: Dictionary[BattleThreat, ThreatHead] = {}
 const MELEE_CUE = preload("res://ui/scenes/melee_attack_visual.tscn")
 
 
 func _ready() -> void:
 	_orb = preload("res://ui/effects/threat_orb.tres")
-	# Parent warnings first, then heads, then the existing melee cue children.
+	# All danger heads stay in front of crossing tails, on the crisp canvas.
+	var surface := ShaderMaterial.new()
+	surface.shader = preload("res://ui/materials/battle_ribbon.gdshader")
+	surface.set_shader_parameter("physical_width", true)
+	low_ribbons.material = surface
+	low_ribbons.modulate.a = 0.65
+	add_child(low_ribbons)
+	move_child(low_ribbons, 0)
 	add_child(_head_layer)
-	move_child(_head_layer, 0)
+	move_child(_head_layer, 1)
 
 
 func _process(_delta: float) -> void:
@@ -47,19 +55,18 @@ func _process(_delta: float) -> void:
 
 func _sync_heads() -> void:
 	var live: Dictionary[BattleThreat, bool] = {}
-	if quality > 0:
-		var fraction := Engine.get_physics_interpolation_fraction()
-		var scale_factor := size.x / BattleSession.ARENA_SIZE.x
-		for threat in session.threats:
-			live[threat] = true
-			if not _heads.has(threat):
-				var head := ThreatHead.new()
-				head.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
-				head.painter = self
-				head.threat = threat
-				_head_layer.add_child(head)
-				_heads[threat] = head
-			_heads[threat].sync(size, fraction, scale_factor)
+	var fraction := Engine.get_physics_interpolation_fraction()
+	var scale_factor := size.x / BattleSession.ARENA_SIZE.x
+	for threat in session.threats:
+		live[threat] = true
+		if not _heads.has(threat):
+			var head := ThreatHead.new()
+			head.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+			head.painter = self
+			head.threat = threat
+			_head_layer.add_child(head)
+			_heads[threat] = head
+		_heads[threat].sync(size, fraction, scale_factor)
 	for threat in _heads.keys():
 		if not live.has(threat):
 			_heads[threat].queue_free()
@@ -126,23 +133,6 @@ func _draw() -> void:
 			var angle := (target - from).angle()
 			draw_arc(from, enemy.radius + 12, -PI * 0.5, -PI * 0.5 + TAU * urgency, 64, tint, 1.8, true)
 			draw_arc(from, enemy.radius + 17, angle - 0.32, angle + 0.32, 20, Color("ffdbb0", urgency), 2.0, true)
-	for threat in session.threats if quality == 0 else []:
-		var point := threat.previous_position.lerp(threat.position, fraction) * size
-		var tint := threat_color(threat)
-		var radius := threat.radius * scale_factor
-		if quality == 0:
-			var samples := PackedVector2Array()
-			for sample in threat.trail: samples.append(sample * size)
-			var curved := not is_zero_approx(threat.curvature)
-			var tail := MotionTrail.build(samples, threat.position * size, point, (180.0 if curved else 64.0) * scale_factor, false, 32)
-			if curved:
-				_draw_curved_tail(tail, tint, scale_factor)
-			else:
-				for index in range(1, tail.size()):
-					var strength := float(index) / tail.size()
-					draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.1), radius * 2.2 * strength, true)
-					draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.5), maxf(1.0, radius * 0.5 * strength), true)
-			_draw_threat_head(self, threat, point, radius, tint, maxf(1.0, scale_factor) / radius, (threat.velocity * size / BattleSession.ARENA_SIZE).angle())
 	DebugLog.end(&"battle.threat_draw", started)
 
 
@@ -228,6 +218,7 @@ class ThreatHead extends Node2D:
 	var tint := Color.TRANSPARENT
 	var edge := 0.0
 	var style: StringName
+	var detail := -1
 
 	func sync(view_size: Vector2, fraction: float, scale_factor: float) -> void:
 		position = threat.previous_position.lerp(threat.position, fraction) * view_size
@@ -237,27 +228,12 @@ class ThreatHead extends Node2D:
 		var next_tint := BattleThreatOverlay.threat_color(threat)
 		var next_edge := maxf(1.0, scale_factor) / radius
 		var next_style: StringName = &"heavy" if threat.heavy else threat.visual_style
-		if tint != next_tint or edge != next_edge or style != next_style:
+		if tint != next_tint or edge != next_edge or style != next_style or detail != painter.quality:
 			tint = next_tint
 			edge = next_edge
 			style = next_style
+			detail = painter.quality
 			queue_redraw()
 
 	func _draw() -> void:
 		painter._draw_threat_head(self, threat, Vector2.ZERO, 1.0, tint, edge, 0.0)
-
-
-func _draw_curved_tail(tail: PackedVector2Array, tint: Color, scale_factor: float) -> void:
-	var length := 0.0
-	for index in range(1, tail.size()):
-		length += tail[index - 1].distance_to(tail[index])
-	var traveled := 0.0
-	var gold := tint.lerp(Color("c9ae72"), 0.4)
-	# A thin, dim history follows real positions; only the round head marks danger.
-	for index in range(1, tail.size()):
-		traveled += tail[index - 1].distance_to(tail[index])
-		var strength := pow(traveled / length, 1.5)
-		if quality > 0 and not reduced_motion:
-			draw_line(tail[index - 1], tail[index], Color(tint, strength * 0.025), 10.0 * scale_factor, true)
-		draw_line(tail[index - 1], tail[index], Color(gold, strength * 0.075), 4.0 * scale_factor, true)
-		draw_line(tail[index - 1], tail[index], Color(gold, strength * 0.44), (0.6 + strength * 0.8) * scale_factor, true)

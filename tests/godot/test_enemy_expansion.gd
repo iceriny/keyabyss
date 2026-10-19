@@ -406,7 +406,7 @@ func _feedback_window() -> void:
 	page.visuals.fluid.set_options(0, true)
 	await _advance(0.15)
 	await _capture(directory, "projectiles-low-reduced")
-	_check(page.warnings._heads.is_empty(), "low quality returns to original interleaved tails and heads")
+	_check(page.warnings._heads.size() == battle.threats.size(), "low quality caches every danger head in front of continuous tails")
 	for shot in battle.threats: shot.reflected = true
 	await _advance(0.15)
 	await _capture(directory, "projectiles-reflected")
@@ -425,6 +425,22 @@ func _feedback_window() -> void:
 		_check(page.visuals.threat_glow.ribbons.mesh == null, "removed threats release their emissive ribbon geometry")
 		_check(page.warnings._heads.is_empty(), "cleared threats release cached head nodes")
 		await _capture(directory, "projectiles-cleared")
+		_check(page.visuals._world_capture.copy_mode == BackBufferCopy.COPY_MODE_DISABLED, "idle battle does not copy the full world for absent waves")
+		# Settle after synchronous image readback before timing a short effect.
+		await _advance(.1)
+		page.visuals._add_wave(Vector2(.5, .5), .5, .003)
+		await _advance(.05)
+		_check(page.visuals._world_capture.copy_mode == BackBufferCopy.COPY_MODE_VIEWPORT and page.visuals._wave_plane.visible, "shockwave enables its background copy before drawing")
+		await _advance(.6)
+		_check(page.visuals._world_capture.copy_mode == BackBufferCopy.COPY_MODE_DISABLED, "expired shockwave releases the background copy")
+		var victim := battle.enemies[0]
+		victim.hp_q = 0
+		await _advance(.2)
+		_check(page.visuals._actors.has(victim.id), "dead actor retains its dissolve animation")
+		await _advance(.5)
+		_check(not page.visuals._actors.has(victim.id) and battle.enemies.has(victim), "completed visual retires while rule history stays intact")
+		await _advance(.1)
+		_check(not page.visuals._actors.has(victim.id), "dead history does not recreate retired actor nodes")
 	page.queue_free()
 	await process_frame
 	print("Enemy feedback evidence: ", ProjectSettings.globalize_path(directory))
@@ -466,7 +482,8 @@ func _check_ribbon_geometry() -> void:
 				vertices.append_array(PackedVector2Array([tail[index] + side, tail[index] - side]))
 				var fade := Color(tint, tint.a * pow(progress, 1.35))
 				colors.append_array(PackedColorArray([fade, fade]))
-				uvs.append_array(PackedVector2Array([Vector2(progress, 0), Vector2(progress, 1)]))
+				var half_width := width * lerpf(.08, 1.0, progress)
+				uvs.append_array(PackedVector2Array([Vector2(half_width, -half_width), Vector2(half_width, half_width)]))
 				if index < tail.size() - 1:
 					var at := base + index * 2
 					indices.append_array(PackedInt32Array([at, at + 1, at + 2, at + 1, at + 3, at + 2]))
@@ -480,9 +497,10 @@ func _check_ribbon_geometry() -> void:
 		reference.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var expected := reference.surface_get_arrays(0)
 		var result := actual.surface_get_arrays(0)
-		_check(result[Mesh.ARRAY_INDEX] == expected[Mesh.ARRAY_INDEX], "ribbon topology and narrow/wide ordering match reference")
-		if result[Mesh.ARRAY_VERTEX].size() != vertices.size():
-			_check(false, "ribbon point count matches reference")
+		_check(result[Mesh.ARRAY_INDEX].slice(0, indices.size()) == expected[Mesh.ARRAY_INDEX], "ribbon topology and narrow/wide ordering match reference")
+		_check((result[Mesh.ARRAY_INDEX] as PackedInt32Array).slice(indices.size()).count(0) == result[Mesh.ARRAY_INDEX].size() - indices.size(), "unused capacity cannot retain triangles from removed tails")
+		if result[Mesh.ARRAY_VERTEX].size() < vertices.size():
+			_check(false, "ribbon buffer covers all active points")
 			continue
 		var matches := true
 		for index in vertices.size():
@@ -493,6 +511,48 @@ func _check_ribbon_geometry() -> void:
 			matches = matches and maxf(absf(color_error.r), maxf(absf(color_error.g), maxf(absf(color_error.b), absf(color_error.a)))) < .004
 		_check(matches, "batched ribbon retains sampled path, width, UV and HDR color")
 	print("Ribbon geometry maximum pixel error: ", maximum_error)
+	# At a tapered quad's center the old normalized UV departs from 0.5.
+	# Physical signed distance must instead stay zero on either triangle.
+	for along: float in [.01, .05, .1, .3, .5, .9]:
+		var physical_uv: Vector2
+		var old_across: float
+		if along <= 1.0 / 14.0:
+			var weights := Vector2((1.0 - 14.0 * along) * .5, (1.0 + 12.0 * along) * .5)
+			physical_uv = Vector2(1, -1) * weights.x + Vector2(1, 1) * weights.y + Vector2(13, -13) * along
+			old_across = weights.y * 2.0 - 1.0
+		else:
+			var end_positive := (14.0 * along - 1.0) / 26.0
+			physical_uv = Vector2(1, 1) * (1.0 - along) + Vector2(13, -13) * (along - end_positive) + Vector2(13, 13) * end_positive
+			old_across = (1.0 - along + end_positive) * 2.0 - 1.0
+		_check(absf(physical_uv.y / physical_uv.x) < .00001 and absf(old_across) > .01, "taper interpolation fixes the optical center displacement on both triangles")
+	_check_parallel_ribbons(256)
+	_check_parallel_ribbons(1024)
+
+
+func _check_parallel_ribbons(batch_count: int) -> void:
+	var geometry: RefCounted = preload("res://ui/effects/ThreatRibbonGeometry.cs").new()
+	var batch_samples := PackedVector2Array()
+	var batch_offsets := PackedInt32Array([0])
+	var batch_heads := PackedVector2Array()
+	var batch_radii := PackedFloat64Array()
+	var batch_limits := PackedFloat64Array()
+	var batch_tints := PackedColorArray()
+	for index in batch_count:
+		for point in 3 + index % 11:
+			batch_samples.append(Vector2(index * 10 + point * 3, sin(point * .3) * 20))
+		batch_offsets.append(batch_samples.size())
+		batch_heads.append(batch_samples[-1])
+		batch_radii.append(3 + index % 5)
+		batch_limits.append(120)
+		batch_tints.append(Color.from_hsv(float(index) / batch_count, .4, 1))
+	geometry.call("SetWorkerLimit", 1)
+	var serial_mesh: ArrayMesh = geometry.call("Build", batch_samples, batch_offsets, batch_heads, batch_heads, batch_radii, batch_limits, batch_tints, Vector2.ONE, true)
+	var serial_arrays := serial_mesh.surface_get_arrays(0)
+	geometry.call("SetWorkerLimit", 4)
+	var parallel_mesh: ArrayMesh = geometry.call("Build", batch_samples, batch_offsets, batch_heads, batch_heads, batch_radii, batch_limits, batch_tints, Vector2.ONE, true)
+	var parallel_arrays := parallel_mesh.surface_get_arrays(0)
+	for channel in [Mesh.ARRAY_VERTEX, Mesh.ARRAY_COLOR, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_INDEX]:
+		_check(serial_arrays[channel] == parallel_arrays[channel], "parallel geometry and transparent ordering match serial bytes")
 
 
 func _check_trail_glow(battle: BattleSession, page: BattlePage, directory: String) -> void:
@@ -513,7 +573,7 @@ func _check_trail_glow(battle: BattleSession, page: BattlePage, directory: Strin
 	for shot in battle.threats:
 		var id := StringName("threat_%d" % shot.get_instance_id())
 		_check(fluid._motion.has(id), "moving threat remains registered with shared fluid")
-		var motion: Dictionary = fluid._motion[id]
+		var motion: FluidAtmosphere.Motion = fluid._motion[id]
 		_check(motion.plumes.any(func(plume: FluidInfluence) -> bool: return plume.density > 0.0), "moving threat continues injecting an advected fluid plume")
 		_check(motion.color == BattleThreatOverlay.threat_color(shot), "fluid illumination follows projectile identity")
 		_check(((shot.position - shot.trail[0]) * battle.ARENA_SIZE).length() > 100.0, "slow straight and curved shots retain distance-based tail history")

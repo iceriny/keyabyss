@@ -42,8 +42,10 @@ var _voice_priority: Dictionary[AudioStreamPlayer2D, int] = {}
 
 
 func _ready() -> void:
+	var started := DebugLog.begin()
 	for cue: String in CUE_GAIN:
 		_streams[cue] = SoundBank.load_cue(cue)
+	DebugLog.end(&"battle.create.audio", started)
 
 
 func present(event: Dictionary, viewport_size: Vector2) -> void:

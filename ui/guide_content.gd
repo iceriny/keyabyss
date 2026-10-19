@@ -50,6 +50,7 @@ static func build(parent: VBoxContainer, book: BookPresentation, on_practice: Ca
 	_add_demonstration(parent, accent_labels, accent_rules)
 	_add_practice(parent, accent_rules, on_practice)
 	parent.theme_changed.connect(_update_accents.bind(parent, fallback, accent_labels, accent_rules))
+	ArchiveTheme.watch_colors(parent)
 	_update_accents(parent, fallback, accent_labels, accent_rules)
 
 
@@ -181,7 +182,8 @@ static func _accent_label(parent: Node, value: String, size: int, font: Font, ac
 
 
 static func _update_accents(parent: VBoxContainer, fallback: Color, labels: Array[Dictionary], rules: Array[Dictionary]) -> void:
-	var accent := parent.get_theme_color("accent", "Archive") if parent.has_theme_color("accent", "Archive") else fallback
+	var palette := ArchiveTheme.inherited_by(parent)
+	var accent := palette.get_color("accent", "Archive") if palette != null else (parent.get_theme_color("accent", "Archive") if parent.has_theme_color("accent", "Archive") else fallback)
 	for item: Dictionary in labels:
 		var label: Label = item.label
 		label.add_theme_color_override("font_color", (item.base as Color).lerp(accent, item.weight))

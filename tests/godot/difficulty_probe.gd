@@ -105,7 +105,7 @@ func _probe(scenario: Array, book: StringName) -> void:
 		if round_index + 1 < round_count:
 			var before := session.selection.to_dict()
 			var saved_characters := session.profile.manual_characters
-			var continued := session.continue_challenge()
+			var continued: bool = session.call("continue_challenge")
 			_check(continued, "earned ascent: " + session.last_error)
 			if not continued: break
 			before.erase("base_hp")
@@ -123,7 +123,7 @@ func _probe(scenario: Array, book: StringName) -> void:
 
 func _probe_round(session: RunSession, entries: Array[VocabularyEntry], prepared: VocabularyIndex, profile_name: String, label: String) -> bool:
 	for serial in 9:
-		var request := session.start_room(entries, prepared)
+		var request: BattleStartRequest = session.call("start_room", entries, prepared)
 		_check(request != null, "probe departure: " + session.last_error)
 		if request == null: return false
 		battle = BattleSession.new()
@@ -135,7 +135,7 @@ func _probe_round(session: RunSession, entries: Array[VocabularyEntry], prepared
 		var hp_trace := {"last_q": battle.player_hp_q, "lost_q": 0, "restored_q": 0}
 		var events: Dictionary = {}
 		var start_failures := failures
-		battle.progression_changed.connect(func() -> void: _check(session.observe_battle(battle), "probe checkpoint: " + session.last_error))
+		battle.progression_changed.connect(func() -> void: _check(session.call("observe_battle", battle), "probe checkpoint: " + session.last_error))
 		battle.event_committed.connect(func(event: Dictionary) -> void:
 			var kind := str(event.get("kind", ""))
 			events[kind] = int(events.get(kind, 0)) + 1
@@ -185,12 +185,12 @@ func _probe_round(session: RunSession, entries: Array[VocabularyEntry], prepared
 		var victory := battle.result == 1
 		report["combat_result"] = result_name
 		report["end_relics"] = _new_relics(session, 0)
-		if battle.result != 0: _check(session.finish_room(battle), "probe settlement: " + session.last_error)
+		if battle.result != 0: _check(session.call("finish_room", battle), "probe settlement: " + session.last_error)
 		battle.free()
 		battle = null
 		if victory and serial < 8:
 			_probe_rewards(session, label)
-			_check(session.take_route("rest"), "probe rest route: " + session.last_error)
+			_check(session.call("take_route", "rest"), "probe rest route: " + session.last_error)
 		if victory: report["end_relics"] = _new_relics(session, 0)
 		if failures > start_failures:
 			result_name = "flow_error"
@@ -213,7 +213,7 @@ func _probe_rewards(session: RunSession, label: String, live: BattleSession = nu
 		if session.phase not in ["REWARD", "BATTLE_REWARD"]: return
 		var candidates: Array = session.offer.candidates.duplicate()
 		if candidates.is_empty():
-			_check(session.supply_reward(str(session.offer.id), live), "probe supply")
+			_check(session.call("supply_reward", str(session.offer.id), live), "probe supply")
 			continue
 		var priorities: Array = ["R001", "R039", "R012", "R024", "R016", "R019"]
 		priorities.append_array(book_preferences[session.selection.book_id])
@@ -223,7 +223,7 @@ func _probe_rewards(session: RunSession, label: String, live: BattleSession = nu
 				chosen = StringName(id)
 				break
 		reward_trace.append({"scenario": label, "difficulty": session.options.difficulty, "room": session.room_serial, "round": session.facts.get("round_index", 0), "offered": candidates, "chosen": str(chosen)})
-		if not session.take_reward(chosen, str(session.offer.id), "", live):
+		if not session.call("take_reward", chosen, str(session.offer.id), "", live):
 			_check(false, "probe acquisition: " + session.last_error)
 			return
 	_check(false, "probe reward queue exhausted")

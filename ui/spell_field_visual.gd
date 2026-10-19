@@ -8,6 +8,10 @@ var particles: GPUParticles2D
 var particle_motion: ParticleProcessMaterial
 var lights: Array[PointLight2D] = []
 var ice: IcePatch
+var budget: BattleVisualBudget
+var birth_quality := 2
+var birth_reduced := false
+var _particle_capacity := 0
 var _born: float
 var _pulses: int
 var _ending := false
@@ -34,7 +38,10 @@ func _ready() -> void:
 	surface.set_shader_parameter("gravity", field.effect.kind == &"gravity_field")
 	particles = $Motes
 	particle_motion = particles.process_material as ParticleProcessMaterial
-	particles.amount = 40 if cold else 54
+	_particle_capacity = budget.grant_particles(roundi((40 if cold else 54) * VisualQuality.PARTICLE_DENSITY[birth_quality])) if not birth_reduced else 0
+	if _particle_capacity > 0:
+		particles.amount = _particle_capacity
+		budget.track_particles(particles, _particle_capacity)
 	particles.lifetime = 1.0 if cold else 0.8
 	var fragment := particles.material as ShaderMaterial
 	fragment.set_shader_parameter("cold", cold)
@@ -50,9 +57,10 @@ func _ready() -> void:
 		if field.effect.kind == &"gravity_field": light.color = Color("ae91d9")
 		light.height = field.radius * .5
 		lights.append(light)
+		budget.register_light(light, 2)
 
 
-func sync_frame(world_size: Vector2, clock: float, quality: int, reduced: bool) -> void:
+func sync_frame(world_size: Vector2, clock: float, quality: int, reduced: bool, fire_fallback: bool = false) -> void:
 	var start := field.center * world_size
 	var end := field.endpoint * world_size
 	var pad := field.radius + 28.0
@@ -65,6 +73,7 @@ func sync_frame(world_size: Vector2, clock: float, quality: int, reduced: bool) 
 	surface.set_shader_parameter("age", clock - _born)
 	surface.set_shader_parameter("clock", 0.0 if reduced else clock)
 	surface.set_shader_parameter("motion", 0.0 if reduced or quality == 0 else 1.0)
+	surface.set_shader_parameter("fire_fallback", fire_fallback)
 	surface.set_shader_parameter("strength", clampf(float(field.remaining_pulses) / _pulses, 0.18, 1.0))
 	_fade = minf(1.0, maxf(0.0, field.expires_at - clock) / 0.35)
 	surface.set_shader_parameter("fade", _fade)
@@ -79,12 +88,18 @@ func sync_frame(world_size: Vector2, clock: float, quality: int, reduced: bool) 
 	motion.emission_sphere_radius = field.radius * 0.9
 	particles.rotation = (end - start).angle() if length > 1 else 0.0
 	particles.visibility_rect = Rect2(-size, size * 2)
-	particles.amount_ratio = 1.0 if quality == 2 else 0.5
-	particles.emitting = quality > 0 and not reduced and not _ending
+	if _particle_capacity == 0 and not reduced and not _ending:
+		_particle_capacity = budget.grant_particles(roundi((40 if ice != null else 54) * VisualQuality.PARTICLE_DENSITY[quality]))
+		if _particle_capacity > 0:
+			birth_quality = quality
+			particles.amount = _particle_capacity
+			budget.track_particles(particles, _particle_capacity)
+	particles.amount_ratio = minf(1.0, VisualQuality.PARTICLE_DENSITY[quality] / VisualQuality.PARTICLE_DENSITY[birth_quality])
+	particles.emitting = _particle_capacity > 0 and not reduced and not _ending
 	for index in lights.size():
 		lights[index].position = (start if index == 0 else end) - position + Vector2(-.35,-.2)*field.radius
 		lights[index].texture_scale = field.radius * 3.0 / 128.0
-		lights[index].visible = quality == 2
+		lights[index].visible = quality > 0
 		lights[index].energy = (1.1 if ice != null else .3) * _fade * minf(1.0, (clock - _born) / 0.18)
 	queue_redraw()
 

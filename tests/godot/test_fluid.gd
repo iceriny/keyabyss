@@ -220,6 +220,7 @@ func _run() -> void:
 
 func _node_usage() -> void:
 	_check_motion_budget()
+	_check_motion_lights()
 	var field := FluidField2D.new()
 	field.position = Vector2(60, 40)
 	field.size = Vector2(320, 180)
@@ -332,13 +333,37 @@ func _check_motion_budget() -> void:
 		field._before_step(1.0 / 60.0)
 	_check(field._scene_sources.size() == FluidGPU.MAX_INFLUENCES + 1, "motion geometry stops at solver capacity, retaining the trailing ambient source")
 	_check(field._omitted_scene_sources == 96, "skipped motion inputs retain dropped-source accounting")
-	_check(field._motion.values().all(func(motion: Dictionary) -> bool: return (motion.path as FluidMotionPath).points == PackedVector2Array([motion.point])), "even omitted motion consumes its path each frame")
+	_check(field._motion.values().all(func(motion: FluidAtmosphere.Motion) -> bool: return motion.path.points == PackedVector2Array([motion.point])), "even omitted motion consumes its path each frame")
 	field.track_body(&"0", Vector2(12, 100), Vector2.ONE * 8, 0.0, Color.WHITE, 100.0, false)
 	field._scene_sources.clear()
 	field._before_step(1.0 / 60.0)
 	_check(field._scene_sources[0].center == Vector2(8, 100), "reentering priority uses the latest short sweep instead of accumulated history")
 	field.free()
 	battle.free()
+
+
+func _check_motion_lights() -> void:
+	var field := FluidAtmosphere.new()
+	field._light_texture = preload("res://ui/effects/fluid_light.tres")
+	# Equal keys, changing priorities, replacement and detail changes must select
+	# exactly the same lights as sorting the original insertion-ordered inputs.
+	for frame in 5:
+		for index in 72:
+			field.track_body(StringName(str(index)), Vector2(index * 8, frame * 9), Vector2.ONE * 8, 0, Color.WHITE, float(index % 4) if frame < 2 else float((index + frame) % 4), false)
+		if frame == 3:
+			field.untrack(&"1")
+			field.track_body(&"replacement", Vector2(700, 90), Vector2.ONE * 8, 0, Color.RED, 4.0, false)
+		field.scene_quality = frame % 3
+		var expected := field._scene_light_inputs()
+		expected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.energy > b.energy)
+		field._sync_lights()
+		for index in field._lights.size():
+			var light := field._lights[index]
+			var enabled: bool = index < FluidField2D.LIGHT_BUDGET[field.scene_quality]
+			_check(light.enabled == enabled, "light budget follows detail changes")
+			if enabled:
+				_check(light.position == expected[index].point and light.energy == expected[index].energy and light.color == expected[index].color, "cached light order matches original sorting with live positions and equal priorities")
+	field.free()
 
 
 func _application() -> void:
@@ -488,8 +513,8 @@ func _visual_clip() -> void:
 		last = at
 		await process_frame
 	await process_frame
-	var pointer_motion: Dictionary = app.archive.fluid._motion.get(&"pointer", {})
-	_check(not pointer_motion.is_empty() and (pointer_motion.point as Vector2).distance_to(gesture[-1] - app.archive.fluid.position) < 2, "native fast pointer gesture reaches the fluid motion source: %s" % pointer_motion.get("point", Vector2.INF))
+	var pointer_motion: FluidAtmosphere.Motion = app.archive.fluid._motion.get(&"pointer")
+	_check(pointer_motion != null and pointer_motion.point.distance_to(gesture[-1] - app.archive.fluid.position) < 2, "native fast pointer gesture reaches the fluid motion source")
 	await _capture("pointer-wake")
 	await create_timer(1.0).timeout
 	await _deployment(app.archive)
@@ -620,7 +645,7 @@ func _continuous_motion() -> void:
 	for quality in [1, 2]:
 		field.set_options(quality, false)
 		field.reset_field()
-		field._motion.clear()
+		for id in field._motion.keys(): field.untrack(id)
 		await _settle()
 		var cloud := FluidInfluence.new()
 		cloud.center = Vector2(125, 170)
@@ -656,7 +681,7 @@ func _continuous_motion() -> void:
 		field._process(1.0 / 60.0)
 		_check(field._scene_sources.all(func(source: FluidInfluence) -> bool: return source.displacement_radius == 0.0 or (source.sweep_length == 0.0 and source.velocity == Vector2.ZERO)), "resuming does not sweep across motion made while inactive")
 		field.reset_field()
-		field._motion.clear()
+		for id in field._motion.keys(): field.untrack(id)
 		await _settle()
 		var rear_cloud := FluidInfluence.new()
 		rear_cloud.center = Vector2(262, 151)
@@ -749,7 +774,7 @@ func _wake_transport() -> void:
 		_check(absf(center_y - (130 + row * 120)) < 8.0, "parallel old trails do not gather into an artificial common suction: %.2f" % center_y)
 	await _capture("parallel-wakes")
 	session.projectiles.clear()
-	field._motion.clear()
+	for id in field._motion.keys(): field.untrack(id)
 	field.reset_field()
 	await _settle()
 	session.player_position = Vector2(220, 270) / field.size

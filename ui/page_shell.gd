@@ -30,13 +30,22 @@ var subtitle_label: Label
 var pattern: TextureRect
 var reading_style := ""
 var _crystal_clock := 0.0
+var entrance_ready := true
 var _covered_page: PageShell
+static var _scene: PackedScene
 
 
 static func create(title: String = "", subtitle: String = "") -> PageShell:
-	var scene := load("res://ui/scenes/page_shell.tscn") as PackedScene
-	var page := scene.instantiate() as PageShell
+	var started := DebugLog.begin()
+	if _scene == null:
+		_scene = load("res://ui/scenes/page_shell.tscn") as PackedScene
+	DebugLog.end(&"page.load", started)
+	started = DebugLog.begin()
+	var page := _scene.instantiate() as PageShell
+	DebugLog.end(&"page.instantiate", started)
+	started = DebugLog.begin()
 	page.configure(title, subtitle)
+	DebugLog.end(&"page.configure", started)
 	return page
 
 
@@ -71,6 +80,8 @@ func _bind_nodes() -> void:
 
 func _ready() -> void:
 	_bind_nodes()
+	content_layer.modulate.a = 0.0
+	wash.modulate.a = 0.0
 	set_reading_style("settings", 2)
 	heading.add_theme_color_override("font_color", Color("f0ddae"))
 	pattern.texture = seal_texture
@@ -107,8 +118,8 @@ func set_accent(value: Color) -> void:
 func _process(delta: float) -> void:
 	if closing:
 		return
-	arrival += delta
-	var progress := 1.0 if reduced_motion else MotionCurve.cubic(arrival/.4,Vector2(0,0),Vector2(.58,1))
+	if entrance_ready: arrival += delta
+	var progress := 0.0 if not entrance_ready else (1.0 if reduced_motion else MotionCurve.cubic(arrival/.4,Vector2(0,0),Vector2(.58,1)))
 	content_layer.modulate.a = progress
 	# The annotation fades into place; the title and action baseline never move.
 	content_layer.position.y = 0.0
@@ -194,7 +205,8 @@ func _layout_panel() -> void:
 	$ContentLayer/GoldBranch.size = Vector2(380, 142.5)
 	$ContentLayer/GoldDivider.position = panel.position + Vector2(10, panel.size.y - 158)
 	$ContentLayer/GoldDivider.size = Vector2(width - 20, 100)
-	$CrystalSheets.arrange(Rect2(panel.position, panel.size))
+	if $CrystalSheets.visible:
+		$CrystalSheets.arrange(Rect2(panel.position, panel.size))
 	if not reading_style.is_empty():
 		_layout_reading_crystal()
 

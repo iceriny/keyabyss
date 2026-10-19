@@ -29,6 +29,9 @@ func _run() -> void:
 
 	router.configure(InputRouter.Context.MENU, PackedStringArray(["start"]))
 	await _key(KEY_S, "s")
+	await process_frame
+	router.set_commands(PackedStringArray(["start", "help"]))
+	_check(router.buffer == "s" and router.context == InputRouter.Context.MENU and "imsuperman" in router.commands, "incremental menu construction preserves typed prefix and command policy")
 	await _key(KEY_T, "t")
 	await _key(KEY_A, "a")
 	await _key(KEY_R, "r")

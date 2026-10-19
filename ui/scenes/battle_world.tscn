@@ -11,6 +11,7 @@ light_mode = 1
 
 [sub_resource type="ShaderMaterial" id="ThreatRibbon"]
 shader = ExtResource("ribbon")
+shader_parameter/physical_width = true
 
 [sub_resource type="ShaderMaterial" id="Material_wave"]
 resource_local_to_scene = true
@@ -42,7 +43,7 @@ mouse_filter = 2
 
 [node name="WorldCapture" type="BackBufferCopy" parent="."]
 z_index = 10
-copy_mode = 2
+copy_mode = 0
 
 [node name="ThreatGlow" type="Control" parent="."]
 z_index = 3

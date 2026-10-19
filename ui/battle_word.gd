@@ -106,7 +106,10 @@ func _draw() -> void:
 
 
 func _process(delta: float) -> void:
-	_selection_weight = lerpf(_selection_weight, 1.0 if _selected else 0.0, 1.0-exp(-delta*12.0))
+	var target := 1.0 if _selected else 0.0
+	if _selection_weight == target: return
+	_selection_weight = lerpf(_selection_weight, target, 1.0-exp(-delta*12.0))
+	if absf(_selection_weight - target) < .0001: _selection_weight = target
 	_update_selection()
 
 

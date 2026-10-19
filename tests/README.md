@@ -16,10 +16,20 @@
 | 冰晶GPU成本 | `test_feedback_effects.gd -- --measure`，真实图形窗口；独立于战斗截图夹具，保存标记匹配的GPU／渲染线程CPU原始区间。受控冰龄推进，不代表整帧FPS |
 | 流体、采样、渲染准备和音频 | `test_fluid.gd`、`test_effect_sampling.gd`、`test_render_preparation.gd`、`test_audio.gd` |
 | 算法与性能定位 | `test_combat_algorithms.gd`、`profile_frames.gd`；只在对应问题或算法变化时选用 |
-| 尾迹批量几何与粒子绑定 | `test_enemy_expansion.gd -- --feedback-fixes --trail-glow` 比较原采样几何并观察实际HDR；`test_fluid.gd -- --usage` 验证即时绑定、半径／选项变化与释放。两者为图形窗口，性能采样另用实施记录中的两组夹具 |
+| 三档视效两组对照 | `test_visual_quality.gd -- --workload=baseline --label=after --capture`，极限只将workload改为`extreme`；各自串行经过三档四书。每段立即写入`.temp/visual-quality-20261018/`，截图与切档／预算／减少动态检查位于计时外。修改前用`--label=before`，不要同时启动两个窗口。真实4／10纸灵只在纸灵书；完整负载定义见视效分级实施记录 |
+| 尾迹批量几何与粒子绑定 | `test_enemy_expansion.gd -- --feedback-fixes --trail-glow` 比较原采样几何、渐细带中心、256／1024条串并行数据、动态容量清理并观察实际HDR；`test_fluid.gd -- --usage` 验证即时绑定、半径／选项变化、灯光优先级与释放。两者为图形窗口，性能采样另用实施记录中的两组夹具 |
+| 冰晶无生长阶段复用 | `test_feedback_effects.gd -- --growth-reuse` 对照原算法，检查128²／384²晶格与膜层的生长、仅扩散、暂停、恢复和重置像素；验证暂停无dispatch及静态枝网不重复求包围信息。需要图形窗口 |
 | 开发夹具 | `test_build_lab_scenarios.gd`；验证共享资源隔离与正式段出口 |
 
 书库布局及持久教学解锁另用现有窗口入口：`test_ui_refinement.gd -- --archive-tutorial`。基础真实完成后任选灰烬，验证单书正式入场、重启回读、失败保存重试与未完远征保留；此UI／流程修改不需要重跑整体难度探针。
+
+主菜单切书用`test_presentation.gd -- --book-switch`：基线4次正常切换／极限12次快速切换，记录帧耗时、调用耗时和主题通知；过渡中断、原生输入颜色、无关控件不失效与截图在计时后验证。使用隔离存档、1080p高画质／中流体，沿用产品显示器刷新率上限，结果在`.temp/book-switch-20261018/`。不用截图编码期间的长帧评估切书性能。
+
+实际长帧复查：`test_profile_save.gd -- --performance --source-profile=<绝对档案路径>`用空档／真实副本两组，测常规保存与追加历史，并用独立Repository重开核对；`test_presentation.gd -- --page-stalls --source-profile=<绝对档案路径>`用1条／完整历史两组，访问记录、词库及路线／奖励公共空壳，验证完整构建与退出。来源只读，运行内容复制到`.temp/`；性能采样不与其他游戏／测试并行，截图在计时后。默认存档回归覆盖缓存隔离、同修订外部变化、改变历史时仍验证、原档保留及写失败。
+
+异步存档：`test_presentation.gd -- --async-saves --source-profile=<绝对档案路径>`使用空历史／实际完整历史两个负载，每组在同一菜单背景分别测同步、异步的读取／起局／进入书页／检查点／追加历史，保存延迟、等待期间主循环帧数与最长帧。附带真实出征、保存中重复操作和关闭等待检查；FPS固定显示在右上角，截图在计时后。夹具使用6个真实词条形成合法进行中检查点，不代表后期完整战斗压力；来源档案须没有进行中远征。默认`test_profile_save`增加信号量控制的后台读写、候选隔离、失败重试、修订冲突、退出join与God转移检查。旧确定性RunSession夹具通过Callable同步调用（`save_tree == null`），正式UI及异步测试使用`await`。
+
+战场与升级专项：`test_visual_quality.gd -- --combat --workload=baseline --label=<标记>`及对应`--workload=extreme`仅测最高画质四书，保留两种规模、右上角FPS、首建分段与实际反制／终极技；`--capture`在计时后截图。`test_defense_movement.gd`同时覆盖96／256弹的串并行择位对照和反射扫掠原算法对照。`test_presentation.gd -- --battle-transitions`先准备正式材质，用隔离档案执行两组出征、经验奖励、领取淡出、输入恢复与失焦暂停；测试供应伤害产生真实死亡事实，截图在采样结束后。报告位于`.temp/visual-quality-20261018/`与`.temp/battle-transitions-20261019/`。
 
 ## 整体难度探针
 

@@ -41,7 +41,9 @@ var fluid_quality: int = 2
 var fluid_material: FluidMedium
 var fluid_effects: Dictionary[StringName, FluidEffectProfile] = {}
 var rule_visuals: BattleRuleVisuals
+var budget := BattleVisualBudget.new()
 @onready var threat_glow: BattleThreatGlow = $ThreatGlow
+@onready var _world_capture: BackBufferCopy = $WorldCapture
 
 
 func configure(battle: BattleSession, tint: Color, visual_quality: int, less_motion: bool) -> void:
@@ -56,21 +58,21 @@ func set_options(detail: int, less_motion: bool) -> void:
 	if quality == detail and reduced_motion == less_motion:
 		return
 	quality = detail
-	fluid.scene_quality = detail
+	fluid.set_scene_quality(detail)
+	budget.quality = detail
 	reduced_motion = less_motion
 	for pulse in _pulses:
 		if pulse.kind not in [&"item_burst", &"clear_pulse"]:
 			continue
 		var sprite: Sprite2D = pulse.node
-		(sprite.material as ShaderMaterial).set_shader_parameter("reduced_motion", less_motion or (detail == 0 and pulse.kind == &"item_burst"))
+		(sprite.material as ShaderMaterial).set_shader_parameter("reduced_motion", less_motion)
 		(sprite.material as ShaderMaterial).set_shader_parameter("detail", detail)
-		if less_motion or detail == 0:
+		if less_motion:
 			for child in sprite.get_children():
-				if child is GPUParticles2D or child is PointLight2D:
-					child.queue_free()
+				if child is GPUParticles2D: child.emitting = false
+				elif child is PointLight2D: child.hide()
 	for visual in _projectile_nodes.values():
-		visual.queue_free()
-	_projectile_nodes.clear()
+		visual.configure(visual.projectile, detail, less_motion)
 	if reduced_motion or quality == 0:
 		_waves.clear()
 		_dodge_echoes.clear()
@@ -78,12 +80,13 @@ func set_options(detail: int, less_motion: bool) -> void:
 		camera_offset = Vector2.ZERO
 		_recoil = Vector2.ZERO
 		for child in get_children():
-			if child is GPUParticles2D:
-				child.queue_free()
+			if child is GPUParticles2D and reduced_motion: child.emitting = false
 	_update_waves()
 
 
 func _ready() -> void:
+	budget.quality = quality
+	add_child(budget)
 	threat_glow.session = session
 	threat_glow.quality = quality
 	threat_glow.reduced_motion = reduced_motion
@@ -93,6 +96,7 @@ func _ready() -> void:
 	fluid = FluidAtmosphere.new()
 	fluid.name = "FluidAtmosphere"
 	fluid.scene_quality = quality
+	fluid.visual_budget = budget
 	fluid.battle = session
 	fluid.trail_material = fluid_material
 	fluid.effects = fluid_effects
@@ -135,6 +139,7 @@ func _process(delta: float) -> void:
 	rule_visuals.size = size
 	rule_visuals.quality = quality
 	rule_visuals.reduced_motion = reduced_motion
+	rule_visuals.fire_fallback = reduced_motion or fluid.quality == FluidField2D.Quality.OFF
 	_recoil *= exp(-delta * 16.0)
 	if reduced_motion:
 		_camera_motion.reset()
@@ -163,7 +168,13 @@ func _process(delta: float) -> void:
 			_dodge_echoes.remove_at(index)
 	for enemy in session.enemies:
 		if not _actors.has(enemy.id):
+			# Rule history remains in the session; completed death visuals do not.
+			if not enemy.alive(): continue
 			_create_actor(enemy)
+		if not enemy.alive() and _actors[enemy.id].dead_time >= 1.0:
+			_actors[enemy.id].queue_free()
+			_actors.erase(enemy.id)
+			continue
 		_actors[enemy.id].sync_enemy(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, session.world_time, real_delta if not enemy.alive() else delta, reduced_motion, quality)
 		_actors[enemy.id].modulate.a = (1.0 - _actors[enemy.id].dead_time) * (1.0 if enemy.combat_locked else 0.06 + 0.94 * pow(BattleSession.arena_clarity(enemy.position, enemy.radius), 2.0))
 	var active_projectiles: Dictionary[BattleProjectile, bool] = {}
@@ -171,6 +182,7 @@ func _process(delta: float) -> void:
 		active_projectiles[projectile] = true
 		if not _projectile_nodes.has(projectile):
 			var visual := BattleProjectileVisual.create(projectile, quality, reduced_motion)
+			visual.budget = budget
 			visual.world_size = size
 			add_child(visual)
 			_projectile_nodes[projectile] = visual
@@ -192,9 +204,10 @@ func _process(delta: float) -> void:
 	for timeline in session.ultimates:
 		if not _ultimate_nodes.has(timeline):
 			var field := UltimateField.create(timeline, school_color)
+			field.budget = budget
 			$Fields.add_child(field)
 			_ultimate_nodes[timeline] = field
-		_ultimate_nodes[timeline].sync_frame(size, quality, reduced_motion)
+		_ultimate_nodes[timeline].sync_frame(size, quality, reduced_motion, rule_visuals.fire_fallback)
 	for timeline in _ultimate_nodes.keys():
 		if not session.ultimates.has(timeline):
 			_ultimate_nodes[timeline].queue_free()
@@ -492,7 +505,8 @@ func _spawn_item_burst(at: Vector2, style: int, radius: float) -> void:
 	sprite.position = at * size
 	sprite.scale = Vector2.ONE * radius * 2.4 / _spark_texture.width
 	var pulse_material := preload("res://ui/materials/item_burst.tres").duplicate() as ShaderMaterial
-	pulse_material.set_shader_parameter("reduced_motion", reduced_motion or quality == 0)
+	pulse_material.set_shader_parameter("reduced_motion", reduced_motion)
+	pulse_material.set_shader_parameter("detail", quality)
 	pulse_material.set_shader_parameter("tint", tint)
 	pulse_material.set_shader_parameter("style", style)
 	pulse_material.set_shader_parameter("radius", radius)
@@ -501,17 +515,18 @@ func _spawn_item_burst(at: Vector2, style: int, radius: float) -> void:
 	add_child(sprite)
 	_pulses.append({"kind": &"item_burst", "node": sprite, "at": at, "age": 0.0, "duration": duration})
 	_add_contact_light(sprite, tint, minf(radius * 1.5, 350.0), duration * .6, [3.2, 1.25, 1.8, 1.5][style])
-	if reduced_motion or quality == 0:
+	if reduced_motion:
 		return
-	for layer in 2:
+	for layer in (1 if quality == 0 else 2):
 		var sparks := layer == 1
+		var amount := budget.grant_particles(roundi((52 if sparks else 22) * VisualQuality.PARTICLE_DENSITY[quality] * (.55 if style == 3 else 1.0)))
+		if amount == 0: continue
 		var particles := preload("res://ui/scenes/burst_splinters.tscn").instantiate() as GPUParticles2D
 		particles.name = "Sparks" if sparks else "CrystalSplinters"
 		# Inverse parent scale keeps the particle sizes and speed in world pixels.
 		particles.scale = Vector2.ONE / sprite.scale.x
-		particles.amount = (52 if sparks else 22) if quality == 2 else (28 if sparks else 12)
-		if style == 3:
-			particles.amount = int(particles.amount * .55)
+		particles.amount = amount
+		budget.track_particles(particles, amount)
 		particles.lifetime = duration * .88
 		particles.texture = _spark_texture
 		particles.visibility_rect = Rect2(-Vector2.ONE * radius * 1.3, Vector2.ONE * radius * 2.6)
@@ -582,13 +597,15 @@ func _add_contact_light(parent: Node2D, tint: Color, radius: float, duration: fl
 	light.texture_scale = radius * 2.0 / light.texture.get_width() / parent.scale.x
 	light.energy = energy
 	parent.add_child(light)
+	budget.register_light(light, 0)
 	BattleVisualClock.tween_for(self).tween_property(light, "energy", 0.0, duration)
 
 
 func _spawn_electric_burst(at: Vector2, radius: float) -> void:
 	var arc := LightningArc.new()
 	arc.burst_radius = radius
-	arc.reduced = reduced_motion or quality == 0
+	arc.reduced = reduced_motion
+	arc.quality = quality
 	arc.random_seed = hash(Vector3(at.x, at.y, session.world_time))
 	arc.position = at * size
 	add_child(arc)
@@ -602,6 +619,7 @@ func _spawn_spell_link(from: Vector2, at: Vector2, electric: bool, empowered: bo
 		var arc := LightningArc.new()
 		arc.reach = maxf(30.0, axis.length())
 		arc.reduced = reduced_motion
+		arc.quality = quality
 		arc.random_seed = hash(Vector3(from.x, at.y, session.elapsed))
 		arc.position = (from + at) * .5 * size
 		arc.rotation = axis.angle()
@@ -657,14 +675,21 @@ func _effect_color(source: StringName) -> Color:
 
 
 func _spawn_particles(at: Vector2, tint: Color, intensity: float, burst: bool, source: StringName = &"", direction: Vector2 = Vector2.ZERO) -> void:
-	if reduced_motion or quality == 0:
+	if reduced_motion:
 		return
+	var requested := 46 if burst else 22
+	if str(source).begins_with("flame"): requested = 24
+	elif str(source).begins_with("frost"): requested = 20
+	elif str(source).begins_with("spirit"): requested = 12
+	var amount := budget.grant_particles(roundi(requested * VisualQuality.PARTICLE_DENSITY[quality]))
+	if amount == 0: return
 	var started := DebugLog.begin()
 	var particles := preload("res://ui/scenes/spell_motes.tscn").instantiate() as GPUParticles2D
 	DebugLog.end(&"particles.instantiate", started)
 	started = DebugLog.begin()
 	particles.position = at * size
-	particles.amount = (46 if quality == 2 else 23) if burst else (22 if quality == 2 else 11)
+	particles.amount = amount
+	budget.track_particles(particles, amount)
 	particles.lifetime = 0.7 * intensity + 0.3
 	particles.texture = _spark_texture
 	particles.modulate = tint
@@ -675,12 +700,10 @@ func _spawn_particles(at: Vector2, tint: Color, intensity: float, burst: bool, s
 	motion.initial_velocity_min = 18.0 if not burst else 48.0
 	motion.initial_velocity_max = 65.0 if not burst else 145.0
 	if str(source).begins_with("flame"):
-		particles.amount = 24 if quality == 2 else 12
 		particles.lifetime = .42
 		motion.initial_velocity_min = 85.0
 		motion.initial_velocity_max = 220.0
 	elif str(source).begins_with("frost") or str(source).begins_with("spirit"):
-		particles.amount = (12 if quality == 2 else 6) if str(source).begins_with("spirit") else (20 if quality == 2 else 10)
 		particles.lifetime = 0.55
 		particles.texture = preload("res://ui/effects/battle_shard.tres")
 		var fragment_material := preload("res://ui/materials/battle_fragment.tres").duplicate() as ShaderMaterial
@@ -734,11 +757,11 @@ func _spawn_frost_impact(at: Vector2, direction: Vector2, empowered: bool, refra
 	sprite.material = ice
 	add_child(sprite)
 	_pulses.append({"kind": &"frost", "node": sprite, "at": at, "age": 0.0, "duration": 0.7})
-	var light := preload("res://ui/scenes/frost_impact_light.tscn").instantiate() as PointLight2D
-	light.visible = quality == 2 and not reduced_motion
-	sprite.add_child(light)
-	var tween := BattleVisualClock.tween_for(self)
-	tween.tween_property(light, "energy", 0.0, 0.45)
+	if quality == 2 and not reduced_motion:
+		var light := preload("res://ui/scenes/frost_impact_light.tscn").instantiate() as PointLight2D
+		sprite.add_child(light)
+		budget.register_light(light, 0)
+		BattleVisualClock.tween_for(self).tween_property(light, "energy", 0.0, 0.45)
 	if refract: _add_wave(at, 0.3, 0.0018, 0.055)
 
 
@@ -751,6 +774,9 @@ func _add_wave(at: Vector2, duration: float, power: float, radius: float = 0.12)
 
 
 func _update_waves() -> void:
+	_wave_plane.visible = not _waves.is_empty()
+	_world_capture.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT if _wave_plane.visible else BackBufferCopy.COPY_MODE_DISABLED
+	if _waves.is_empty(): return
 	var encoded := PackedVector4Array()
 	var canvas_size: Vector2 = get_parent().size
 	var origin := position / canvas_size
@@ -764,6 +790,5 @@ func _update_waves() -> void:
 		encoded.append(Vector4(center.x, center.y, front * wave.radius * span.y, wave.power * (1.0 - progress)))
 	while encoded.size() < 4:
 		encoded.append(Vector4.ZERO)
-	_wave_plane.visible = not _waves.is_empty()
 	_wave_material.set_shader_parameter("waves", encoded)
 	_wave_material.set_shader_parameter("aspect", canvas_size.x / canvas_size.y)

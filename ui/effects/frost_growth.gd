@@ -12,6 +12,7 @@ var surface_texture := Texture2DRD.new()
 var vapor_density := .42
 var iteration := 0
 var surface_age := 0.0
+var _surface_initialized := false
 var _seed := 1
 var _extra_roots := 0
 var _rd: RenderingDevice
@@ -73,6 +74,7 @@ func configure(resolution: int = GRID, seed_value: int = 1, large_region: bool =
 func reset(advance_seed: bool = true) -> void:
 	iteration=0
 	surface_age=0.0
+	_surface_initialized = false
 	if advance_seed: _seed+=1
 	var list:=_rd.compute_list_begin()
 	_rd.compute_list_bind_compute_pipeline(list,_pipeline)
@@ -85,9 +87,11 @@ func reset(advance_seed: bool = true) -> void:
 
 func step(count: int,delta: float) -> void:
 	if iteration>=max_steps and surface_age>=10.0: return
+	var growth_steps := mini(count, max_steps - iteration)
+	if growth_steps == 0 and delta <= 0.0 and _surface_initialized: return
 	var list:=_rd.compute_list_begin()
 	_rd.compute_list_bind_compute_pipeline(list,_pipeline)
-	for i in mini(count,max_steps-iteration):
+	for i in growth_steps:
 		_dispatch(list,0,0)
 		_dispatch(list,1,1)
 		iteration+=1
@@ -97,9 +101,10 @@ func step(count: int,delta: float) -> void:
 	var diffusion_scale := pow(float(grid)/GRID, 2.0)
 	var pairs := maxi(1,ceili(delta*maxf(1.0,diffusion_scale)/.05))
 	for part in pairs:
-		_surface_dispatch(list,0,delta/(pairs*2.0),false,part==0)
+		_surface_dispatch(list,0,delta/(pairs*2.0),false,part==0 and (growth_steps > 0 or not _surface_initialized))
 		_surface_dispatch(list,1,delta/(pairs*2.0),false,false)
 	surface_age+=delta
+	_surface_initialized = true
 	_rd.compute_list_end()
 
 

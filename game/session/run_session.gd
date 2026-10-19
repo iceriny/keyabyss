@@ -8,6 +8,8 @@ const DIFFICULTY_NAMES := ["启程", "冒险", "深渊", "噩梦", "灭世"]
 const STARTING_HEALTH := [155, 125, 110, 100, 90]
 const SERIALIZED := ["run_id", "phase", "room_serial", "attempt_id", "seed_text", "options", "facts", "offer", "contracts", "transactions", "used_events", "pending_dodge", "pending_opening", "reward_rng_state", "event_rng_state"]
 var repository: SaveRepository
+var save_tree: SceneTree
+var _active_repository: SaveRepository
 var profile: ProfileState
 var compiler := BuildCompiler.new()
 var itinerary: RunItinerary = preload("res://game/content/s2_itinerary.tres")
@@ -44,7 +46,7 @@ func begin(book_id: StringName, settings: AppSettings) -> bool:
 		last_error = "已有进行中的远征，请继续或明确重开。"
 		return false
 	var candidate := _new_candidate(book_id, settings, profile)
-	return candidate != null and _save(candidate)
+	return candidate != null and await _save(candidate)
 
 
 func has_pending_run() -> bool:
@@ -55,7 +57,7 @@ func restart(book_id: StringName, settings: AppSettings, battle: BattleSession =
 	var ended := _prepare_end(battle)
 	if ended.is_empty(): return false
 	var candidate := _new_candidate(book_id, settings, ended.profile)
-	return candidate != null and _save(candidate, ended.profile)
+	return candidate != null and await _save(candidate, ended.profile)
 
 
 func _new_candidate(book_id: StringName, settings: AppSettings, starting_profile: ProfileState) -> RunSession:
@@ -126,7 +128,7 @@ func restore() -> bool:
 		candidate.phase = "REWARD" if candidate.phase == "BATTLE_REWARD" else "READY_FOR_ROOM"
 		candidate.facts["route_complete"] = true
 		save_required = true
-	if save_required: return _save(candidate)
+	if save_required: return await _save(candidate)
 	_adopt(candidate)
 	return true
 
@@ -173,7 +175,7 @@ func start_room(entries: Array[VocabularyEntry], prepared: VocabularyIndex) -> B
 	for entry in entries:
 		words.append(entry.word.replace(" ", ""))
 	candidate.facts["vocabulary_letters"] = words
-	if not _save(candidate):
+	if not await _save(candidate):
 		return null
 	return request
 
@@ -191,6 +193,7 @@ func observe_battle(battle: BattleSession) -> bool:
 		return false
 	if phase != "BATTLE" or battle.result != 0:
 		return true
+	var started := DebugLog.begin()
 	var candidate := copy()
 	if not _consume_facts(candidate, battle.reward_facts):
 		return false
@@ -198,6 +201,7 @@ func observe_battle(battle: BattleSession) -> bool:
 	if candidate.rewards.available() <= 0:
 		rewards = candidate.rewards
 		facts = candidate.facts
+		DebugLog.end(&"battle.progression", started)
 		return true
 	battle.set_physics_process(false)
 	candidate.phase = "BATTLE_REWARD"
@@ -211,7 +215,8 @@ func observe_battle(battle: BattleSession) -> bool:
 	if not progress.diagnostics.is_empty():
 		last_error = "\n".join(progress.diagnostics)
 		return false
-	return _save(candidate, progress.profile)
+	DebugLog.end(&"battle.progression", started)
+	return await _save(candidate, progress.profile)
 
 
 func suspend_battle(battle: BattleSession) -> bool:
@@ -219,7 +224,7 @@ func suspend_battle(battle: BattleSession) -> bool:
 		last_error = "当前没有可以保存的战斗。"
 		return false
 	if battle.result != 0:
-		return finish_room(battle)
+		return await finish_room(battle)
 	var candidate := copy()
 	if not _consume_facts(candidate, battle.reward_facts): return false
 	_merge_facts(candidate, battle)
@@ -235,12 +240,12 @@ func suspend_battle(battle: BattleSession) -> bool:
 	if not progress.diagnostics.is_empty():
 		last_error = "\n".join(progress.diagnostics)
 		return false
-	return _save(candidate, progress.profile)
+	return await _save(candidate, progress.profile)
 
 
 func finish_room(battle: BattleSession) -> bool:
 	if _pending_boundary != null:
-		return _save_boundary()
+		return await _save_boundary()
 	if phase not in ["BATTLE", "BATTLE_REWARD"]:
 		return phase in ["REWARD", "ROUTE", "READY_FOR_ROOM", "RESULT"]
 	var result := battle.finish_room(&"victory" if battle.result > 0 else &"abandon" if battle.abandoned_run else &"defeat")
@@ -270,7 +275,7 @@ func finish_room(battle: BattleSession) -> bool:
 		if candidate.phase == "REWARD":
 			_make_reward_offer(candidate)
 	_pending_boundary = candidate
-	return _save_boundary()
+	return await _save_boundary()
 
 
 func _close_run(candidate: RunSession) -> void:
@@ -305,7 +310,7 @@ func _save_boundary() -> bool:
 	if _pending_boundary.phase == "RESULT":
 		_append_record(_pending_boundary, progress.profile)
 	var candidate := _pending_boundary
-	if not _save(candidate, progress.profile):
+	if not await _save(candidate, progress.profile):
 		return false
 	_pending_boundary = null
 	return true
@@ -345,20 +350,20 @@ func continue_challenge() -> bool:
 	candidate.rewards.spent = candidate.rewards.earned
 	candidate.offer.clear()
 	candidate.phase = "READY_FOR_ROOM"
-	return _save(candidate)
+	return await _save(candidate)
 
 
 func end_challenge() -> bool:
 	if phase != "RESULT":
 		last_error = "请先完成当前挑战。"
 		return false
-	return end_run()
+	return await end_run()
 
 
 func end_run(battle: BattleSession = null) -> bool:
 	if not has_pending_run(): return true
 	var ended := _prepare_end(battle)
-	return not ended.is_empty() and _save(ended.run, ended.profile)
+	return not ended.is_empty() and await _save(ended.run, ended.profile)
 
 
 func _prepare_end(battle: BattleSession) -> Dictionary:
@@ -408,7 +413,9 @@ func isolate_to_god(god_repository: SaveRepository, battle: BattleSession = null
 	if god_repository == null or god_repository.mode != &"god":
 		last_error = "接管仓库必须为God档。"
 		return false
-	var target := god_repository.load_profile()
+	_active_repository = god_repository
+	var target := await god_repository.load_profile_async(save_tree) if save_tree != null else god_repository.load_profile()
+	_active_repository = null
 	if target == null:
 		last_error = god_repository.last_error
 		return false
@@ -454,7 +461,7 @@ func isolate_to_god(god_repository: SaveRepository, battle: BattleSession = null
 		source.run_checkpoint = candidate.to_checkpoint()
 		source.run_checkpoint.facts["god_transfer"] = marker
 		source.revision = profile.revision + 1
-		if not repository.save_profile(source, profile.revision):
+		if not await _persist(repository, source, profile.revision):
 			last_error = repository.last_error
 			return false
 		profile = source
@@ -470,13 +477,16 @@ func isolate_to_god(god_repository: SaveRepository, battle: BattleSession = null
 		return false
 	if not received:
 		# Ensure fallback also contains the lock before publishing the second profile.
-		if not repository.protect_transfer_backup(profile.revision):
+		_active_repository = repository
+		var protected := await repository.protect_transfer_backup_async(profile.revision, save_tree) if save_tree != null else repository.protect_transfer_backup(profile.revision)
+		_active_repository = null
+		if not protected:
 			last_error = repository.last_error
 			return false
 		var proposed := target.copy()
 		proposed.run_checkpoint = marker.checkpoint.duplicate(true)
 		proposed.revision += 1
-		if not god_repository.save_profile(proposed, target.revision):
+		if not await _persist(god_repository, proposed, target.revision):
 			last_error = god_repository.last_error
 			return false
 		target = proposed
@@ -487,7 +497,7 @@ func isolate_to_god(god_repository: SaveRepository, battle: BattleSession = null
 	var cleared := profile.copy()
 	cleared.run_checkpoint.clear()
 	cleared.revision += 1
-	if not repository.save_profile(cleared, profile.revision):
+	if not await _persist(repository, cleared, profile.revision):
 		last_error = repository.last_error
 		return false
 	adopted.profile = target
@@ -521,7 +531,7 @@ func take_reward(content_id: StringName, offer_id: String, parent_id: String = "
 		_make_reward_offer(candidate)
 	else:
 		candidate.phase = "BATTLE" if phase == "BATTLE_REWARD" else "READY_FOR_ROOM" if bool(candidate.facts.get("route_complete", false)) else "ROUTE"
-	if not _save(candidate):
+	if not await _save(candidate):
 		return false
 	if battle != null:
 		battle.run_state = combat
@@ -547,7 +557,7 @@ func skip_reward(offer_id: String) -> bool:
 		_make_reward_offer(candidate)
 	else:
 		candidate.phase = "BATTLE" if phase == "BATTLE_REWARD" else "READY_FOR_ROOM" if bool(candidate.facts.get("route_complete", false)) else "ROUTE"
-	return _save(candidate)
+	return await _save(candidate)
 
 
 func reroll_reward(offer_id: String) -> bool:
@@ -557,7 +567,7 @@ func reroll_reward(offer_id: String) -> bool:
 	var candidate := copy()
 	candidate.facts["rerolls"] = int(facts.rerolls) - 1
 	_make_reward_offer(candidate)
-	return _save(candidate)
+	return await _save(candidate)
 
 
 func supply_reward(offer_id: String, battle: BattleSession = null) -> bool:
@@ -576,7 +586,7 @@ func supply_reward(offer_id: String, battle: BattleSession = null) -> bool:
 		_make_reward_offer(candidate)
 	else:
 		candidate.phase = "BATTLE" if phase == "BATTLE_REWARD" else "READY_FOR_ROOM" if bool(candidate.facts.get("route_complete", false)) else "ROUTE"
-	if not _save(candidate): return false
+	if not await _save(candidate): return false
 	if battle != null:
 		battle.player_hp_q = combat.hp_q
 		battle.run_state = combat
@@ -586,7 +596,7 @@ func supply_reward(offer_id: String, battle: BattleSession = null) -> bool:
 
 
 func leave_route() -> bool:
-	return take_route("continue")
+	return await take_route("continue")
 
 
 func take_route(choice: String) -> bool:
@@ -615,7 +625,7 @@ func take_route(choice: String) -> bool:
 	candidate.phase = "REWARD" if candidate.rewards.available() > 0 else "READY_FOR_ROOM"
 	if candidate.phase == "REWARD":
 		_make_reward_offer(candidate)
-	return _save(candidate)
+	return await _save(candidate)
 
 
 func acquisition_context() -> Dictionary:
@@ -714,19 +724,34 @@ func _save(candidate: RunSession, updated_profile: ProfileState = null) -> bool:
 	if profile.run_checkpoint.get("facts", {}).has("god_transfer"):
 		last_error = "远征正在转入God档，请先完成接管。"
 		return false
+	var started := DebugLog.begin()
 	var proposed := profile.copy() if updated_profile == null else updated_profile
 	proposed.content_version = SaveRepository.CONTENT_VERSION
 	proposed.graph_version = SaveRepository.GRAPH_VERSION
 	proposed.layout_version = SaveRepository.LAYOUT_VERSION
 	proposed.run_checkpoint = candidate.to_checkpoint() if candidate.phase != "RESULT" or bool(candidate.facts.get("victory_pending", false)) else {}
 	proposed.revision = profile.revision + 1
-	if not repository.save_profile(proposed, profile.revision):
+	DebugLog.end(&"profile.prepare_snapshot", started)
+	if not await _persist(repository, proposed, profile.revision):
 		last_error = repository.last_error
 		return false
 	candidate.profile = proposed
 	_adopt(candidate)
 	last_error = ""
 	return true
+
+
+func _persist(target: SaveRepository, proposed: ProfileState, revision: int) -> bool:
+	if save_tree != null:
+		_active_repository = target
+		var saved := await target._save_owned_profile_async(proposed, revision, save_tree)
+		_active_repository = null
+		return saved
+	return target.save_profile(proposed, revision)
+
+
+func finish_pending_save() -> void:
+	if _active_repository != null: _active_repository.finish_pending_save()
 
 
 func _adopt(candidate: RunSession) -> void:

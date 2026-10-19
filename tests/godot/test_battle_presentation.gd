@@ -672,6 +672,18 @@ func _check_refresh_cost() -> void:
 	assert(label.position.distance_to(before) <= 15.01, "combined anchor and avoidance motion is bounded per frame")
 	print("UI_REFRESH 10000 words, ", session.enemies.size(), " retained targets, 60 unchanged refreshes: median=", samples[30], "ms p95=", samples[57], "ms max=", samples[-1], "ms; position/no-op regressions passed")
 	await _capture("refresh-words")
+	assert(page.enemy_words.size() == 20, "dead history does not retain word nodes")
+	var selected := session.enemies[0]
+	session.typing.upsert_target(selected.id, selected.word)
+	session.typing.select_target(selected.id)
+	session.typing.feed(session.typing.word[0])
+	selected.hp_q = 0
+	session.typing.retire_target(selected.id)
+	page._refresh()
+	assert(page.enemy_words.has(selected.id) and page.enemy_words[selected.id].visible, "selected dead target keeps residual typing visible")
+	session.typing.cancel()
+	page._refresh()
+	assert(not page.enemy_words.has(selected.id), "leaving residual typing retires its word node")
 	page.queue_free()
 	await process_frame
 

@@ -36,6 +36,7 @@ static func end(scope: StringName, started: int) -> float:
 	if started == 0:
 		return 0.0
 	var duration := (Time.get_ticks_usec() - started) / 1000.0
+	if not Thread.is_main_thread(): return duration
 	_spans[scope] = float(_spans.get(scope, 0.0)) + duration
 	return duration
 
@@ -44,6 +45,12 @@ static func operation(scope: StringName, started: int, details: Dictionary, alwa
 	var duration := end(scope, started)
 	if enabled and _instance != null and (always or duration >= 10.0):
 		_instance._record("operation", {"scope": scope, "ms": duration, "details": details})
+
+
+static func background_operation(scope: StringName, duration_ms: float, details: Dictionary) -> void:
+	# Background latency is not CPU time spent in the frame receiving its result.
+	if enabled and _instance != null:
+		_instance._record("background_operation", {"scope": scope, "ms": duration_ms, "details": details})
 
 
 func _ready() -> void:

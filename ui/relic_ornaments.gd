@@ -3,6 +3,23 @@ extends RefCounted
 
 const NAMES := ["crescent", "quartz", "fan", "sail", "ribbon", "shell",
 	"fern", "tide", "wing", "fold", "petals", "shards"]
+static var _prepared: Dictionary[String, Texture2D] = {}
+
+
+static func prepare(indices: PackedInt32Array, tree: SceneTree) -> void:
+	var paths: Array[String] = []
+	for index in indices:
+		for suffix: String in [".png", "_optics.exr"]:
+			var path: String = "res://assets/art/ui/relic_ornaments/" + NAMES[index] + suffix
+			if _prepared.has(path): continue
+			var error := ResourceLoader.load_threaded_request(path, "Texture2D")
+			assert(error == OK, "Ornament request failed: " + path)
+			paths.append(path)
+	for path in paths:
+		while ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			await tree.process_frame
+		_prepared[path] = ResourceLoader.load_threaded_get(path) as Texture2D
+		assert(_prepared[path] != null, "Ornament load failed: " + path)
 
 
 static func for_offer(candidates: Array) -> PackedInt32Array:

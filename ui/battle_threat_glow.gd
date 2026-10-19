@@ -6,6 +6,7 @@ const ORB = preload("res://ui/effects/threat_orb.tres")
 var session: BattleSession
 var quality := 2
 var reduced_motion := false
+var low_ribbons: MeshInstance2D
 @onready var ribbons: MeshInstance2D = $Ribbons
 var _geometry: RefCounted = preload("res://ui/effects/ThreatRibbonGeometry.cs").new()
 var _samples := PackedVector2Array()
@@ -40,9 +41,11 @@ func _draw() -> void:
 
 
 func _update_ribbons() -> void:
-	if quality == 0 or session.threats.is_empty():
+	if session.threats.is_empty():
 		ribbons.mesh = null
+		if low_ribbons != null: low_ribbons.mesh = null
 		return
+	var packed_at := DebugLog.begin()
 	_samples.clear()
 	var count := session.threats.size()
 	_offsets.resize(count + 1)
@@ -60,7 +63,13 @@ func _update_ribbons() -> void:
 		_physics_heads[index] = threat.position * size
 		_render_heads[index] = threat.previous_position.lerp(threat.position, fraction) * size
 		_radii[index] = threat.radius * scale_factor
-		_limits[index] = (180.0 if threat.curvature != 0.0 else 120.0) * scale_factor * (0.45 if reduced_motion else 1.0)
+		_limits[index] = (180.0 if threat.curvature != 0.0 else (64.0 if quality == 0 else 120.0)) * scale_factor * (0.45 if reduced_motion else 1.0)
 		_tints[index] = BattleThreatOverlay.threat_color(threat)
 	_offsets[count] = _samples.size()
-	ribbons.mesh = _geometry.call("Build", _samples, _offsets, _physics_heads, _render_heads, _radii, _limits, _tints, size, quality == 2)
+	DebugLog.end(&"battle.ribbon_pack", packed_at)
+	var built_at := DebugLog.begin()
+	var mesh: ArrayMesh = _geometry.call("Build", _samples, _offsets, _physics_heads, _render_heads, _radii, _limits, _tints, size, quality == 2 and not reduced_motion)
+	if low_ribbons != null:
+		low_ribbons.mesh = mesh if quality == 0 else null
+	ribbons.mesh = mesh if quality > 0 or low_ribbons == null else null
+	DebugLog.end(&"battle.ribbon_build_upload", built_at)

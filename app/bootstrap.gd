@@ -38,6 +38,8 @@ func _run() -> void:
 	await _present()
 	var main := await _load_scene("res://app/main.tscn")
 	if main == null: return
+	ritual.feedback.update_stage("正在准备战斗音效", 0, 0)
+	await SoundBank.prepare(BattleAudio.CUE_GAIN.keys(), get_tree())
 	application = main.instantiate()
 	application.settings = settings
 	application.settings_prepared = true
@@ -49,6 +51,7 @@ func _run() -> void:
 	# ArchiveGate remains the authored welcome ritual after resource preparation.
 	add_child(application)
 	get_window().size_changed.disconnect(_resize_output)
+	while not application.initialized: await _present()
 	await _present()
 	await _present()
 	application.welcome_gate.reveal_from_loading(ritual)

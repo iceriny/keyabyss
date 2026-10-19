@@ -53,7 +53,7 @@ var settings_tab: String = "display"
 var _settings_groups: Dictionary[String, VBoxContainer] = {}
 var _settings_tabs: Dictionary[String, OpenButton] = {}
 var _settings_body: VBoxContainer
-var _archive_theme: Theme
+var _archive_theme: ArchiveTheme
 var _volume_labels: Dictionary[String, Label] = {}
 var _audio_settings_dirty := false
 @onready var _settings_save_timer: Timer = $SettingsSaveTimer
@@ -72,6 +72,13 @@ var _calibration_return := "home"
 var _calibration_archive_visible := true
 var tutorial: TutorialLesson
 var tutorial_overlay: TutorialOverlay
+var initialized := false
+var _saving := false
+var _save_input_cover: Control
+var _quit_requested := false
+var _last_save_ok := true
+var _pause_after_save := false
+signal save_finished
 
 
 func _enter_tree() -> void:
@@ -91,7 +98,6 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	_load_profile()
 	term_tooltips = TermTooltips.new()
 	term_tooltips.name = "TermTooltips"
 	term_tooltips.build_provider = _reading_build
@@ -152,8 +158,10 @@ func _ready() -> void:
 	)
 	router.focus_lost.connect(func() -> void:
 		if route in ["practice", "battle"]:
-			_pause()
+			if _saving: _pause_after_save = true
+			else: _pause()
 	)
+	await _load_profile()
 	_home()
 	if presentation_enabled:
 		var gate := ArchiveGate.create()
@@ -178,6 +186,7 @@ func _ready() -> void:
 	if not settings.last_error.is_empty():
 		archive.command_label.text = settings.last_error
 	print("Keyabyss ready | %s | %s" % [Engine.get_version_info()["string"], RenderingServer.get_current_rendering_method()])
+	initialized = true
 	if "--frame-profile" in OS.get_cmdline_user_args() and not "--profile-driver" in OS.get_cmdline_user_args():
 		add_child(load("res://app/frame_capture.gd").new() as Node)
 
@@ -214,6 +223,7 @@ func _save_preparation() -> void:
 
 
 func _archive_navigate(destination: String) -> void:
+	if _saving: return
 	match destination:
 		"vocab": _vocabulary_page()
 		"help": _guide()
@@ -337,7 +347,9 @@ func _open(next_route: String, title: String, subtitle: String, audible: bool = 
 	page.accent = archive.accent
 	page.seal_texture = ArchiveHome.BOOKS[archive.selected].seal
 	page.name = next_route.capitalize()
+	var attach_started := DebugLog.begin()
 	root.add_child(page)
+	DebugLog.end(&"page.attach", attach_started)
 	page.set_reading_style(next_route, settings.quality)
 	archive.set_interactive(false)
 	page.close_button.pressed.connect(_back)
@@ -356,6 +368,7 @@ static func _numbered_word(prefix: String, index: int, total: int) -> String:
 
 
 func _button(parent: Node, caption: String, command: String, callback: Callable, cue: String = "") -> OpenButton:
+	var started := DebugLog.begin()
 	var button := PageShell.button(parent, "%s    %s" % [caption, command], callback)
 	button.name = command.capitalize()
 	button.set_motion_reduced(settings.reduce_motion)
@@ -363,7 +376,9 @@ func _button(parent: Node, caption: String, command: String, callback: Callable,
 		button.pressed.connect(func() -> void: sound.play_cue(cue))
 	button.mouse_entered.connect(func() -> void: sound.play_cue("ui.focus"))
 	_bind_control_command(button, command)
-	router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
+	router.set_commands(PackedStringArray(commands.keys()))
+	button.set_command_prefix(router.buffer)
+	DebugLog.end(&"page.button", started)
 	return button
 
 
@@ -435,6 +450,8 @@ func _apply_control_policy(node_id: int) -> void:
 		return
 	control.focus_mode = Control.FOCUS_CLICK if control is LineEdit or control is TextEdit else Control.FOCUS_NONE
 	control.tooltip_text = ""
+	if control is LineEdit or control is TextEdit:
+		ArchiveTheme.watch_colors(control)
 	if control is Label and is_instance_valid(term_tooltips):
 		term_tooltips.register(control)
 
@@ -471,6 +488,7 @@ func _apply_book_theme() -> void:
 
 
 func _command(command: String) -> void:
+	if _saving: return
 	if is_instance_valid(page) and page.has_node("RewardDetail"):
 		if command == "back": _back()
 		return
@@ -511,12 +529,13 @@ func _home(audible: bool = true) -> void:
 
 
 func _back() -> void:
+	if _saving: return
 	if is_instance_valid(page) and page.has_node("RewardDetail"):
 		_close_reward_detail()
 		return
 	match route:
 		"resume_run": _home()
-		"reward", "reward_wait", "reward_error", "settlement": pass
+		"reward", "reward_wait", "reward_return", "reward_error", "settlement": pass
 		"relics", "build":
 			if run != null and run.phase in ["REWARD", "BATTLE_REWARD", "EVENT"]:
 				_show_run_stage()
@@ -560,6 +579,7 @@ func _guide() -> void:
 	grid.focus_mode = Control.FOCUS_NONE
 	page.body.add_child(grid)
 	page.body.theme_changed.connect(GuideContent._update_accents.bind(page.body, book.color, labels, rules))
+	ArchiveTheme.watch_colors(page.body)
 	var build_started := Time.get_ticks_usec()
 	for article: Dictionary in GuideContent.ARTICLES:
 		GuideContent._add_article(grid, article, labels, rules)
@@ -620,19 +640,9 @@ func _vocabulary_page() -> void:
 	detail_scroll.add_child(vocab_detail)
 	var catalog := vocabulary.catalog()
 	for index in catalog.size():
-		var book: Dictionary = catalog[index]
-		var word_command := str(book.id).replace("primary", "grade")
-		if str(book.id) == "extension":
-			word_command = "lexicon"
-		elif str(book.id).begins_with("custom-"):
-			word_command = _numbered_word("custom", index + 1, catalog.size())
-		var choice := _button(list, str(book.title), word_command, func() -> void:
-			if selected_id != str(book.id):
-				_show_vocabulary(str(book.id))
-				sound.play_cue("ui.select"))
-		choice.name = "V%02d" % (index + 1)
-		choice.custom_minimum_size.y = 44
-		choice.add_theme_font_size_override("font_size", 18)
+		commands[_vocabulary_command(catalog[index], index, catalog.size())] = _select_vocabulary.bind(str(catalog[index].id))
+	router.set_commands(PackedStringArray(commands.keys()))
+	_build_vocabulary_choices(list, catalog)
 	selected_id = settings.vocabulary_id
 	if not catalog.any(func(book: Dictionary) -> bool: return str(book.id) == selected_id) and not catalog.is_empty():
 		selected_id = str(catalog[0].id)
@@ -641,6 +651,34 @@ func _vocabulary_page() -> void:
 	_button(page.footer, "导入词表", "import", _import_page)
 	_button(page.footer, "使用词库", "use", _use_vocabulary)
 	_button(page.footer, "导出", "export", _export_vocabulary, "ui.select")
+
+
+func _vocabulary_command(book: Dictionary, index: int, total: int) -> String:
+	if str(book.id) == "extension": return "lexicon"
+	if str(book.id).begins_with("custom-"): return _numbered_word("custom", index + 1, total)
+	return str(book.id).replace("primary", "grade")
+
+
+func _select_vocabulary(id: String) -> void:
+	if selected_id != id:
+		_show_vocabulary(id)
+		sound.play_cue("ui.select")
+
+
+func _build_vocabulary_choices(list: VBoxContainer, catalog: Array[Dictionary]) -> void:
+	var opened_page := page
+	var build_started := Time.get_ticks_usec()
+	for index in catalog.size():
+		var book: Dictionary = catalog[index]
+		var word_command := _vocabulary_command(book, index, catalog.size())
+		var choice := _catalog_button(list, str(book.title), word_command, _select_vocabulary.bind(str(book.id)))
+		choice.name = "V%02d" % (index + 1)
+		choice.custom_minimum_size.y = 44
+		choice.add_theme_font_size_override("font_size", 18)
+		if Time.get_ticks_usec() - build_started >= 2000:
+			await get_tree().process_frame
+			if not is_instance_valid(opened_page) or opened_page != page or not opened_page.visible: return
+			build_started = Time.get_ticks_usec()
 
 
 func _show_vocabulary(id: String) -> void:
@@ -690,12 +728,17 @@ func _show_vocabulary(id: String) -> void:
 	preview_grid.add_theme_constant_override("h_separation", 28)
 	preview_grid.add_theme_constant_override("v_separation", 18)
 	vocab_detail.add_child(preview_grid)
+	var build_started := Time.get_ticks_usec()
 	for entry in selected_entries.slice(0, 40):
 		var pair := VBoxContainer.new()
 		pair.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		preview_grid.add_child(pair)
 		PageShell.label(pair, entry.word, 18, Color("c5d5d0"))
 		PageShell.label(pair, entry.meaning, 14, Color("8b9c99"))
+		if Time.get_ticks_usec() - build_started >= 2000:
+			await get_tree().process_frame
+			if not is_instance_valid(preview_grid) or not preview_grid.is_visible_in_tree() or selected_id != id: return
+			build_started = Time.get_ticks_usec()
 	if selected_entries.is_empty():
 		page.status.text = vocabulary.last_error
 
@@ -990,7 +1033,7 @@ func _settings_page(return_to: String) -> void:
 	fluid_select.set_meta("settings_tab", "visuals")
 	settings_controls["fluid_quality"] = fluid_select
 	_bind_control_command(fluid_select, "fluid")
-	PageShell.label(_settings_body, "各档保持连贯流动，越高则雾气轮廓、卷曲与雾中光线越细腻，也越需要显卡性能。减少动态时停止流动效果。", 16, Color("aab9c2"))
+	PageShell.label(_settings_body, "画质影响材质细节、柔光与装饰密度。流体效果影响空气流动和雾气细节，关闭后仍保留冰火与技能范围。减少动态会收敛拖尾并停止持续流动。", 16, Color("aab9c2"))
 	_settings_body = _settings_groups["audio"]
 	_check("sound", "声音", settings.sound)
 	_volume_setting("volume", "总音量", settings.volume)
@@ -1166,6 +1209,8 @@ func _persist_audio_settings() -> void:
 
 
 func _exit_tree() -> void:
+	if run != null: run.finish_pending_save()
+	if saves != null: saves.finish_pending_save()
 	if _audio_settings_dirty:
 		settings.save_settings()
 
@@ -1422,6 +1467,7 @@ func _enter_practice(entries: Array[VocabularyEntry]) -> void:
 
 
 func _start_battle() -> void:
+	if _saving: return
 	if route == "departure":
 		return
 	var book_id := run.selection.book_id if run != null and run.has_pending_run() else StringName(settings.book_id)
@@ -1440,7 +1486,8 @@ func _start_battle() -> void:
 		return
 	if run == null or run.phase == "RESULT":
 		run = RunSession.new(saves, profile)
-		if not run.begin(StringName(settings.book_id), settings):
+		run.save_tree = get_tree()
+		if not await _run_write(run.begin.bind(StringName(settings.book_id), settings)):
 			archive.command_label.text = run.last_error
 			return
 		profile = run.profile
@@ -1476,12 +1523,13 @@ func _start_battle() -> void:
 
 
 func _launch_prepared() -> void:
+	if _saving: return
 	if not _require_book_tutorial(StringName(settings.book_id)): return
 	if run != null and run.has_pending_run():
 		if not _restart_requested:
 			_pending_run_page()
 			return
-		if not run.restart(StringName(settings.book_id), settings):
+		if not await _run_write(run.restart.bind(StringName(settings.book_id), settings)):
 			if is_instance_valid(page): page.status.text = run.last_error
 			else: archive.command_label.text = run.last_error
 			return
@@ -1540,11 +1588,15 @@ func _require_book_tutorial(book_id: StringName) -> bool:
 
 
 func _activate_god_mode() -> void:
+	if _saving: return
 	if god_enabled: return
 	var god_saves := SaveRepository.new(&"god", profile_base_path)
 	if run != null and run.has_pending_run():
 		var current_battle: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
-		if not run.isolate_to_god(god_saves, current_battle):
+		if current_battle != null:
+			current_battle.set_physics_process(false)
+			_pause()
+		if not await _run_write(run.isolate_to_god.bind(god_saves, current_battle)):
 			profile = run.profile
 			if is_instance_valid(page):
 				page.status.text = run.last_error
@@ -1555,13 +1607,13 @@ func _activate_god_mode() -> void:
 		profile = run.profile
 		profile_mode = &"god"
 		if current_battle == null:
-			if not run.restore():
+			if not await _run_write(run.restore):
 				if is_instance_valid(page): page.status.text = run.last_error
 				return
 			profile = run.profile
 	else:
 		profile_mode = &"god"
-		_load_profile()
+		await _load_profile()
 	god_enabled = true
 	if is_instance_valid(battle) and battle.session.result == 0:
 		battle.session.activate_god_mode()
@@ -1579,7 +1631,7 @@ func _enter_battle(entries: Array[VocabularyEntry]) -> void:
 		battle.queue_free()
 	var session := BattleSession.new()
 	session.name = "Session"
-	var request := run.start_room(entries, vocabulary.prepared_index(str(run.options.vocabulary_id)))
+	var request: BattleStartRequest = await _run_write(run.start_room.bind(entries, vocabulary.prepared_index(str(run.options.vocabulary_id))))
 	if request == null:
 		session.free()
 		_open("room_error", "未能进入书页", run.last_error)
@@ -1589,12 +1641,18 @@ func _enter_battle(entries: Array[VocabularyEntry]) -> void:
 		return
 	profile = run.profile
 	request.god_mode = god_enabled
+	await SoundBank.prepare(BattleAudio.CUE_GAIN.keys(), get_tree())
+	var started := DebugLog.begin()
 	session.start(request, run.combat)
 	run.install_room_opening(session)
+	DebugLog.end(&"battle.create.session", started)
+	await get_tree().process_frame
 	battle = BattlePage.create(session, settings, _run_book())
 	battle.theme = _archive_theme
 	battle.name = "Battle"
+	started = DebugLog.begin()
 	root.add_child(battle)
+	DebugLog.end(&"battle.create.attach", started)
 	session.set_physics_process(false)
 	battle.pause_requested.connect(_pause)
 	session.finished.connect(_battle_finished)
@@ -1614,13 +1672,14 @@ func _enter_battle(entries: Array[VocabularyEntry]) -> void:
 
 
 func _battle_finished(victory: bool) -> void:
+	if _saving: await save_finished
 	if not is_instance_valid(battle):
 		return
 	var session := battle.session
 	var gained_level := false
 	if run != null:
 		var previous_level := TalentProgress.level_for(profile.manual_characters)
-		if not run.finish_room(session):
+		if not await _run_write(run.finish_room.bind(session)):
 			_open("settlement", "正在归档", run.last_error)
 			_button(page.footer, "重试保存", "retry", _battle_finished.bind(victory))
 			return
@@ -1699,13 +1758,43 @@ func _export_battle_report(report: Dictionary) -> void:
 
 func _load_profile() -> void:
 	saves = SaveRepository.new(profile_mode, profile_base_path)
-	profile = saves.load_profile()
+	profile = await _run_write(saves.load_profile_async.bind(get_tree()))
 	if profile != null:
 		run = RunSession.new(saves, profile)
-		if run.restore():
+		run.save_tree = get_tree()
+		if await _run_write(run.restore):
 			profile = run.profile
 		else:
 			profile.diagnostics.append(run.last_error)
+
+
+func _run_write(action: Callable) -> Variant:
+	# Transaction controls are held until durable commit; drawing and animation
+	# keep running. No speculative reward/build is published to the live battle.
+	if _saving: return null
+	_saving = true
+	if not is_instance_valid(_save_input_cover):
+		_save_input_cover = Control.new()
+		_save_input_cover.name = "SaveInputCover"
+		_save_input_cover.z_index = 100
+		_save_input_cover.mouse_filter = Control.MOUSE_FILTER_STOP
+		root.add_child(_save_input_cover)
+		_save_input_cover.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# GUI hit testing follows sibling order, independently of CanvasItem z_index.
+	root.move_child(_save_input_cover, root.get_child_count() - 1)
+	_save_input_cover.show()
+	router.clear_held()
+	router.set_process_input(false)
+	var result: Variant = await action.call()
+	router.set_process_input(true)
+	_save_input_cover.hide()
+	_last_save_ok = result is ProfileState or result is BattleStartRequest or (result is bool and result)
+	_saving = false
+	save_finished.emit()
+	if _pause_after_save:
+		_pause_after_save = false
+		_pause.call_deferred()
+	return result
 
 
 func _run_book() -> BookPresentation:
@@ -1715,7 +1804,8 @@ func _run_book() -> BookPresentation:
 
 
 func _continue_challenge() -> void:
-	if not run.continue_challenge():
+	if _saving: return
+	if not await _run_write(run.continue_challenge):
 		page.status.text = run.last_error
 		sound.play_cue("ui.invalid")
 		return
@@ -1725,7 +1815,8 @@ func _continue_challenge() -> void:
 
 
 func _end_challenge() -> void:
-	if not run.end_challenge():
+	if _saving: return
+	if not await _run_write(run.end_challenge):
 		page.status.text = run.last_error
 		sound.play_cue("ui.invalid")
 		return
@@ -1782,26 +1873,27 @@ func _profile_page() -> void:
 
 
 func _progression_changed() -> void:
-	var started := DebugLog.begin()
 	_observe_battle_progression()
-	DebugLog.end(&"battle.progression", started)
 
 
 func _observe_battle_progression() -> void:
+	if _saving: return
 	if run == null or not is_instance_valid(battle):
 		return
 	var previous_level := TalentProgress.level_for(profile.manual_characters)
-	if not run.observe_battle(battle.session):
+	if not await _run_write(run.observe_battle.bind(battle.session)):
 		_open("reward_error", "奖励暂未保存", run.last_error)
 		_button(page.footer, "重试保存", "retry", _progression_changed)
 		return
 	profile = run.profile
 	var gained_level := TalentProgress.level_for(profile.manual_characters) > previous_level
+	if battle.session.result != 0: return
 	if gained_level:
 		sound.play_cue("ui.level")
 	if run.phase == "BATTLE_REWARD":
 		await _wait_for_battle_feedback()
-		_show_run_stage(not gained_level)
+		if battle.session.result != 0: return
+		await _show_run_stage(not gained_level)
 
 
 func _wait_for_battle_feedback() -> void:
@@ -1810,7 +1902,10 @@ func _wait_for_battle_feedback() -> void:
 	commands.clear()
 	router.typing = null
 	router.configure(InputRouter.Context.MODAL)
-	var reveal_at := Time.get_ticks_usec() + 200000
+	var reveal_at := Time.get_ticks_usec() + (120000 if settings.reduce_motion else 220000)
+	if is_instance_valid(battle): battle.focus_reading(true)
+	if run.phase in ["REWARD", "BATTLE_REWARD"]:
+		await RelicOrnaments.prepare(RelicOrnaments.for_offer(run.offer.candidates), get_tree())
 	while Time.get_ticks_usec() < reveal_at:
 		await get_tree().process_frame
 
@@ -1821,6 +1916,10 @@ func _show_run_stage(audible: bool = true) -> void:
 		return
 	if run.phase in ["REWARD", "BATTLE_REWARD"]:
 		_open("reward", "选择遗物", "还可领取 %d 件" % run.rewards.available(), audible)
+		var reward_page := page
+		page.entrance_ready = false
+		page.content_layer.hide()
+		router.configure(InputRouter.Context.MODAL)
 		page.compact_height = 710
 		page.set_width(1280.0)
 		page.scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -1845,6 +1944,7 @@ func _show_run_stage(audible: bool = true) -> void:
 		page.body.add_child(choices)
 		var ornament_variants := RelicOrnaments.for_offer(run.offer.candidates)
 		for id: String in run.offer.candidates:
+			var choice_started := DebugLog.begin()
 			var definition := run.compiler.catalog.get_definition(StringName(id))
 			var choice := load("res://ui/scenes/relic_reward_choice.tscn").instantiate() as RelicRewardChoice
 			choice.definition = definition
@@ -1875,6 +1975,9 @@ func _show_run_stage(audible: bool = true) -> void:
 			take.add_theme_font_size_override("font_size", 21)
 			choice.picked.connect(take.pressed.emit)
 			choice.mouse_entered.connect(func() -> void: menu_navigation.select_word(take_word))
+			DebugLog.end(&"page.reward.choice", choice_started)
+			await get_tree().process_frame
+			if not is_instance_valid(reward_page) or page != reward_page: return
 		_reward_companion()
 		_button(page.footer, "已有遗物", "relics", _relics_page.bind(true))
 		if run.offer.candidates.is_empty():
@@ -1882,8 +1985,9 @@ func _show_run_stage(audible: bool = true) -> void:
 			menu_navigation.primary_word = "supply"
 			PageShell.label(page.body, "当前可用遗物已满层。领取补给：恢复 25 点生命，补充一次闪避。", 22)
 			_button(page.footer, "领取补给", "supply", func() -> void:
+				if _saving: return
 				var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
-				if run.supply_reward(str(run.offer.id), session):
+				if await _run_write(run.supply_reward.bind(str(run.offer.id), session)):
 					profile = run.profile
 					sound.play_cue("ui.supply")
 					_resume_reward_or_stage(false)
@@ -1892,7 +1996,8 @@ func _show_run_stage(audible: bool = true) -> void:
 					page.status.text = run.last_error
 					sound.play_cue("ui.invalid"))
 		var reroll := _button(page.footer, "重抽 · 剩余 %d 次" % int(run.facts.get("rerolls", 0)), "reroll", func() -> void:
-			if run.reroll_reward(str(run.offer.id)):
+			if _saving: return
+			if await _run_write(run.reroll_reward.bind(str(run.offer.id))):
 				profile = run.profile
 				sound.play_cue("ui.reroll")
 				_show_run_stage(false)
@@ -1902,7 +2007,8 @@ func _show_run_stage(audible: bool = true) -> void:
 				sound.play_cue("ui.invalid"))
 		reroll.disabled = int(run.facts.get("rerolls", 0)) <= 0 or run.offer.candidates.is_empty()
 		_button(page.footer, "放弃本次奖励", "skip", func() -> void:
-			if run.skip_reward(str(run.offer.id)):
+			if _saving: return
+			if await _run_write(run.skip_reward.bind(str(run.offer.id))):
 				profile = run.profile
 				sound.play_cue("ui.close")
 				_resume_reward_or_stage(false)
@@ -1910,6 +2016,10 @@ func _show_run_stage(audible: bool = true) -> void:
 				page.status.show()
 				page.status.text = run.last_error
 				sound.play_cue("ui.invalid"))
+		page.arrival = 0.0
+		page.entrance_ready = true
+		page.content_layer.show()
+		router.configure(InputRouter.Context.MENU, PackedStringArray(commands.keys()))
 	else:
 		_open("route", "行间", "下一页，选择如何继续。", audible)
 		page.set_width(1080)
@@ -2046,7 +2156,8 @@ func _reward_companion() -> void:
 
 
 func _choose_route(choice: String) -> void:
-	if not run.take_route(choice):
+	if _saving: return
+	if not await _run_write(run.take_route.bind(choice)):
 		page.status.text = run.last_error
 		sound.play_cue("ui.invalid")
 		return
@@ -2185,13 +2296,15 @@ func _catalog_button(parent: Node, caption: String, command: String, callback: C
 		button.pressed.connect(scroll_parent.ensure_control_visible.bind(button), CONNECT_DEFERRED)
 	_bind_control_command(button, command)
 	parent.add_child(button)
+	button.set_command_prefix(router.buffer)
 	return button
 
 
 func _choose_reward(id: StringName, offer_id: String, parent: OptionButton) -> void:
+	if _saving: return
 	var session: BattleSession = battle.session if is_instance_valid(battle) and battle.session.result == 0 else null
 	var parent_id := str(parent.get_selected_metadata()) if parent != null else ""
-	if not run.take_reward(id, offer_id, parent_id, session):
+	if not await _run_write(run.take_reward.bind(id, offer_id, parent_id, session)):
 		page.status.show()
 		page.status.text = run.last_error
 		sound.play_cue("ui.invalid")
@@ -2203,19 +2316,28 @@ func _choose_reward(id: StringName, offer_id: String, parent: OptionButton) -> v
 
 func _resume_reward_or_stage(audible: bool = true) -> void:
 	if run.phase == "BATTLE":
-		page.queue_free()
+		if route == "reward_return": return
+		route = "reward_return"
+		commands.clear()
+		router.configure(InputRouter.Context.MODAL)
+		var closing_page := page
 		page = null
-		route = "battle"
 		battle.show()
+		var reveal := battle.focus_reading(false)
+		closing_page.dismiss()
+		await reveal.finished
+		route = "battle"
 		battle.session.set_physics_process(true)
 		router.typing = battle.session.typing
 		router.configure(InputRouter.Context.TYPING)
+		if not get_window().has_focus(): _pause()
 	else:
 		_show_run_stage(audible)
 
 
 func _next_room() -> void:
-	if not run.leave_route():
+	if _saving: return
+	if not await _run_write(run.leave_route):
 		page.status.text = run.last_error
 		sound.play_cue("ui.invalid")
 		return
@@ -2255,21 +2377,31 @@ func _run_records() -> void:
 	var record_index := 0
 	var records := profile.records.duplicate()
 	records.reverse()
+	var opened_page := page
+	var catalog := BuildCatalog.new()
+	_catalog_button(page.footer, "返回书库", "back", _home)
+	for index in records.size():
+		commands[_numbered_word("entry", index + 1, records.size())] = _record_detail.bind(records[index])
+	router.set_commands(PackedStringArray(commands.keys()))
+	if not records.is_empty(): _record_detail(records[0], false)
+	var build_started := Time.get_ticks_usec()
 	for record in records:
 		record_index += 1
-		var book_title := BuildCatalog.new().get_definition(StringName(record.book)).title
-		var action := _button(list, "%02d · %s" % [records.size() - record_index + 1, book_title], _numbered_word("entry", record_index, records.size()), _record_detail.bind(record))
+		var book_title := catalog.get_definition(StringName(record.book)).title
+		var action := _catalog_button(list, "%02d · %s" % [records.size() - record_index + 1, book_title], _numbered_word("entry", record_index, records.size()), _record_detail.bind(record))
 		action.add_theme_font_size_override("font_size", 18)
 		PageShell.label(list, "%s · %d 页" % [_result_name(record), int(record.rooms)], 14, Color("92a69f"))
-	if not records.is_empty(): _record_detail(records[0], false)
-	else:
+		if Time.get_ticks_usec() - build_started >= 2000 and record_index < records.size():
+			await get_tree().process_frame
+			if not is_instance_valid(opened_page) or opened_page != page or not opened_page.visible: return
+			build_started = Time.get_ticks_usec()
+	if records.is_empty():
 		var emblem := JourneyEmblem.new()
 		emblem.kind = &"growth"
 		emblem.custom_minimum_size.y = 210
 		_history_detail.add_child(emblem)
 		PageShell.label(_history_detail, "这里还没有归卷的远征", 25, Color("ddc79b"))
 		PageShell.label(_history_detail, "远征结束后，法书、遗物与行间选择会留在这里。", 17, Color("a0b1a8"))
-	_button(page.footer, "返回书库", "back", _home)
 
 
 func _result_name(record: Dictionary) -> String:
@@ -2280,6 +2412,9 @@ func _record_detail(record: Dictionary, audible: bool = true) -> void:
 	if _history_detail.get_meta("record", {}) == record:
 		return
 	_history_detail.set_meta("record", record)
+	var detail := _history_detail
+	var generation := int(detail.get_meta("generation", 0)) + 1
+	detail.set_meta("generation", generation)
 	if audible:
 		sound.play_cue("ui.select")
 	for child in _history_detail.get_children():
@@ -2303,6 +2438,7 @@ func _record_detail(record: Dictionary, audible: bool = true) -> void:
 	grid.add_theme_constant_override("h_separation", 16)
 	grid.add_theme_constant_override("v_separation", 20)
 	_history_detail.add_child(grid)
+	var build_started := Time.get_ticks_usec()
 	for id in assets:
 		var definition := BuildCatalog.new().get_definition(StringName(id))
 		if definition == null: continue
@@ -2315,10 +2451,18 @@ func _record_detail(record: Dictionary, audible: bool = true) -> void:
 		cell.add_child(glyph)
 		PageShell.label(cell, "%s ×%d" % [definition.title, int(assets[id])], 15).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		PageShell.label(cell, ContentDescription.summary(definition, int(assets[id])), 14, Color("aeb9b5"))
+		if Time.get_ticks_usec() - build_started >= 2000:
+			await get_tree().process_frame
+			if not is_instance_valid(detail) or not detail.is_visible_in_tree() or detail.get_meta("generation") != generation: return
+			build_started = Time.get_ticks_usec()
 	if assets.is_empty(): PageShell.label(_history_detail, "未携带遗物", 16, Color("91a69b"))
 	PageShell.label(_history_detail, "行间足迹", 21, Color("d8c496"))
 	for item: Dictionary in record.get("routes", []):
 		PageShell.label(_history_detail, "%02d  ─  %s" % [int(item.room), {"continue": "前行", "rest": "休息", "offering": "献血换取遗物"}.get(str(item.choice), str(item.choice))], 16)
+		if Time.get_ticks_usec() - build_started >= 2000:
+			await get_tree().process_frame
+			if not is_instance_valid(detail) or not detail.is_visible_in_tree() or detail.get_meta("generation") != generation: return
+			build_started = Time.get_ticks_usec()
 	if record.get("routes", []).is_empty():
 		PageShell.label(_history_detail, "尚未经过行间", 16, Color("91a69b"))
 
@@ -2329,8 +2473,20 @@ func _notification(what: int) -> void:
 
 
 func _quit_game() -> void:
+	if _quit_requested: return
+	_quit_requested = true
+	if _saving:
+		await save_finished
+		if not _last_save_ok:
+			_quit_requested = false
+			return
+		# Let the committing handler adopt its result before snapshotting for exit.
+		await get_tree().process_frame
 	if not is_instance_valid(tutorial) and run != null and is_instance_valid(battle) and battle.session.result == 0:
-		if not profile.run_checkpoint.get("facts", {}).has("god_transfer") and not run.suspend_battle(battle.session):
+		battle.session.set_physics_process(false)
+		if not profile.run_checkpoint.get("facts", {}).has("god_transfer") and not await _run_write(run.suspend_battle.bind(battle.session)):
+			_quit_requested = false
+			_pause()
 			if is_instance_valid(page):
 				page.status.text = run.last_error
 				page.status.show()
@@ -2340,6 +2496,7 @@ func _quit_game() -> void:
 
 
 func _pause() -> void:
+	if _saving: return
 	if route not in ["practice", "battle"] and not (get_tree().paused and paused_route in ["practice", "battle"]):
 		return
 	if route in ["practice", "battle"]:
@@ -2385,10 +2542,11 @@ func _pause() -> void:
 
 
 func _end_current_run() -> void:
+	if _saving: return
 	var gained_level := false
 	if paused_route == "battle":
 		var previous_level := TalentProgress.level_for(profile.manual_characters)
-		if not run.end_run(battle.session):
+		if not await _run_write(run.end_run.bind(battle.session)):
 			page.status.show()
 			page.status.text = run.last_error
 			sound.play_cue("ui.invalid")

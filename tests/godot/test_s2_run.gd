@@ -1,5 +1,7 @@
 extends SceneTree
 ## S2 transaction fixtures are explicit; --formal additionally earns nine-room victories.
+## Sessions here use the synchronous transport (save_tree == null). Callable
+## dispatch keeps these deterministic fixtures synchronous; UI tests await writes.
 
 const Q := 1024
 const MODES := ["story", "normal", "hard", "nightmare", "apocalypse"]
@@ -81,7 +83,7 @@ func _new_run(label: String, mode: String = "normal", book: StringName = &"frost
 	settings.difficulty = mode
 	settings.progressive = false
 	settings.run_seed = "s2-" + label if run_seed.is_empty() else run_seed
-	_check(session.begin(book, settings), "direct book begin: " + session.last_error)
+	_check(session.call("begin", book, settings), "direct book begin: " + session.last_error)
 	return session
 
 
@@ -92,7 +94,7 @@ func _persist_fixture(session: RunSession) -> RunSession:
 	_check(RunSession.from_checkpoint(proposed.run_checkpoint) != null, "fixture passes the real checkpoint parser")
 	_check(session.repository.save_profile(proposed, session.profile.revision), "fixture persists through actual profile repository: " + session.repository.last_error)
 	var restored := RunSession.new(session.repository, session.repository.load_profile())
-	_check(restored.restore(), "fixture reopens through real restore")
+	_check(restored.call("restore"), "fixture reopens through real restore")
 	return restored
 
 
@@ -143,9 +145,9 @@ func _test_continuation(mode: String) -> void:
 	var bytes := FileAccess.get_file_as_bytes(session.repository.path)
 	var snapshot := session.to_checkpoint()
 	(session.repository as FailingRepository).reject_next = true
-	_check(not session.continue_challenge(), "continuation save failure is reported")
+	_check(not session.call("continue_challenge"), "continuation save failure is reported")
 	_check(session.to_checkpoint() == snapshot and FileAccess.get_file_as_bytes(session.repository.path) == bytes, "failed continuation publishes no stage, healing, reroll or file change")
-	_check(session.continue_challenge(), "continue commits: " + session.last_error)
+	_check(session.call("continue_challenge"), "continue commits: " + session.last_error)
 	_check(session.run_id == identity and _inherited_selection(session.selection) == assets, "continuation preserves run, book, growth and relic IDs, instances and layers")
 	_check(session.selection.base_hp == next_selection.base_hp, "next difficulty selects its own starting health baseline")
 	_check(RunStateCodec.encode(session.combat).get("asset_claims", {}) == claims, "continuation preserves consumed asset opportunities")
@@ -157,10 +159,10 @@ func _test_continuation(mode: String) -> void:
 	_check(int(session.facts.round_start_characters) == 100 and session.profile.manual_characters == 100 and session.profile.records.size() == 1, "continuation neither earns growth nor repeats its previous stage record")
 	var after := session.to_checkpoint()
 	var revision := session.profile.revision
-	session.continue_challenge()
+	session.call("continue_challenge")
 	_check(session.to_checkpoint() == after and session.profile.revision == revision, "duplicate continuation cannot restore health, rerolls or advance again")
 	var restored := RunSession.new(session.repository, session.repository.load_profile())
-	_check(restored.restore() and _json_equal(restored.to_checkpoint(), after), "continued identity and state survive JSON reload")
+	_check(restored.call("restore") and _json_equal(restored.to_checkpoint(), after), "continued identity and state survive JSON reload")
 	_check(not restored.combat.claim_asset(restored.selection.instances.back().usage_key(), &"revive"), "reloaded consumed rescue cannot be used again after advancing")
 	evidence.append({"kind": "RESULT transaction fixture", "mode": mode, "next_mode": str(session.options.difficulty), "loop": session.options.get("loop_index", 0), "instances": session.selection.instances.size(), "claimed_opportunities": claims.size()})
 
@@ -168,7 +170,7 @@ func _test_continuation(mode: String) -> void:
 func _test_records_and_end() -> void:
 	var session := _victory_fixture("records")
 	var original := session.run_id
-	_check(session.continue_challenge(), "record fixture enters round two")
+	_check(session.call("continue_challenge"), "record fixture enters round two")
 	var candidate := session.copy()
 	candidate.phase = "RESULT"
 	candidate.room_serial = candidate.itinerary.encounters.size()
@@ -187,15 +189,15 @@ func _test_records_and_end() -> void:
 	var bytes := FileAccess.get_file_as_bytes(session.repository.path)
 	var before := session.to_checkpoint()
 	(session.repository as FailingRepository).reject_next = true
-	_check(not session.end_challenge() and session.to_checkpoint() == before and FileAccess.get_file_as_bytes(session.repository.path) == bytes, "failed end does not close assets or change the original pending victory")
-	_check(session.end_challenge(), "explicit end closes a pending victory")
+	_check(not session.call("end_challenge") and session.to_checkpoint() == before and FileAccess.get_file_as_bytes(session.repository.path) == bytes, "failed end does not close assets or change the original pending victory")
+	_check(session.call("end_challenge"), "explicit end closes a pending victory")
 	_check(session.phase == "RESULT" and session.selection.instances.is_empty() and not bool(session.facts.get("victory_pending", false)), "end clears local relics and continuation eligibility")
 	_check(session.profile.manual_characters == 130 and session.profile.records.size() == 2, "end does not earn growth or append another victory record")
 	var revision := session.profile.revision
-	session.end_challenge()
+	session.call("end_challenge")
 	_check(session.profile.revision == revision and session.profile.records.size() == 2, "duplicate end does not resettle")
 	var settings := AppSettings.new()
-	_check(session.begin(&"storm", settings) and session.run_id != original and session.selection.book_id == &"storm" and session.selection.instances.is_empty(), "ordinary restart creates a new run and clears inherited relics")
+	_check(session.call("begin", &"storm", settings) and session.run_id != original and session.selection.book_id == &"storm" and session.selection.instances.is_empty(), "ordinary restart creates a new run and clears inherited relics")
 	_check(session.profile.manual_characters == 130 and session.profile.records.size() == 2, "ordinary restart retains prior characters and records")
 	evidence.append({"kind": "record projection fixture", "round_characters": record.characters, "total_characters": 130})
 
@@ -214,24 +216,24 @@ func _reward_fixture(label: String) -> RunSession:
 func _test_reroll() -> void:
 	var session := _reward_fixture("reroll")
 	var previous: Dictionary = session.offer.duplicate(true)
-	_check(not session.supply_reward(str(previous.id)), "nonempty eligible pool cannot exchange a relic offer for supply")
+	_check(not session.call("supply_reward", str(previous.id)), "nonempty eligible pool cannot exchange a relic offer for supply")
 	var spent := session.rewards.spent
 	var bytes := FileAccess.get_file_as_bytes(session.repository.path)
 	(session.repository as FailingRepository).reject_next = true
-	_check(not session.reroll_reward(str(previous.id)), "reroll save failure is reported")
+	_check(not session.call("reroll_reward", str(previous.id)), "reroll save failure is reported")
 	_check(session.offer == previous and int(session.facts.rerolls) == 2 and FileAccess.get_file_as_bytes(session.repository.path) == bytes, "failed reroll preserves quote, counter and file")
-	_check(session.reroll_reward(str(previous.id)), "reroll refreshes a valid saved quote")
+	_check(session.call("reroll_reward", str(previous.id)), "reroll refreshes a valid saved quote")
 	_check(str(session.offer.id) != str(previous.id) and int(session.facts.rerolls) == 1 and session.rewards.spent == spent, "reroll changes quote identity and spends one reroll rather than reward opportunity")
 	var after := session.to_checkpoint()
 	var revision := session.profile.revision
-	session.reroll_reward(str(previous.id))
+	session.call("reroll_reward", str(previous.id))
 	_check(session.to_checkpoint() == after and session.profile.revision == revision, "old reroll quote cannot pay twice or redraw again")
-	_check(not session.take_reward(StringName(previous.candidates[0]), str(previous.id)), "stale pre-reroll reward quote cannot be acquired")
+	_check(not session.call("take_reward", StringName(previous.candidates[0]), str(previous.id)), "stale pre-reroll reward quote cannot be acquired")
 	var restored := RunSession.new(session.repository, session.repository.load_profile())
-	_check(restored.restore() and restored.offer == session.offer and int(restored.facts.rerolls) == 1, "refreshed quote and remaining rerolls reopen unchanged")
-	_check(session.reroll_reward(str(session.offer.id)) and int(session.facts.rerolls) == 0, "last reroll is consumed")
+	_check(restored.call("restore") and restored.offer == session.offer and int(restored.facts.rerolls) == 1, "refreshed quote and remaining rerolls reopen unchanged")
+	_check(session.call("reroll_reward", str(session.offer.id)) and int(session.facts.rerolls) == 0, "last reroll is consumed")
 	after = session.to_checkpoint()
-	_check(not session.reroll_reward(str(session.offer.id)) and session.to_checkpoint() == after, "zero rerolls rejects further redraw")
+	_check(not session.call("reroll_reward", str(session.offer.id)) and session.to_checkpoint() == after, "zero rerolls rejects further redraw")
 
 
 func _test_relic_restore_compatibility() -> void:
@@ -242,7 +244,7 @@ func _test_relic_restore_compatibility() -> void:
 	var checkpoint := legal.profile.run_checkpoint.duplicate(true)
 	var revision := legal.profile.revision
 	var saves := (legal.repository as FailingRepository).save_calls
-	_check(legal.restore() and _json_equal(legal.to_checkpoint(), checkpoint), "legal old relic ownership resumes unchanged")
+	_check(legal.call("restore") and _json_equal(legal.to_checkpoint(), checkpoint), "legal old relic ownership resumes unchanged")
 	_check(legal.profile.revision == revision and (legal.repository as FailingRepository).save_calls == saves and FileAccess.get_file_as_bytes(legal.repository.path) == bytes, "legal ready checkpoints need no compatibility save")
 	for conflict in ["exclusive", "capability"]:
 		var old := _new_run("compat-" + conflict, "normal", &"frost" if conflict == "exclusive" else &"flame")
@@ -259,11 +261,11 @@ func _test_relic_restore_compatibility() -> void:
 		checkpoint = old.profile.run_checkpoint.duplicate(true)
 		revision = old.profile.revision
 		saves = (old.repository as FailingRepository).save_calls
-		_check(not old.restore() and "旧局已保留" in old.last_error and "重开" in old.last_error, "new %s requirements reject the old build through the preserved-run path" % conflict)
+		_check(not old.call("restore") and "旧局已保留" in old.last_error and "重开" in old.last_error, "new %s requirements reject the old build through the preserved-run path" % conflict)
 		_check(old.profile.has_pending_run() and _json_equal(old.profile.run_checkpoint, checkpoint) and old.profile.revision == revision, "rejected %s ownership retains the original checkpoint and revision" % conflict)
 		_check((old.repository as FailingRepository).save_calls == saves and FileAccess.get_file_as_bytes(old.repository.path) == bytes, "rejected %s battle does not publish resume state or alter the file" % conflict)
 		var settings := AppSettings.new()
-		_check(old.restart(&"storm", settings) and old.selection.instances.is_empty(), "explicit restart remains available after an incompatible %s build" % conflict)
+		_check(old.call("restart", &"storm", settings) and old.selection.instances.is_empty(), "explicit restart remains available after an incompatible %s build" % conflict)
 	for old_phase in ["REWARD", "BATTLE_REWARD"]:
 		var old := _reward_fixture("compat-offer-" + old_phase)
 		old.phase = old_phase
@@ -279,9 +281,9 @@ func _test_relic_restore_compatibility() -> void:
 		revision = old.profile.revision
 		saves = (old.repository as FailingRepository).save_calls
 		(old.repository as FailingRepository).reject_next = true
-		_check(not old.restore(), "a failed %s offer migration remains recoverable" % old_phase)
+		_check(not old.call("restore"), "a failed %s offer migration remains recoverable" % old_phase)
 		_check(_json_equal(old.profile.run_checkpoint, checkpoint) and old.profile.revision == revision and FileAccess.get_file_as_bytes(old.repository.path) == bytes, "failed %s offer migration publishes no quote, RNG or resume state" % old_phase)
-		_check(old.restore(), "%s offer with obsolete qualification is rebuilt" % old_phase)
+		_check(old.call("restore"), "%s offer with obsolete qualification is rebuilt" % old_phase)
 		_check(old.profile.revision == revision + 1 and (old.repository as FailingRepository).save_calls == saves + 2, "%s offer and battle resume publish one successful save transaction" % old_phase)
 		_check(old.phase == "REWARD" and str(old.offer.id).begins_with(old.run_id + ":reward:") and str(old.offer.id) != obsolete_id and int(old.facts.offer_serial) == serial + 1, "%s refresh keeps the run identity and advances the quote once" % old_phase)
 		_check(_json_equal(old.rewards.to_dict(), reward_state) and int(old.facts.rerolls) == rerolls, "%s automatic refresh spends no reward or reroll" % old_phase)
@@ -291,17 +293,17 @@ func _test_relic_restore_compatibility() -> void:
 		var fresh := old.offer.duplicate(true)
 		var reloaded := RunSession.new(old.repository, old.repository.load_profile())
 		saves = (old.repository as FailingRepository).save_calls
-		_check(reloaded.restore() and reloaded.offer == fresh and (old.repository as FailingRepository).save_calls == saves, "%s refreshed offer reopens without a second redraw" % old_phase)
+		_check(reloaded.call("restore") and reloaded.offer == fresh and (old.repository as FailingRepository).save_calls == saves, "%s refreshed offer reopens without a second redraw" % old_phase)
 		var chosen := StringName(reloaded.offer.candidates[0])
-		_check(not reloaded.take_reward(chosen, obsolete_id), "obsolete %s quote cannot acquire the refreshed reward" % old_phase)
-		_check(reloaded.take_reward(chosen, str(fresh.id)), "refreshed %s quote acquires through the real transaction" % old_phase)
+		_check(not reloaded.call("take_reward", chosen, obsolete_id), "obsolete %s quote cannot acquire the refreshed reward" % old_phase)
+		_check(reloaded.call("take_reward", chosen, str(fresh.id)), "refreshed %s quote acquires through the real transaction" % old_phase)
 		revision = reloaded.profile.revision
 		var owned := reloaded.selection.instances.size()
-		_check(reloaded.take_reward(chosen, str(fresh.id)) and reloaded.profile.revision == revision and reloaded.selection.instances.size() == owned, "repeated %s acquisition retains its once-only receipt" % old_phase)
+		_check(reloaded.call("take_reward", chosen, str(fresh.id)) and reloaded.profile.revision == revision and reloaded.selection.instances.size() == owned, "repeated %s acquisition retains its once-only receipt" % old_phase)
 	var empty := _reward_fixture("compat-empty-offer")
 	empty.offer.candidates.clear()
 	empty = _save_legacy_checkpoint(empty)
-	_check(empty.restore() and not empty.offer.candidates.is_empty(), "an old exhausted pool quote becomes a reward when the expanded pool is reachable")
+	_check(empty.call("restore") and not empty.offer.candidates.is_empty(), "an old exhausted pool quote becomes a reward when the expanded pool is reachable")
 
 
 func _legacy_relic(id: StringName, identity: String) -> CombatAssetInstance:
@@ -343,20 +345,20 @@ func _test_full_pool_supply() -> void:
 	var before_spent := session.rewards.spent
 	var bytes := FileAccess.get_file_as_bytes(session.repository.path)
 	(session.repository as FailingRepository).reject_next = true
-	_check(not session.supply_reward(offer_id), "supply save failure is reported")
+	_check(not session.call("supply_reward", offer_id), "supply save failure is reported")
 	_check(session.combat.hp_q == 40 * Q and session.pending_dodge == 0 and session.rewards.spent == before_spent and FileAccess.get_file_as_bytes(session.repository.path) == bytes, "failed supply grants nothing and spends nothing")
-	_check(session.supply_reward(offer_id), "empty-pool supply commits")
+	_check(session.call("supply_reward", offer_id), "empty-pool supply commits")
 	_check(session.combat.hp_q == 65 * Q and session.pending_dodge == 1 and session.rewards.spent == before_spent + 1 and session.phase == "READY_FOR_ROOM", "supply restores 25 health and one opening dodge while spending one reward")
 	var after := session.to_checkpoint()
 	var revision := session.profile.revision
-	_check(session.supply_reward(offer_id) and session.to_checkpoint() == after and session.profile.revision == revision, "duplicate supply does not restore or spend again")
+	_check(session.call("supply_reward", offer_id) and session.to_checkpoint() == after and session.profile.revision == revision, "duplicate supply does not restore or spend again")
 	var maximum := session.compiler.compile(session.selection).build.maximum_hp_q()
 	session.combat.hp_q = maximum - 10 * Q
 	session.phase = "REWARD"
 	session.rewards.earned += 1
 	session._make_reward_offer(session)
 	session = _persist_fixture(session)
-	_check(session.supply_reward(str(session.offer.id)) and session.combat.hp_q == maximum, "supply health is capped at the actual build maximum")
+	_check(session.call("supply_reward", str(session.offer.id)) and session.combat.hp_q == maximum, "supply health is capped at the actual build maximum")
 	evidence.append({"kind": "full legal pool transaction fixture", "book": "frost", "instances": acquired, "supply_health": 25, "supply_dodge": 1})
 
 
@@ -366,7 +368,7 @@ func _formal_run(book: StringName, session: RunSession = null, cps: float = 60.0
 	if session.itinerary.encounters.size() != 9: return false
 	var entries: Array[VocabularyEntry] = [VocabularyEntry.new("ash", "灰"), VocabularyEntry.new("frost", "霜"), VocabularyEntry.new("archive", "档案")]
 	for serial in 9:
-		var request := session.start_room(entries, VocabularyIndex.build(entries))
+		var request: BattleStartRequest = session.call("start_room", entries, VocabularyIndex.build(entries))
 		_check(request != null, "formal room departure persists")
 		if request == null: return false
 		battle = BattleSession.new()
@@ -378,7 +380,7 @@ func _formal_run(book: StringName, session: RunSession = null, cps: float = 60.0
 		var hp_trace := {"last_q": battle.player_hp_q, "lost_q": 0, "restored_q": 0}
 		var progression_failed: Array[bool] = [false]
 		battle.progression_changed.connect(func() -> void:
-			if not session.observe_battle(battle):
+			if not session.call("observe_battle", battle):
 				_check(false, "formal checkpoint failed: " + session.last_error)
 				progression_failed[0] = true
 		)
@@ -444,19 +446,19 @@ func _formal_run(book: StringName, session: RunSession = null, cps: float = 60.0
 		if battle.result != 1:
 			report["relics_gained"] = _new_relics(session, departure_instances)
 			if battle.result == -1:
-				_check(session.finish_room(battle), "actual balance defeat settlement saves")
+				_check(session.call("finish_room", battle), "actual balance defeat settlement saves")
 				report["after_boundary_hp"] = float(session.combat.hp_q) / Q
 			evidence.append(report)
 			print("S2 FORMAL ROOM ", JSON.stringify(report))
 			battle.free()
 			battle = null
 			return false
-		_check(session.finish_room(battle), "formal room settlement saves")
+		_check(session.call("finish_room", battle), "formal room settlement saves")
 		battle.free()
 		battle = null
 		if serial < 8:
 			_formal_rewards(session)
-			_check(session.take_route("rest"), "formal rest route advances")
+			_check(session.call("take_route", "rest"), "formal rest route advances")
 		report["relics_gained"] = _new_relics(session, departure_instances)
 		report["after_boundary_hp"] = float(session.combat.hp_q) / Q
 		evidence.append(report)
@@ -466,7 +468,7 @@ func _formal_run(book: StringName, session: RunSession = null, cps: float = 60.0
 	var assets := _inherited_selection(session.selection)
 	var characters := session.profile.manual_characters
 	var identity := session.run_id
-	_check(session.continue_challenge() and session.run_id == identity and _inherited_selection(session.selection) == assets and session.options.difficulty == "hard", "formal victory keeps earned relics and advances to hard")
+	_check(session.call("continue_challenge") and session.run_id == identity and _inherited_selection(session.selection) == assets and session.options.difficulty == "hard", "formal victory keeps earned relics and advances to hard")
 	_check(session.profile.manual_characters == characters and session.profile.records.size() == 1, "formal continuation does not replay previous earnings")
 	return true
 
@@ -491,7 +493,7 @@ func _balance_matrix() -> void:
 		for round_index in 4:
 			if not _balance_round(book, chain, 5.0, chain_label): break
 			if round_index < 3:
-				_check(chain.continue_challenge(), "balance earned continuation commits")
+				_check(chain.call("continue_challenge"), "balance earned continuation commits")
 				evidence.append({"kind": "balance continuation", "scenario": chain_label, "book": str(book), "difficulty": chain.options.difficulty, "round": chain.facts.get("round_index", 0), "run_id": chain.run_id, "hp": float(chain.combat.hp_q) / Q, "growth_hp": chain.selection.growth_hp, "relics": _new_relics(chain, 0), "rerolls": chain.facts.rerolls})
 
 
@@ -556,14 +558,14 @@ func _formal_rewards(session: RunSession, live: BattleSession = null) -> void:
 	for index in 32:
 		if session.phase not in ["REWARD", "BATTLE_REWARD"]: return
 		if session.offer.candidates.is_empty():
-			_check(session.supply_reward(str(session.offer.id), live), "formal empty-pool supply")
+			_check(session.call("supply_reward", str(session.offer.id), live), "formal empty-pool supply")
 		else:
 			var chosen := StringName(session.offer.candidates[0])
 			for id in ["R001", "R016", "R012", "R019", "R039", "R024"]:
 				if id in session.offer.candidates:
 					chosen = StringName(id)
 					break
-			_check(session.take_reward(chosen, str(session.offer.id), "", live), "formal relic acquisition: " + session.last_error)
+			_check(session.call("take_reward", chosen, str(session.offer.id), "", live), "formal relic acquisition: " + session.last_error)
 	_check(false, "formal reward queue did not drain")
 
 

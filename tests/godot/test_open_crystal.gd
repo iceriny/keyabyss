@@ -176,7 +176,7 @@ func _review_shared_surfaces() -> void:
 func _open_relic_fixture() -> void:
 	app._home(false)
 	app.run = RunSession.new(app.saves, app.profile)
-	_check(app.run.begin(&"flame", app.settings), "isolated visual fixture starts")
+	_check(await app.run.begin(&"flame", app.settings), "isolated visual fixture starts")
 	app.profile = app.run.profile
 	app.run.phase = "REWARD"
 	app.run.rewards.earned = 5

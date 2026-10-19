@@ -19,6 +19,11 @@ void main() {
     ivec2 q=ivec2(gl_GlobalInvocationID.xy), n=imageSize(next_state);
     if(any(greaterThanEqual(q,n))) return;
     vec2 uv=(vec2(q)+0.5)/vec2(n), at=uv*p.domain.xy;
+    // Quality changes resample concentrations once, without replaying ignition.
+    if(p.control.x < 0.0) {
+        imageStore(next_state,q,texture(previous_state,uv));
+        return;
+    }
     float dt=p.domain.z, time=p.domain.w;
     vec2 v=texture(velocity_field,uv).xy;
     vec2 mid=uv-v*dt*0.5/p.domain.xy;

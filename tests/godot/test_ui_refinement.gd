@@ -275,7 +275,7 @@ func _review_menu_layout() -> void:
 	await _capture("menu-settings")
 	app._home(false)
 	app.run = RunSession.new(app.saves, app.profile)
-	_check(app.run.begin(&"flame", app.settings), "isolated shortcut run starts")
+	_check(await app.run.begin(&"flame", app.settings), "isolated shortcut run starts")
 	app.run.phase = "REWARD"
 	app.run.rewards.earned = 5
 	app.run.offer = {"id": "ui-menu-reward", "candidates": ["G001", "G002", "R012"]}
@@ -399,7 +399,7 @@ func _review_relic_upgrade() -> void:
 	_check(ContentDescription.summary(catalog.get_definition(&"R001"), 2).contains("56.25"), "compound growth reads the same numeric definition")
 	_check(GameTerms.matches("完美御术后获得护盾").size() == 2, "longest terms avoid nested duplicate explanations")
 	app.run = RunSession.new(app.saves, app.profile)
-	_check(app.run.begin(&"frost", app.settings), "isolated UI run starts")
+	_check(await app.run.begin(&"frost", app.settings), "isolated UI run starts")
 	app.run.phase = "REWARD"
 	app.run.rewards.earned = 3
 	app.run.offer = {"id": "ui-relic", "candidates": ["G001", "F007", "F026"]}

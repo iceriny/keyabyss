@@ -60,7 +60,7 @@ func _new_run(book: StringName, repository: SaveRepository) -> RunSession:
 	settings.difficulty = "normal"
 	settings.progressive = false
 	settings.run_seed = "s1-flow-" + str(book)
-	_check(session.begin(book, settings), "%s begins directly from a main book: %s" % [book, session.last_error])
+	_check(session.call("begin", book, settings), "%s begins directly from a main book: %s" % [book, session.last_error])
 	_check(session.phase == "READY_FOR_ROOM" and session.selection.talents.is_empty() and session.selection.instances.is_empty(), "new run has no talents or opening relics")
 	return session
 
@@ -79,7 +79,7 @@ func _run_book(book: StringName) -> void:
 		if session.phase != "READY_FOR_ROOM":
 			_check(false, "%s room %d was not ready: %s" % [book, serial + 1, session.phase])
 			break
-		var request := session.start_room(_entries(), VocabularyIndex.build(_entries()))
+		var request: BattleStartRequest = session.call("start_room", _entries(), VocabularyIndex.build(_entries()))
 		_check(request != null, "%s room %d persists departure: %s" % [book, serial + 1, session.last_error])
 		if request == null: break
 		encounter_ids.append(request.encounter.resource_path)
@@ -108,12 +108,12 @@ func _run_book(book: StringName) -> void:
 			var before := session.profile.to_dict()
 			var bytes := FileAccess.get_file_as_bytes(repository.path)
 			repository.reject_next = true
-			_check(not session.finish_room(battle), "failed room save returns failure")
+			_check(not session.call("finish_room", battle), "failed room save returns failure")
 			_check(session.profile.to_dict() == before and FileAccess.get_file_as_bytes(repository.path) == bytes and session.phase == "BATTLE", "failed room save publishes neither characters nor phase nor disk changes")
 			boundary_failure_checked = true
-		_check(session.finish_room(battle), "room settlement commits: " + session.last_error)
+		_check(session.call("finish_room", battle), "room settlement commits: " + session.last_error)
 		var revision := session.profile.revision
-		_check(session.finish_room(battle) and session.profile.revision == revision, "duplicate room settlement does not save or pay twice")
+		_check(session.call("finish_room", battle) and session.profile.revision == revision, "duplicate room settlement does not save or pay twice")
 		_check(session.profile.manual_characters == total_characters, "persisted growth equals accepted characters across room/checkpoint boundaries")
 		battle.free()
 		battle = null
@@ -125,14 +125,14 @@ func _run_book(book: StringName) -> void:
 			_rewards(session)
 			_check(session.phase == "READY_FOR_ROOM", "route and any offering reward return to ready")
 			var restored := RunSession.new(repository, repository.load_profile())
-			_check(restored.restore() and restored.phase == "READY_FOR_ROOM" and restored.selection.to_dict() == session.selection.to_dict(), "persisted next-room build restores without talent configuration")
+			_check(restored.call("restore") and restored.phase == "READY_FOR_ROOM" and restored.selection.to_dict() == session.selection.to_dict(), "persisted next-room build restores without talent configuration")
 			session = restored
 	_check(encounter_ids.size() == 3 and encounter_ids[0] != encounter_ids[1] and encounter_ids[1] != encounter_ids[2], "three rooms use different real encounter definitions")
 	_check(session.phase == "RESULT" and session.profile.records.size() == 1 and session.facts.get("result_reason") == "victory", "%s ends in one saved victory record" % book)
 	var completed_characters := session.profile.manual_characters
 	var settings := AppSettings.new()
 	settings.run_seed = "s1-restart-" + str(book)
-	_check(session.begin(book, settings) and session.run_id != run_identity and session.phase == "READY_FOR_ROOM" and session.room_serial == 0, "restart creates a fresh run identity at the first room")
+	_check(session.call("begin", book, settings) and session.run_id != run_identity and session.phase == "READY_FOR_ROOM" and session.room_serial == 0, "restart creates a fresh run identity at the first room")
 	_check(session.selection.instances.is_empty() and session.profile.manual_characters == completed_characters and session.profile.records.size() == 1, "normal restart resets local relics while retaining saved growth and record")
 
 
@@ -158,7 +158,7 @@ func _play_room(session: RunSession) -> void:
 		battle.step(STEP)
 		for enemy in battle.enemies:
 			if enemy.boss: boss_phases[enemy.phase] = true
-		if battle.result == 0 and not session.observe_battle(battle):
+		if battle.result == 0 and not session.call("observe_battle", battle):
 			_check(false, "live reward checkpoint failed: " + session.last_error)
 			return
 	_check(false, "room exceeded 300 seconds of simulated battle")
@@ -185,7 +185,7 @@ func _rewards(session: RunSession, live: BattleSession = null) -> void:
 		var offer := session.offer.duplicate(true)
 		var restored := RunSession.new(session.repository, session.repository.load_profile())
 		if live == null:
-			_check(restored.restore() and restored.offer == offer, "saved candidates restore exactly without redraw")
+			_check(restored.call("restore") and restored.offer == offer, "saved candidates restore exactly without redraw")
 		var candidates: Array = offer.get("candidates", [])
 		if candidates.is_empty():
 			_check(false, "formal reward has no candidates")
@@ -195,11 +195,11 @@ func _rewards(session: RunSession, live: BattleSession = null) -> void:
 			if str(preference) in candidates:
 				chosen = preference
 				break
-		_check(session.take_reward(chosen, str(offer.id), "", live), "formal reward installs %s: %s" % [chosen, session.last_error])
+		_check(session.call("take_reward", chosen, str(offer.id), "", live), "formal reward installs %s: %s" % [chosen, session.last_error])
 		var revision := session.profile.revision
 		var spent := session.rewards.spent
 		var rng := session.reward_rng_state
-		_check(session.take_reward(chosen, str(offer.id), "", live) and session.profile.revision == revision and session.rewards.spent == spent and session.reward_rng_state == rng, "duplicate reward neither pays nor saves nor redraws")
+		_check(session.call("take_reward", chosen, str(offer.id), "", live) and session.profile.revision == revision and session.rewards.spent == spent and session.reward_rng_state == rng, "duplicate reward neither pays nor saves nor redraws")
 	_check(false, "reward queue exceeded its finite limit")
 
 
@@ -211,16 +211,16 @@ func _route(session: RunSession, choice: String) -> void:
 		var before := session.profile.to_dict()
 		var bytes := FileAccess.get_file_as_bytes(session.repository.path)
 		(session.repository as FailingRepository).reject_next = true
-		_check(not session.take_route(choice), "route save failure is reported")
+		_check(not session.call("take_route", choice), "route save failure is reported")
 		_check(session.phase == "ROUTE" and session.combat.hp_q == hp and session.profile.to_dict() == before and FileAccess.get_file_as_bytes(session.repository.path) == bytes, "failed route publishes neither payment nor next-room state")
 		route_failure_checked = true
-	_check(session.take_route(choice), "simple route commits %s: %s" % [choice, session.last_error])
+	_check(session.call("take_route", choice), "simple route commits %s: %s" % [choice, session.last_error])
 	if choice == "rest": _check(session.combat.hp_q == mini(maximum, hp + 20 * 1024), "rest restores 20 health with maximum cap")
 	if choice == "offering": _check(session.combat.hp_q == hp - 15 * 1024 and session.rewards.earned == earned + 1 and session.phase == "REWARD", "offering pays 15 once and grants one saved reward")
 	var revision := session.profile.revision
 	var paid_hp := session.combat.hp_q
 	var paid_earned := session.rewards.earned
-	_check(session.take_route(choice) and session.combat.hp_q == paid_hp and session.rewards.earned == paid_earned and session.profile.revision == revision, "duplicate route does not repay or restore again")
+	_check(session.call("take_route", choice) and session.combat.hp_q == paid_hp and session.rewards.earned == paid_earned and session.profile.revision == revision, "duplicate route does not repay or restore again")
 
 
 func _test_legacy_preservation() -> void:
@@ -234,18 +234,18 @@ func _test_legacy_preservation() -> void:
 	_check(repository.save_profile(old, session.profile.revision), "fixture writes a valid old-version ready checkpoint")
 	var original := FileAccess.get_file_as_bytes(repository.path)
 	var restored := RunSession.new(repository, repository.load_profile())
-	_check(restored.restore() and restored.phase == "RESULT" and restored.facts.get("result_reason") == "incompatible", "incompatible old run ends at restore boundary")
+	_check(restored.call("restore") and restored.phase == "RESULT" and restored.facts.get("result_reason") == "incompatible", "incompatible old run ends at restore boundary")
 	_check(restored.profile.manual_characters == 1234 and restored.profile.records.size() == 1, "old saved characters and terminal record survive contraction")
 	_check(FileAccess.file_exists(repository.path + ".v1.json") and FileAccess.get_file_as_bytes(repository.path + ".v1.json") == original, "original v1 archive is preserved byte for byte")
 	var revision := restored.profile.revision
 	var again := RunSession.new(repository, repository.load_profile())
-	_check(again.restore() and again.profile.revision == revision and again.profile.records.size() == 1 and FileAccess.get_file_as_bytes(repository.path + ".v1.json") == original, "repeated restore does not resettle or overwrite preserved original")
+	_check(again.call("restore") and again.profile.revision == revision and again.profile.records.size() == 1 and FileAccess.get_file_as_bytes(repository.path + ".v1.json") == original, "repeated restore does not resettle or overwrite preserved original")
 
 
 func _key(code: int, unicode: int = 0, pressed: bool = true) -> void:
 	var event := InputEventKey.new()
-	event.keycode = code
-	event.physical_keycode = code
+	event.keycode = code as Key
+	event.physical_keycode = code as Key
 	event.unicode = unicode
 	event.pressed = pressed
 	router._input(event)

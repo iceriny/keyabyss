@@ -147,8 +147,9 @@ var _enemy_definitions: Dictionary[StringName, EnemyCombatDefinition] = {}
 var _progression_dirty: bool = false
 static var _dodge_prepared := false
 var _dodge_scorer: RefCounted = preload("res://game/algorithms/DodgeScorer.cs").new()
-var _dodge_points := PackedVector2Array()
-var _dodge_starts := PackedInt32Array()
+var _dodge_origins := PackedVector2Array()
+var _dodge_velocities := PackedVector2Array()
+var _dodge_flight := PackedFloat64Array()
 var _dodge_segments := PackedInt32Array()
 var _dodge_radii := PackedFloat64Array()
 var _dodge_directions := PackedVector2Array()
@@ -570,12 +571,18 @@ func step(delta: float) -> void:
 	stage_started = DebugLog.begin()
 	_advance_projectiles(world_step)
 	_advance_blades(world_step)
+	DebugLog.end(&"battle.projectiles", stage_started)
+	stage_started = DebugLog.begin()
 	_advance_enemies(world_step)
+	DebugLog.end(&"battle.enemy_attacks", stage_started)
+	stage_started = DebugLog.begin()
 	_advance_threats(world_step)
+	DebugLog.end(&"battle.threats", stage_started)
+	stage_started = DebugLog.begin()
 	_advance_hazards(world_step)
 	_advance_pickups(world_step)
 	_advance_encounter(world_step)
-	DebugLog.end(&"battle.attacks_encounter", stage_started)
+	DebugLog.end(&"battle.encounter", stage_started)
 	if god_mode: _fill_god_resources()
 	if player_hp_q <= 0 and compiled_build.has(&"revive"):
 		for asset in compiled_build.asset_instances():
@@ -1567,8 +1574,18 @@ func _advance_threats(delta: float) -> void:
 		if threat.reflected:
 			var hit: BattleEnemy
 			var closest := INF
+			var extent := Vector2.ONE * threat.radius / ARENA_SIZE
+			var low := threat.previous_position.min(threat.position) - extent
+			var high := threat.previous_position.max(threat.position) + extent
 			for enemy in enemies:
-				if not enemy.alive() or not enemy_in_combat(enemy):
+				if not enemy.alive():
+					continue
+				# Swept AABBs reject distant bodies before the exact moving-disc test.
+				# Keep live positions and original order: an earlier hit may kill/spawn.
+				var reach := Vector2.ONE * enemy.radius / ARENA_SIZE
+				if minf(enemy.previous_position.x, enemy.position.x) - reach.x > high.x or maxf(enemy.previous_position.x, enemy.position.x) + reach.x < low.x:
+					continue
+				if minf(enemy.previous_position.y, enemy.position.y) - reach.y > high.y or maxf(enemy.previous_position.y, enemy.position.y) + reach.y < low.y or not enemy_in_combat(enemy):
 					continue
 				var time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, enemy.previous_position * ARENA_SIZE, enemy.position * ARENA_SIZE, threat.radius + enemy.radius)
 				if time < closest:
@@ -1971,25 +1988,21 @@ func _safe_direction() -> Vector2:
 		var time := tick * PREDICTION_STEP
 		if time < 0.17:
 			travel_factors.append(Vector2(1.0 - pow(1.0 - time / 0.17, 3.0), 1.0 - pow(1.0 - minf(0.17, time + PREDICTION_STEP) / 0.17, 3.0)))
-	_dodge_points.resize(threats.size() * 15)
-	_dodge_starts.resize(threats.size())
+	_dodge_origins.resize(threats.size())
+	_dodge_velocities.resize(threats.size())
+	_dodge_flight.resize(threats.size() * 2)
 	_dodge_segments.resize(threats.size())
 	_dodge_radii.resize(threats.size())
-	var point_count := 0
 	var trajectory_count := 0
 	for threat in threats:
 		if threat.reflected: continue
 		var segments := mini(14, ceili(threat.life / PREDICTION_STEP))
-		_dodge_starts[trajectory_count] = point_count
 		_dodge_segments[trajectory_count] = segments
 		_dodge_radii[trajectory_count] = threat.radius + 21.0 + 12.0
-		_dodge_points[point_count] = threat.position * ARENA_SIZE
-		point_count += 1
-		var velocity := threat.velocity
-		for tick in segments:
-			_dodge_points[point_count] = _dodge_points[point_count - 1] + BattleThreat.flight_displacement(velocity, threat.curvature, threat.acceleration, PREDICTION_STEP)
-			velocity = BattleThreat.flight_velocity(velocity, threat.curvature, threat.acceleration, PREDICTION_STEP)
-			point_count += 1
+		_dodge_origins[trajectory_count] = threat.position * ARENA_SIZE
+		_dodge_velocities[trajectory_count] = threat.velocity
+		_dodge_flight[trajectory_count * 2] = threat.curvature
+		_dodge_flight[trajectory_count * 2 + 1] = threat.acceleration
 		trajectory_count += 1
 	var from := player_position * ARENA_SIZE
 	var center := ARENA_SIZE * 0.5
@@ -2039,7 +2052,7 @@ func _safe_direction() -> Vector2:
 			var factors := travel_factors[tick]
 			_dodge_travel[index * 4 + tick * 2] = from.lerp(point, factors.x)
 			_dodge_travel[index * 4 + tick * 2 + 1] = from.lerp(point, factors.y)
-	var chosen: int = _dodge_scorer.Choose(_dodge_points, _dodge_starts, _dodge_segments, _dodge_radii, trajectory_count, _dodge_candidates, _dodge_travel, _dodge_scores, _dodge_fixed, _dodge_tails, tail_stride)
+	var chosen: int = _dodge_scorer.ChooseFlight(_dodge_origins, _dodge_velocities, _dodge_flight, _dodge_segments, _dodge_radii, trajectory_count, _dodge_candidates, _dodge_travel, _dodge_scores, _dodge_fixed, _dodge_tails, tail_stride)
 	return _dodge_directions[chosen]
 
 

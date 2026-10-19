@@ -22,11 +22,11 @@ func has_pending_run() -> bool:
 	return run_checkpoint.get("phase") != "RESULT" or bool(run_checkpoint.get("facts", {}).get("victory_pending", false))
 
 
-func to_dict() -> Dictionary:
+func to_dict(deep_copy: bool = true) -> Dictionary:
 	return {
 		"mode": String(mode), "revision": revision, "manual_characters": manual_characters,
-		"allocations": allocations.duplicate(true), "settlements": settlements.duplicate(true),
-		"run_checkpoint": run_checkpoint.duplicate(true), "records": records.duplicate(true),
+		"allocations": allocations.duplicate(deep_copy), "settlements": settlements.duplicate(deep_copy),
+		"run_checkpoint": run_checkpoint.duplicate(deep_copy), "records": records.duplicate(deep_copy),
 		"content_version": content_version, "graph_version": graph_version, "layout_version": layout_version,
 		"diagnostics": Array(diagnostics),
 	}
@@ -74,14 +74,20 @@ static func from_dict(data: Dictionary) -> ProfileState:
 			return null
 	if not _valid_settlements(data.settlements, StringName(data.mode), int(data.manual_characters)):
 		return null
+	return _from_validated_dict(data)
+
+
+# Storage may adopt a private JSON parse after its encoded bytes were verified.
+# External callers must use from_dict, which validates and owns a deep copy.
+static func _from_validated_dict(data: Dictionary, copy_data: bool = true) -> ProfileState:
 	var result := ProfileState.new()
 	result.mode = StringName(data.mode)
 	result.revision = int(data.revision)
 	result.manual_characters = int(data.manual_characters)
-	result.allocations = data.allocations.duplicate(true)
-	result.settlements = data.settlements.duplicate(true)
-	result.run_checkpoint = data.run_checkpoint.duplicate(true)
-	result.records.assign(data.records.duplicate(true))
+	result.allocations = data.allocations.duplicate(true) if copy_data else data.allocations
+	result.settlements = data.settlements.duplicate(true) if copy_data else data.settlements
+	result.run_checkpoint = data.run_checkpoint.duplicate(true) if copy_data else data.run_checkpoint
+	result.records.assign(data.records.duplicate(true) if copy_data else data.records)
 	result.content_version = int(data.content_version)
 	result.graph_version = int(data.graph_version)
 	result.layout_version = int(data.layout_version)

@@ -8,6 +8,8 @@ var _age := 0.0
 var _steps := 0
 var _resolution := 160
 var _configured := false
+var _growth_age := 0.0
+var _static_entry := false
 
 
 func _ready() -> void:
@@ -29,6 +31,7 @@ func sync_patch(center: Vector2, radius: float, age: float, fade: float, quality
 		surface.set_shader_parameter("lattice_angle", fposmod(visual_seed * 2.39996, TAU))
 		RenderingServer.call_on_render_thread(growth.configure.bind(_resolution, visual_seed, radius >= 220.0))
 		_configured = true
+		_static_entry = reduced
 	var extent := radius * 2.5
 	size = Vector2.ONE * extent
 	position = center - size * .5
@@ -37,12 +40,20 @@ func sync_patch(center: Vector2, radius: float, age: float, fade: float, quality
 	surface.set_shader_parameter("fade", fade)
 	# Growth is tied to the paid clock, including pause. Bound per-frame catch-up.
 	var dt := clampf(age - _age, 0.0, .05)
+	var elapsed := maxf(0.0, age - _age)
 	_age = age
+	# New reduced-motion ice gets one brief entrance, then a stable structure.
+	# Existing ice freezes immediately; resuming never catches up skipped ages.
+	if not reduced: _static_entry = false
+	if reduced and (not _static_entry or _growth_age >= .5):
+		return
+	_growth_age += elapsed
 	var rate := _resolution * 7.0
-	var next := mini(int(age * rate), _steps + ceili(rate * .05))
+	var next := mini(int(_growth_age * rate), _steps + ceili(rate * .05))
 	var count := maxi(0, next - _steps)
 	_steps += count
-	RenderingServer.call_on_render_thread(growth.step.bind(count, dt * 2.5))
+	if count > 0 or dt > 0.0:
+		RenderingServer.call_on_render_thread(growth.step.bind(count, dt * 2.5))
 	queue_redraw()
 
 

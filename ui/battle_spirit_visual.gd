@@ -12,6 +12,8 @@ var spirit: BattleSpirit
 @onready var paper: ShaderMaterial = body.material as ShaderMaterial
 var age: float = 0.0
 var world_size := Vector2.ZERO
+var _trail_length := TRAIL_LENGTH
+var _trail_points := 48
 
 
 static func create(value: BattleSpirit) -> BattleSpiritVisual:
@@ -48,25 +50,30 @@ func sync_frame(view_size: Vector2, fraction: float, remaining: float, delta: fl
 	paper.set_shader_parameter("flutter", 0.0 if reduce else sin(age * 8.0 + spirit.slot * 1.8))
 	body.scale = Vector2(1.15, 0.65) if spirit.crossing else Vector2.ONE * 0.85
 	modulate.a = minf(1.0, age / 0.2) * (1.0 if spirit.crossing else minf(1.0, remaining / 0.8))
+	ribbon.visible = not reduce or spirit.crossing
+	halo.visible = not reduce and detail > 0
+	filament.visible = not reduce and detail == 2
+	_trail_length = 80.0 if reduce else (140.0 if detail == 0 and not spirit.crossing else TRAIL_LENGTH)
+	_trail_points = VisualQuality.TRAIL_POINTS[detail]
+	if not ribbon.visible: return
 	var samples := PackedVector2Array()
 	for at in spirit.trail:
 		samples.append(at * world_size)
 	_set_trail(samples, body.position)
-	for line in [halo, ribbon, filament]:
-		line.visible = not reduce and (detail > 0 or spirit.crossing)
 
 
 func retire() -> void:
-	var samples := PackedVector2Array()
-	for at in spirit.trail:
-		samples.append(at * world_size)
-	_set_trail(samples, spirit.position * world_size)
+	if ribbon.visible:
+		var samples := PackedVector2Array()
+		for at in spirit.trail:
+			samples.append(at * world_size)
+		_set_trail(samples, spirit.position * world_size)
 	var fade := BattleVisualClock.tween_for(self)
 	fade.tween_property(self, "modulate:a", 0.0, 0.25)
 	fade.tween_callback(queue_free)
 
 
 func _set_trail(samples: PackedVector2Array, render_head: Vector2) -> void:
-	var points := MotionTrail.build(samples, spirit.position * world_size, render_head, TRAIL_LENGTH, true, 64)
+	var points := MotionTrail.build(samples, spirit.position * world_size, render_head, _trail_length, true, _trail_points)
 	for line in [halo, ribbon, filament]:
-		line.points = points
+		if line.visible: line.points = points

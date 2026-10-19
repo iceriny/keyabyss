@@ -17,7 +17,8 @@ var _program: EffectPipeline
 var _side := 0
 
 
-func configure(flow: Texture2DRD, resolution: Vector2i = GRID) -> void:
+func configure(flow: Texture2DRD, resolution: Vector2i = GRID, preserve: bool = false) -> void:
+	var retained := _images[_side] if preserve and configured else RID()
 	var previous := _take_resources()
 	grid = resolution
 	_rd = RenderingServer.get_rendering_device()
@@ -40,23 +41,31 @@ func configure(flow: Texture2DRD, resolution: Vector2i = GRID) -> void:
 		_rd.texture_clear(_images[i],Color(0,0,0,0),0,1,0,1)
 	_sources = _keep(_rd.storage_buffer_create(MAX_SOURCES * 32))
 	for i in 2:
-		var uniforms: Array[RDUniform] = []
-		for binding in 3:
-			var uniform := RDUniform.new()
-			uniform.binding = binding
-			uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE if binding == 1 else RenderingDevice.UNIFORM_TYPE_SAMPLER_WITH_TEXTURE
-			if binding != 1: uniform.add_id(sampler)
-			uniform.add_id([_images[i],_images[1-i],flow.texture_rd_rid][binding])
-			uniforms.append(uniform)
-		var sources := RDUniform.new()
-		sources.binding = 3
-		sources.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-		sources.add_id(_sources)
-		uniforms.append(sources)
-		_sets.append(_keep(_rd.uniform_set_create(uniforms,shader,0)))
+		_sets.append(_keep(_make_set(_images[i], _images[1-i], flow.texture_rd_rid, sampler, shader)))
+	if retained.is_valid():
+		var transfer := _make_set(retained, _images[0], flow.texture_rd_rid, sampler, shader)
+		_dispatch(transfer, PackedFloat32Array([1, 1, 0, 0, -1, 0, 0, 0]))
+		_rd.free_rid(transfer)
 	texture.texture_rd_rid = _images[0]
 	_free_resources(previous)
 	configured = true
+
+
+func _make_set(input: RID, output: RID, flow: RID, sampler: RID, shader: RID) -> RID:
+	var uniforms: Array[RDUniform] = []
+	for binding in 3:
+		var uniform := RDUniform.new()
+		uniform.binding = binding
+		uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE if binding == 1 else RenderingDevice.UNIFORM_TYPE_SAMPLER_WITH_TEXTURE
+		if binding != 1: uniform.add_id(sampler)
+		uniform.add_id([input, output, flow][binding])
+		uniforms.append(uniform)
+	var sources := RDUniform.new()
+	sources.binding = 3
+	sources.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	sources.add_id(_sources)
+	uniforms.append(sources)
+	return _rd.uniform_set_create(uniforms, shader, 0)
 
 
 func step(parameters: PackedFloat32Array) -> void:
@@ -72,15 +81,19 @@ func advance(domain: PackedFloat32Array, sources: PackedFloat32Array) -> void:
 		_rd.buffer_update(_sources,0,source_bytes.size(),source_bytes)
 	var parameters := domain.duplicate()
 	parameters.append_array(PackedFloat32Array([count,0,0,0]))
+	_dispatch(_sets[_side], parameters)
+	_side = 1-_side
+	texture.texture_rd_rid = _images[_side]
+
+
+func _dispatch(bindings: RID, parameters: PackedFloat32Array) -> void:
 	var list := _rd.compute_list_begin()
 	_rd.compute_list_bind_compute_pipeline(list,_pipeline)
-	_rd.compute_list_bind_uniform_set(list,_sets[_side],0)
+	_rd.compute_list_bind_uniform_set(list,bindings,0)
 	var bytes := parameters.to_byte_array()
 	_rd.compute_list_set_push_constant(list,bytes,bytes.size())
 	_rd.compute_list_dispatch(list,ceili(grid.x/8.0),ceili(grid.y/8.0),1)
 	_rd.compute_list_end()
-	_side = 1-_side
-	texture.texture_rd_rid = _images[_side]
 
 
 func _keep(id: RID) -> RID:

@@ -194,9 +194,79 @@ func _run() -> void:
 	_check(statistics.defense_successes == 1 and statistics.perfect_defenses == 1, "room result snapshots actual committed defense outcomes")
 	_check_world_clocks()
 	_check_perfect_dodge()
+	_check_batched_dodge()
+	_check_reflected_sweep_batch()
 	for session in sessions: session.free()
 	print("Defense and movement: %s failure(s)" % failures)
 	quit(1 if failures else 0)
+
+
+func _check_reflected_sweep_batch() -> void:
+	for count: int in [96, 256]:
+		var battle := _session()
+		while battle.enemies.size() < (6 if count == 96 else 18):
+			battle._spawn_enemy(battle._enemy_definitions[battle.enemies[0].id], Vector2(.5, .5))
+		for index in battle.enemies.size():
+			var enemy := battle.enemies[index]
+			enemy.position = Vector2(.5, .5) + Vector2.from_angle(index * 1.7) * (80 + index * 12) / BattleSession.ARENA_SIZE
+			enemy.previous_position = enemy.position - Vector2(30, -50) / BattleSession.ARENA_SIZE
+			enemy.combat_locked = true
+		var matched := true
+		var hits := 0
+		for index in count:
+			battle.threats.clear()
+			var shot := _threat(battle, Vector2.from_angle(index * .7) * 450.0, Vector2.ZERO, "sweep-%d" % index)
+			shot.reflected = true
+			shot.curvature = (index % 3 - 1) * .2
+			shot.velocity = ((battle.enemies[index % battle.enemies.size()].position - shot.position) * BattleSession.ARENA_SIZE).normalized() * 1400.0
+			var origin := shot.position
+			var end := origin + BattleThreat.flight_displacement(shot.velocity, shot.curvature, shot.acceleration, .5) / BattleSession.ARENA_SIZE
+			var nearest := INF
+			for enemy in battle.enemies:
+				nearest = minf(nearest, CombatGeometry.sweep_discs(origin * BattleSession.ARENA_SIZE, end * BattleSession.ARENA_SIZE, enemy.previous_position * BattleSession.ARENA_SIZE, enemy.position * BattleSession.ARENA_SIZE, shot.radius + enemy.radius))
+			battle._advance_threats(.5)
+			matched = matched and battle.threats.is_empty() == (nearest != INF)
+			if nearest != INF:
+				hits += 1
+				matched = matched and ((shot.position - origin.lerp(end, nearest)) * BattleSession.ARENA_SIZE).length() < .001
+		_check(matched and hits > 0, "%d reflected sweeps retain exact moving-body collision results" % count)
+
+
+func _check_batched_dodge() -> void:
+	for count: int in [96, 256]:
+		var battle := _session()
+		battle.threats.clear()
+		for index in count:
+			var angle := TAU * index / count
+			var shot := _threat(battle, Vector2.from_angle(angle) * (180 + index % 350), Vector2.from_angle(angle + 2.3) * (150 + index % 400), "batch-%d" % index)
+			shot.curvature = (index % 7 - 3) * .173
+			shot.acceleration = (index % 5 - 2) * .11
+			shot.life = .1 + (index % 15) * .1
+		var timings := {"reference": [], "serial": [], "parallel": []}
+		for sample in 17:
+			battle.player_position = Vector2(.2 + (sample % 5) * .14, .25 + (sample % 4) * .16)
+			battle._safe_direction()
+			var scorer := battle._dodge_scorer
+			scorer.SetWorkerLimit(1)
+			var started := Time.get_ticks_usec()
+			var points := PackedVector2Array()
+			var starts := PackedInt32Array()
+			for shot in battle.threats:
+				starts.append(points.size())
+				points.append(shot.position * BattleSession.ARENA_SIZE)
+				var velocity := shot.velocity
+				for tick in mini(14, ceili(shot.life / .1)):
+					points.append(points[-1] + BattleThreat.flight_displacement(velocity, shot.curvature, shot.acceleration, .1))
+					velocity = BattleThreat.flight_velocity(velocity, shot.curvature, shot.acceleration, .1)
+			var expected: int = scorer.Choose(points, starts, battle._dodge_segments, battle._dodge_radii, count, battle._dodge_candidates, battle._dodge_travel, battle._dodge_scores, battle._dodge_fixed, battle._dodge_tails, 2)
+			if sample > 0: timings.reference.append((Time.get_ticks_usec() - started) / 1000.0)
+			for workers in [1, 4]:
+				scorer.SetWorkerLimit(workers)
+				started = Time.get_ticks_usec()
+				var actual: int = scorer.ChooseFlight(battle._dodge_origins, battle._dodge_velocities, battle._dodge_flight, battle._dodge_segments, battle._dodge_radii, count, battle._dodge_candidates, battle._dodge_travel, battle._dodge_scores, battle._dodge_fixed, battle._dodge_tails, 2)
+				if sample > 0: timings["serial" if workers == 1 else "parallel"].append((Time.get_ticks_usec() - started) / 1000.0)
+				_check(actual == expected, "%d threats: worker count %d keeps original dodge choice %d" % [count, workers, sample])
+		print("DODGE_BATCH ", count, " ", JSON.stringify(timings))
 
 
 func _check_curved_trajectory() -> void:

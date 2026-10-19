@@ -5,6 +5,7 @@ extends MeshInstance2D
 var reach := 300.0
 var burst_radius := 0.0
 var reduced := false
+var quality := 2
 var random_seed := 1
 var illumination: FluidEmitter2D
 var _phase := -1
@@ -41,13 +42,15 @@ func advance(progress: float) -> void:
 			var tip := Vector2.from_angle(angle) * burst_radius * _rng.randf_range(.78, 1.0)
 			tips.append(tip)
 			_append_path(_path(Vector2.ZERO, tip, burst_radius * .16), .8)
-		for index in 7:
-			_append_path(_path(tips[index], tips[(index + 1) % 7], burst_radius * .1), .28)
+		if quality > 0:
+			for index in 7:
+				_append_path(_path(tips[index], tips[(index + 1) % 7], burst_radius * .1), .28)
 		_publish_mesh()
 		return
 	var trunk := _path(Vector2(-reach * .5, 0), Vector2(reach * .5, 0), reach * .085)
 	_append_path(trunk, 1.0)
-	for index in clampi(int(reach / 95.0), 3, 9):
+	var branches := 0 if quality == 0 else ceili(clampi(int(reach / 95.0), 3, 9) * (0.5 if quality == 1 else 1.0))
+	for index in branches:
 		var root_index := _rng.randi_range(2, trunk.size() - 3)
 		var origin := trunk[root_index]
 		var direction := (trunk[root_index + 1] - trunk[root_index - 1]).normalized()
@@ -56,7 +59,7 @@ func advance(progress: float) -> void:
 		var tip := origin + direction.rotated(side * _rng.randf_range(.55, 1.4)) * _rng.randf_range(branch_length * .4, branch_length)
 		var branch := _path(origin, tip, origin.distance_to(tip) * .18)
 		_append_path(branch, _rng.randf_range(.18, .42))
-		if index % 2 == 0:
+		if quality == 2 and index % 2 == 0:
 			var fork := branch[floori(branch.size() * .5)]
 			_append_path(_path(fork, fork + direction.rotated(-side * .9) * _rng.randf_range(15, 40), 5.0), .12)
 	_publish_mesh()

@@ -9,7 +9,26 @@ const BURST: FluidEffectProfile = preload("res://ui/effects/presets/burst.tres")
 const GUST: FluidEffectProfile = preload("res://ui/effects/presets/gust.tres")
 const DODGE: FluidEffectProfile = preload("res://ui/effects/presets/dodge.tres")
 var _dodge_trail: FluidEmitter2D
-var _motion: Dictionary[StringName, Dictionary] = {}
+class Motion extends RefCounted:
+	var previous: Vector2
+	var previous_angle: float
+	var flow_angle: float
+	var path := FluidMotionPath.new()
+	var wakes: Array[FluidInfluence] = []
+	var plumes: Array[FluidInfluence] = []
+	var point: Vector2
+	var extent: Vector2
+	var angle: float
+	var color: Color
+	var glow: float
+	var solid: bool
+	var gain: float
+	var body_shape: FluidInfluence.BodyShape
+	var light := {"point": Vector2.ZERO, "color": Color.WHITE, "energy": 0.0, "radius": 0.0}
+
+var _motion: Dictionary[StringName, Motion] = {}
+var _ordered_motion: Array[Motion] = []
+var _motion_order_dirty := true
 var _ambient: Array[FluidInfluence] = []
 var _spell_smoke: Dictionary[RefCounted, FluidEmitter2D] = {}
 var _shockwaves: Array[Dictionary] = []
@@ -20,6 +39,7 @@ var _fire_surface: ColorRect
 var _fire_capture: BackBufferCopy
 var _fire_bursts: Array[Dictionary] = []
 var _fire_tail := 0.0
+var _paths_active := true
 
 
 func _ready() -> void:
@@ -88,11 +108,13 @@ func _process(delta: float) -> void:
 		_sync_battle_motion()
 		if battle.runtime != null:
 			_sync_spell_smoke()
-	if not active or reduced_motion or quality == Quality.OFF or not is_visible_in_tree():
+	var paths_active := active and not reduced_motion and quality != Quality.OFF and is_visible_in_tree()
+	if paths_active != _paths_active:
 		for motion in _motion.values():
 			motion.previous = motion.point
 			motion.previous_angle = motion.angle
-			(motion.path as FluidMotionPath).reset(motion.point)
+			motion.path.reset(motion.point)
+		_paths_active = paths_active
 	super._process(delta)
 	if combustion != null:
 		_step_combustion(minf(delta,.05))
@@ -108,11 +130,22 @@ func _before_reconfigure() -> void:
 
 
 func _after_reconfigure() -> void:
+	_configure_combustion(false)
+
+
+func _configure_combustion(preserve_fire: bool) -> void:
 	if combustion != null:
 		if quality != Quality.OFF:
-			RenderingServer.call_on_render_thread(combustion.configure.bind(field_texture(),fog_grid_size))
+			var fire_grid := Vector2i((size / maxf(size.x, size.y) * VisualQuality.FIRE_LONG_EDGE[scene_quality]).ceil()).max(Vector2i(8, 8))
+			RenderingServer.call_on_render_thread(combustion.configure.bind(field_texture(), fire_grid, preserve_fire))
 		else:
 			RenderingServer.call_on_render_thread(combustion.deactivate)
+
+
+func set_scene_quality(detail: int) -> void:
+	if scene_quality == detail: return
+	scene_quality = detail
+	if is_node_ready(): _configure_combustion(true)
 
 
 func set_options(detail: int, less_motion: bool) -> void:
@@ -159,14 +192,33 @@ func track_body(id: StringName, point: Vector2, extent: Vector2, angle: float, t
 		untrack(id)
 		return
 	if not _motion.has(id):
-		_motion[id] = {"previous": point, "previous_angle": angle, "flow_angle": angle, "path": FluidMotionPath.new(), "wakes": [], "plumes": []}
+		var added := Motion.new()
+		added.previous = point
+		added.previous_angle = angle
+		added.flow_angle = angle
+		_motion[id] = added
+		_motion_order_dirty = true
 	var motion := _motion[id]
-	(motion.path as FluidMotionPath).append(point)
-	motion.merge({"point": point, "extent": extent, "angle": angle, "color": tint, "glow": glow * presence, "solid": solid, "gain": gain * presence, "body_shape": body_shape}, true)
+	_motion_order_dirty = _motion_order_dirty or motion.glow != glow * presence
+	if active and not reduced_motion and quality != Quality.OFF:
+		motion.path.append(point)
+	motion.point = point
+	motion.extent = extent
+	motion.angle = angle
+	motion.color = tint
+	motion.glow = glow * presence
+	motion.solid = solid
+	motion.gain = gain * presence
+	motion.body_shape = body_shape
+	if motion.glow > 0.0:
+		motion.light.point = point
+		motion.light.color = tint
+		motion.light.energy = motion.glow
+		motion.light.radius = maxf(extent.x, extent.y) * 3.0 + 80.0
 
 
 func untrack(id: StringName) -> void:
-	_motion.erase(id)
+	if _motion.erase(id): _motion_order_dirty = true
 
 
 func _sync_battle_motion() -> void:
@@ -194,7 +246,7 @@ func _sync_battle_motion() -> void:
 		track_body(id, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), BattleThreatOverlay.threat_color(threat), .5 if threat.heavy else .38, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
 	for id in _motion.keys():
 		if id not in seen:
-			_motion.erase(id)
+			untrack(id)
 
 
 func _before_step(delta: float) -> void:
@@ -213,13 +265,16 @@ func _before_step(delta: float) -> void:
 			source.expansion = wave.radius * 65.0 * exp(-wave.age*22.0) * wave.strength
 		_scene_sources.append(source)
 	# Keep render/input turns, then sweep every retained segment on the solver tick.
-	var ordered: Array = _motion.values()
-	ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.glow > b.glow)
-	tracked_count = ordered.size()
-	for motion: Dictionary in ordered:
+	if _motion_order_dirty:
+		# Sort from insertion order, preserving the engine's original equal-key order.
+		_ordered_motion.assign(_motion.values())
+		_ordered_motion.sort_custom(func(a: Motion, b: Motion) -> bool: return a.glow > b.glow)
+		_motion_order_dirty = false
+	tracked_count = _ordered_motion.size()
+	for motion in _ordered_motion:
 		var point: Vector2 = motion.point
 		var extent: Vector2 = motion.extent
-		var path := motion.path as FluidMotionPath
+		var path := motion.path
 		var distance := path.length()
 		var speed := distance / delta
 		var angular := angle_difference(motion.previous_angle, motion.angle) / delta
@@ -326,7 +381,7 @@ func _scene_light_inputs() -> Array[Dictionary]:
 	if active:
 		for motion in _motion.values():
 			if motion.glow > 0:
-				emitters.append({"point": motion.point, "color": motion.color, "energy": motion.glow, "radius": maxf(motion.extent.x, motion.extent.y) * 3.0 + 80.0})
+				emitters.append(motion.light)
 	return emitters
 
 

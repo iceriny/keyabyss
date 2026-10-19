@@ -8,6 +8,8 @@ var projectile: BattleProjectile
 var world_size: Vector2
 var quality: int
 var reduced_motion: bool
+var budget: BattleVisualBudget
+var _ember_capacity := -1
 @onready var trail: Line2D = $Trail
 @onready var trail_glow: Line2D = $TrailGlow
 @onready var head: Node2D = $Head
@@ -52,11 +54,11 @@ func _apply_configuration() -> void:
 	trail.width *= 3.0
 	trail.gradient.set_color(0, Color(tint, 0.0))
 	trail.gradient.set_color(1, Color(tint, 0.72 if flame else 0.6))
-	trail.visible = quality > 0 and not reduced_motion
+	trail.visible = not reduced_motion
 	trail_glow.width = trail.width * (5.0 if flame else 4.5)
 	trail_glow.gradient.set_color(0, Color(tint, 0.0))
 	trail_glow.gradient.set_color(1, Color(tint, 0.10 if flame else 0.12))
-	trail_glow.visible = trail.visible
+	trail_glow.visible = trail.visible and quality > 0
 	halo.modulate = Color((Color("ffac55") if flame else tint) * 1.4, 0.42)
 	halo.scale = (Vector2(2.0, 0.96) if empowered else Vector2(1.45, 0.62)) if flame else (Vector2(2.35, 1.05) if empowered and frost else Vector2(1.7, 0.82))
 	flame_sprite.visible = flame
@@ -67,8 +69,12 @@ func _apply_configuration() -> void:
 	barb_lower.visible = barb_upper.visible
 	ink_folds.visible = not flame and source.begins_with("spirit")
 	embers.emitting = false
-	embers.visible = flame and quality > 0 and not reduced_motion
-	embers.amount = 8 if quality == 2 else 4
+	if _ember_capacity < 0:
+		_ember_capacity = budget.grant_particles(roundi(8 * VisualQuality.PARTICLE_DENSITY[quality])) if flame and not reduced_motion else 0
+		if _ember_capacity > 0:
+			embers.amount = _ember_capacity
+			budget.track_particles(embers, _ember_capacity)
+	embers.visible = flame and not reduced_motion and _ember_capacity > 0
 	if flame:
 		var texture := flame_sprite.texture as GradientTexture2D
 		texture.width = 130 if empowered else 104
@@ -122,6 +128,6 @@ func retire() -> void:
 
 
 func _set_trail(samples: PackedVector2Array, render_head: Vector2) -> void:
-	var points := MotionTrail.build(samples, projectile.position * world_size, render_head, TRAIL_LENGTH, true, 36)
+	var points := MotionTrail.build(samples, projectile.position * world_size, render_head, 110.0 if quality == 0 else TRAIL_LENGTH, true, VisualQuality.TRAIL_POINTS[quality])
 	trail.points = points
-	trail_glow.points = points
+	if trail_glow.visible: trail_glow.points = points

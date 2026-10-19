@@ -7,8 +7,10 @@ uniform float age = 0.0;
 uniform float lifetime = 6.0;
 uniform float motion = 1.0;
 uniform float detail = 1.0;
+uniform bool fire_fallback = false;
 
 #include "res://ui/materials/element_medium.gdshaderinc"
+#include "res://ui/materials/fire_fallback.gdshaderinc"
 
 void fragment() {
 	vec2 p=(UV-0.5)*2.5;
@@ -24,6 +26,10 @@ void fragment() {
 		light=vec3(0.09,0.23,0.31)*mist*0.06;
 	} else if(school==1) {
 		light=vec3(0.45,0.07,0.012)*exp(-r*r*7.0)*0.08;
+		if (fire_fallback) {
+			vec4 fire = field_fire(p, t);
+			light = fire.rgb * fire.a;
+		}
 	} else if(school==2) {
 		vec2 warp=p*4.0+vec2(cloud,element_fbm(p*3.0+8.0))*1.5;
 		float charge=element_fbm(warp);

@@ -35,6 +35,7 @@ var _light: ColorRect
 var _light_material: ShaderMaterial
 var _gold: GoldFilaments
 var _gold_clock := 0.0
+var _accent_theme: ArchiveTheme
 
 
 func _init() -> void:
@@ -149,7 +150,9 @@ func set_command_word(value: String) -> void:
 			_suffix_label = null
 		alignment = _caption_alignment
 		for state: String in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
-			get_theme_stylebox(state).content_margin_left = CONTENT_PADDING
+			var spacing := get_theme_stylebox(state)
+			if spacing.content_margin_left != CONTENT_PADDING:
+				spacing.content_margin_left = CONTENT_PADDING
 		custom_minimum_size.x = _base_minimum_width
 		_sync_light_text()
 	else:
@@ -158,7 +161,10 @@ func set_command_word(value: String) -> void:
 
 
 func set_command_prefix(value: String) -> void:
-	_command_prefix = value.to_lower()
+	var prefix := value.to_lower()
+	if prefix == _command_prefix:
+		return
+	_command_prefix = prefix
 	_update_badge()
 	_refresh_state()
 
@@ -183,6 +189,7 @@ func _ensure_badge() -> void:
 		_command_badge.add_child(_prefix_label)
 		_command_badge.add_child(_suffix_label)
 		alignment = HORIZONTAL_ALIGNMENT_LEFT
+		_sync_light_accent()
 	_update_badge()
 	call_deferred("_layout_badge")
 
@@ -215,7 +222,9 @@ func _layout_badge() -> void:
 	elif _caption_alignment == HORIZONTAL_ALIGNMENT_RIGHT:
 		content_left = maxf(CONTENT_PADDING, size.x - group_width - CONTENT_PADDING)
 	for state: String in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
-		get_theme_stylebox(state).content_margin_left = content_left
+		var spacing := get_theme_stylebox(state)
+		if spacing.content_margin_left != content_left:
+			spacing.content_margin_left = content_left
 	_command_badge.position = Vector2(content_left + icon_width + caption_width + 20.0, maxf(0.0, (size.y - badge_size.y) * 0.5))
 	_sync_light_text()
 
@@ -307,8 +316,20 @@ func _sync_light_text() -> void:
 
 
 func _sync_light_theme() -> void:
+	var palette := ArchiveTheme.inherited_by(self)
+	if palette != _accent_theme:
+		if _accent_theme != null:
+			_accent_theme.accent_changed.disconnect(_sync_light_accent)
+		_accent_theme = palette
+		if _accent_theme != null:
+			_accent_theme.accent_changed.connect(_sync_light_accent)
+	_sync_light_accent()
+	_sync_light_text()
+
+
+func _sync_light_accent() -> void:
+	var accent := _accent_theme.get_color("accent", "Archive") if _accent_theme != null else get_theme_color("accent", "Archive")
 	if _light_material != null:
-		_light_material.set_shader_parameter("accent", get_theme_color("accent", "Archive"))
-		_sync_light_text()
+		_light_material.set_shader_parameter("accent", accent)
 	if _prefix_label != null:
-		_prefix_label.add_theme_color_override("font_color", get_theme_color("accent", "Archive"))
+		_prefix_label.add_theme_color_override("font_color", accent)

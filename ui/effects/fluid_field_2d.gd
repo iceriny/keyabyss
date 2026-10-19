@@ -50,8 +50,11 @@ var _omitted_scene_sources := 0
 var _emitters: Array[FluidEmitter2D] = []
 const LIGHT_BUDGET := [3, 5, 8]
 var scene_quality: int = 2
+var visual_budget: BattleVisualBudget
 var _lights: Array[PointLight2D] = []
 var _light_texture: GradientTexture2D
+var _light_energies := PackedFloat64Array()
+var _light_order: Array[int] = []
 
 
 func _ready() -> void:
@@ -306,7 +309,13 @@ func _sync_lights() -> void:
 	for emitter in _emitters:
 		if emitter.profile.light_energy > 0.0 and (not reduced_motion or emitter.profile.duration == 0.0):
 			inputs.append_array(emitter.light_inputs())
-	inputs.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.energy > b.energy)
+	var energies := PackedFloat64Array()
+	energies.resize(inputs.size())
+	for i in inputs.size(): energies[i] = inputs[i].energy
+	if energies != _light_energies:
+		_light_energies = energies
+		_light_order.assign(range(inputs.size()))
+		_light_order.sort_custom(func(a: int, b: int) -> bool: return energies[a] > energies[b])
 	var count := mini(inputs.size(), LIGHT_BUDGET[scene_quality])
 	while _lights.size() < count:
 		var light := PointLight2D.new()
@@ -315,14 +324,17 @@ func _sync_lights() -> void:
 		light.range_item_cull_mask = 2
 		add_child(light)
 		_lights.append(light)
+		if visual_budget != null: visual_budget.register_light(light, 3)
 	for i in _lights.size():
 		var light := _lights[i]
 		light.enabled = i < count
+		light.visible = i < count
 		if i < count:
-			light.position = inputs[i].point
-			light.color = inputs[i].color
-			light.energy = inputs[i].energy
-			light.texture_scale = inputs[i].radius * 2.0 / _light_texture.width
+			var input := inputs[_light_order[i]]
+			light.position = input.point
+			light.color = input.color
+			light.energy = input.energy
+			light.texture_scale = input.radius * 2.0 / _light_texture.width
 
 
 func _exit_tree() -> void:

@@ -8,6 +8,7 @@ var ice: IcePatch
 var _ice_light: PointLight2D
 var _seal: Sprite2D
 var _ice_seed: int
+var budget: BattleVisualBudget
 
 
 static func create(state: BattleUltimate, tint: Color) -> UltimateField:
@@ -37,9 +38,10 @@ func _ready() -> void:
 	_ice_light.height = timeline.radius * .5
 	_ice_light.texture_scale = timeline.radius * 4.0 / 128.0
 	add_child(_ice_light)
+	budget.register_light(_ice_light, 1)
 
 
-func sync_frame(world_size: Vector2, detail: int, less_motion: bool) -> void:
+func sync_frame(world_size: Vector2, detail: int, less_motion: bool, fire_fallback: bool = false) -> void:
 	size = Vector2.ONE * timeline.radius * 2.5
 	position = timeline.center * world_size - size * 0.5
 	_seal.position = size * .5
@@ -50,6 +52,7 @@ func sync_frame(world_size: Vector2, detail: int, less_motion: bool) -> void:
 	_surface.set_shader_parameter("lifetime", timeline.lifetime)
 	_surface.set_shader_parameter("motion", 0.0 if less_motion else 1.0)
 	_surface.set_shader_parameter("detail", float(detail) / 2.0)
+	_surface.set_shader_parameter("fire_fallback", fire_fallback)
 	if ice != null:
 		var fade := smoothstep(0.0,.6,timeline.lifetime-timeline.age)
 		ice.sync_patch(size*.5,timeline.radius,timeline.age,fade,detail,less_motion,_ice_seed)

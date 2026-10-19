@@ -5,6 +5,7 @@ extends Control
 var session: BattleSession
 var reduced_motion := false
 var quality := 2
+var fire_fallback := false
 var field_nodes: Dictionary = {}
 var _field_capture: BackBufferCopy
 var _corrosion: Dictionary[OngoingSpell, Sprite2D] = {}
@@ -50,11 +51,14 @@ func _process(_delta: float) -> void:
 			if field.effect.kind == &"paper_crane": continue
 			if not field_nodes.has(field):
 				var visual := SpellFieldVisual.create(field, session.runtime.clock)
+				visual.budget = (get_parent() as BattleVisuals).budget
+				visual.birth_quality = quality
+				visual.birth_reduced = reduced_motion
 				add_child(visual)
 				if field.effect.kind == &"fire_field":
 					(get_parent() as BattleVisuals).fluid.bind_particles(visual.particles, 3.0)
 				field_nodes[field] = visual
-			field_nodes[field].sync_frame(size, session.runtime.clock, quality, reduced_motion)
+			field_nodes[field].sync_frame(size, session.runtime.clock, quality, reduced_motion, fire_fallback)
 		for field in field_nodes.keys():
 			if not visible_fields.has(field):
 				field_nodes[field].finish()

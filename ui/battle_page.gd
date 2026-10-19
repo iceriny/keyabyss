@@ -48,11 +48,19 @@ var _cast_progress_display := 0.0
 var _cast_progress_word := ""
 var slow_lens: BattleSlowLens
 var _refresh_pending := false
+var _reading_tween: Tween
 
 
 static func create(battle: BattleSession, options: AppSettings, book: BookPresentation) -> BattlePage:
-	var page := load("res://ui/scenes/battle_page.tscn").instantiate() as BattlePage
+	var started := DebugLog.begin()
+	var scene := load("res://ui/scenes/battle_page.tscn") as PackedScene
+	DebugLog.end(&"battle.create.load", started)
+	started = DebugLog.begin()
+	var page := scene.instantiate() as BattlePage
+	DebugLog.end(&"battle.create.instantiate", started)
+	started = DebugLog.begin()
 	page._configure(battle, options, book)
+	DebugLog.end(&"battle.create.configure", started)
 	return page
 
 
@@ -84,6 +92,7 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 	warnings.session = session
 	warnings.quality = settings.quality
 	warnings.reduced_motion = settings.reduce_motion
+	(visuals.get_node("ThreatGlow") as BattleThreatGlow).low_ribbons = warnings.low_ribbons
 	$BattleCompass.session = session
 	$BattleCompass.reduced_motion = settings.reduce_motion
 	audio = $BattleAudio
@@ -156,8 +165,10 @@ func _configure(battle: BattleSession, options: AppSettings, book: BookPresentat
 
 func _word_targets() -> Array:
 	var targets: Array = []
-	targets.append_array(session.enemies)
-	targets.append_array(session.pickups)
+	for enemy in session.enemies:
+		if enemy.alive() or session.typing.target_id == enemy.id: targets.append(enemy)
+	for pickup in session.pickups:
+		if pickup.alive() or session.typing.target_id == pickup.id: targets.append(pickup)
 	return targets
 
 
@@ -188,6 +199,16 @@ func _ready() -> void:
 	resized.connect(_layout)
 	_layout()
 	_refresh()
+
+
+func focus_reading(reading: bool) -> Tween:
+	if _reading_tween != null and _reading_tween.is_valid(): _reading_tween.kill()
+	_reading_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var duration := 0.12 if settings.reduce_motion else 0.22
+	_reading_tween.tween_property(hud, "modulate:a", 0.2 if reading else 1.0, duration)
+	_reading_tween.tween_property($TargetWords, "modulate:a", 0.25 if reading else 1.0, duration)
+	_reading_tween.tween_property(stage.output, "modulate", Color(0.72, 0.72, 0.72) if reading else Color.WHITE, duration)
+	return _reading_tween
 
 
 func apply_options() -> void:
@@ -276,6 +297,7 @@ func _refresh() -> void:
 		_cast_progress_display = 0.0
 		_cast_progress_word = attempt
 	for enemy in session.enemies:
+		if not enemy_words.has(enemy.id): continue
 		var word_label := enemy_words[enemy.id]
 		var selected := session.typing.target_id == enemy.id
 		var display_word := session.typing.word if selected else enemy.word
@@ -284,6 +306,7 @@ func _refresh() -> void:
 		word_label.visible = not display_word.is_empty() and ((enemy.alive() and not enemy.word_pending and (selected or BattleSession.enemy_in_combat(enemy))) or (selected and not enemy.alive()))
 		word_label.modulate.a = smoothstep(0.0, 0.28, enemy.word_age)
 	for pickup in session.pickups:
+		if not enemy_words.has(pickup.id): continue
 		var word_label := enemy_words[pickup.id]
 		var selected := session.typing.target_id == pickup.id
 		word_label.configure(pickup.word, session.word_meaning(pickup.word), settings.show_meaning, selected, session.typing.display_boundary() if selected else 0, settings.reduce_motion, "反制" if pickup.kind == &"rune" else "爆墨", [])
