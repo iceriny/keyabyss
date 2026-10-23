@@ -26,7 +26,7 @@ class Motion extends RefCounted:
 	var body_shape: FluidInfluence.BodyShape
 	var light := {"point": Vector2.ZERO, "color": Color.WHITE, "energy": 0.0, "radius": 0.0}
 
-var _motion: Dictionary[StringName, Motion] = {}
+var _motion: Dictionary = {}
 var _ordered_motion: Array[Motion] = []
 var _motion_order_dirty := true
 var _ambient: Array[FluidInfluence] = []
@@ -105,12 +105,14 @@ func _process(delta: float) -> void:
 	if reduced_motion or quality == Quality.OFF:
 		_shockwaves.clear()
 	if battle != null and active:
+		var motion_started := DebugLog.begin()
 		_sync_battle_motion()
 		if battle.runtime != null:
 			_sync_spell_smoke()
+		DebugLog.end(&"atmosphere.motion_sync", motion_started)
 	var paths_active := active and not reduced_motion and quality != Quality.OFF and is_visible_in_tree()
 	if paths_active != _paths_active:
-		for motion in _motion.values():
+		for motion: Motion in _motion.values():
 			motion.previous = motion.point
 			motion.previous_angle = motion.angle
 			motion.path.reset(motion.point)
@@ -183,8 +185,9 @@ func _step_combustion(delta: float) -> void:
 		RenderingServer.call_on_render_thread(combustion.advance.bind(domain,fuel))
 
 
-func track_body(id: StringName, point: Vector2, extent: Vector2, angle: float, tint: Color, glow: float = .4, solid: bool = true, gain: float = 18.0, presence: float = 1.0, body_shape: FluidInfluence.BodyShape = FluidInfluence.BodyShape.BLUNT) -> void:
+func track_body(id: Variant, point: Vector2, extent: Vector2, angle: float, tint: Color, glow: float = .4, solid: bool = true, gain: float = 18.0, presence: float = 1.0, body_shape: FluidInfluence.BodyShape = FluidInfluence.BodyShape.BLUNT) -> void:
 	## Points and extents are in field-local coordinates, not normalized screen UVs.
+	## Battle bodies use object identity; authored UI bodies use stable StringNames.
 	if extent.x <= 0 or extent.y <= 0:
 		push_error("Fluid motion requires positive extent")
 		return
@@ -198,7 +201,7 @@ func track_body(id: StringName, point: Vector2, extent: Vector2, angle: float, t
 		added.flow_angle = angle
 		_motion[id] = added
 		_motion_order_dirty = true
-	var motion := _motion[id]
+	var motion: Motion = _motion[id]
 	_motion_order_dirty = _motion_order_dirty or motion.glow != glow * presence
 	if active and not reduced_motion and quality != Quality.OFF:
 		motion.path.append(point)
@@ -217,12 +220,12 @@ func track_body(id: StringName, point: Vector2, extent: Vector2, angle: float, t
 		motion.light.radius = maxf(extent.x, extent.y) * 3.0 + 80.0
 
 
-func untrack(id: StringName) -> void:
+func untrack(id: Variant) -> void:
 	if _motion.erase(id): _motion_order_dirty = true
 
 
 func _sync_battle_motion() -> void:
-	var seen: Dictionary[StringName, bool] = {&"player": true}
+	var seen: Dictionary = {&"player": true}
 	var fraction := Engine.get_physics_interpolation_fraction()
 	var tint := light_color
 	track_body(&"player", battle.previous_player_position.lerp(battle.player_position, fraction) * size, Vector2.ONE * 24, 0, tint, .25)
@@ -230,20 +233,17 @@ func _sync_battle_motion() -> void:
 		_dodge_trail.position = _motion[&"player"].point
 	for enemy in battle.enemies:
 		if enemy.alive():
-			seen[enemy.id] = true
-			track_body(enemy.id, enemy.previous_position.lerp(enemy.position, fraction) * size, Vector2.ONE * enemy.radius, 0, Color("a6bcd9"), 0)
+			seen[enemy] = true
+			track_body(enemy, enemy.previous_position.lerp(enemy.position, fraction) * size, Vector2.ONE * enemy.radius, 0, Color("a6bcd9"), 0)
 	for projectile in battle.projectiles:
-		var id := StringName("projectile_%d" % projectile.get_instance_id())
-		seen[id] = true
-		track_body(id, projectile.previous_position.lerp(projectile.position, fraction) * size, Vector2.ONE * projectile.radius, 0, tint, .8, false, 18.0, 1.0, FluidInfluence.BodyShape.POINTED)
+		seen[projectile] = true
+		track_body(projectile, projectile.previous_position.lerp(projectile.position, fraction) * size, Vector2.ONE * projectile.radius, 0, tint, .8, false, 18.0, 1.0, FluidInfluence.BodyShape.POINTED)
 	for spirit in battle.spirits:
-		var id := StringName("spirit_%d" % spirit.get_instance_id())
-		seen[id] = true
-		track_body(id, spirit.previous_position.lerp(spirit.position, fraction) * size, Vector2.ONE * 18, 0, tint, .4, false)
+		seen[spirit] = true
+		track_body(spirit, spirit.previous_position.lerp(spirit.position, fraction) * size, Vector2.ONE * 18, 0, tint, .4, false)
 	for threat in battle.threats:
-		var id := StringName("threat_%d" % threat.get_instance_id())
-		seen[id] = true
-		track_body(id, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), BattleThreatOverlay.threat_color(threat), .5 if threat.heavy else .38, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
+		seen[threat] = true
+		track_body(threat, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), BattleThreatOverlay.threat_color(threat), .5 if threat.heavy else .38, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
 	for id in _motion.keys():
 		if id not in seen:
 			untrack(id)
@@ -281,6 +281,18 @@ func _before_step(delta: float) -> void:
 		var radius := maxf(extent.x, extent.y)
 		var emits_wake: bool = motion.solid or speed > 1.0 or absf(angular) > .01
 		var emits_plume: bool = battle != null and not motion.solid and speed > 12.0
+		if _scene_sources.size() >= FluidGPU.MAX_INFLUENCES:
+			_omitted_scene_sources += maxi(1, path.points.size() - 1) * (int(emits_wake) + int(emits_plume))
+			# Only the last nonzero segment affects the next tick's heading.
+			for i in range(path.points.size() - 1, 0, -1):
+				var last_segment := path.points[i] - path.points[i - 1]
+				if last_segment.length_squared() > 0.0:
+					motion.flow_angle = last_segment.angle()
+					break
+			path.reset(point)
+			motion.previous = point
+			motion.previous_angle = motion.angle
+			continue
 		for i in maxi(1, path.points.size() - 1):
 			var start := path.points[i]
 			var end := path.points[mini(i + 1, path.points.size() - 1)]
@@ -295,7 +307,8 @@ func _before_step(delta: float) -> void:
 			while motion.wakes.size() <= i:
 				motion.wakes.append(FluidInfluence.new())
 				motion.plumes.append(FluidInfluence.new())
-			var velocity := segment.normalized() * speed
+			var direction := segment.normalized()
+			var velocity := direction * speed
 			var wake := motion.wakes[i] as FluidInfluence
 			FluidMotionPath.sweep(wake, start, end, radius * 3.2)
 			wake.rotation = motion.flow_angle
@@ -313,7 +326,7 @@ func _before_step(delta: float) -> void:
 				var width := clampf(maxf(extent.x, extent.y) * .8, 18, 80)
 				var plume := motion.plumes[i] as FluidInfluence
 				var rear_length := radius * (wake.body_aspect if wake.body_shape == FluidInfluence.BodyShape.POINTED else 1.0)
-				var release_offset := segment.normalized() * rear_length * 0.35
+				var release_offset := direction * rear_length * 0.35
 				FluidMotionPath.sweep(plume, start - release_offset, end - release_offset, width)
 				var exposure := FluidMotionPath.exposure(segment.length(), distance, width)
 				plume.velocity = velocity * .08
@@ -379,7 +392,7 @@ func _sync_gravity() -> void:
 func _scene_light_inputs() -> Array[Dictionary]:
 	var emitters: Array[Dictionary] = []
 	if active:
-		for motion in _motion.values():
+		for motion: Motion in _motion.values():
 			if motion.glow > 0:
 				emitters.append(motion.light)
 	return emitters

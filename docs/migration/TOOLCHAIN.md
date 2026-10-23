@@ -35,13 +35,13 @@ pwsh -NoProfile -File tools/godot/godot.ps1 export-release
 
 导入／导出除了退出码还检查显式引擎错误。`export` 生成 `builds/windows/` 下的 Debug 包；`export-release` 使用官方 Release 模板生成 `builds/windows-release/` 下的 EXE、PCK 和 `data_Keyabyss_windows_x86_64/` 托管运行目录。导出前验证对应 `ExportDebug`／`ExportRelease` 的 `win-x64` locked restore，随后由 Godot 自身执行该配置的 `dotnet publish`，不提前重复编译；子进程继续使用 `RestoreLockedMode=true`。两者同时复制项目声明、引擎及词库许可。导出不表示玩法、目标机器或素材许可已经验收，当前实际证据见阶段总结。
 
-Windows 预设已启用 Shader Baker。`export`／`export-release` 使用真实 RenderingDevice，不能追加 `--headless`；官方烘焙步骤需要图形设备。非交互导出显式传 `--screen 0`，避免复用编辑器记忆中已不存在的显示器编号。日志应包含 `baking_shaders` 完成及 `res://.godot/shader_cache/` 入包记录，独立启动仍需创建硬件相关管线。资源导入和成品 Boss 检查继续使用 headless。原理与资源入口见[渲染准备方案](PLAN.md#渲染准备与原生资源实施方案)。
+Windows 预设已启用 Shader Baker。`export`／`export-release` 使用真实 RenderingDevice，不能追加 `--headless`；官方烘焙步骤需要图形设备。非交互导出显式传 `--screen 0`，避免复用编辑器记忆中已不存在的显示器编号。日志包含 `baking_shaders` 完成及 `res://.godot/shader_cache/` 入包记录，独立启动仍需创建硬件相关管线。原理与资源入口见[渲染准备方案](PLAN.md#渲染准备与原生资源实施方案)。
 
 独立导出 EXE 从包含同名 PCK 的目录启动；锁定的官方模板不支持 `--script`、`--main-pack` 或 `--path`，这些参数留给编辑器引擎命令。成品验证使用 `keyabyss.console.exe` 捕获输出并等待退出，不以 GUI EXE 调用测试脚本。
 
-导出前把 `.godot/exported/` 的转换缓存移入 `.delete/godot-export-cache/<唯一目录>/`，重新生成二进制资源；导入与 shader 缓存保留。锁定引擎曾漏存以 `[]` 初始化的 `PackedInt32Array` 和 `PackedStringArray` 导出属性；内容定义改用隐式空值声明，修正声明后旧转换缓存仍须重建。导出后确认托管目录中的 `Keyabyss.dll` 存在，增量编译当前 `Debug`，再用编辑器引擎加载成品 PCK 执行 Boss 与遗物目录检查，核对三个 Boss 的五档生成／血量，以及遗物法书限制、来源和实际获取。该检查验证打包资源及当前 Debug 程序集，不执行成品发布程序集。
+导出前自动把旧输出目录和 `.godot/exported/` 转换缓存移入 `.delete/godot-export/<唯一目录>/`，重新生成成品与二进制资源；导入与shader缓存保留。导出后确认托管目录中的 `Keyabyss.dll` 存在。锁定引擎曾漏存以 `[]` 初始化的packed数组导出属性，相关定义使用隐式空值声明；修改序列化声明或排查导出数据时，可按[TESTING](../TESTING.md)手动核对成品PCK。
 
-成品另用 `keyabyss.console.exe --quit-after 1800 --max-fps 60 --headless --log-file <绝对日志路径>` 做启动烟测，给首次词库索引的后台准备留出时间；原240帧曾在工作线程完成前退出，不能据此判断成品启动失败。Debug 和 Release 均生成控制台包装器。APPDATA 暂时隔离到 `.temp/export-smoke/<唯一目录>/appdata`，结束后恢复环境变量。检查退出码、输出和日志，要求出现 `Keyabyss ready` 且没有显式引擎错误；日志保留在该证据目录。短时启动通过不等于发布 C# 算法已经执行，仍需相应成品玩法验证。任一检查失败时不将产物视为可分发包。Debug 包附带“启动并记录.cmd”和“无诊断对照.cmd”，可回收目标设备日志。
+发布时以临时APPDATA启动成品一次，等待首页就绪后关闭，检查退出码及启动错误，具体步骤见[发布流程](../RELEASING.md)。Debug和Release均生成控制台包装器；Debug包附带“启动并记录.cmd”和“无诊断对照.cmd”，可回收目标设备日志。
 
 官方 CLI 始终可直接使用。例如 `& $env:GODOT_PATH --headless --path . --editor --import`。便利脚本不承担游戏运行逻辑。原生 CLI 与导出能力参见 [Godot CLI 文档](https://docs.godotengine.org/en/4.7/tutorials/editor/command_line_tutorial.html)。
 

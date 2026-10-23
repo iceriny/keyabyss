@@ -313,6 +313,10 @@ func _actor_window() -> void:
 
 func _feedback_window() -> void:
 	assert(DisplayServer.get_name() != "headless")
+	var fps_layer := CanvasLayer.new()
+	fps_layer.layer = 100
+	root.add_child(fps_layer)
+	fps_layer.add_child(FpsDisplay.create())
 	if "--trail-glow" in OS.get_cmdline_user_args():
 		_check_ribbon_geometry()
 	root.size = Vector2i(1920, 1080)
@@ -421,7 +425,7 @@ func _feedback_window() -> void:
 		battle.threats.clear()
 		await _advance(0.1)
 		await process_frame
-		_check(page.visuals.fluid._motion.keys().all(func(id: StringName) -> bool: return not str(id).begins_with("threat_")), "removed threats release fluid motion and native light inputs")
+		_check(page.visuals.fluid._motion.keys().all(func(id: Variant) -> bool: return not id is BattleThreat), "removed threats release fluid motion and native light inputs")
 		_check(page.visuals.threat_glow.ribbons.mesh == null, "removed threats release their emissive ribbon geometry")
 		_check(page.warnings._heads.is_empty(), "cleared threats release cached head nodes")
 		await _capture(directory, "projectiles-cleared")
@@ -571,9 +575,8 @@ func _check_trail_glow(battle: BattleSession, page: BattlePage, directory: Strin
 	await _capture(directory, "flight-hdr-fluid")
 	var fluid := page.visuals.fluid
 	for shot in battle.threats:
-		var id := StringName("threat_%d" % shot.get_instance_id())
-		_check(fluid._motion.has(id), "moving threat remains registered with shared fluid")
-		var motion: FluidAtmosphere.Motion = fluid._motion[id]
+		_check(fluid._motion.has(shot), "moving threat remains registered with shared fluid")
+		var motion: FluidAtmosphere.Motion = fluid._motion[shot]
 		_check(motion.plumes.any(func(plume: FluidInfluence) -> bool: return plume.density > 0.0), "moving threat continues injecting an advected fluid plume")
 		_check(motion.color == BattleThreatOverlay.threat_color(shot), "fluid illumination follows projectile identity")
 		_check(((shot.position - shot.trail[0]) * battle.ARENA_SIZE).length() > 100.0, "slow straight and curved shots retain distance-based tail history")

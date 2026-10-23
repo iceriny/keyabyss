@@ -38,7 +38,7 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 来源前置回归复用`test_relic_catalog.gd -- --expanded`：审计全部正式定义的来源／依赖，逐项去除所需能力，脱离法书限制与标签验证效果参数本身的约束；覆盖同屏未取得来源不能授权、无根循环、不同能力数量、四书各12次连续实际报价／事务取得。每次运行输出`.temp/relic-sources-<PID>.json`供核对全目录；源头与消费方按机制族测试，不为单件另建平衡脚本。`test_relic_effects.gd`包含没有其他感电遗物时纸灵实际附加感电；`test_s2_run.gd`检查含失效觉醒、多状态消费和纸灵增强的旧报价免费重建及重开不二次刷新。
 
-`export`／`export-release` 同时用编辑器引擎加载成品PCK执行目录 `--expanded`；其中显式核对千纸军团的法书／前置与行距尺的护盾来源，防止资源转换漏存packed数组。源码通过不能替代这项包内检查；它使用当前Debug程序集，成品EXE仍需独立启动和交互检查。
+修改遗物序列化声明或排查导出数据时，可用编辑器引擎加载成品PCK，手动执行目录 `--expanded`，核对千纸军团的法书／前置与行距尺的护盾来源。先用 `godot.ps1 import` 更新Debug程序集，再以锁定编辑器引擎执行 `--headless --path <工程根目录> --main-pack <绝对PCK路径> --script <test_relic_catalog.gd绝对路径> -- --expanded`。此检查使用当前Debug程序集，按需要选择。
 
 ```powershell
 & ./tools/godot/godot.ps1 -Task run -EngineArguments @('--headless', '--debug', '--script', 'res://tests/godot/test_relic_catalog.gd', '--', '--expanded')
@@ -101,7 +101,7 @@ pwsh -File tools/godot/godot.ps1 run --debug --script res://tests/godot/test_ren
 
 ### 收缩后的正式检查
 
-`test_boss_resources.gd` 专门核对三位 Boss 的五档血量、正式生成及页不会立即判胜；它不模拟完整 Boss 战。可用 `run --headless --script tests/godot/test_boss_resources.gd` 检查源码资源。导出工具还会用锁定编辑器引擎的 `--headless --main-pack <绝对 PCK 路径> --script <该脚本绝对路径>` 检查成品数据，失败即拒绝交付；源码检查不能替代这一步。
+`test_boss_resources.gd` 核对三位Boss的五档血量、正式生成及页不会立即判胜；修改相关资源时可用 `run --headless --script tests/godot/test_boss_resources.gd` 检查源码。排查导出数据时，先用 `godot.ps1 import` 更新Debug程序集，再用锁定编辑器引擎执行 `--headless --path <工程根目录> --main-pack <绝对PCK路径> --script <该脚本绝对路径>`，按需要手动检查成品数据。
 
 按改动选择下列入口，不作为每次修改后的全量套件：
 

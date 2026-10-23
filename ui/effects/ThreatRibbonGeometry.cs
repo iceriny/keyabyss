@@ -14,7 +14,6 @@ public partial class ThreatRibbonGeometry : RefCounted
     private readonly ParallelOptions parallelOptions = new();
     private readonly ArrayMesh mesh = new();
     private int vertexCapacity, indexCapacity, previousIndexCount;
-    private byte[] attributes = Array.Empty<byte>();
     private byte[] indexBytes = Array.Empty<byte>();
     private int indexStride;
 
@@ -67,8 +66,6 @@ public partial class ThreatRibbonGeometry : RefCounted
     private void Upload(Geometry geometry)
     {
         var vertices = geometry.vertices;
-        var colors = geometry.colors;
-        var uvs = geometry.uvs;
         var indices = geometry.indices;
         if (vertices.Count > vertexCapacity || indices.Count > indexCapacity)
         {
@@ -91,23 +88,8 @@ public partial class ThreatRibbonGeometry : RefCounted
                 || RenderingServer.MeshSurfaceGetFormatOffset(format, vertexCapacity, (int)Mesh.ArrayType.TexUV) != 4)
                 throw new InvalidOperationException("Unexpected ribbon surface layout.");
             indexStride = vertexCapacity <= 65536 ? 2 : 4;
-            attributes = new byte[vertexCapacity * 12];
             indexBytes = new byte[indexCapacity * indexStride];
             previousIndexCount = 0;
-        }
-        Vector2 minimum = vertices[0], maximum = vertices[0];
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            minimum = minimum.Min(vertices[i]); maximum = maximum.Max(vertices[i]);
-            Color c = colors[i];
-            int at = i * 12;
-            // Match ArrayMesh's original RGBA8 conversion, including truncation.
-            attributes[at] = (byte)(Math.Clamp(c.R, 0f, 1f) * 255f);
-            attributes[at + 1] = (byte)(Math.Clamp(c.G, 0f, 1f) * 255f);
-            attributes[at + 2] = (byte)(Math.Clamp(c.B, 0f, 1f) * 255f);
-            attributes[at + 3] = (byte)(Math.Clamp(c.A, 0f, 1f) * 255f);
-            BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 4), uvs[i].X);
-            BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 8), uvs[i].Y);
         }
         for (int i = 0; i < indices.Count; i++)
             if (indexStride == 2)
@@ -117,10 +99,10 @@ public partial class ThreatRibbonGeometry : RefCounted
         // Removed tails become degenerate triangles; they must never retain old indices.
         if (previousIndexCount > indices.Count)
             Array.Clear(indexBytes, indices.Count * indexStride, (previousIndexCount - indices.Count) * indexStride);
-        mesh.CustomAabb = new Aabb(new Vector3(minimum.X, minimum.Y, 0),
-            new Vector3(maximum.X - minimum.X, maximum.Y - minimum.Y, 1));
+        mesh.CustomAabb = new Aabb(new Vector3(geometry.minimum.X, geometry.minimum.Y, 0),
+            new Vector3(geometry.maximum.X - geometry.minimum.X, geometry.maximum.Y - geometry.minimum.Y, 1));
         mesh.SurfaceUpdateVertexRegion(0, 0, MemoryMarshal.AsBytes(CollectionsMarshal.AsSpan(vertices)));
-        mesh.SurfaceUpdateAttributeRegion(0, 0, attributes.AsSpan(0, vertices.Count * 12));
+        mesh.SurfaceUpdateAttributeRegion(0, 0, geometry.attributes.AsSpan(0, vertices.Count * 12));
         RenderingServer.MeshSurfaceUpdateIndexRegion(mesh.GetRid(), 0, 0,
             indexBytes.AsSpan(0, Math.Max(indices.Count, previousIndexCount) * indexStride));
         previousIndexCount = indices.Count;
@@ -133,21 +115,53 @@ public partial class ThreatRibbonGeometry : RefCounted
         private readonly List<Vector2> smooth = new();
         private readonly List<Vector2> trimmed = new();
         internal readonly List<Vector2> vertices = new();
-        internal readonly List<Color> colors = new();
-        internal readonly List<Vector2> uvs = new();
+        internal byte[] attributes = Array.Empty<byte>();
+        internal Vector2 minimum, maximum;
         internal readonly List<int> indices = new();
         private readonly List<double> distances = new();
 
         internal void Clear()
         {
-            vertices.Clear(); colors.Clear(); uvs.Clear(); indices.Clear();
+            vertices.Clear(); indices.Clear();
+            minimum = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+            maximum = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
         }
 
         internal void AppendBatch(Geometry batch)
         {
+            if (batch.vertices.Count == 0) return;
             int start = vertices.Count;
-            vertices.AddRange(batch.vertices); colors.AddRange(batch.colors); uvs.AddRange(batch.uvs);
+            vertices.AddRange(batch.vertices);
+            EnsureAttributes(vertices.Count);
+            batch.attributes.AsSpan(0, batch.vertices.Count * 12).CopyTo(attributes.AsSpan(start * 12));
+            minimum = minimum.Min(batch.minimum);
+            maximum = maximum.Max(batch.maximum);
             foreach (int index in batch.indices) indices.Add(start + index);
+        }
+
+        private void EnsureAttributes(int count)
+        {
+            if (attributes.Length < count * 12)
+                Array.Resize(ref attributes, (int)System.Numerics.BitOperations.RoundUpToPowerOf2((uint)count) * 12);
+        }
+
+        private void WritePair(int vertex, Vector2 upper, Vector2 lower, Color color, float halfWidth)
+        {
+            vertices[vertex] = upper;
+            vertices[vertex + 1] = lower;
+            minimum = minimum.Min(upper).Min(lower);
+            maximum = maximum.Max(upper).Max(lower);
+            int at = vertex * 12;
+            // Pack inside the owning worker, matching ArrayMesh's RGBA8 truncation.
+            attributes[at] = (byte)(Math.Clamp(color.R, 0f, 1f) * 255f);
+            attributes[at + 1] = (byte)(Math.Clamp(color.G, 0f, 1f) * 255f);
+            attributes[at + 2] = (byte)(Math.Clamp(color.B, 0f, 1f) * 255f);
+            attributes[at + 3] = (byte)(Math.Clamp(color.A, 0f, 1f) * 255f);
+            attributes.AsSpan(at, 4).CopyTo(attributes.AsSpan(at + 12, 4));
+            BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 4), halfWidth);
+            BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 8), -halfWidth);
+            BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 16), halfWidth);
+            BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 20), halfWidth);
         }
 
         internal void BuildRange(int first, int end, Vector2[] samples, int[] offsets,
@@ -243,7 +257,8 @@ public partial class ThreatRibbonGeometry : RefCounted
             // Preserve per-threat narrow strip then wide strip draw order.
             for (int layer = 0; layer < (halo ? 2 : 1); layer++)
                 for (int i = 0; i < count * 2; i++)
-                { vertices.Add(default); colors.Add(default); uvs.Add(default); }
+                    vertices.Add(default);
+            EnsureAttributes(vertices.Count);
             for (int i = 0; i < count; i++)
             {
                 double progress = distances[i] / distances[^1];
@@ -256,16 +271,12 @@ public partial class ThreatRibbonGeometry : RefCounted
                 {
                     int at = start + layer * count * 2 + i * 2;
                     Vector2 side = normal * (float)(radius * (layer == 0 ? 2.6 : 7.0)) * (float)taper;
-                    vertices[at] = smooth[i] + side;
-                    vertices[at + 1] = smooth[i] - side;
                     Color color = tint * (layer == 0 ? 1.75f : 1.3f);
                     color.A = (float)((layer == 0 ? 0.7 : 0.13) * fade);
-                    colors[at] = colors[at + 1] = color;
                     float halfWidth = (float)(radius * (layer == 0 ? 2.6 : 7.0) * taper);
                     // Interpolate physical distance and width separately. Normalized UVs
                     // on a tapered quad bend the optical center at every triangle diagonal.
-                    uvs[at] = new Vector2(halfWidth, -halfWidth);
-                    uvs[at + 1] = new Vector2(halfWidth, halfWidth);
+                    WritePair(at, smooth[i] + side, smooth[i] - side, color, halfWidth);
                 }
             }
             for (int layer = 0; layer < (halo ? 2 : 1); layer++)

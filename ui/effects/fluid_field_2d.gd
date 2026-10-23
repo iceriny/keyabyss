@@ -240,8 +240,10 @@ func _process(delta: float) -> void:
 
 
 func _process_field(delta: float) -> void:
+	var bindings_started := DebugLog.begin()
 	_sync_particles()
 	_sync_lights()
+	DebugLog.end(&"fluid.bindings", bindings_started)
 	if not active or quality == Quality.OFF or reduced_motion or not is_visible_in_tree() or grid_size == Vector2i.ZERO:
 		return
 	var inverse := get_global_transform_with_canvas().affine_inverse()
@@ -254,6 +256,7 @@ func _process_field(delta: float) -> void:
 	_clock += dt
 	_scene_sources.clear()
 	_omitted_scene_sources = 0
+	var sources_started := DebugLog.begin()
 	_before_step(dt)
 	var inputs: Array[FluidInfluence] = []
 	for emitter in _emitters:
@@ -261,6 +264,8 @@ func _process_field(delta: float) -> void:
 			inputs.append_array(emitter.sample(dt))
 	inputs.append_array(_scene_sources)
 	inputs.append_array(sources)
+	DebugLog.end(&"fluid.sources", sources_started)
+	var pack_started := DebugLog.begin()
 	var packed := PackedFloat32Array()
 	var capacity := FluidGPU.MAX_INFLUENCES
 	var obstacle_count := mini(obstacles.size(), capacity)
@@ -274,6 +279,7 @@ func _process_field(delta: float) -> void:
 		packed.append_array(_impulses[i].packed(fog_color))
 	for i in obstacle_count:
 		packed.append_array(obstacles[i].packed(fog_color))
+	DebugLog.end(&"fluid.pack", pack_started)
 	dropped_influences += inputs.size() - source_count + _impulses.size() - impulse_count + obstacles.size() - obstacle_count + _omitted_scene_sources
 	_impulses.clear()
 	var parameters := PackedFloat32Array([size.x, size.y, dt, 0,

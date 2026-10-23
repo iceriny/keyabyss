@@ -15,7 +15,7 @@
 | 当前源码入口 | [实现快照](TECHNICAL-SNAPSHOT.md) | 实際文件与职责，不规定全部继续保留 |
 | 怎样核对旧玩法和素材 | [数据与素材映射](migration/DATA-AND-ASSETS.md)、[体验映射](migration/EXPERIENCE-MAP.md) | Git 基线、旧入口、素材来源与体验边界 |
 | 怎样启动和观察 | [工具链](migration/TOOLCHAIN.md) | 引擎锁、CLI、生成预览与导出 |
-| 怎样发布测试包与正式包 | [Windows 发布流程](RELEASING.md) | 版本与资产锁、导出、成品验收、分发校验、反馈与回退 |
+| 怎样发布测试包与正式包 | [Windows 发布流程](RELEASING.md) | 固定版本、导出、启动一次、压包上传 |
 | 怎样选择验证 | [TESTING](TESTING.md)、[测试入口索引](../tests/README.md)、[收益与难度评估](COMBAT-BALANCE-DESIGN.md) | 按行为选择最小检查、完整内容评估和最高档门槛 |
 
 ## 专题规范与工具

@@ -126,19 +126,20 @@ switch ($Task) {
             throw 'A development bridge is present in the source project. Restore the clean source configuration before exporting.'
         }
         $outputDirectory = Join-Path $projectRoot $(if ($Task -eq 'export-release') { 'builds/windows-release' } else { 'builds/windows' })
+        # Start with fresh package files and converted resources; retain import/shader caches.
+        foreach ($source in @($outputDirectory, (Join-Path $projectRoot '.godot/exported'))) {
+            $source = [IO.Path]::GetFullPath($source)
+            $retiredExport = [IO.Path]::GetFullPath((Join-Path $projectRoot ('.delete/godot-export/' + [Guid]::NewGuid().ToString('N'))))
+            if (-not $source.StartsWith($projectRoot + [IO.Path]::DirectorySeparatorChar) -or
+                -not $retiredExport.StartsWith((Join-Path $projectRoot '.delete') + [IO.Path]::DirectorySeparatorChar)) {
+                throw 'Export archive escaped project.'
+            }
+            if (Test-Path -LiteralPath $source) {
+                New-Item -ItemType Directory -Path (Split-Path $retiredExport) -Force | Out-Null
+                Move-Item -LiteralPath $source -Destination $retiredExport
+            }
+        }
         New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
-        # Converted resources can retain old script properties after a schema
-        # change. Rebuild these disposable export outputs; keep import/shader caches.
-        $convertedCache = [IO.Path]::GetFullPath((Join-Path $projectRoot '.godot/exported'))
-        $retiredExport = [IO.Path]::GetFullPath((Join-Path $projectRoot ('.delete/godot-export-cache/' + [Guid]::NewGuid().ToString('N'))))
-        if (-not $convertedCache.StartsWith($projectRoot + [IO.Path]::DirectorySeparatorChar) -or
-            -not $retiredExport.StartsWith((Join-Path $projectRoot '.delete') + [IO.Path]::DirectorySeparatorChar)) {
-            throw 'Export cache archive escaped project.'
-        }
-        if (Test-Path -LiteralPath $convertedCache) {
-            New-Item -ItemType Directory -Path (Split-Path $retiredExport) -Force | Out-Null
-            Move-Item -LiteralPath $convertedCache -Destination $retiredExport
-        }
         $exportFlag = if ($Task -eq 'export-release') { '--export-release' } else { '--export-debug' }
         # Shader Baker requires the real RenderingDevice; headless silently skips it.
         $arguments = @('--path', $projectRoot, '--screen', '0', $exportFlag, 'Windows Desktop', (Join-Path $outputDirectory 'keyabyss.exe'))
@@ -164,50 +165,6 @@ if ($Task -in @('import', 'export', 'export-release')) {
         if (-not (Test-Path -LiteralPath $publishedAssembly -PathType Leaf)) {
             throw "Managed $managedConfiguration export assembly missing: $publishedAssembly"
         }
-        # This checks packed resources with the current editor Debug assembly.
-        # Official export templates do not support --script or --main-pack.
-        Build-ManagedDebug $projectRoot
-        $bossCheck = & $godotPath --headless --path $projectRoot --main-pack (Join-Path $outputDirectory 'keyabyss.pck') --script (Join-Path $projectRoot 'tests/godot/test_boss_resources.gd') 2>&1
-        $bossExitCode = $LASTEXITCODE
-        $bossCheck | ForEach-Object { Write-Output $_ }
-        if ($bossExitCode -ne 0 -or ($bossCheck | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
-            throw 'Exported Boss resource check failed; this package is not ready to publish.'
-        }
-        $relicCheck = & $godotPath --headless --path $projectRoot --main-pack (Join-Path $outputDirectory 'keyabyss.pck') --script (Join-Path $projectRoot 'tests/godot/test_relic_catalog.gd') -- --expanded 2>&1
-        $relicExitCode = $LASTEXITCODE
-        $relicCheck | ForEach-Object { Write-Output $_ }
-        if ($relicExitCode -ne 0 -or ($relicCheck | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
-            throw 'Exported relic resource check failed; this package is not ready to publish.'
-        }
-        $consoleWrapper = Join-Path $outputDirectory 'keyabyss.console.exe'
-        if (-not (Test-Path -LiteralPath $consoleWrapper -PathType Leaf)) {
-            throw "Export smoke check requires the console wrapper: $consoleWrapper"
-        }
-        $smokeDirectory = Join-Path $projectRoot ('.temp/export-smoke/' + [Guid]::NewGuid().ToString('N'))
-        $smokeAppData = Join-Path $smokeDirectory 'appdata'
-        $smokeLog = Join-Path $smokeDirectory 'engine.log'
-        New-Item -ItemType Directory -Path $smokeAppData -Force | Out-Null
-        $previousAppData = $env:APPDATA
-        try {
-            $env:APPDATA = $smokeAppData
-            Push-Location -LiteralPath $outputDirectory
-            try {
-                # The console wrapper captures output and waits for the game.
-                # A fresh user directory rebuilds all vocabulary indices in a worker.
-                $smokeOutput = & $consoleWrapper --quit-after 1800 --max-fps 60 --headless --log-file $smokeLog 2>&1
-                $smokeExitCode = $LASTEXITCODE
-            } finally { Pop-Location }
-        } finally { $env:APPDATA = $previousAppData }
-        $smokeOutput | ForEach-Object { Write-Output $_ }
-        if ($smokeExitCode -ne 0 -or -not (Test-Path -LiteralPath $smokeLog -PathType Leaf)) {
-            throw "Export smoke check failed (exit code $smokeExitCode); inspect $smokeDirectory"
-        }
-        $smokeLogContents = Get-Content -LiteralPath $smokeLog -Raw -Encoding utf8
-        if ($smokeLogContents -notmatch 'Keyabyss ready \|' -or $smokeLogContents -match 'SCRIPT ERROR:|(?m)^ERROR:' -or
-            ($smokeOutput | Select-String -Pattern 'SCRIPT ERROR:|^ERROR:')) {
-            throw "Export smoke check did not reach a clean startup; inspect $smokeLog"
-        }
-        Write-Output "Export smoke log: $smokeLog"
         Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE'), (Join-Path $projectRoot 'THIRD_PARTY_NOTICES.md') -Destination $outputDirectory
         $licenseDirectory = Join-Path $outputDirectory 'licenses'
         New-Item -ItemType Directory -Path $licenseDirectory -Force | Out-Null

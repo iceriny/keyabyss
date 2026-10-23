@@ -18,6 +18,10 @@ func _run() -> void:
 	evidence = "res://.temp/fluid/run-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	root.size = Vector2i(1280, 720)
+	var fps_layer := CanvasLayer.new()
+	fps_layer.layer = 100
+	root.add_child(fps_layer)
+	fps_layer.add_child(FpsDisplay.create())
 	if "--budget" in OS.get_cmdline_user_args():
 		await _smoke_budget()
 		quit(0 if failures == 0 else 1)
@@ -221,6 +225,7 @@ func _run() -> void:
 func _node_usage() -> void:
 	_check_motion_budget()
 	_check_motion_lights()
+	_check_battle_motion_identity()
 	var field := FluidField2D.new()
 	field.position = Vector2(60, 40)
 	field.size = Vector2(320, 180)
@@ -338,6 +343,43 @@ func _check_motion_budget() -> void:
 	field._scene_sources.clear()
 	field._before_step(1.0 / 60.0)
 	_check(field._scene_sources[0].center == Vector2(8, 100), "reentering priority uses the latest short sweep instead of accumulated history")
+	for index in range(1, 72):
+		field.track_body(StringName(str(index)), Vector2(index * 8.0 + 8.0, 100), Vector2.ONE * 8, 0.0, Color.WHITE, float(index), false)
+	for point: Vector2 in [Vector2(16, 110), Vector2(21, 112), Vector2(18, 120)]:
+		field.track_body(&"0", point, Vector2.ONE * 8, .75, Color.WHITE, 0.0, false)
+	var bent_motion: FluidAtmosphere.Motion = field._motion[&"0"]
+	var retained_points := bent_motion.path.points
+	field._scene_sources.clear()
+	field._omitted_scene_sources = 0
+	field._before_step(1.0 / 60.0)
+	_check(field._omitted_scene_sources == 100, "omitted bent paths count every original wake and plume")
+	_check(bent_motion.flow_angle == Vector2(-3, 8).angle() and bent_motion.previous_angle == .75, "omitted bent paths retain their last heading and rotation")
+	_check(retained_points.size() == 4 and bent_motion.path.points == PackedVector2Array([Vector2(18, 120)]), "path reset preserves retained snapshots and consumes all turns")
+	field.free()
+	battle.free()
+
+
+func _check_battle_motion_identity() -> void:
+	var field := FluidAtmosphere.new()
+	var battle := BattleSession.new()
+	field.battle = battle
+	field.size = Vector2(960, 540)
+	var first := BattleThreat.new()
+	var second := BattleThreat.new()
+	first.source_id = &"same_enemy"
+	second.source_id = first.source_id
+	battle.threats.assign([first, second])
+	field._sync_battle_motion()
+	_check(field._motion.size() == 3 and field._motion.has(first) and field._motion.has(second), "shots from the same enemy retain separate fluid identities")
+	var motion: FluidAtmosphere.Motion = field._motion[first]
+	first.reflected = true
+	field._sync_battle_motion()
+	_check(field._motion[first] == motion and motion.color == BattleThreatOverlay.threat_color(first), "reflection preserves motion history and updates its color")
+	var retired: WeakRef = weakref(first)
+	battle.threats.erase(first)
+	first = null
+	field._sync_battle_motion()
+	_check(retired.get_ref() == null and field._motion.size() == 2, "removed shots release their fluid registration and object reference")
 	field.free()
 	battle.free()
 

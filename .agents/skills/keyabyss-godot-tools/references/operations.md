@@ -40,11 +40,11 @@ HDR 图像先从原高精度像素 `linear_to_srgb()` 写入新 RGBA8，再保�
 
 来源：`docs/migration/M2-IMPLEMENTATION-LESSONS.md` §9–10；`app/debug_log.gd`、`app/frame_capture.gd`、`tests/godot/profile_frames.gd` 与 `docs/TESTING.md`。
 
-## Windows 导出：包内数据与独立 EXE 分别验证
+## Windows 导出
 
-继续使用 `godot.ps1 export`／`export-release`；它们已处理 locked restore、配置输出缓存退休、实际图形 Shader Baker、Boss 包内检查及 console 启动。不要 headless 导出，不以导出成功跳过引擎日志。
+使用 `godot.ps1 export`／`export-release`；脚本处理locked restore、旧输出与转换缓存移入`.delete/`、实际图形Shader Baker及许可复制。导出使用图形设备；发布时按[发布流程](../../../../docs/RELEASING.md)启动成品一次，然后压包上传。
 
-包内资源使用锁定编辑器引擎 `--main-pack <绝对PCK> --script <绝对测试脚本>`；官方 Release 模板不执行外部 `--script`。因此资源检查和独立 EXE 启动分开，短时启动不冒充战斗交互。C# 成品还需运行时目录及其实际加载证据，受限 SDK 搜索测试不等于卸载 SDK 的干净机。
+功能测试沿用开发阶段结果。修改资源序列化或排查导出数据时，按TESTING选择包内资源专项：先更新Debug程序集，再用锁定编辑器引擎 `--main-pack <绝对PCK> --script <绝对测试脚本>`。官方导出模板不执行外部`--script`。
 
 副本导入／导出一旦出现原生异常，保留首次日志、退出码和复跑条件；查清事实后再决定是否复跑。历史访问异常原样复跑成功，不是自动重试或改画质的依据。
 

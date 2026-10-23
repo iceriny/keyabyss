@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="键渊 · 失控咒典"
-config/version="0.7.0-test.20261019"
+config/version="0.7.0-test.20261023"
 run/main_scene="res://app/bootstrap.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Keyabyss"
