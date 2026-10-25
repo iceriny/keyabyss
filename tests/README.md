@@ -13,13 +13,21 @@
 | 保存、恢复、成长与重复结算 | `test_profile_save.gd`、`test_single_run_save.gd`、`test_talent_progress.gd`、`test_reward_ledger.gd` |
 | 菜单、窗口、布局和教学 | `test_application.gd`、`test_presentation.gd`、`test_display.gd`、`test_ui_refinement.gd`、`test_tutorial_lesson.gd`；局部参数见验证说明 |
 | 战斗与反馈画面 | `test_battle_presentation.gd`、`test_feedback_effects.gd`、`test_feedback_presentation.gd`、`test_s1_application.gd`；图形运行并审阅画面 |
+| 战场Canvas缓存 | `test_battle_presentation.gd -- --canvas-cache --workload=baseline\|extreme`；6／18敌，两HDR视口逐字节比较原命令与缓存命令，核对移动不重建、状态切换、变换／光照／覆盖顺序、隐藏恢复及死亡／新增。报告位于`.temp/godot-m2/`，右上角FPS |
 | 冰晶GPU成本 | `test_feedback_effects.gd -- --measure`，真实图形窗口；独立于战斗截图夹具，保存标记匹配的GPU／渲染线程CPU原始区间。受控冰龄推进，不代表整帧FPS |
+| GPU计算等价与整链成本 | `tools/godot/compare-gpu.ps1 -Workload baseline`，极限只改为`extreme`；从固定`ad5fe67`生成旧计算器，`test_gpu_compute.gd`比较冰晶／膜层／流体逐字节输出和交替提交的GPU区间。可用`-Label`保留不同候选，右上角显示FPS；结果在`.temp/gpu-compute-20261025/`，不代表整场帧率 |
 | 流体、采样、渲染准备和音频 | `test_fluid.gd`、`test_effect_sampling.gd`、`test_render_preparation.gd`、`test_audio.gd` |
 | 算法与性能定位 | `test_combat_algorithms.gd`、`profile_frames.gd`；只在对应问题或算法变化时选用 |
 | 三档视效两组对照 | `test_visual_quality.gd -- --workload=baseline --label=after --capture`，极限只将workload改为`extreme`；各自串行经过三档四书。每段立即写入`.temp/visual-quality-20261018/`，截图与切档／预算／减少动态检查位于计时外。修改前用`--label=before`，不要同时启动两个窗口。真实4／10纸灵只在纸灵书；完整负载定义见视效分级实施记录 |
+| 实际Release两组对照 | `tools/godot/prepare-release-benchmark.ps1 -OutputDirectory .temp/release-performance/current`生成隔离工程并官方导出；从副本`project/builds/windows-release/`启动成品，用户参数沿用`--combat --workload=baseline\|extreme --label=release --output-root=<绝对证据目录> --capture`。每组独立APPDATA／LOCALAPPDATA，身份字段及命令见[实施记录](../docs/migration/PERFORMANCE-IMPLEMENTATION.md#2026-10-25-release模板采样)；正式工程入口与包保持原样 |
 | 尾迹批量几何与粒子绑定 | `test_enemy_expansion.gd -- --feedback-fixes --trail-glow` 比较原采样几何、渐细带中心、256／1024条串并行数据、动态容量清理并观察实际HDR；`test_fluid.gd -- --usage` 验证即时绑定、半径／选项变化、灯光优先级与释放。两者为图形窗口，性能采样另用实施记录中的两组夹具 |
-| 冰晶无生长阶段复用 | `test_feedback_effects.gd -- --growth-reuse` 对照原算法，检查128²／384²晶格与膜层的生长、仅扩散、暂停、恢复和重置像素；验证暂停无dispatch及静态枝网不重复求包围信息。需要图形窗口 |
+| 尾迹CPU分段与索引复用 | `test_enemy_expansion.gd -- --ribbon-profile --workload=baseline\|extreme`；96／256条曲线，输出数值／等待、合并、索引准备及上传，保存网格哈希与索引复用次数。追加`--verify-ribbons`在计时后运行既有几何回归；窗口右上角FPS，结果在`.temp/enemy-expansion/`。实际整帧仍用Release两组 |
+| 冰晶无生长阶段复用 | `test_feedback_effects.gd -- --growth-reuse` 对照每帧重算包围的膜层路径，检查128²／384²晶格与膜层的生长、仅扩散、暂停、恢复和重置像素；验证暂停无dispatch及静态枝网不重复求包围信息。需要图形窗口 |
 | 开发夹具 | `test_build_lab_scenarios.gd`；验证共享资源隔离与正式段出口 |
+
+GPU分段归因沿用 `test_visual_quality.gd` 的基线／极限入口，追加 `--gpu-profile`；右上角显示FPS，各段计时窗外增量写入同一结果目录的 `gpu-effects.jsonl`，携带法书、画质及派发阶段。`--combat` 只运行高画质四书。时间戳采样与关闭探针的整帧对照分别解释；字段及当前验证状态见[实施记录](../docs/migration/PERFORMANCE-IMPLEMENTATION.md#2026-10-23-gpu分段计时与冰晶流体计算)。
+
+该两组入口在雷鸣计时窗外比较托管索引雷弧与冻结的GDS六顶点流：逐字节核对顶点、UV、颜色，并核对RNG状态、同phase复用及分支边界；可用 `--geometry-only --workload=baseline|extreme` 单独执行。流体 `test_fluid.gd -- --motion-kernel --workload=baseline|extreme` 可headless核对旧GDS与托管运动核的源字节、路径简化、容量、删除重入及灯序。`--usage`与`--motion`在实际窗口核对发射器／障碍／冲量预占、连续扫掠、暂停和场景接线；这些正确性检查不增加性能负载组。
 
 书库布局及持久教学解锁另用现有窗口入口：`test_ui_refinement.gd -- --archive-tutorial`。基础真实完成后任选灰烬，验证单书正式入场、重启回读、失败保存重试与未完远征保留；此UI／流程修改不需要重跑整体难度探针。
 

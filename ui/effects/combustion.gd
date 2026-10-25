@@ -2,6 +2,7 @@ class_name Combustion
 extends Node
 ## Passive fuel/heat transport; velocity and pressure remain owned by FluidField2D.
 const SHADER: RDShaderFile = preload("res://ui/effects/combustion.glsl")
+const GPU_TIMING = preload("res://ui/effects/gpu_effect_timing.gd")
 const GRID := Vector2i(512,288)
 const MAX_SOURCES := 64
 var grid := GRID
@@ -81,9 +82,14 @@ func advance(domain: PackedFloat32Array, sources: PackedFloat32Array) -> void:
 		_rd.buffer_update(_sources,0,source_bytes.size(),source_bytes)
 	var parameters := domain.duplicate()
 	parameters.append_array(PackedFloat32Array([count,0,0,0]))
+	var timing := 0
+	if GPU_TIMING.enabled:
+		timing = GPU_TIMING.begin(_rd, "combustion", get_instance_id(), 1, {
+			"grid": [grid.x, grid.y], "sources": count, "dispatches": 1, "clock": domain[3]})
 	_dispatch(_sets[_side], parameters)
 	_side = 1-_side
 	texture.texture_rd_rid = _images[_side]
+	if timing != 0: GPU_TIMING.mark(_rd, timing, "transport_reaction")
 
 
 func _dispatch(bindings: RID, parameters: PackedFloat32Array) -> void:

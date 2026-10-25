@@ -12,5 +12,7 @@
   <ItemGroup>
     <Compile Include="game/algorithms/*.cs" />
     <Compile Include="ui/effects/ThreatRibbonGeometry.cs" />
+    <Compile Include="ui/effects/LightningGeometry.cs" />
+    <Compile Include="ui/effects/FluidMotionKernel.cs" />
   </ItemGroup>
 </Project>

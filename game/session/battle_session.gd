@@ -560,9 +560,15 @@ func step(delta: float) -> void:
 		player_position = clamp_player(player_position + player_impulse * world_step / ARENA_SIZE)
 		player_impulse *= exp(-world_step * 9.0)
 	var stage_started := DebugLog.begin()
+	var spell_stage_started := DebugLog.begin()
 	runtime.advance(world_step)
+	DebugLog.end(&"battle.spells.runtime", spell_stage_started)
+	spell_stage_started = DebugLog.begin()
 	_advance_ultimates(world_step)
+	DebugLog.end(&"battle.spells.ultimates", spell_stage_started)
+	spell_stage_started = DebugLog.begin()
 	_advance_effects(world_step)
+	DebugLog.end(&"battle.spells.effects", spell_stage_started)
 	DebugLog.end(&"battle.spells", stage_started)
 	stage_started = DebugLog.begin()
 	_advance_enemy_motion(world_step)
@@ -1557,14 +1563,13 @@ func _resolve_melee(enemy: BattleEnemy) -> void:
 
 func _advance_threats(delta: float) -> void:
 	_advancing_threats = true
+	var spirits_can_intercept := compiled_build.asset_stacks(&"R049") > 0
 	for index in range(threats.size() - 1, -1, -1):
 		var threat := threats[index]
 		if threat.cleared: continue
-		threat.previous_position = threat.position
-		threat.position += BattleThreat.flight_displacement(threat.velocity, threat.curvature, threat.acceleration, delta) / ARENA_SIZE
-		threat.velocity = BattleThreat.flight_velocity(threat.velocity, threat.curvature, threat.acceleration, delta)
+		threat.advance_flight(delta, ARENA_SIZE)
 		threat.life -= delta
-		if ((threat.position - player_position) * ARENA_SIZE).length() <= 75.0 and dodge_window > 0.0: runtime.graze(threat)
+		if dodge_window > 0.0 and not threat.grazed and not threat.reflected and ((threat.position - player_position) * ARENA_SIZE).length() <= 75.0: runtime.graze(threat)
 		# Display history follows distance, so slow straight shots retain a full tail.
 		if threat.trail.is_empty(): threat.trail.append(threat.previous_position)
 		if ((threat.position - threat.trail[-1]) * ARENA_SIZE).length() >= (6.0 if threat.curvature != 0.0 else 4.0):
@@ -1604,7 +1609,7 @@ func _advance_threats(delta: float) -> void:
 		if runtime.intercept_crane(threat):
 			threats.remove_at(index)
 			continue
-		if compiled_build.asset_stacks(&"R049") > 0:
+		if spirits_can_intercept:
 			var intercepted := false
 			for spirit in spirits:
 				if spirit.mode == &"orbit": continue
@@ -1615,9 +1620,10 @@ func _advance_threats(delta: float) -> void:
 			if intercepted:
 				threats.remove_at(index)
 				continue
-		var contact_time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, previous_player_position * ARENA_SIZE, player_position * ARENA_SIZE, threat.radius + 21.0)
-		var predicted_contact := parry_window > 0.0 and _threat_will_hit_player(threat, minf(DEFENSE_PREDICTION, parry_window))
-		if (contact_time != INF or predicted_contact) and (parry_window > 0.0 or (dodge_window <= 0.0 and hurt_window <= 0.0)):
+		var can_hit_player := parry_window > 0.0 or (dodge_window <= 0.0 and hurt_window <= 0.0)
+		var contact_time := CombatGeometry.sweep_discs(threat.previous_position * ARENA_SIZE, threat.position * ARENA_SIZE, previous_player_position * ARENA_SIZE, player_position * ARENA_SIZE, threat.radius + 21.0) if can_hit_player else INF
+		var predicted_contact := contact_time == INF and parry_window > 0.0 and _threat_will_hit_player(threat, minf(DEFENSE_PREDICTION, parry_window))
+		if contact_time != INF or predicted_contact:
 			if contact_time != INF:
 				threat.position = threat.previous_position.lerp(threat.position, contact_time)
 			var outcome: StringName = &"hit"
@@ -1645,9 +1651,11 @@ func _flush_cleared_threats() -> void:
 	for read_index in threats.size():
 		var threat := threats[read_index]
 		if threat.cleared: continue
-		threats[write_index] = threat
+		if write_index != read_index:
+			threats[write_index] = threat
 		write_index += 1
-	threats.resize(write_index)
+	if write_index != threats.size():
+		threats.resize(write_index)
 
 
 func _commit_action(action: StringName) -> void:

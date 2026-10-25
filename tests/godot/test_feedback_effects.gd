@@ -4,13 +4,14 @@ var _gpu_frame := -1
 var _ice_samples: Array[Dictionary] = []
 
 class OriginalGrowth extends FrostGrowth:
+	# Reference film policy: recompute enclosure even without new growth.
 	func step(count: int, delta: float) -> void:
 		if iteration >= max_steps and surface_age >= 10.0: return
 		var list := _rd.compute_list_begin()
 		_rd.compute_list_bind_compute_pipeline(list, _pipeline)
 		for i in mini(count, max_steps - iteration):
-			_dispatch(list, 0, 0)
-			_dispatch(list, 1, 1)
+			_dispatch(list, _side, 0)
+			_side = 1 - _side
 			iteration += 1
 		_rd.compute_list_bind_compute_pipeline(list, _surface_pipeline)
 		var pairs := maxi(1, ceili(delta * maxf(1.0, pow(float(grid) / GRID, 2.0)) / .05))
@@ -19,6 +20,7 @@ class OriginalGrowth extends FrostGrowth:
 			_surface_dispatch(list, 1, delta / (pairs * 2.0), false, false)
 		surface_age += delta
 		_rd.compute_list_end()
+		texture.texture_rd_rid = _images[_side]
 
 class CountedGrowth extends FrostGrowth:
 	var dispatches := 0

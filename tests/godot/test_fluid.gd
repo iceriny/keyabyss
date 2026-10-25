@@ -3,10 +3,21 @@ extends SceneTree
 
 var evidence: String
 var failures := 0
+var checks := 0
 var timings: Array[float] = []
 var reports: Array[Dictionary] = []
 var _last_timestamp_frame := -1
 var _movie_srgb := false
+
+
+class CapacityField extends FluidField2D:
+	var observed_capacity := -1
+	var observed_paths_reset := false
+	var observed_emitter: FluidEmitter2D
+
+	func _before_step(_delta: float) -> void:
+		observed_capacity = _scene_source_capacity
+		observed_paths_reset = observed_emitter._paths.all(func(path: FluidMotionPath) -> bool: return path.points.size() == 1)
 
 
 func _initialize() -> void:
@@ -14,6 +25,15 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	if "--motion-kernel" in OS.get_cmdline_user_args():
+		_check_motion_kernel()
+		_check_motion_budget()
+		_check_remaining_motion_budget()
+		_check_battle_motion_identity()
+		_check_motion_lights()
+		print("Fluid motion kernel: ", checks, " checks, ", failures, " failures")
+		quit(0 if failures == 0 else 1)
+		return
 	assert(DisplayServer.get_name() != "headless", "Fluid regression requires the actual GPU renderer")
 	evidence = "res://.temp/fluid/run-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
@@ -224,6 +244,8 @@ func _run() -> void:
 
 func _node_usage() -> void:
 	_check_motion_budget()
+	_check_remaining_motion_budget()
+	await _check_reserved_motion_capacity()
 	_check_motion_lights()
 	_check_battle_motion_identity()
 	var field := FluidField2D.new()
@@ -336,27 +358,205 @@ func _check_motion_budget() -> void:
 		field._scene_sources.clear()
 		field._omitted_scene_sources = 0
 		field._before_step(1.0 / 60.0)
-	_check(field._scene_sources.size() == FluidGPU.MAX_INFLUENCES + 1, "motion geometry stops at solver capacity, retaining the trailing ambient source")
+	_check(_scene_source_count(field) == FluidGPU.MAX_INFLUENCES + 1, "motion geometry stops at solver capacity, retaining the trailing ambient source")
 	_check(field._omitted_scene_sources == 96, "skipped motion inputs retain dropped-source accounting")
-	_check(field._motion.values().all(func(motion: FluidAtmosphere.Motion) -> bool: return motion.path.points == PackedVector2Array([motion.point])), "even omitted motion consumes its path each frame")
+	_check(field._motion.keys().all(func(id: Variant) -> bool:
+		var motion := field.motion_snapshot(id)
+		return motion.path.points == PackedVector2Array([motion.point])), "even omitted motion consumes its path each frame")
 	field.track_body(&"0", Vector2(12, 100), Vector2.ONE * 8, 0.0, Color.WHITE, 100.0, false)
 	field._scene_sources.clear()
 	field._before_step(1.0 / 60.0)
-	_check(field._scene_sources[0].center == Vector2(8, 100), "reentering priority uses the latest short sweep instead of accumulated history")
+	_check(Vector2(field._scene_motion_packed[0], field._scene_motion_packed[1]) == Vector2(8, 100), "reentering priority uses the latest short sweep instead of accumulated history")
 	for index in range(1, 72):
 		field.track_body(StringName(str(index)), Vector2(index * 8.0 + 8.0, 100), Vector2.ONE * 8, 0.0, Color.WHITE, float(index), false)
 	for point: Vector2 in [Vector2(16, 110), Vector2(21, 112), Vector2(18, 120)]:
 		field.track_body(&"0", point, Vector2.ONE * 8, .75, Color.WHITE, 0.0, false)
-	var bent_motion: FluidAtmosphere.Motion = field._motion[&"0"]
-	var retained_points := bent_motion.path.points
+	var bent_motion := field.motion_snapshot(&"0")
+	var retained_points: PackedVector2Array = bent_motion.path.points
 	field._scene_sources.clear()
 	field._omitted_scene_sources = 0
 	field._before_step(1.0 / 60.0)
 	_check(field._omitted_scene_sources == 100, "omitted bent paths count every original wake and plume")
+	bent_motion = field.motion_snapshot(&"0")
 	_check(bent_motion.flow_angle == Vector2(-3, 8).angle() and bent_motion.previous_angle == .75, "omitted bent paths retain their last heading and rotation")
 	_check(retained_points.size() == 4 and bent_motion.path.points == PackedVector2Array([Vector2(18, 120)]), "path reset preserves retained snapshots and consumes all turns")
 	field.free()
 	battle.free()
+
+
+func _check_motion_kernel() -> void:
+	var extreme := "--workload=extreme" in OS.get_cmdline_user_args()
+	var count := 256 if extreme else 8
+	var battle := BattleSession.new()
+	var field := FluidAtmosphere.new()
+	var reference := preload("res://tests/godot/fixtures/fluid_motion_reference.gd").new()
+	field.battle = battle
+	reference.battle = battle
+	field.size = Vector2(960, 540)
+	field._ambient.append(FluidInfluence.new())
+	var medium := FluidMedium.new()
+	medium.color = Color(.035, .24, .9, 1)
+	medium.density_scale = 1.23
+	medium.temperature = -.28
+	medium.dissipation = .36
+	medium.emission = .58
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 78219
+	for frame in 12:
+		var capacity: int = [0, 1, 3, 9, 48, 48][frame % 6]
+		field.trail_material = medium if frame % 2 == 0 else null
+		reference.trail_material = field.trail_material
+		field._batching = true
+		for index in count:
+			if frame == 4 and index % 3 == 0:
+				field.untrack(index)
+				reference.untrack(index)
+			var point := Vector2(40 + index * 2.1, 70 + frame * 5.5)
+			var extent := Vector2(rng.randf_range(3, 21), rng.randf_range(4, 24))
+			var angle := rng.randf_range(-9, 9)
+			var tint := Color(rng.randf(), rng.randf(), rng.randf(), 0 if index % 4 == 0 else 1)
+			var glow := float((index + (frame >> 1)) % 4)
+			var solid := index % 3 == 0
+			var gain := rng.randf_range(2, 20)
+			var presence := .01 if frame == 7 and index % 5 == 0 else .87
+			var shape := (index % 2) as FluidInfluence.BodyShape
+			# Multi-turn input exceeds the retained eight-segment bound.
+			for turn in (12 if frame % 3 == 0 else 1):
+				var next := point + Vector2(turn * 1.7, sin(float(turn) * 1.1) * 12)
+				field.track_body(index, next, extent, angle, tint, glow, solid, gain, presence, shape)
+				reference.track_body(index, next, extent, angle, tint, glow, solid, gain, presence, shape)
+		field._flush_motion()
+		field._batching = false
+		_check(field._motion.keys() == reference._motion.keys(), "motion identities and insertion order frame %d" % frame)
+		var paths_equal := true
+		for id: Variant in field._motion:
+			paths_equal = paths_equal and field.motion_snapshot(id).path.points.to_byte_array() == reference._motion[id].path.points.to_byte_array()
+		_check(paths_equal, "motion path simplification frame %d" % frame)
+		field._scene_sources.clear()
+		field._omitted_scene_sources = 0
+		reference._scene_sources.clear()
+		reference._omitted_scene_sources = 0
+		field._scene_source_capacity = capacity
+		reference._scene_source_capacity = capacity
+		var dt := 1.0 / (30.0 if frame % 2 == 0 else 144.0)
+		field._before_step(dt)
+		reference._before_step(dt)
+		var expected := PackedFloat32Array()
+		for source: FluidInfluence in reference._scene_sources:
+			expected.append_array(source.packed(reference.fog_color))
+		var actual := field._scene_motion_packed
+		if actual.to_byte_array() != expected.to_byte_array():
+			for index in mini(actual.size(), expected.size()):
+				if PackedFloat32Array([actual[index]]).to_byte_array() != PackedFloat32Array([expected[index]]).to_byte_array():
+					print("First motion difference frame=", frame, " float=", index, " actual=", actual[index], " expected=", expected[index])
+					break
+		_check(actual.to_byte_array() == expected.to_byte_array(), "motion source bytes frame %d capacity %d" % [frame, capacity])
+		_check(field._omitted_scene_sources == reference._omitted_scene_sources, "motion omitted count frame %d" % frame)
+		var histories_equal := true
+		for id: Variant in field._motion:
+			var got := field.motion_snapshot(id)
+			var prior: RefCounted = reference._motion[id]
+			histories_equal = histories_equal and got.previous == prior.previous and got.previous_angle == prior.previous_angle and got.flow_angle == prior.flow_angle and got.path.points == prior.path.points
+		_check(histories_equal, "motion consumed history frame %d" % frame)
+		# Prefix, packed motion, ambient, explicit sources preserve submitted order.
+		var prefix := FluidInfluence.new()
+		prefix.center = Vector2(17, 31)
+		var tail := FluidInfluence.new()
+		tail.center = Vector2(73, 91)
+		var inputs: Array[FluidInfluence] = [prefix, tail]
+		var all_expected := prefix.packed(field.fog_color)
+		all_expected.append_array(expected)
+		all_expected.append_array(tail.packed(field.fog_color))
+		_check(field._pack_sources(inputs, capacity, 1).to_byte_array() == all_expected.slice(0, capacity * 28).to_byte_array(), "packed motion insertion and truncation frame %d" % frame)
+	field.free()
+	battle.free()
+
+
+func _check_remaining_motion_budget() -> void:
+	for capacity: int in [0, 1, 3, 9]:
+		var battle := BattleSession.new()
+		var reference := FluidAtmosphere.new()
+		var limited := FluidAtmosphere.new()
+		for field: FluidAtmosphere in [reference, limited]:
+			field.battle = battle
+			field.size = Vector2(960, 540)
+			field._ambient.append(FluidInfluence.new())
+			for index in 4:
+				for point: Vector2 in [Vector2(20, 20), Vector2(28, 20), Vector2(28, 28), Vector2(24, 36)]:
+					field.track_body(index, point + Vector2(index * 70, 0), Vector2.ONE * 8, .75, Color.WHITE, float(index), false)
+		limited._scene_source_capacity = capacity
+		var retained: PackedVector2Array = limited.motion_snapshot(0).path.points
+		reference._before_step(1.0 / 60.0)
+		limited._before_step(1.0 / 60.0)
+		_check(_motion_prefix_bytes(reference, capacity) == _motion_prefix_bytes(limited, capacity), "remaining capacity %d retains the exact submitted motion prefix" % capacity)
+		var old_dropped := maxi(0, _scene_source_count(reference) - capacity) + reference._omitted_scene_sources
+		var new_dropped := maxi(0, _scene_source_count(limited) - capacity) + limited._omitted_scene_sources
+		_check(old_dropped == new_dropped, "remaining capacity %d retains omitted-source accounting" % capacity)
+		var histories_match := true
+		for index in 4:
+			var expected := reference.motion_snapshot(index)
+			var actual := limited.motion_snapshot(index)
+			histories_match = histories_match and actual.flow_angle == expected.flow_angle and actual.previous_angle == expected.previous_angle and actual.previous == expected.previous and actual.path.points == expected.path.points
+		_check(histories_match, "remaining capacity %d consumes every path and heading" % capacity)
+		_check(retained.size() == 4 and limited.motion_snapshot(0).path.points.size() == 1, "remaining capacity %d preserves external path snapshots" % capacity)
+		# A previously omitted low-priority body becomes the first submitted sweep.
+		for field: FluidAtmosphere in [reference, limited]:
+			field._scene_source_capacity = FluidGPU.MAX_INFLUENCES
+			field._scene_sources.clear()
+			field._omitted_scene_sources = 0
+			field.track_body(0, Vector2(30, 39), Vector2.ONE * 8, 1.1, Color.WHITE, 100.0, false)
+			field._before_step(1.0 / 60.0)
+		_check(_motion_prefix_bytes(reference, FluidGPU.MAX_INFLUENCES) == _motion_prefix_bytes(limited, FluidGPU.MAX_INFLUENCES), "remaining capacity %d priority reentry uses the same short sweep" % capacity)
+		reference.free()
+		limited.free()
+		battle.free()
+
+
+func _motion_prefix_bytes(field: FluidAtmosphere, capacity: int) -> PackedByteArray:
+	return field._pack_sources(field._scene_sources, capacity, field._scene_motion_offset).to_byte_array()
+
+
+func _scene_source_count(field: FluidAtmosphere) -> int:
+	@warning_ignore("integer_division")
+	var motion_count := field._scene_motion_packed.size() / 28
+	return field._scene_sources.size() + motion_count
+
+
+func _check_reserved_motion_capacity() -> void:
+	var field := CapacityField.new()
+	field.size = Vector2(320, 180)
+	root.add_child(field)
+	field.set_process(false)
+	var profile := FluidEffectProfile.new()
+	profile.duration = 0.0
+	profile.sweep = false
+	for index in 4:
+		var source := FluidInfluence.new()
+		source.center = Vector2(index * 10, 20)
+		profile.influences.append(source)
+	var emitter := FluidEmitter2D.new()
+	emitter.field = field
+	emitter.profile = profile
+	field.observed_emitter = emitter
+	field.add_child(emitter)
+	emitter.set_process(false)
+	for counts: Vector2i in [Vector2i(2, 3), Vector2i(48, 3), Vector2i(46, 1)]:
+		field.obstacles.clear()
+		for index in counts.x:
+			field.obstacles.append(FluidInfluence.new())
+		for index in counts.y:
+			field._impulses.append(FluidInfluence.new())
+		for path in emitter._paths:
+			path.append(path.points[0] + Vector2(8, 0))
+			path.append(path.points[0] + Vector2(8, 8))
+		var had_bends := emitter._paths.all(func(path: FluidMotionPath) -> bool: return path.points.size() == 3)
+		var prior_ticks := field.tick_count
+		field._process_field(1.0 / 60.0)
+		var expected := maxi(0, FluidGPU.MAX_INFLUENCES - counts.x - counts.y - profile.influences.size())
+		_check(field.observed_capacity == expected and field.tick_count == prior_ticks + 1, "real field step reserves obstacle, impulse and emitter slots: %s" % counts)
+		_check(had_bends and field.observed_paths_reset, "real field step consumes bent emitter paths before scene preparation: %s" % counts)
+	field.queue_free()
+	await _settle()
 
 
 func _check_battle_motion_identity() -> void:
@@ -371,10 +571,10 @@ func _check_battle_motion_identity() -> void:
 	battle.threats.assign([first, second])
 	field._sync_battle_motion()
 	_check(field._motion.size() == 3 and field._motion.has(first) and field._motion.has(second), "shots from the same enemy retain separate fluid identities")
-	var motion: FluidAtmosphere.Motion = field._motion[first]
+	var motion: int = field._motion[first]
 	first.reflected = true
 	field._sync_battle_motion()
-	_check(field._motion[first] == motion and motion.color == BattleThreatOverlay.threat_color(first), "reflection preserves motion history and updates its color")
+	_check(field._motion[first] == motion and field.motion_snapshot(first).color == BattleThreatOverlay.threat_color(first), "reflection preserves motion history and updates its color")
 	var retired: WeakRef = weakref(first)
 	battle.threats.erase(first)
 	first = null
@@ -396,7 +596,11 @@ func _check_motion_lights() -> void:
 			field.untrack(&"1")
 			field.track_body(&"replacement", Vector2(700, 90), Vector2.ONE * 8, 0, Color.RED, 4.0, false)
 		field.scene_quality = frame % 3
-		var expected := field._scene_light_inputs()
+		var expected: Array[Dictionary] = []
+		for id: Variant in field._motion:
+			var motion := field.motion_snapshot(id)
+			if motion.glow > 0:
+				expected.append({"point": motion.point, "color": motion.color, "energy": motion.glow})
 		expected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.energy > b.energy)
 		field._sync_lights()
 		for index in field._lights.size():
@@ -555,8 +759,8 @@ func _visual_clip() -> void:
 		last = at
 		await process_frame
 	await process_frame
-	var pointer_motion: FluidAtmosphere.Motion = app.archive.fluid._motion.get(&"pointer")
-	_check(pointer_motion != null and pointer_motion.point.distance_to(gesture[-1] - app.archive.fluid.position) < 2, "native fast pointer gesture reaches the fluid motion source")
+	var pointer_motion := app.archive.fluid.motion_snapshot(&"pointer")
+	_check(not pointer_motion.is_empty() and pointer_motion.point.distance_to(gesture[-1] - app.archive.fluid.position) < 2, "native fast pointer gesture reaches the fluid motion source")
 	await _capture("pointer-wake")
 	await create_timer(1.0).timeout
 	await _deployment(app.archive)
@@ -721,7 +925,11 @@ func _continuous_motion() -> void:
 		field._process(.1)
 		field.set_active(true)
 		field._process(1.0 / 60.0)
-		_check(field._scene_sources.all(func(source: FluidInfluence) -> bool: return source.displacement_radius == 0.0 or (source.sweep_length == 0.0 and source.velocity == Vector2.ZERO)), "resuming does not sweep across motion made while inactive")
+		var stationary := true
+		for offset in range(0, field._scene_motion_packed.size(), 28):
+			var packed := field._scene_motion_packed
+			stationary = stationary and (packed[offset + 20] == 0.0 or (packed[offset + 21] == 0.0 and packed[offset + 4] == 0.0 and packed[offset + 5] == 0.0))
+		_check(stationary, "resuming does not sweep across motion made while inactive")
 		field.reset_field()
 		for id in field._motion.keys(): field.untrack(id)
 		await _settle()
@@ -1299,6 +1507,7 @@ func _capture(label: String) -> void:
 
 
 func _check(condition: bool, label: String) -> void:
+	checks += 1
 	if not condition:
 		failures += 1
 		push_error("Fluid test failed: " + label)

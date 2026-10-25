@@ -9,26 +9,18 @@ const BURST: FluidEffectProfile = preload("res://ui/effects/presets/burst.tres")
 const GUST: FluidEffectProfile = preload("res://ui/effects/presets/gust.tres")
 const DODGE: FluidEffectProfile = preload("res://ui/effects/presets/dodge.tres")
 var _dodge_trail: FluidEmitter2D
-class Motion extends RefCounted:
-	var previous: Vector2
-	var previous_angle: float
-	var flow_angle: float
-	var path := FluidMotionPath.new()
-	var wakes: Array[FluidInfluence] = []
-	var plumes: Array[FluidInfluence] = []
-	var point: Vector2
-	var extent: Vector2
-	var angle: float
-	var color: Color
-	var glow: float
-	var solid: bool
-	var gain: float
-	var body_shape: FluidInfluence.BodyShape
-	var light := {"point": Vector2.ZERO, "color": Color.WHITE, "energy": 0.0, "radius": 0.0}
-
+# GDS retains Variant identity and insertion order; numeric state belongs to the kernel.
 var _motion: Dictionary = {}
-var _ordered_motion: Array[Motion] = []
+var _ordered_motion: Array[int] = []
 var _motion_order_dirty := true
+var _motion_kernel: RefCounted = preload("res://ui/effects/FluidMotionKernel.cs").new()
+var _batching := false
+var _batch_handles := PackedInt32Array()
+var _batch_points := PackedVector2Array()
+var _batch_extents := PackedVector2Array()
+var _batch_values := PackedFloat64Array()
+var _batch_colors := PackedColorArray()
+var _batch_flags := PackedInt32Array()
 var _ambient: Array[FluidInfluence] = []
 var _spell_smoke: Dictionary[RefCounted, FluidEmitter2D] = {}
 var _shockwaves: Array[Dictionary] = []
@@ -112,10 +104,7 @@ func _process(delta: float) -> void:
 		DebugLog.end(&"atmosphere.motion_sync", motion_started)
 	var paths_active := active and not reduced_motion and quality != Quality.OFF and is_visible_in_tree()
 	if paths_active != _paths_active:
-		for motion: Motion in _motion.values():
-			motion.previous = motion.point
-			motion.previous_angle = motion.angle
-			motion.path.reset(motion.point)
+		_motion_kernel.call("Rebase", PackedInt32Array(_motion.values()))
 		_paths_active = paths_active
 	super._process(delta)
 	if combustion != null:
@@ -195,42 +184,51 @@ func track_body(id: Variant, point: Vector2, extent: Vector2, angle: float, tint
 		untrack(id)
 		return
 	if not _motion.has(id):
-		var added := Motion.new()
-		added.previous = point
-		added.previous_angle = angle
-		added.flow_angle = angle
-		_motion[id] = added
+		_motion[id] = _motion_kernel.call("Add", point, angle)
 		_motion_order_dirty = true
-	var motion: Motion = _motion[id]
-	_motion_order_dirty = _motion_order_dirty or motion.glow != glow * presence
-	if active and not reduced_motion and quality != Quality.OFF:
-		motion.path.append(point)
-	motion.point = point
-	motion.extent = extent
-	motion.angle = angle
-	motion.color = tint
-	motion.glow = glow * presence
-	motion.solid = solid
-	motion.gain = gain * presence
-	motion.body_shape = body_shape
-	if motion.glow > 0.0:
-		motion.light.point = point
-		motion.light.color = tint
-		motion.light.energy = motion.glow
-		motion.light.radius = maxf(extent.x, extent.y) * 3.0 + 80.0
+	_batch_handles.append(_motion[id])
+	_batch_points.append(point)
+	_batch_extents.append(extent)
+	_batch_values.append(angle)
+	_batch_values.append(glow * presence)
+	_batch_values.append(gain * presence)
+	_batch_colors.append(tint)
+	_batch_flags.append(int(solid) | (int(body_shape) << 1))
+	if not _batching:
+		_flush_motion()
+
+
+func _flush_motion() -> void:
+	var changed: bool = _motion_kernel.call("Update", _batch_handles, _batch_points, _batch_extents, _batch_values, _batch_colors, _batch_flags, active and not reduced_motion and quality != Quality.OFF)
+	_motion_order_dirty = _motion_order_dirty or changed
+	_batch_handles.clear()
+	_batch_points.clear()
+	_batch_extents.clear()
+	_batch_values.clear()
+	_batch_colors.clear()
+	_batch_flags.clear()
+
+
+func motion_snapshot(id: Variant) -> Dictionary:
+	return _motion_kernel.call("Inspect", _motion[id]) if _motion.has(id) else {}
 
 
 func untrack(id: Variant) -> void:
-	if _motion.erase(id): _motion_order_dirty = true
+	if _motion.has(id):
+		_motion_kernel.call("Remove", _motion[id])
+		_motion.erase(id)
+		_motion_order_dirty = true
 
 
 func _sync_battle_motion() -> void:
+	_batching = true
 	var seen: Dictionary = {&"player": true}
 	var fraction := Engine.get_physics_interpolation_fraction()
 	var tint := light_color
-	track_body(&"player", battle.previous_player_position.lerp(battle.player_position, fraction) * size, Vector2.ONE * 24, 0, tint, .25)
+	var player_point := battle.previous_player_position.lerp(battle.player_position, fraction) * size
+	track_body(&"player", player_point, Vector2.ONE * 24, 0, tint, .25)
 	if is_instance_valid(_dodge_trail):
-		_dodge_trail.position = _motion[&"player"].point
+		_dodge_trail.position = player_point
 	for enemy in battle.enemies:
 		if enemy.alive():
 			seen[enemy] = true
@@ -244,6 +242,10 @@ func _sync_battle_motion() -> void:
 	for threat in battle.threats:
 		seen[threat] = true
 		track_body(threat, threat.previous_position.lerp(threat.position, fraction) * size, Vector2.ONE * threat.radius, threat.velocity.angle(), BattleThreatOverlay.threat_color(threat), .5 if threat.heavy else .38, false, 5.0, 1.0, FluidInfluence.BodyShape.BLUNT)
+	var update_started := DebugLog.begin()
+	_flush_motion()
+	_batching = false
+	DebugLog.end(&"atmosphere.motion_update", update_started)
 	for id in _motion.keys():
 		if id not in seen:
 			untrack(id)
@@ -264,80 +266,23 @@ func _before_step(delta: float) -> void:
 			source.extent = Vector2.ONE * wave.radius * lerpf(.28,1.0,1.0-exp(-wave.age*18.0))
 			source.expansion = wave.radius * 65.0 * exp(-wave.age*22.0) * wave.strength
 		_scene_sources.append(source)
-	# Keep render/input turns, then sweep every retained segment on the solver tick.
 	if _motion_order_dirty:
-		# Sort from insertion order, preserving the engine's original equal-key order.
+		var glows: PackedFloat64Array = _motion_kernel.call("Glows")
 		_ordered_motion.assign(_motion.values())
-		_ordered_motion.sort_custom(func(a: Motion, b: Motion) -> bool: return a.glow > b.glow)
+		_ordered_motion.sort_custom(func(a: int, b: int) -> bool: return glows[a] > glows[b])
 		_motion_order_dirty = false
 	tracked_count = _ordered_motion.size()
-	for motion in _ordered_motion:
-		var point: Vector2 = motion.point
-		var extent: Vector2 = motion.extent
-		var path := motion.path
-		var distance := path.length()
-		var speed := distance / delta
-		var angular := angle_difference(motion.previous_angle, motion.angle) / delta
-		var radius := maxf(extent.x, extent.y)
-		var emits_wake: bool = motion.solid or speed > 1.0 or absf(angular) > .01
-		var emits_plume: bool = battle != null and not motion.solid and speed > 12.0
-		if _scene_sources.size() >= FluidGPU.MAX_INFLUENCES:
-			_omitted_scene_sources += maxi(1, path.points.size() - 1) * (int(emits_wake) + int(emits_plume))
-			# Only the last nonzero segment affects the next tick's heading.
-			for i in range(path.points.size() - 1, 0, -1):
-				var last_segment := path.points[i] - path.points[i - 1]
-				if last_segment.length_squared() > 0.0:
-					motion.flow_angle = last_segment.angle()
-					break
-			path.reset(point)
-			motion.previous = point
-			motion.previous_angle = motion.angle
-			continue
-		for i in maxi(1, path.points.size() - 1):
-			var start := path.points[i]
-			var end := path.points[mini(i + 1, path.points.size() - 1)]
-			var segment := end - start
-			if segment.length_squared() > 0.0:
-				motion.flow_angle = segment.angle()
-			# The solver already truncates at this capacity, after higher-priority
-			# emitters. Keep path/heading history and accounting, skip unused geometry.
-			if _scene_sources.size() >= FluidGPU.MAX_INFLUENCES:
-				_omitted_scene_sources += int(emits_wake) + int(emits_plume)
-				continue
-			while motion.wakes.size() <= i:
-				motion.wakes.append(FluidInfluence.new())
-				motion.plumes.append(FluidInfluence.new())
-			var direction := segment.normalized()
-			var velocity := direction * speed
-			var wake := motion.wakes[i] as FluidInfluence
-			FluidMotionPath.sweep(wake, start, end, radius * 3.2)
-			wake.rotation = motion.flow_angle
-			wake.displacement_radius = radius
-			wake.body_shape = motion.body_shape
-			wake.velocity = velocity
-			wake.coupling = motion.gain * FluidMotionPath.exposure(segment.length(), distance, radius)
-			wake.spin = clampf(angular, -4, 4)
-			if emits_wake:
-				_scene_sources.append(wake)
-			if emits_plume:
-				if _scene_sources.size() >= FluidGPU.MAX_INFLUENCES:
-					_omitted_scene_sources += 1
-					continue
-				var width := clampf(maxf(extent.x, extent.y) * .8, 18, 80)
-				var plume := motion.plumes[i] as FluidInfluence
-				var rear_length := radius * (wake.body_aspect if wake.body_shape == FluidInfluence.BodyShape.POINTED else 1.0)
-				var release_offset := direction * rear_length * 0.35
-				FluidMotionPath.sweep(plume, start - release_offset, end - release_offset, width)
-				var exposure := FluidMotionPath.exposure(segment.length(), distance, width)
-				plume.velocity = velocity * .08
-				plume.coupling = 3.0 * exposure
-				plume.density = minf(speed / width * .65, 32.0) * exposure
-				plume.medium = trail_material
-				plume.color = motion.color
-				_scene_sources.append(plume)
-		path.reset(point)
-		motion.previous = point
-		motion.previous_angle = motion.angle
+	var medium := PackedFloat64Array()
+	var medium_color := Color.WHITE
+	if trail_material != null:
+		medium = PackedFloat64Array([trail_material.density_scale, trail_material.temperature, trail_material.dissipation, trail_material.emission])
+		medium_color = trail_material.color.srgb_to_linear()
+	_scene_motion_offset = _scene_sources.size()
+	var consume_started := DebugLog.begin()
+	var result: Array = _motion_kernel.call("Consume", PackedInt32Array(_ordered_motion), delta, maxi(0, _scene_source_capacity - _scene_sources.size()), battle != null, medium, medium_color, fog_color.srgb_to_linear())
+	_scene_motion_packed = result[0]
+	_omitted_scene_sources += int(result[1])
+	DebugLog.end(&"fluid.motion_consume", consume_started)
 	if battle == null:
 		# Room mist exists independently of interactions; books only move its air.
 		_ambient[0].center = size * Vector2(.5, 1.04)
@@ -389,13 +334,12 @@ func _sync_gravity() -> void:
 		if state not in live: _gravity_sources.erase(state)
 
 
-func _scene_light_inputs() -> Array[Dictionary]:
-	var emitters: Array[Dictionary] = []
-	if active:
-		for motion: Motion in _motion.values():
-			if motion.glow > 0:
-				emitters.append(motion.light)
-	return emitters
+func _scene_light_energies() -> PackedFloat64Array:
+	return _motion_kernel.call("LightEnergies", PackedInt32Array(_motion.values()))
+
+
+func _scene_light_input(index: int) -> Dictionary:
+	return _motion_kernel.call("Light", index)
 
 
 func present(event: Dictionary) -> void:

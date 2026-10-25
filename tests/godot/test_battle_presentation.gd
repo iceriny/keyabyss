@@ -15,6 +15,226 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 
+func _check_canvas_cache() -> void:
+	var workload := "baseline"
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--workload="): workload = argument.trim_prefix("--workload=")
+	assert(workload in ["baseline", "extreme"])
+	var failures := 0
+	var checks: Array[Dictionary] = []
+	var fps := CanvasLayer.new()
+	fps.layer = 100
+	root.add_child(fps)
+	fps.add_child(FpsDisplay.create())
+	var battle := BattleSession.new()
+	var words: Array[VocabularyEntry] = [VocabularyEntry.new("lumen", "光"), VocabularyEntry.new("ember", "余烬"), VocabularyEntry.new("quill", "羽笔")]
+	battle.start_baseline(&"flame", words, "normal", "canvas-" + workload, false)
+	var count := 6 if workload == "baseline" else 18
+	while battle.enemies.size() < count:
+		battle._spawn_enemy(FirstVisitSetup.ENEMY_TYPES[0], Vector2(.5, .5))
+	for index in count:
+		var enemy := battle.enemies[index]
+		enemy.kind = BattleVisuals.ENEMY_COLORS.keys()[index]
+		enemy.position = Vector2(.5, .5) + Vector2.from_angle(index * TAU / count) * Vector2(.12, .2)
+		enemy.previous_position = enemy.position
+		enemy.combat_locked = true
+		enemy.hp_q = 55000
+		enemy.max_hp_q = 100000
+		enemy.radius = 18.0 + index
+		enemy.boss = index % 5 == 0
+		enemy.shielded = index % 2 == 0
+		enemy.mirror_ready = index % 3 == 0
+		enemy.cold = (index % 4) * 30
+		enemy.frozen_time = 2.0 if index % 4 == 0 else 0.0
+		enemy.marked_time = 2.0
+		enemy.shock = 70
+		enemy.burn = 31
+		enemy.aura = [&"speed", &"slow", &""][index % 3]
+		enemy.aura_radius = 220.0
+		if index % 3 == 0:
+			enemy.behavior = &"ward"
+			enemy.ward_target_id = battle.enemies[(index + 1) % count].id
+			enemy.ward_remaining = 2.0
+	battle.player_position = Vector2(.51, .5)
+	battle.previous_player_position = battle.player_position
+	battle.typing.target_id = battle.enemies[1].id
+	var painter := BattleVisuals.new()
+	painter.configure(battle, Color("8bdeff"), 2, false)
+	painter.size = Vector2(960, 540)
+	painter._spark_texture = preload("res://ui/effects/threat_orb.tres")
+	painter._charge = .6
+	painter._dodge_echoes = [{"at": Vector2(580, 270), "age": .1}]
+	painter._pulses = [{"kind": &"ember", "at": Vector2(.62, .5), "age": .2, "duration": 1.0, "color": Color("e8b988")}]
+	painter._player = BattleActorVisual.new()
+	painter._player.aura = Sprite2D.new()
+	painter._player.add_child(painter._player.aura)
+	painter._prepare_canvas_layers()
+	var reference := preload("res://tests/godot/fixtures/battle_canvas_reference.gd").new()
+	reference.session = battle
+	reference.size = painter.size
+	reference.texture_filter = painter.texture_filter
+	reference._spark_texture = painter._spark_texture
+	reference._charge = painter._charge
+	reference._dodge_echoes = painter._dodge_echoes
+	reference._pulses = painter._pulses
+	var current := Node2D.new()
+	current.texture_filter = painter.texture_filter
+	current.draw.connect(painter._draw_background.bind(current))
+	painter._enemy_layer.reparent(current)
+	painter._foreground.reparent(current)
+	var views: Array[SubViewport] = []
+	var lights: Array[PointLight2D] = []
+	for index in 2:
+		var viewport := SubViewport.new()
+		viewport.size = Vector2i(960, 540)
+		viewport.use_hdr_2d = true
+		viewport.world_2d = World2D.new()
+		viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		root.add_child(viewport)
+		if index == 0: viewport.add_child(reference)
+		else: viewport.add_child(current)
+		var light := PointLight2D.new()
+		light.texture = painter._spark_texture
+		light.texture_scale = 6.0
+		light.position = Vector2(520, 260)
+		light.color = Color("c4dfef")
+		light.energy = .7
+		viewport.add_child(light)
+		lights.append(light)
+		views.append(viewport)
+		var output := TextureRect.new()
+		output.texture = viewport.get_texture()
+		output.position = Vector2(index * 960, 240)
+		root.add_child(output)
+	var redraws := [0]
+	var observed: Dictionary[BattleEnemy, bool] = {}
+	for step in 14:
+		if step == 1:
+			# Motion and countdowns leave the displayed geometry unchanged.
+			for enemy in battle.enemies:
+				enemy.position += Vector2(.00013, -.00017)
+				enemy.previous_position = enemy.position
+				if enemy.frozen_time > 0.0: enemy.frozen_time -= .1
+				enemy.marked_time -= .1
+				enemy.shock -= 1
+		elif step == 2:
+			for enemy in battle.enemies:
+				enemy.hp_q -= 1900
+				enemy.max_hp_q += 700
+				enemy.radius += .7
+				enemy.shielded = not enemy.shielded
+				enemy.mirror_ready = false
+				enemy.frozen_time = 0.0
+				enemy.cold = 91
+				enemy.shock = 30
+		elif step == 3:
+			for enemy in battle.enemies:
+				enemy.cold = 0
+				enemy.shock = 31
+				enemy.burn = 37
+				enemy.vulnerability = 42
+				enemy.resistances[DamagePacket.Element.FIRE] = 40
+				enemy.marked_time = 0.0
+		elif step == 4:
+			var selection := BuildSelection.new()
+			selection.book_id = battle.book_id
+			selection.assets[&"R050"] = 2
+			selection.assets[&"R051"] = 1
+			selection.assets[&"R056"] = 1
+			var compiled: BuildCompileResult = BuildCompiler.new().compile(selection)
+			assert(compiled.diagnostics.is_empty(), str(compiled.diagnostics))
+			battle.install_prepared_build(compiled.build)
+			for enemy in battle.enemies:
+				enemy.shock = 61
+				enemy.boss = not enemy.boss
+		elif step == 5:
+			battle.enemies[0].combat_locked = false
+			battle.enemies[0].position = Vector2(-.3, -.3)
+			battle.enemies[0].previous_position = battle.enemies[0].position
+		elif step == 6:
+			battle.enemies[0].position = Vector2(.55, .47)
+			battle.enemies[0].previous_position = battle.enemies[0].position
+			battle.enemies[0].cold = 45
+			battle.enemies[0].aura = &"slow"
+			battle.enemies[0].aura_radius = 290.0
+			painter.size = Vector2(928, 522)
+			reference.size = painter.size
+		elif step == 7:
+			# Affine parent transforms and modulation must apply equally to all layers.
+			reference.position = Vector2(4.25, 2.75)
+			current.position = reference.position
+			reference.scale = Vector2(1.013, .987)
+			current.scale = reference.scale
+			reference.rotation = .013
+			current.rotation = reference.rotation
+			reference.modulate = Color(.8, .9, .7, .85)
+			current.modulate = reference.modulate
+		elif step == 8:
+			for light in lights:
+				light.position += Vector2(40, -15)
+				light.range_item_cull_mask = 2
+			painter.reduced_motion = true
+			reference.reduced_motion = true
+			battle.world_time += 1.3
+		elif step == 9:
+			battle.enemies[2].hp_q = 0
+		elif step == 10:
+			battle._spawn_enemy(FirstVisitSetup.ENEMY_TYPES[0], Vector2(.52, .52))
+			var added: BattleEnemy = battle.enemies.back()
+			added.previous_position = added.position
+			added.combat_locked = true
+			added.shock = 60
+			battle.typing.target_id = added.id
+		elif step == 11:
+			reference.hide()
+			current.hide()
+		elif step == 12:
+			reference.show()
+			current.show()
+			for enemy in battle.enemies:
+				enemy.shock = 0
+				enemy.burn = 10
+				enemy.hp_q = enemy.max_hp_q if enemy.alive() else 0
+		elif step == 13:
+			for light in lights: light.range_item_cull_mask = 1
+			battle.typing.target_id = battle.enemies[4].id
+			painter.reduced_motion = false
+			reference.reduced_motion = false
+		var before: int = redraws[0]
+		painter._sync_canvas_layers(Engine.get_physics_interpolation_fraction())
+		for enemy: BattleEnemy in painter._enemy_commands:
+			if not observed.has(enemy):
+				painter._enemy_commands[enemy].status.draw.connect(func() -> void: redraws[0] += 1)
+				observed[enemy] = true
+		current.queue_redraw()
+		reference.queue_redraw()
+		await process_frame
+		await RenderingServer.frame_post_draw
+		var old_image := views[0].get_texture().get_image()
+		var new_image := views[1].get_texture().get_image()
+		var same := old_image.get_data() == new_image.get_data()
+		var reused: bool = step != 1 or redraws[0] == before
+		var live := battle.enemies.filter(func(enemy: BattleEnemy) -> bool: return enemy.alive()).size()
+		var retired := painter._enemy_commands.size() == live and painter._enemy_layer.get_child_count() == live * 3
+		checks.append({"step": step, "pixels_equal": same, "cache_reused": reused, "live_entries": retired, "redraws": redraws[0] - before})
+		if not same or not reused or not retired:
+			failures += 1
+			push_error("Canvas cache mismatch: " + str(checks.back()))
+		if not same or step == 13:
+			old_image.save_png(evidence.path_join("canvas-%s-%02d-reference.png" % [workload, step]))
+			new_image.save_png(evidence.path_join("canvas-%s-%02d-current.png" % [workload, step]))
+	var file := FileAccess.open(evidence.path_join("canvas-" + workload + ".json"), FileAccess.WRITE)
+	file.store_string(JSON.stringify({"workload": workload, "checks": checks, "failures": failures}))
+	print("CANVAS_CACHE ", workload, " checks=", checks.size(), " failures=", failures, " evidence=", evidence)
+	for viewport in views: viewport.queue_free()
+	painter._player.free()
+	painter.budget.free()
+	painter.free()
+	await process_frame
+	battle.free()
+	quit(0 if failures == 0 else 1)
+
+
 func _run() -> void:
 	assert(DisplayServer.get_name() != "headless", "Battle presentation requires the actual HDR renderer")
 	_check_motion_tools()
@@ -25,6 +245,9 @@ func _run() -> void:
 				evidence = "res://.temp/relic-upgrade/performance/" + argument.trim_prefix("--sync-label=").validate_filename()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(evidence))
 	root.size = Vector2i(1920, 1080)
+	if "--canvas-cache" in OS.get_cmdline_user_args():
+		await _check_canvas_cache()
+		return
 	if "--projectile-sync-cost" in OS.get_cmdline_user_args():
 		await _check_projectile_sync_cost()
 		quit()

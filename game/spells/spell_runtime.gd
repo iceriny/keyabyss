@@ -353,11 +353,14 @@ func _crane_followup(target: BattleEnemy) -> void:
 
 func advance(delta: float) -> void:
 	clock += delta
+	var stage_started := DebugLog.begin()
 	_advance_states(delta)
+	DebugLog.end(&"battle.spells.states", stage_started)
 	for attack in spirit_attacks.duplicate():
 		if attack.expires_at <= clock:
 			retire(attack)
 			spirit_attacks.erase(attack)
+	stage_started = DebugLog.begin()
 	for status in ongoing.duplicate():
 		var enemy := world.enemy_by_id(status.target_id)
 		if enemy == null or not enemy.alive():
@@ -366,6 +369,7 @@ func advance(delta: float) -> void:
 		while status.remaining_pulses > 0 and status.next_at <= clock:
 			_pulse_status(status)
 		if status.remaining_pulses <= 0: ongoing.erase(status)
+	DebugLog.end(&"battle.spells.ongoing", stage_started)
 	for field in fields.duplicate():
 		if field.expires_at <= clock:
 			fields.erase(field)
@@ -595,6 +599,9 @@ func add_mark(target: BattleEnemy, points: int, ceiling: int = 127, snapshot: Co
 
 
 func _advance_states(delta: float) -> void:
+	var cold_decay_factor := 1.0 - build.modifier(&"cold_decay_pct") / 100.0
+	var mark_decay_factor := 1.0 - build.modifier(&"mark_decay_pct") / 100.0
+	var shock_decay_factor := 1.0 - build.modifier(&"shock_decay_pct") / 100.0
 	for enemy in world._living():
 		var frozen_before := enemy.frozen_time
 		enemy.frozen_time = maxf(0.0, frozen_before - delta)
@@ -604,27 +611,29 @@ func _advance_states(delta: float) -> void:
 			enemy.freeze_cooldown = maxf(0.0, enemy.freeze_cooldown - delta)
 		var cold_decay := maxf(0.0, delta - enemy.cold_grace)
 		enemy.cold_grace = maxf(0.0, enemy.cold_grace - delta)
-		enemy.cold_remainder += cold_decay * COLD_DECAY * (1.0 - build.modifier(&"cold_decay_pct") / 100.0)
+		enemy.cold_remainder += cold_decay * COLD_DECAY * cold_decay_factor
 		var cold_loss := floori(enemy.cold_remainder)
 		enemy.cold_remainder -= cold_loss
 		enemy.cold = maxi(0, enemy.cold - cold_loss)
 		var mark_decay := maxf(0.0, delta - enemy.mark_grace)
 		enemy.mark_grace = maxf(0.0, enemy.mark_grace - delta)
-		enemy.vulnerability_remainder += mark_decay * 12.0 * (1.0 - build.modifier(&"mark_decay_pct") / 100.0)
+		enemy.vulnerability_remainder += mark_decay * 12.0 * mark_decay_factor
 		var mark_loss := floori(enemy.vulnerability_remainder)
 		enemy.vulnerability_remainder -= mark_loss
 		enemy.vulnerability = maxi(0, enemy.vulnerability - mark_loss)
 		enemy.marked_time = maxf(0.0, enemy.marked_time - delta)
 		var shock_decay := maxf(0.0, delta - enemy.shock_grace)
 		enemy.shock_grace = maxf(0.0, enemy.shock_grace - delta)
-		enemy.shock_remainder += shock_decay * 8.0 * (1.0 - build.modifier(&"shock_decay_pct") / 100.0)
+		enemy.shock_remainder += shock_decay * 8.0 * shock_decay_factor
 		var shock_loss := floori(enemy.shock_remainder)
 		enemy.shock_remainder -= shock_loss
 		enemy.shock = maxi(0, enemy.shock - shock_loss)
 		var layers := 0
 		var cold_rate := 0.0
 		for field in fields:
-			if field.expires_at <= clock or not field.contains(enemy.position): continue
+			if field.expires_at <= clock: continue
+			if field.effect.kind not in [&"fire_field", &"cold_field", &"ice_mist"]: continue
+			if not field.contains(enemy.position): continue
 			if field.effect.kind == &"fire_field": layers += 1
 			elif field.effect.kind in [&"cold_field", &"ice_mist"]: cold_rate += 30.0
 		if layers > 0:

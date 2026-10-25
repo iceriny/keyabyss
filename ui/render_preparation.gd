@@ -33,6 +33,9 @@ func prepare(feedback: LoadingFeedback) -> void:
 	await _present()
 	RenderingServer.call_on_render_thread(_exercise_compute)
 	await compute_completed
+	LightningArc.prepare_geometry()
+	var motion_kernel: RefCounted = preload("res://ui/effects/FluidMotionKernel.cs").new()
+	motion_kernel.call("Prepare")
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	var total := _catalog.size()
 	print("[RENDER] Material preparation: %d resources" % total)

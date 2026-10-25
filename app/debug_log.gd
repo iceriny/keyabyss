@@ -6,6 +6,7 @@ extends Node
 static var enabled: bool = OS.is_debug_build()
 static var _instance: DebugLog
 static var _spans: Dictionary = {}
+const GPU_TIMING = preload("res://ui/effects/gpu_effect_timing.gd")
 
 var _writer := Thread.new()
 var _mutex := Mutex.new()
@@ -26,6 +27,7 @@ var _recent: Array[Dictionary] = []
 var _frame_count := 0
 var _slow_count := 0
 var _maximum_ms := 0.0
+var _gpu_timing := false
 
 
 static func begin() -> int:
@@ -47,6 +49,12 @@ static func operation(scope: StringName, started: int, details: Dictionary, alwa
 		_instance._record("operation", {"scope": scope, "ms": duration, "details": details})
 
 
+static func add_cpu_duration(scope: StringName, duration_ms: float) -> void:
+	# Native batch timers already have an end point; retain their elapsed CPU time.
+	if enabled and Thread.is_main_thread():
+		_spans[scope] = float(_spans.get(scope, 0.0)) + duration_ms
+
+
 static func background_operation(scope: StringName, duration_ms: float, details: Dictionary) -> void:
 	# Background latency is not CPU time spent in the frame receiving its result.
 	if enabled and _instance != null:
@@ -59,6 +67,7 @@ func _ready() -> void:
 	var directory := "user://diagnostics"
 	for argument: String in OS.get_cmdline_user_args():
 		if argument == "--debug-log": enabled = true
+		elif argument == "--gpu-profile": enabled = true
 		elif argument == "--no-debug-log": enabled = false
 		elif argument.begins_with("--diagnostics-dir="):
 			directory = argument.trim_prefix("--diagnostics-dir=")
@@ -88,9 +97,10 @@ func _ready() -> void:
 		enabled = false
 		set_process(false)
 		return
+	_gpu_timing = GPU_TIMING.start(_record_gpu_timing)
 	_record("session", {
 		"version": ProjectSettings.get_setting("application/config/version"),
-		"engine": Engine.get_version_info().get("string", ""), "debug_build": OS.is_debug_build(),
+		"engine": Engine.get_version_info().get("string", ""), "debug_build": OS.is_debug_build(), "gpu_effect_timing": _gpu_timing,
 		"os": OS.get_name(), "os_version": OS.get_version(), "cpu": OS.get_processor_name(),
 		"cpu_threads": OS.get_processor_count(), "gpu": RenderingServer.get_video_adapter_name(),
 		"renderer": RenderingServer.get_current_rendering_method(), "driver": RenderingServer.get_current_rendering_driver_name(),
@@ -98,6 +108,7 @@ func _ready() -> void:
 	})
 	print("[DEBUG] Session log: ", _path)
 	print("[DEBUG] Long frames >=50 ms; heartbeat every 5 s; asynchronous disk writer")
+	if _gpu_timing: print("[DEBUG] GPU effect stages enabled; asynchronous timestamp results")
 
 
 func _process(_delta: float) -> void:
@@ -208,6 +219,10 @@ func _render_probe(requested: int) -> void:
 	_record("render_probe", {"queue_delay_ms": (Time.get_ticks_usec() - requested) / 1000.0})
 
 
+func _record_gpu_timing(batch: Dictionary) -> void:
+	_record("gpu_effects", batch)
+
+
 func _write_loop() -> void:
 	var file := FileAccess.open(_path, FileAccess.WRITE)
 	if file == null:
@@ -240,6 +255,7 @@ func _writer_failed(error: int) -> void:
 
 
 func _exit_tree() -> void:
+	if _gpu_timing: GPU_TIMING.stop()
 	if _writer.is_started():
 		_record("session_end", {"recent": _recent})
 		_mutex.lock()

@@ -18,6 +18,36 @@ var curvature: float = 0.0
 var acceleration: float = 0.0
 var heavy: bool = false
 var visual_style: StringName
+var _flight_delta := -1.0
+var _flight_turn := 0.0
+var _flight_growth := 0.0
+var _flight_linear := true
+var _flight_along := 0.0
+var _flight_across := 0.0
+var _flight_angle := 0.0
+var _flight_scale := 1.0
+
+
+func advance_flight(delta: float, arena_size: Vector2) -> void:
+	# Coefficients depend on the time step and flight law, never on velocity.
+	# Read velocity here so earlier parries/impacts still affect this exact step.
+	if _flight_delta != delta or _flight_turn != curvature or _flight_growth != acceleration:
+		_flight_delta = delta
+		_flight_turn = curvature
+		_flight_growth = acceleration
+		var denominator := acceleration * acceleration + curvature * curvature
+		_flight_linear = denominator < 0.00000001
+		_flight_angle = curvature * delta
+		_flight_scale = exp(acceleration * delta)
+		if not _flight_linear:
+			var cosine := cos(_flight_angle)
+			var sine := sin(_flight_angle)
+			_flight_along = (_flight_scale * (acceleration * cosine + curvature * sine) - acceleration) / denominator
+			_flight_across = (_flight_scale * (acceleration * sine - curvature * cosine) + curvature) / denominator
+	previous_position = position
+	var displacement := velocity * delta if _flight_linear else velocity * _flight_along + Vector2(-velocity.y, velocity.x) * _flight_across
+	position += displacement / arena_size
+	velocity = velocity.rotated(_flight_angle) * _flight_scale
 
 
 func aim_curve(offset: Vector2) -> float:

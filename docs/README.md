@@ -32,6 +32,7 @@
 | [流体工具](FLUID-EFFECTS.md) | 当前原生流体、预设、照明和质量成本 |
 | [全面性能研究](PERFORMANCE-RESEARCH.md)、[实施路线](migration/PLAN.md#全面性能优化)、[实施记录](migration/PERFORMANCE-IMPLEMENTATION.md) | 当前工作区四书／弹幕／反制实测、成本地图、跨设备目标、逐批改动与实际收益 |
 | [视效分级方案](VISUAL-QUALITY-DESIGN.md) | 低／中／高画质的目标外观与成本，流体及减少动态的独立职责，群体预算、切换和验收；已接入实现，两组实测及限制见性能实施记录 |
+| [GPU 与 Shader 优化研究](GPU-SHADER-OPTIMIZATION.md) | 全量 shader 成本地图、冰晶派发融合／方向扫描、流体搬运与邻域复用、光学过滤、GPU 同步及保持效果的两组验收方案 |
 | [渲染准备方案](migration/PLAN.md#渲染准备与原生资源实施方案) | 首屏反馈、原生场景／材质、计算管线复用、Shader Baker 与必要验收 |
 | [战斗算法优化](migration/PLAN.md#战斗算法优化)、[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md) | 查询、首击选择与 .NET 闪避评分核；保留碰撞／视觉语义，记录性能取舍及验证 |
 | [周期卡顿调查](migration/PERIODIC-STALL-INVESTIGATION.md) | 目标机复现、诊断对照、指标边界与WPR线程／GPU采集 |

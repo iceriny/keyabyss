@@ -179,16 +179,11 @@ float blast_stretch(vec2 offset, int index) {
 void main() {
     ivec2 q = ivec2(gl_GlobalInvocationID.xy);
     int mode = int(p.domain.w);
-    ivec2 n = (mode == 5 || mode == 6) ? imageSize(dye_in) : imageSize(state_in);
+    ivec2 n = mode == 5 ? imageSize(dye_in) : imageSize(state_in);
     if (any(greaterThanEqual(q, n))) return;
     vec2 h = p.domain.xy / vec2(imageSize(state_in));
     vec2 at = (vec2(q) + 0.5) * p.domain.xy / vec2(n);
     float dt = p.domain.z;
-    if (mode == 6) {
-        imageStore(dye_out, q, imageLoad(dye_in, q));
-        imageStore(matter_out, q, imageLoad(matter_in, q));
-        return;
-    }
     if (mode == 7) {
         vec4 s = state(q);
         s.zw = sample_dye(at / p.domain.xy * vec2(imageSize(dye_in)) - 0.5).rg;

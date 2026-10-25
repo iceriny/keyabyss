@@ -3,6 +3,7 @@ extends Control
 ## Emissive flight lives in the HDR world; the overlay owns crisp danger shapes.
 
 const ORB = preload("res://ui/effects/threat_orb.tres")
+const CPU_PHASES: Array[StringName] = [&"battle.ribbon_numeric", &"battle.ribbon_merge", &"battle.ribbon_indices", &"battle.ribbon_upload"]
 var session: BattleSession
 var quality := 2
 var reduced_motion := false
@@ -16,6 +17,11 @@ var _render_heads := PackedVector2Array()
 var _radii := PackedFloat64Array()
 var _limits := PackedFloat64Array()
 var _tints := PackedColorArray()
+var index_uploaded := false
+
+
+func _ready() -> void:
+	_geometry.call("SetProfiling", DebugLog.enabled)
 
 
 func _process(_delta: float) -> void:
@@ -42,6 +48,7 @@ func _draw() -> void:
 
 func _update_ribbons() -> void:
 	if session.threats.is_empty():
+		index_uploaded = false
 		ribbons.mesh = null
 		if low_ribbons != null: low_ribbons.mesh = null
 		return
@@ -73,3 +80,8 @@ func _update_ribbons() -> void:
 		low_ribbons.mesh = mesh if quality == 0 else null
 	ribbons.mesh = mesh if quality > 0 or low_ribbons == null else null
 	DebugLog.end(&"battle.ribbon_build_upload", built_at)
+	if DebugLog.enabled:
+		var timings: PackedFloat64Array = _geometry.call("GetTimings")
+		index_uploaded = timings[5] > 0.0
+		for index in 4:
+			DebugLog.add_cpu_duration(CPU_PHASES[index], timings[index])

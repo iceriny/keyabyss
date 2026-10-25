@@ -46,6 +46,10 @@ var _configured_quality := -1
 var _configured_mask: Texture2D
 var _particle_bindings: Array[Dictionary] = []
 var _scene_sources: Array[FluidInfluence] = []
+# A bounded packed motion block sits between scene prefix and ambient sources.
+var _scene_motion_packed := PackedFloat32Array()
+var _scene_motion_offset := 0
+var _scene_source_capacity := FluidGPU.MAX_INFLUENCES
 var _omitted_scene_sources := 0
 var _emitters: Array[FluidEmitter2D] = []
 const LIGHT_BUDGET := [3, 5, 8]
@@ -255,32 +259,39 @@ func _process_field(delta: float) -> void:
 	var dt := minf(delta, 0.05)
 	_clock += dt
 	_scene_sources.clear()
+	_scene_motion_packed.clear()
+	_scene_motion_offset = 0
 	_omitted_scene_sources = 0
 	var sources_started := DebugLog.begin()
-	_before_step(dt)
-	var inputs: Array[FluidInfluence] = []
-	for emitter in _emitters:
-		if emitter.strength() > 0.0:
-			inputs.append_array(emitter.sample(dt))
-	inputs.append_array(_scene_sources)
-	inputs.append_array(sources)
-	DebugLog.end(&"fluid.sources", sources_started)
-	var pack_started := DebugLog.begin()
-	var packed := PackedFloat32Array()
 	var capacity := FluidGPU.MAX_INFLUENCES
 	var obstacle_count := mini(obstacles.size(), capacity)
 	capacity -= obstacle_count
 	var impulse_count := mini(_impulses.size(), capacity)
 	capacity -= impulse_count
-	var source_count := mini(inputs.size(), capacity)
-	for i in source_count:
-		packed.append_array(inputs[i].packed(fog_color))
+	var inputs: Array[FluidInfluence] = []
+	for emitter in _emitters:
+		if emitter.strength() > 0.0:
+			inputs.append_array(emitter.sample(dt))
+	# Emitters precede scene motion in the submitted buffer; walls and impulses
+	# reserve slots first. Build only the motion sources that can reach the solver.
+	_scene_source_capacity = maxi(0, capacity - inputs.size())
+	var emitter_count := inputs.size()
+	_before_step(dt)
+	inputs.append_array(_scene_sources)
+	inputs.append_array(sources)
+	DebugLog.end(&"fluid.sources", sources_started)
+	var pack_started := DebugLog.begin()
+	var packed := PackedFloat32Array()
+	@warning_ignore("integer_division")
+	var motion_count := _scene_motion_packed.size() / 28
+	var source_count := mini(inputs.size() + motion_count, capacity)
+	packed = _pack_sources(inputs, capacity, emitter_count + _scene_motion_offset)
 	for i in impulse_count:
 		packed.append_array(_impulses[i].packed(fog_color))
 	for i in obstacle_count:
 		packed.append_array(obstacles[i].packed(fog_color))
 	DebugLog.end(&"fluid.pack", pack_started)
-	dropped_influences += inputs.size() - source_count + _impulses.size() - impulse_count + obstacles.size() - obstacle_count + _omitted_scene_sources
+	dropped_influences += inputs.size() + motion_count - source_count + _impulses.size() - impulse_count + obstacles.size() - obstacle_count + _omitted_scene_sources
 	_impulses.clear()
 	var parameters := PackedFloat32Array([size.x, size.y, dt, 0,
 		wind.x, wind.y, buoyancy, vorticity,
@@ -290,6 +301,20 @@ func _process_field(delta: float) -> void:
 		turbulence_detail, 0, 0, 0])
 	RenderingServer.call_on_render_thread(_gpu.step.bind(parameters, packed, PRESSURE_ITERATIONS[quality]))
 	tick_count += 1
+
+
+func _pack_sources(inputs: Array[FluidInfluence], capacity: int, motion_at: int) -> PackedFloat32Array:
+	var packed := PackedFloat32Array()
+	var prefix := mini(motion_at, capacity)
+	for i in prefix:
+		packed.append_array(inputs[i].packed(fog_color))
+	var available := capacity - prefix
+	packed.append_array(_scene_motion_packed.slice(0, available * 28))
+	@warning_ignore("integer_division")
+	available -= mini(available, _scene_motion_packed.size() / 28)
+	for i in range(motion_at, mini(inputs.size(), motion_at + available)):
+		packed.append_array(inputs[i].packed(fog_color))
+	return packed
 
 
 func _before_step(_delta: float) -> void:
@@ -304,25 +329,28 @@ func _after_reconfigure() -> void:
 	pass
 
 
-func _scene_light_inputs() -> Array[Dictionary]:
-	return []
+func _scene_light_energies() -> PackedFloat64Array:
+	return PackedFloat64Array()
+
+
+func _scene_light_input(_index: int) -> Dictionary:
+	return {}
 
 
 func _sync_lights() -> void:
 	var inputs: Array[Dictionary] = []
-	if active:
-		inputs.append_array(_scene_light_inputs())
+	var energies := _scene_light_energies() if active else PackedFloat64Array()
+	var scene_count := energies.size()
 	for emitter in _emitters:
 		if emitter.profile.light_energy > 0.0 and (not reduced_motion or emitter.profile.duration == 0.0):
 			inputs.append_array(emitter.light_inputs())
-	var energies := PackedFloat64Array()
-	energies.resize(inputs.size())
-	for i in inputs.size(): energies[i] = inputs[i].energy
+	energies.resize(scene_count + inputs.size())
+	for i in inputs.size(): energies[scene_count + i] = inputs[i].energy
 	if energies != _light_energies:
 		_light_energies = energies
-		_light_order.assign(range(inputs.size()))
+		_light_order.assign(range(energies.size()))
 		_light_order.sort_custom(func(a: int, b: int) -> bool: return energies[a] > energies[b])
-	var count := mini(inputs.size(), LIGHT_BUDGET[scene_quality])
+	var count := mini(energies.size(), LIGHT_BUDGET[scene_quality])
 	while _lights.size() < count:
 		var light := PointLight2D.new()
 		light.name = "FluidLight%d" % _lights.size()
@@ -336,7 +364,8 @@ func _sync_lights() -> void:
 		light.enabled = i < count
 		light.visible = i < count
 		if i < count:
-			var input := inputs[_light_order[i]]
+			var index := _light_order[i]
+			var input := _scene_light_input(index) if index < scene_count else inputs[index - scene_count]
 			light.position = input.point
 			light.color = input.color
 			light.energy = input.energy

@@ -58,6 +58,10 @@ GDScript 的整数除法、属性遮蔽、三元类型与整数当枚举等警�
 
 效果检查的`--balance`分支用于内容收束后的统一组合采样，`--storm-ablation`用于定位雷鸣叠加来源；它们使用有限目标、固定3／6／9字符每秒及真实支付，不代表正式页段或真人通关。弹体同步微基准沿用`test_battle_presentation.gd -- --projectile-sync-cost`，仅测表现同步CPU开销。实际结果与限制见[阶段总结](STAGE-SUMMARY.md)和[收益评估](COMBAT-BALANCE-DESIGN.md)。
 
+Canvas缓存正确性使用同一表现入口的`--canvas-cache --workload=baseline|extreme`，以6／18敌在两个独立HDR视口比较冻结的原绘制命令与当前命令。14个状态窗口覆盖血条与烧伤尾段、冰／雷／标记、护卫与锁定、分数位置及父变换、光照掩码、前后覆盖、隐藏恢复及死亡／新增；图像按原HDR字节比较，移动与状态倒计时应复用命令，失效节点应回收。此正确性窗口显示FPS，结果位于`.temp/godot-m2/`，性能仍由Release基线／极限测量。
+
+尾迹CPU分段使用`test_enemy_expansion.gd -- --ribbon-profile --workload=baseline|extreme`，实际Forward+窗口显示右上角FPS，分别采96／256条原曲线。报告位于`.temp/enemy-expansion/`，保存调用边界、数值及等待、合并、索引准备、原生上传、索引复用次数和完整网格属性哈希；可追加`--verify-ribbons`在计时后运行既有几何／串并行检查。冷创建分别列节点、首次内容编译、词库索引和Session.start。四书Release入口同步记录`battle.create.node`、`battle.create.baseline`与每帧索引上传状态，整场性能沿用基线／极限两组。
+
 战斗算法可用 `pwsh -File tools/godot/compare-combat.ps1` 从优化前提交 `c39c032` 生成隔离参考子类，比较四书事件／状态与 1,152 个闪避选点；`-BenchmarkOnly` 只采样微基准，`-DodgeOnly` 跳过逐步战斗。该上传基线与本地原记录 `9f3539b` 的规则源码相同，仅剔除了转入私有资产库的新增字体。适配器针对该基线的方法与数据声明，未来结构变化需同步审阅，不能作为任意 Git 版本的通用比较器。正常运行前工具自动做锁定依赖的 Debug 编译。生成文件与日志留在 `.temp/`，不进入游戏或导出。
 
 局部几何入口为 `test_battle_session.gd -- --geometry`，覆盖连续扫掠、首击顺序、贯穿快照／死亡连锁及接触尾迹；`test_defense_movement.gd` 覆盖御术与时钟。`test_combat_algorithms.gd -- --cold` 单列首次操作、会话准备、封送分配与 GC。数值程序集在各配置均启用优化，需和受影响 GDScript 一起检查；实际命令与结果见[实施记录](migration/COMBAT-ALGORITHM-IMPLEMENTATION.md)。
@@ -119,6 +123,8 @@ pwsh -File tools/godot/godot.ps1 run --script tests/godot/test_s1_application.gd
 `test_s2_run.gd` 的默认模式使用明确的合法结果夹具验证保存失败、升档、继承、去重、满层补给与重开；`--formal` 才包含实际打字打赢九页。`--balance` 为分阶段数值取样入口，记录速度、准确率、种子、防御策略与失败，不以预期胜败替代测量。`--cold-only`、`--retained-only --mistakes` 分别测快速冷开与中速继承，`--seed=s3-sample-2` 更换种子，`--book=frost` 等参数只复测受影响法书。`test_profile_save.gd`、`test_talent_progress.gd` 和 `test_reward_ledger.gd` 分别保护迁移原档、五阶自动成长与实际经验去重。
 
 `test_s2_encounters.gd` 的 `--defense` 检查不打字的纯防御边界，`--tail` 检查停笔后有限效果，`--word-cost` 比较三／七字符的六词周期与主术等待。后两项隔离敌人 AI，不代表正式通关。窗口脚本支持 `--ui-only --low --reduce-motion` 复查低画质静态可读性；`--package-check` 将验证文件写到隔离的 `user://verification/`。使用锁定编辑器引擎的 `--main-pack <绝对 PCK 路径> --script <绝对测试脚本路径>` 从独立包目录验证资源，测试脚本本身不随包分发。官方 Release 模板不执行外部 `--script`，正式 EXE 另做独立启动检查；两类结果不能混称为 Release 交互自动化。测试子进程的 `APPDATA` 指向工作区独立目录，保持玩家数据不变。
+
+Release性能采样使用`tools/godot/prepare-release-benchmark.ps1`：在隔离工程内注册继承`test_visual_quality.gd`的MainLoop，再以官方ExportRelease导出实际模板。成品通过自身工程入口运行基线／极限，使用绝对`--output-root`和独立APPDATA／LOCALAPPDATA，保留右上角FPS及template／release／debug身份字段。正式根入口和包内容不变；命令、来源manifest与实测数据见[实施记录](migration/PERFORMANCE-IMPLEMENTATION.md#2026-10-25-release模板采样)。
 
 体验与存档针对性回归：`test_single_run_save.gd` 覆盖唯一存档、退出保存、页恢复、重复奖励、重开原子性、God 分账及跨档写入失败重试；`test_s2_encounters.gd --arrival` 核对八向扇区分布与真实单敌批次，`--god` 核对四书普通／God 的致死、闪避和有限终式对象。`test_s1_application.gd --feedback` 在真实窗口完成首页打字、数字领奖、详情隔离、路线、继续／取消重开、暂停构筑／图鉴、隐藏激活和一步结束归档；`test_feedback_effects.gd` 使用受控敌人位置和敌弹，实际完词触发冰面、火场、反制与爆墨并截图，不将布置的战场当作正式玩法通关。
 

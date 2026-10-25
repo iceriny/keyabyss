@@ -10,19 +10,19 @@ const SCENE_PATH := "res://ui/scenes/key_hint.tscn"
 		if key_text == value:
 			return
 		key_text = value
-		_refresh()
+		_refresh_key()
 @export var description := "切换目标":
 	set(value):
 		if description == value:
 			return
 		description = value
-		_refresh()
+		_refresh_description()
 @export var accent := Color("84969e"):
 	set(value):
 		if accent == value:
 			return
 		accent = value
-		_refresh()
+		_refresh_style()
 
 @onready var _key_frame: PanelContainer = $KeyFrame
 @onready var _key_label: Label = $KeyFrame/Key
@@ -51,15 +51,27 @@ func _ready() -> void:
 	_key_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_key_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_description_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_refresh()
+	_refresh_key()
+	_refresh_description()
+	_refresh_style()
 
 
-func _refresh() -> void:
+func _refresh_key() -> void:
 	if not is_node_ready():
 		return
 	_key_label.text = key_text
+
+
+func _refresh_description() -> void:
+	if not is_node_ready():
+		return
 	_description_label.text = description
 	_description_label.visible = not description.is_empty()
+
+
+func _refresh_style() -> void:
+	if not is_node_ready():
+		return
 	_key_label.add_theme_font_override("font", SMALL_FONT)
 	_description_label.add_theme_font_override("font", SMALL_FONT)
 	_key_label.add_theme_color_override("font_color", accent.lerp(Color.WHITE, 0.52))

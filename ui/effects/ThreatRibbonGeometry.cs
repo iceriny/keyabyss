@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 /// <summary>Display-only geometry batch; no combat objects or per-point interop.</summary>
 public partial class ThreatRibbonGeometry : RefCounted
@@ -15,7 +16,15 @@ public partial class ThreatRibbonGeometry : RefCounted
     private readonly ArrayMesh mesh = new();
     private int vertexCapacity, indexCapacity, previousIndexCount;
     private byte[] indexBytes = Array.Empty<byte>();
+    private int[] previousIndices = Array.Empty<int>();
     private int indexStride;
+    private bool profiling;
+    // CPU milliseconds: numeric work + join, merge, index preparation, native upload, total.
+    private readonly double[] timings = new double[6]; // Last slot: whether indices were uploaded.
+
+    public void SetProfiling(bool enabled) => profiling = enabled;
+    public double[] GetTimings() => timings;
+    private static double Elapsed(long started) => (Stopwatch.GetTimestamp() - started) * 1000.0 / Stopwatch.Frequency;
 
     public void SetWorkerLimit(int count)
     {
@@ -28,6 +37,8 @@ public partial class ThreatRibbonGeometry : RefCounted
         Vector2[] renderHeads, double[] radii, double[] limits, Color[] tints,
         Vector2 size, bool halo)
     {
+        long started = profiling ? Stopwatch.GetTimestamp() : 0;
+        if (profiling) Array.Clear(timings);
         int count = radii.Length;
         if (offsets.Length != count + 1 || physicsHeads.Length != count
             || renderHeads.Length != count || limits.Length != count || tints.Length != count
@@ -45,6 +56,7 @@ public partial class ThreatRibbonGeometry : RefCounted
         {
             result = workers[0];
             result.BuildRange(0, count, samples, offsets, physicsHeads, renderHeads, radii, limits, tints, size, halo);
+            if (profiling) timings[0] = Elapsed(started);
         }
         else
         {
@@ -54,17 +66,22 @@ public partial class ThreatRibbonGeometry : RefCounted
             Parallel.For(0, jobs, parallelOptions, job =>
                 workers[job].BuildRange(count * job / jobs, count * (job + 1) / jobs,
                     samples, offsets, physicsHeads, renderHeads, radii, limits, tints, size, halo));
+            if (profiling) timings[0] = Elapsed(started);
+            long merging = profiling ? Stopwatch.GetTimestamp() : 0;
             result = merged;
             result.Clear();
             for (int job = 0; job < jobs; job++) result.AppendBatch(workers[job]);
+            if (profiling) timings[1] = Elapsed(merging);
         }
         if (result.vertices.Count == 0) return null;
         Upload(result);
+        if (profiling) timings[4] = Elapsed(started);
         return mesh;
     }
 
     private void Upload(Geometry geometry)
     {
+        long started = profiling ? Stopwatch.GetTimestamp() : 0;
         var vertices = geometry.vertices;
         var indices = geometry.indices;
         if (vertices.Count > vertexCapacity || indices.Count > indexCapacity)
@@ -89,23 +106,39 @@ public partial class ThreatRibbonGeometry : RefCounted
                 throw new InvalidOperationException("Unexpected ribbon surface layout.");
             indexStride = vertexCapacity <= 65536 ? 2 : 4;
             indexBytes = new byte[indexCapacity * indexStride];
+            previousIndices = new int[indexCapacity];
             previousIndexCount = 0;
         }
-        for (int i = 0; i < indices.Count; i++)
-            if (indexStride == 2)
-                BinaryPrimitives.WriteUInt16LittleEndian(indexBytes.AsSpan(i * 2), (ushort)indices[i]);
-            else
-                BinaryPrimitives.WriteInt32LittleEndian(indexBytes.AsSpan(i * 4), indices[i]);
-        // Removed tails become degenerate triangles; they must never retain old indices.
-        if (previousIndexCount > indices.Count)
-            Array.Clear(indexBytes, indices.Count * indexStride, (previousIndexCount - indices.Count) * indexStride);
+        var activeIndices = CollectionsMarshal.AsSpan(indices);
+        bool indexChanged = indices.Count != previousIndexCount
+            || !activeIndices.SequenceEqual(previousIndices.AsSpan(0, indices.Count));
+        if (indexChanged)
+        {
+            for (int i = 0; i < activeIndices.Length; i++)
+                if (indexStride == 2)
+                    BinaryPrimitives.WriteUInt16LittleEndian(indexBytes.AsSpan(i * 2), (ushort)activeIndices[i]);
+                else
+                    BinaryPrimitives.WriteInt32LittleEndian(indexBytes.AsSpan(i * 4), activeIndices[i]);
+            // Removed tails become degenerate triangles; never retain old indices.
+            if (previousIndexCount > indices.Count)
+                Array.Clear(indexBytes, indices.Count * indexStride, (previousIndexCount - indices.Count) * indexStride);
+            activeIndices.CopyTo(previousIndices);
+        }
+        if (profiling) timings[2] = Elapsed(started);
+        long uploading = profiling ? Stopwatch.GetTimestamp() : 0;
         mesh.CustomAabb = new Aabb(new Vector3(geometry.minimum.X, geometry.minimum.Y, 0),
             new Vector3(geometry.maximum.X - geometry.minimum.X, geometry.maximum.Y - geometry.minimum.Y, 1));
         mesh.SurfaceUpdateVertexRegion(0, 0, MemoryMarshal.AsBytes(CollectionsMarshal.AsSpan(vertices)));
         mesh.SurfaceUpdateAttributeRegion(0, 0, geometry.attributes.AsSpan(0, vertices.Count * 12));
-        RenderingServer.MeshSurfaceUpdateIndexRegion(mesh.GetRid(), 0, 0,
-            indexBytes.AsSpan(0, Math.Max(indices.Count, previousIndexCount) * indexStride));
+        if (indexChanged)
+            RenderingServer.MeshSurfaceUpdateIndexRegion(mesh.GetRid(), 0, 0,
+                indexBytes.AsSpan(0, Math.Max(indices.Count, previousIndexCount) * indexStride));
         previousIndexCount = indices.Count;
+        if (profiling)
+        {
+            timings[3] = Elapsed(uploading);
+            timings[5] = indexChanged ? 1 : 0;
+        }
     }
 
     private sealed class Geometry
@@ -136,7 +169,17 @@ public partial class ThreatRibbonGeometry : RefCounted
             batch.attributes.AsSpan(0, batch.vertices.Count * 12).CopyTo(attributes.AsSpan(start * 12));
             minimum = minimum.Min(batch.minimum);
             maximum = maximum.Max(batch.maximum);
-            foreach (int index in batch.indices) indices.Add(start + index);
+            int firstIndex = indices.Count;
+            CollectionsMarshal.SetCount(indices, firstIndex + batch.indices.Count);
+            var source = CollectionsMarshal.AsSpan(batch.indices);
+            var target = CollectionsMarshal.AsSpan(indices).Slice(firstIndex);
+            // Each worker has local indices. Rebase the ordered merge in integer vectors.
+            int cursor = 0;
+            var shift = new System.Numerics.Vector<int>(start);
+            int width = System.Numerics.Vector<int>.Count;
+            for (; cursor <= source.Length - width; cursor += width)
+                (new System.Numerics.Vector<int>(source.Slice(cursor)) + shift).CopyTo(target.Slice(cursor));
+            for (; cursor < source.Length; cursor++) target[cursor] = start + source[cursor];
         }
 
         private void EnsureAttributes(int count)
@@ -145,19 +188,22 @@ public partial class ThreatRibbonGeometry : RefCounted
                 Array.Resize(ref attributes, (int)System.Numerics.BitOperations.RoundUpToPowerOf2((uint)count) * 12);
         }
 
-        private void WritePair(int vertex, Vector2 upper, Vector2 lower, Color color, float halfWidth)
+        private static uint PackRgb(Color color) =>
+            (uint)(byte)(Math.Clamp(color.R, 0f, 1f) * 255f)
+            | ((uint)(byte)(Math.Clamp(color.G, 0f, 1f) * 255f) << 8)
+            | ((uint)(byte)(Math.Clamp(color.B, 0f, 1f) * 255f) << 16);
+
+        private void WritePair(Span<Vector2> data, int vertex, Vector2 upper, Vector2 lower, uint rgb, float alpha, float halfWidth)
         {
-            vertices[vertex] = upper;
-            vertices[vertex + 1] = lower;
+            data[vertex] = upper;
+            data[vertex + 1] = lower;
             minimum = minimum.Min(upper).Min(lower);
             maximum = maximum.Max(upper).Max(lower);
             int at = vertex * 12;
             // Pack inside the owning worker, matching ArrayMesh's RGBA8 truncation.
-            attributes[at] = (byte)(Math.Clamp(color.R, 0f, 1f) * 255f);
-            attributes[at + 1] = (byte)(Math.Clamp(color.G, 0f, 1f) * 255f);
-            attributes[at + 2] = (byte)(Math.Clamp(color.B, 0f, 1f) * 255f);
-            attributes[at + 3] = (byte)(Math.Clamp(color.A, 0f, 1f) * 255f);
-            attributes.AsSpan(at, 4).CopyTo(attributes.AsSpan(at + 12, 4));
+            uint color = rgb | ((uint)(byte)(Math.Clamp(alpha, 0f, 1f) * 255f) << 24);
+            BinaryPrimitives.WriteUInt32LittleEndian(attributes.AsSpan(at), color);
+            BinaryPrimitives.WriteUInt32LittleEndian(attributes.AsSpan(at + 12), color);
             BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 4), halfWidth);
             BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 8), -halfWidth);
             BinaryPrimitives.WriteSingleLittleEndian(attributes.AsSpan(at + 16), halfWidth);
@@ -254,10 +300,13 @@ public partial class ThreatRibbonGeometry : RefCounted
                 distances.Add((float)(distances[^1] + smooth[i - 1].DistanceTo(smooth[i])));
             int start = vertices.Count;
             int count = smooth.Count;
+            int layers = halo ? 2 : 1;
+            double narrowWidth = radius * 2.6, wideWidth = radius * 7.0;
+            uint narrowRgb = PackRgb(tint * 1.75f), wideRgb = PackRgb(tint * 1.3f);
             // Preserve per-threat narrow strip then wide strip draw order.
-            for (int layer = 0; layer < (halo ? 2 : 1); layer++)
-                for (int i = 0; i < count * 2; i++)
-                    vertices.Add(default);
+            CollectionsMarshal.SetCount(vertices, start + layers * count * 2);
+            // Every newly exposed Vector2 is written below before any read or upload.
+            var vertexData = CollectionsMarshal.AsSpan(vertices);
             EnsureAttributes(vertices.Count);
             for (int i = 0; i < count; i++)
             {
@@ -267,24 +316,29 @@ public partial class ThreatRibbonGeometry : RefCounted
                 Vector2 normal = (after - before).Normalized().Orthogonal();
                 double taper = 0.08 + 0.92 * progress;
                 double fade = Math.Pow(progress, 1.35);
-                for (int layer = 0; layer < (halo ? 2 : 1); layer++)
+                for (int layer = 0; layer < layers; layer++)
                 {
                     int at = start + layer * count * 2 + i * 2;
-                    Vector2 side = normal * (float)(radius * (layer == 0 ? 2.6 : 7.0)) * (float)taper;
-                    Color color = tint * (layer == 0 ? 1.75f : 1.3f);
-                    color.A = (float)((layer == 0 ? 0.7 : 0.13) * fade);
-                    float halfWidth = (float)(radius * (layer == 0 ? 2.6 : 7.0) * taper);
+                    double width = layer == 0 ? narrowWidth : wideWidth;
+                    Vector2 side = normal * (float)width * (float)taper;
+                    float alpha = (float)((layer == 0 ? 0.7 : 0.13) * fade);
+                    float halfWidth = (float)(width * taper);
                     // Interpolate physical distance and width separately. Normalized UVs
                     // on a tapered quad bend the optical center at every triangle diagonal.
-                    WritePair(at, smooth[i] + side, smooth[i] - side, color, halfWidth);
+                    WritePair(vertexData, at, smooth[i] + side, smooth[i] - side,
+                        layer == 0 ? narrowRgb : wideRgb, alpha, halfWidth);
                 }
             }
-            for (int layer = 0; layer < (halo ? 2 : 1); layer++)
+            int firstIndex = indices.Count;
+            CollectionsMarshal.SetCount(indices, firstIndex + layers * (count - 1) * 6);
+            var indexData = CollectionsMarshal.AsSpan(indices).Slice(firstIndex);
+            int cursor = 0;
+            for (int layer = 0; layer < layers; layer++)
                 for (int i = 0; i < count - 1; i++)
                 {
                     int at = start + layer * count * 2 + i * 2;
-                    indices.Add(at); indices.Add(at + 1); indices.Add(at + 2);
-                    indices.Add(at + 1); indices.Add(at + 3); indices.Add(at + 2);
+                    indexData[cursor++] = at; indexData[cursor++] = at + 1; indexData[cursor++] = at + 2;
+                    indexData[cursor++] = at + 1; indexData[cursor++] = at + 3; indexData[cursor++] = at + 2;
                 }
         }
     }

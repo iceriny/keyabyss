@@ -10,6 +10,10 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	if "--ribbon-profile" in OS.get_cmdline_user_args():
+		await _profile_ribbons()
+		quit(1 if failures else 0)
+		return
 	if "--actors" in OS.get_cmdline_user_args():
 		await _actor_window()
 		quit(1 if failures else 0)
@@ -35,6 +39,94 @@ func _run() -> void:
 		_check_encounters()
 	print("Enemy expansion: %s failure(s)" % failures)
 	quit(1 if failures else 0)
+
+
+func _profile_ribbons() -> void:
+	assert(DisplayServer.get_name() != "headless")
+	root.size = Vector2i(1920, 1080)
+	var fps := CanvasLayer.new()
+	fps.layer = 100
+	root.add_child(fps)
+	fps.add_child(FpsDisplay.create())
+	var workload := "baseline"
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--workload="): workload = argument.trim_prefix("--workload=")
+	assert(workload in ["baseline", "extreme"])
+	var began := Time.get_ticks_usec()
+	var battle := BattleSession.new()
+	var node_ms := (Time.get_ticks_usec() - began) / 1000.0
+	began = Time.get_ticks_usec()
+	var selection := BuildSelection.new()
+	selection.book_id = &"frost"
+	var compiled: BuildCompileResult = BuildCompiler.new().compile(selection)
+	assert(compiled.success(), str(compiled.diagnostics))
+	var compile_ms := (Time.get_ticks_usec() - began) / 1000.0
+	var request := BattleStartRequest.new()
+	request.build = compiled.build
+	request.vocabulary = _words()
+	began = Time.get_ticks_usec()
+	request.vocabulary_index = VocabularyIndex.build(request.vocabulary)
+	var vocabulary_ms := (Time.get_ticks_usec() - began) / 1000.0
+	request.encounter = battle.encounter
+	began = Time.get_ticks_usec()
+	battle.start(request)
+	var start_ms := (Time.get_ticks_usec() - began) / 1000.0
+	battle.free()
+	print("CREATION_PROFILE ", {"node": node_ms, "compile": compile_ms, "vocabulary": vocabulary_ms, "start": start_ms})
+	var count := 96 if workload == "baseline" else 256
+	var geometry: RefCounted = preload("res://ui/effects/ThreatRibbonGeometry.cs").new()
+	geometry.call("SetProfiling", true)
+	var samples := PackedVector2Array()
+	var offsets := PackedInt32Array([0])
+	var heads := PackedVector2Array()
+	var render_heads := PackedVector2Array()
+	var radii := PackedFloat64Array()
+	var limits := PackedFloat64Array()
+	var tints := PackedColorArray()
+	for index in count:
+		var at := Vector2(960, 540) + Vector2.from_angle(index * TAU / count) * 250
+		for point in 32:
+			samples.append(at + Vector2(point * (220.0 / 30.0), sin(point * .1) * (25 if index % 3 == 0 else 0)))
+		offsets.append(samples.size())
+		heads.append(samples[-1])
+		radii.append(5.0 + index % 3)
+		limits.append(180.0 if index % 3 == 0 else 120.0)
+		tints.append(Color("9cdeff"))
+	var display := MeshInstance2D.new()
+	var shader_material := ShaderMaterial.new()
+	shader_material.shader = preload("res://ui/materials/battle_ribbon.gdshader")
+	shader_material.set_shader_parameter("physical_width", true)
+	display.material = shader_material
+	root.add_child(display)
+	var measurements: Array[Dictionary] = []
+	for frame in 48:
+		render_heads = heads.duplicate()
+		for index in count: render_heads[index] += Vector2((frame % 4) * .9, -.2)
+		began = Time.get_ticks_usec()
+		display.mesh = geometry.call("Build", samples, offsets, heads, render_heads, radii, limits, tints, Vector2.ONE, true)
+		var boundary_ms := (Time.get_ticks_usec() - began) / 1000.0
+		var timings: PackedFloat64Array = geometry.call("GetTimings")
+		if frame >= 8:
+			measurements.append({"boundary": boundary_ms, "numeric": timings[0], "merge": timings[1], "indices": timings[2], "upload": timings[3], "native_total": timings[4], "index_uploaded": timings[5] > 0.0})
+		await process_frame
+		await RenderingServer.frame_post_draw
+	var directory := EVIDENCE.path_join("ribbon-profile-%s-%s" % [workload, Time.get_ticks_usec()])
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
+	var file := FileAccess.open(directory.path_join("report.json"), FileAccess.WRITE)
+	var fingerprints: Dictionary = {}
+	var arrays := display.mesh.surface_get_arrays(0)
+	for channel in [Mesh.ARRAY_VERTEX, Mesh.ARRAY_COLOR, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_INDEX]:
+		var digest := HashingContext.new()
+		digest.start(HashingContext.HASH_SHA256)
+		digest.update(arrays[channel].to_byte_array())
+		fingerprints[str(channel)] = digest.finish().hex_encode()
+	file.store_string(JSON.stringify({"workload": workload, "measurements": measurements, "fingerprints": fingerprints, "creation": {"node": node_ms, "compile": compile_ms, "vocabulary": vocabulary_ms, "start": start_ms}}))
+	print("RIBBON_PROFILE ", directory)
+	if "--verify-ribbons" in OS.get_cmdline_user_args():
+		_check_ribbon_geometry()
+		print("Ribbon geometry: %s failure(s)" % failures)
+	display.queue_free()
+	await process_frame
 
 
 func _words() -> Array[VocabularyEntry]:
@@ -576,8 +668,8 @@ func _check_trail_glow(battle: BattleSession, page: BattlePage, directory: Strin
 	var fluid := page.visuals.fluid
 	for shot in battle.threats:
 		_check(fluid._motion.has(shot), "moving threat remains registered with shared fluid")
-		var motion: FluidAtmosphere.Motion = fluid._motion[shot]
-		_check(motion.plumes.any(func(plume: FluidInfluence) -> bool: return plume.density > 0.0), "moving threat continues injecting an advected fluid plume")
+		var motion := fluid.motion_snapshot(shot)
+		_check(motion.last_plume_density > 0.0, "moving threat continues injecting an advected fluid plume")
 		_check(motion.color == BattleThreatOverlay.threat_color(shot), "fluid illumination follows projectile identity")
 		_check(((shot.position - shot.trail[0]) * battle.ARENA_SIZE).length() > 100.0, "slow straight and curved shots retain distance-based tail history")
 	_check(fluid._lights.any(func(light: PointLight2D) -> bool: return light.enabled), "native lighting is still active alongside HDR emission")

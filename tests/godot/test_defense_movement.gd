@@ -9,6 +9,11 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	if "--measure-flight" in OS.get_cmdline_user_args():
+		_measure_flight()
+		quit(1 if failures else 0)
+		return
+	_check_flight_coefficients()
 	_check_curved_trajectory()
 	for grade: StringName in [&"success", &"perfect"]:
 		var session := _session()
@@ -199,6 +204,80 @@ func _run() -> void:
 	for session in sessions: session.free()
 	print("Defense and movement: %s failure(s)" % failures)
 	quit(1 if failures else 0)
+
+
+func _measure_flight() -> void:
+	for count: int in [96, 256]:
+		var reference: Array[BattleThreat] = []
+		var current: Array[BattleThreat] = []
+		for index in count:
+			for group: Array[BattleThreat] in [reference, current]:
+				var shot := BattleThreat.new()
+				shot.position = Vector2(.5, .5)
+				shot.velocity = Vector2.from_angle(index * .31) * 220.0
+				shot.curvature = .22 if index % 3 == 0 else 0.0
+				group.append(shot)
+		var times := {"reference": [], "current": []}
+		for sample in 16:
+			for optimized: bool in ([false, true] if sample % 2 == 0 else [true, false]):
+				var shots := current if optimized else reference
+				var started := Time.get_ticks_usec()
+				for tick in 32:
+					var delta := (1.0 / 60.0) * (1.0 if sample < 12 else .06 + tick * .001)
+					if optimized:
+						for shot in shots: shot.advance_flight(delta, BattleSession.ARENA_SIZE)
+					else:
+						for shot in shots:
+							shot.previous_position = shot.position
+							shot.position += BattleThreat.flight_displacement(shot.velocity, shot.curvature, shot.acceleration, delta) / BattleSession.ARENA_SIZE
+							shot.velocity = BattleThreat.flight_velocity(shot.velocity, shot.curvature, shot.acceleration, delta)
+				times["current" if optimized else "reference"].append((Time.get_ticks_usec() - started) / 32000.0)
+		var matched := true
+		for index in count:
+			matched = matched and PackedVector2Array([current[index].position, current[index].velocity]).to_byte_array() == PackedVector2Array([reference[index].position, reference[index].velocity]).to_byte_array()
+		_check(matched, "paired flight measurement preserves final vector bytes")
+		print("FLIGHT_BATCH ", count, " ", JSON.stringify(times))
+
+
+func _check_flight_coefficients() -> void:
+	for count: int in [96, 256]:
+		var shots: Array[BattleThreat] = []
+		for index in count:
+			var shot := BattleThreat.new()
+			shot.position = Vector2(index * .0013, index * -.0021)
+			shot.velocity = Vector2(-0.0, -170.0) if index % 9 == 0 else Vector2.from_angle(index * .31) * (70 + index)
+			shot.curvature = [0.0, .22, -.31, .00009999, .00010001, 2.1][index % 6]
+			shot.acceleration = [0.0, .12, -.08, .00004][index % 4]
+			shots.append(shot)
+		var matches := true
+		for tick in 96:
+			var delta := .00331 if tick >= 66 and tick < 80 else 1.0 / 60.0
+			for index in count:
+				var shot := shots[index]
+				if tick == 24: shot.velocity += Vector2(81.25, -47.5)
+				if tick == 39: shot.curvature = -shot.curvature + .017
+				if tick == 53: shot.acceleration = -.2 if index % 2 else 0.0
+				var previous := shot.position
+				var at := previous + BattleThreat.flight_displacement(shot.velocity, shot.curvature, shot.acceleration, delta) / BattleSession.ARENA_SIZE
+				var velocity := BattleThreat.flight_velocity(shot.velocity, shot.curvature, shot.acceleration, delta)
+				shot.advance_flight(delta, BattleSession.ARENA_SIZE)
+				var expected_bytes := PackedVector2Array([previous, at, velocity]).to_byte_array()
+				var actual_bytes := PackedVector2Array([shot.previous_position, shot.position, shot.velocity]).to_byte_array()
+				if matches and expected_bytes != actual_bytes:
+					print("Flight coefficient mismatch tick=", tick, " index=", index)
+				matches = matches and expected_bytes == actual_bytes
+		_check(matches, "%d flight laws retain original vector bytes through impulses, law changes and slow-time boundaries" % count)
+		var battle := _session()
+		battle.threats.assign(shots)
+		var before := battle.threats.duplicate()
+		battle._flush_cleared_threats()
+		_check(battle.threats == before, "uncleared threat flush retains original identities and order")
+		var expected: Array[BattleThreat] = []
+		for index in count:
+			shots[index].cleared = index % 3 == 0 or index == count - 1
+			if not shots[index].cleared: expected.append(shots[index])
+		battle._flush_cleared_threats()
+		_check(battle.threats == expected, "cleared threat flush retains the original stable subsequence")
 
 
 func _check_reflected_sweep_batch() -> void:
